@@ -18,10 +18,6 @@ const SettingModal = () => {
     setValue((prev) => !prev);
   };
 
-  const handleLogout = (): void => {
-    return usersApi.logout();
-  };
-
   const handleReset = () => {
     todosApi.reset();
   };
