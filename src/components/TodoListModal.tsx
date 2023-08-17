@@ -11,9 +11,12 @@ import {
 import { useEffect, useState } from 'react';
 import IconAtom from '../atoms/IconAtom';
 import styled from '@emotion/styled';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { resolve } from 'path';
 
+// TODO : id column에 autoIncrement를 설정해 두었기 때문에 todo를 추가할 때는 id를 따로 입력해 주지 않아도 된다.
 interface TodoDto {
-  id: number;
+  id?: number;
   date: string;
   todo: string;
   createdAt: Date;
@@ -130,6 +133,58 @@ const groupByDate = (todos: TodoDto[]) => {
 
 const groupedStubs = groupByDate(todoStubs);
 
+const DBNAME = 'extreme';
+const STORENAME = 'todos';
+const request = indexedDB.open(DBNAME, 1);
+request.onupgradeneeded = (event) => {
+  const db = (event.target as IDBOpenDBRequest).result;
+  console.dir(db);
+  if (!db.objectStoreNames.contains(STORENAME)) {
+    db.createObjectStore(STORENAME, {
+      keyPath: 'id',
+      autoIncrement: true,
+    });
+    // todoStore.createIndex('data', 'data', {})
+  }
+};
+request.onsuccess = (event) => {
+  const db = (event.target as IDBOpenDBRequest).result;
+  const transaction = db.transaction([STORENAME], 'readwrite');
+  const todoStore = transaction.objectStore(STORENAME);
+  const todo: TodoDto = {
+    date: '2023-08-14',
+    todo: 'work ET',
+    createdAt: new Date('Dec 26, 2022 18:00:30'),
+    duration: 60 * 60,
+    done: false,
+    categories: null,
+    focusTime: 0,
+    order: 2,
+  };
+  todoStore.add(todo);
+};
+
+const fetchTodosFromIndexedDB = (
+  request: IDBOpenDBRequest,
+): Promise<Map<string, TodoDto[]>> => {
+  return new Promise((res, rej) => {
+    request.onsuccess = (event) => {
+      const db = (event?.target as IDBOpenDBRequest).result;
+      const transaction = db.transaction([STORENAME], 'readonly');
+      const todoStore = transaction.objectStore(STORENAME);
+      const getAllRequest = todoStore.getAll();
+
+      getAllRequest.onsuccess = () => {
+        const req = getAllRequest.result as TodoDto[];
+        console.log(req);
+        res(groupByDate(req));
+      };
+      getAllRequest.onerror = () => {
+        rej(new Error('Error fetching data from IndexedDB'));
+      };
+    };
+  });
+};
 /* ************************************ 테스트용 */
 
 const listRender = (mapTodo: Map<string, TodoDto[]>) => {
@@ -166,7 +221,30 @@ const listRender = (mapTodo: Map<string, TodoDto[]>) => {
 };
 
 const TodoListModal = () => {
-  const [mapTodo, setMapTodo] = useState<Map<string, TodoDto[]>>(groupedStubs);
+  const [mapTodo, setMapTodo] = useState<Map<string, TodoDto[]>>();
+
+  /* Tanstack Query 테스트용 ************************************ */
+  const queryClient = useQueryClient();
+  const {
+    data: todos,
+    error,
+    isLoading,
+  } = useQuery(['todos'], () => fetchTodosFromIndexedDB(request));
+
+  const mutation = useMutation({
+    // mutationFn: () => {
+    //   console.log('mutation mutationFn');
+    // },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
+
+  useEffect(() => {
+    if (!isLoading) setMapTodo(todos);
+  }, [isLoading]);
+
+  /* ************************************ Tanstack Query 테스트용 */
 
   const modifiedSameDate = (
     source: DraggableLocation,
@@ -240,7 +318,7 @@ const TodoListModal = () => {
     <>
       <CardAtom>
         <DragDropContext onDragEnd={onDragDropHandler}>
-          {listRender(mapTodo)}
+          {!isLoading && mapTodo ? listRender(mapTodo) : null}
         </DragDropContext>
       </CardAtom>
     </>
