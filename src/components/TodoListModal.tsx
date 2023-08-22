@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react';
 import IconAtom from '../atoms/IconAtom';
 import styled from '@emotion/styled';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { resolve } from 'path';
 
 // TODO : id column에 autoIncrement를 설정해 두었기 때문에 todo를 추가할 때는 id를 따로 입력해 주지 않아도 된다.
 interface TodoDto {
