@@ -7,14 +7,14 @@ const STORENAME = 'todos';
 // TODO : 백엔드 코드를 참고해서 만들면서, 계산과 액션의 분리를 좀 더 꼼꼼히 해서 나중에 백엔드 코드에 다시 반영을 시킬 수 있도록 하자
 
 /* 
-addTodo <-
+addTodo * Action_add
 getOneTodo
 removeTodoOrder
 deleteTodo
 minusOrder
 updateTodo
 doTodo
-getList <-
+getList <- Action_getAll + Calc_orderedList
 groupByDate
 reorderTodos
 todosToUpdate
@@ -71,7 +71,7 @@ class ETIndexedDBAction {
   }
 
   // addTodo
-  addTodo(todo: AddTodoDto) {
+  add(todo: AddTodoDto) {
     if (!this.db) throw new Error('DB hasnt been initialized yet');
     if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
       return alert('카테고리는 최대 5개 까지 설정할 수 있습니다.');
@@ -90,7 +90,7 @@ class ETIndexedDBAction {
   }
 
   // getList
-  getList(): Promise<TodoEntity[]> {
+  getAll(): Promise<TodoEntity[]> {
     // return await this.repo.find({
 
     //   order: { date: 'ASC', order: 'ASC' },
@@ -117,8 +117,6 @@ class ETIndexedDBAction {
           }),
         );
       };
-
-      return todoStore;
     });
   }
 }
@@ -129,8 +127,7 @@ class ETIndexedDBCalc {
   }
 
   orderedList(todoList: TodoEntity[]) {
-    const doneFalse = this.filterDone(false, todoList);
-    return doneFalse.sort((a, b) => (a.order as number) - (b.order as number));
+    return todoList.sort((a, b) => (a.order as number) - (b.order as number));
   }
 }
 

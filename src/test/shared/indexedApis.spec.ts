@@ -93,23 +93,32 @@ const mockFetchTodoList = () => [
 
 describe('ExtremeTodoIndexedDB', () => {
   let mockTodoList: ReturnType<typeof mockFetchTodoList>;
-  let indexedApis: ETIndexedDBCalc;
+  let indexedCalc: ETIndexedDBCalc;
 
   beforeAll(() => {
     mockTodoList = mockFetchTodoList();
-    indexedApis = new ETIndexedDBCalc();
+    indexedCalc = new ETIndexedDBCalc();
   });
 
   describe('filterDone', () => {
     it('Done이 true인 한 개의 todo만 반환된다.', () => {
-      const filtered = indexedApis.filterDone(true, mockTodoList);
+      const filtered = indexedCalc.filterDone(true, mockTodoList);
       expect(filtered.length).toBe(1);
     });
   });
+
   describe('orderedList', () => {
     it('order의 오름차순에 따라 리스트를 정렬한다.', () => {
-      const ordered = indexedApis.orderedList(mockTodoList);
+      const filtered = indexedCalc.filterDone(false, mockTodoList);
+      const ordered = indexedCalc.orderedList(filtered);
       expect(ordered[0].order).toBe(1);
+    });
+  });
+
+  describe('groupByDate', () => {
+    it('date를 기준으로 todo를 묶는다.', () => {
+      const grouped = indexedCalc.groupByDate(mockTodoList);
+      expect(grouped[0].date > grouped[grouped.length - 1].date).toBe(true);
     });
   });
 });
