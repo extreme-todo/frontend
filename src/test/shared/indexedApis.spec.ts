@@ -118,7 +118,8 @@ describe('ExtremeTodoIndexedDB', () => {
   describe('groupByDate', () => {
     it('date를 기준으로 todo를 묶는다.', () => {
       const grouped = indexedCalc.groupByDate(mockTodoList);
-      expect(grouped[0].date > grouped[grouped.length - 1].date).toBe(true);
+      expect(grouped instanceof Map).toBe(true);
+      expect(grouped.size).toBe(4);
     });
   });
 });
