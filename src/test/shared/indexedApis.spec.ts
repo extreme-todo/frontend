@@ -95,7 +95,7 @@ describe('ExtremeTodoIndexedDB', () => {
   let mockTodoList: ReturnType<typeof mockFetchTodoList>;
   let indexedCalc: ETIndexedDBCalc;
 
-  beforeAll(() => {
+  beforeEach(() => {
     mockTodoList = mockFetchTodoList();
     indexedCalc = new ETIndexedDBCalc();
   });
@@ -120,6 +120,52 @@ describe('ExtremeTodoIndexedDB', () => {
       const grouped = indexedCalc.groupByDate(mockTodoList);
       expect(grouped instanceof Map).toBe(true);
       expect(grouped.size).toBe(4);
+    });
+  });
+
+  describe('updateOrder', () => {
+    let correspondingOrder: typeof mockTodoList;
+
+    beforeEach(() => {
+      const notNullTodos = mockTodoList.filter((todo) => todo.order !== null);
+      correspondingOrder = notNullTodos.filter(
+        (todo) => (todo.order as number) >= 2 && (todo.order as number) <= 6,
+      );
+    });
+
+    it('새로운 order값을 해당 todo의 order를 수정하고', () => {
+      let targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
+      expect(targetTodo[0].id === 5).toBe(true);
+
+      indexedCalc.updateOrder(correspondingOrder, 6, 2);
+
+      targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
+      expect(targetTodo[0].id === 5).toBe(false);
+
+      targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
+      expect(targetTodo[0].id === 5).toBe(true);
+    });
+
+    it('해당 범위 안에 있는 todo의 order를 수정한다.', () => {
+      let targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
+      expect(targetTodo[0].id === 4).toBe(true);
+
+      indexedCalc.updateOrder(correspondingOrder, 6, 2);
+
+      targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
+      expect(targetTodo[0].id === 4).toBe(false);
+
+      targetTodo = correspondingOrder.filter((todo) => todo.order === 3);
+      expect(targetTodo[0].id === 4).toBe(true);
+    });
+  });
+
+  describe('doneTodo', () => {
+    it('해당 id의 done을 true로 하고 order을 null로 변경한다.', () => {
+      const targetTodo = mockTodoList.filter((todo) => todo.id === 1);
+      const done = indexedCalc.doneTodo(targetTodo[0]);
+      expect(done.done).toBe(true);
+      expect(done.order).toBe(null);
     });
   });
 });
