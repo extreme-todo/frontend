@@ -5,18 +5,18 @@
 
 /* 
 addTodo * Action_add
-getOneTodo
-removeTodoOrder
-deleteTodo * Action_removeOne
+getOneTodo * Action_getOne
+removeTodoOrder <- Calc_minusOrder + Action_update
 minusOrder
-updateTodo
-doTodo
+deleteTodo * Action_removeOne
+updateTodo * Action_updateOne
+doTodo * Action_getOne + Calc_doneTodo + Action_updateOne 
 getList <- Action_getAll + Calc_orderedList
 groupByDate * Calc_groupByDate
 reorderTodos
-todosToUpdate
-updateOrder
-removeTodos
+todosToUpdate * Calc_updateOrder + Action_getAll + Action_updateOne (+Promise.all)
+updateOrder * same as above
+removeTodos <- Cron 사용한 메소드임
 resetTodos * Action_resetAll
 */
 
@@ -100,7 +100,8 @@ class ETIndexedDBAction {
         };
         const request = todoStore.add(newTodo);
 
-        request.onsuccess = () => resolve();
+        request.onsuccess = (event) =>
+          resolve((event.target as IDBRequest<void>).result);
         request.onerror = (event) =>
           reject(
             new Error('Fail to add todo', {
@@ -142,12 +143,28 @@ class ETIndexedDBAction {
     });
   }
 
+  getOne(id: number): Promise<TodoEntity> {
+    return new Promise((resolve, reject) => {
+      try {
+        const objectStore = this.getObjectStore('readonly');
+        const todoStore = objectStore.get(id);
+        todoStore.onsuccess = (event) =>
+          resolve((event.target as IDBRequest<TodoEntity>).result);
+        todoStore.onerror = (event) =>
+          reject((event.target as IDBRequest).error);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   removeOne(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         const objectStore = this.getObjectStore('readwrite');
         const todoStore = objectStore.delete(id);
-        todoStore.onsuccess = () => resolve();
+        todoStore.onsuccess = (event) =>
+          resolve((event.target as IDBRequest<void>).result);
         todoStore.onerror = (event) =>
           reject(
             new Error('Fail to delete', {
@@ -165,7 +182,8 @@ class ETIndexedDBAction {
       try {
         const objectStore = this.getObjectStore('readwrite');
         const todoStore = objectStore.clear();
-        todoStore.onsuccess = () => resolve();
+        todoStore.onsuccess = (event) =>
+          resolve((event.target as IDBRequest<void>).result);
         todoStore.onerror = (event) =>
           reject(
             new Error('Fail to reset', {
@@ -174,6 +192,25 @@ class ETIndexedDBAction {
           );
       } catch (err) {
         reject(err);
+      }
+    });
+  }
+
+  updateOne(todo: TodoEntity): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        const objectStore = this.getObjectStore('readwrite');
+        const todoStore = objectStore.put(todo);
+        todoStore.onsuccess = (event) =>
+          resolve((event.target as IDBRequest<void>).result);
+        todoStore.onerror = (event) =>
+          reject(
+            new Error('Fail to update', {
+              cause: (event.target as IDBRequest).error,
+            }),
+          );
+      } catch (error) {
+        reject(error);
       }
     });
   }
@@ -197,6 +234,30 @@ class ETIndexedDBCalc {
       mapped.set(todo.date, index);
     }
     return mapped;
+  }
+
+  updateOrder(
+    todoList: TodoEntity[],
+    prevOrder: number,
+    newOrder: number,
+  ): TodoEntity[] {
+    return todoList.map((todo) => {
+      if (todo.order === Number(prevOrder)) {
+        todo.order = Number(newOrder);
+      } else {
+        const isShiftUp = prevOrder > newOrder;
+        const shiftAmount = isShiftUp ? 1 : -1;
+        (todo.order as number) += shiftAmount;
+      }
+      return todo;
+    });
+  }
+
+  doneTodo(todo: TodoEntity) {
+    const copyTodo = Object.assign({}, todo);
+    copyTodo.done = true;
+    copyTodo.order = null;
+    return copyTodo;
   }
 }
 
