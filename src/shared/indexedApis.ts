@@ -37,7 +37,8 @@ interface AddTodoDto
   date: Date; // @Transform(({ value }) => new Date(value))
 }
 
-type transactionMode = 'readonly' | 'readwrite';
+type TransactionMode = 'readonly' | 'readwrite';
+type CrudType = 'add' | 'get' | 'update' | 'remove';
 
 const DBNAME = 'extreme';
 const STORENAME = 'todos';
@@ -71,148 +72,100 @@ class ETIndexedDBAction {
     };
   }
 
-  private getObjectStore(mode: transactionMode) {
+  private getObjectStore(mode: TransactionMode) {
     if (!this.db) throw new Error('DB hasnt been initialized yet');
     const transaction = this.db?.transaction([STORENAME], mode);
-    const todoStore = transaction.objectStore(STORENAME);
-    return todoStore;
+    const objectStore = transaction.objectStore(STORENAME);
+    return objectStore;
+  }
+
+  private makePromise<T>(request: IDBRequest, action: CrudType): Promise<T> {
+    return new Promise((resolve, reject) => {
+      request.onsuccess = (event) =>
+        resolve((event.target as IDBRequest<T>).result);
+      request.onerror = (event) =>
+        reject(
+          new Error(`Fail to ${action} todo`, {
+            cause: (event.target as IDBRequest).error,
+          }),
+        );
+    });
+  }
+
+  private catchError<T>(fn: () => T) {
+    try {
+      return fn();
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   // addTodo
-  add(todo: AddTodoDto): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
-        return reject(
-          new Error('Fail to add todo', {
-            cause: '카테고리는 최대 5개 까지 설정할 수 있습니다.',
-          }),
-        );
-      }
+  async add(todo: AddTodoDto): Promise<void> {
+    if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
+      return Promise.reject(
+        new Error('Fail to add todo', {
+          cause: '카테고리는 최대 5개 까지 설정할 수 있습니다.',
+        }),
+      );
+    }
 
-      try {
-        const todoStore = this.getObjectStore('readwrite');
-        // TODO : 새로운 order 정보를 받아서 TODO Entity를 만들자
-        const newTodo = {
-          ...todo,
-          createdAt: new Date(),
-          done: false,
-          focusTime: 0,
-        };
-        const request = todoStore.add(newTodo);
-
-        request.onsuccess = (event) =>
-          resolve((event.target as IDBRequest<void>).result);
-        request.onerror = (event) =>
-          reject(
-            new Error('Fail to add todo', {
-              cause: (event.target as IDBRequest).error,
-            }),
-          );
-      } catch (err) {
-        reject(err);
-      }
-    });
+    const objectStore = await this.catchError<IDBObjectStore>(() =>
+      this.getObjectStore('readwrite'),
+    );
+    // TODO : newTodo 객체 만들기
+    const todoRequest = objectStore.add(todo);
+    const promisedTodo = this.makePromise<void>(todoRequest, 'add');
+    return promisedTodo;
   }
 
   // getList
-  getAll(): Promise<TodoEntity[]> {
+  async getAll(): Promise<TodoEntity[]> {
     // return await this.repo.find({
-
     //   order: { date: 'ASC', order: 'ASC' }, // -> 순서대로 정렬을 하고 나면 날짜별로도 됐을 거임
     // });
-
-    return new Promise((resolve, reject) => {
-      try {
-        const objectStore = this.getObjectStore('readonly');
-        const todoStore = objectStore.getAll();
-
-        todoStore.onsuccess = (event) => {
-          resolve((event.target as IDBRequest<TodoEntity[]>).result);
-        };
-
-        todoStore.onerror = (event) => {
-          reject(
-            new Error('error fetching todo list', {
-              cause: (event.target as IDBRequest).error,
-            }),
-          );
-        };
-      } catch (error) {
-        reject(error);
-      }
-    });
+    const objectStore = await this.catchError<IDBObjectStore>(() =>
+      this.getObjectStore('readonly'),
+    );
+    const todoRequest = objectStore.getAll();
+    const promisedTodo = this.makePromise<TodoEntity[]>(todoRequest, 'get');
+    return promisedTodo;
   }
 
-  getOne(id: number): Promise<TodoEntity> {
-    return new Promise((resolve, reject) => {
-      try {
-        const objectStore = this.getObjectStore('readonly');
-        const todoStore = objectStore.get(id);
-        todoStore.onsuccess = (event) =>
-          resolve((event.target as IDBRequest<TodoEntity>).result);
-        todoStore.onerror = (event) =>
-          reject((event.target as IDBRequest).error);
-      } catch (error) {
-        reject(error);
-      }
-    });
+  async getOne(id: number): Promise<TodoEntity> {
+    const objectStore = await this.catchError<IDBObjectStore>(() =>
+      this.getObjectStore('readonly'),
+    );
+    const todoRequest = objectStore.get(id);
+    const promisedTodo = this.makePromise<TodoEntity>(todoRequest, 'get');
+    return promisedTodo;
   }
 
-  removeOne(id: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        const objectStore = this.getObjectStore('readwrite');
-        const todoStore = objectStore.delete(id);
-        todoStore.onsuccess = (event) =>
-          resolve((event.target as IDBRequest<void>).result);
-        todoStore.onerror = (event) =>
-          reject(
-            new Error('Fail to delete', {
-              cause: (event.target as IDBRequest).error,
-            }),
-          );
-      } catch (err) {
-        reject(err);
-      }
-    });
+  async removeOne(id: number): Promise<void> {
+    const objectStore = await this.catchError<IDBObjectStore>(() =>
+      this.getObjectStore('readwrite'),
+    );
+    const todoRequest = objectStore.delete(id);
+    const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
+    return promisedTodo;
   }
 
-  resetAll(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        const objectStore = this.getObjectStore('readwrite');
-        const todoStore = objectStore.clear();
-        todoStore.onsuccess = (event) =>
-          resolve((event.target as IDBRequest<void>).result);
-        todoStore.onerror = (event) =>
-          reject(
-            new Error('Fail to reset', {
-              cause: (event.target as IDBRequest).error,
-            }),
-          );
-      } catch (err) {
-        reject(err);
-      }
-    });
+  async resetAll(): Promise<void> {
+    const objectStore = await this.catchError<IDBObjectStore>(() =>
+      this.getObjectStore('readwrite'),
+    );
+    const todoRequest = objectStore.clear();
+    const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
+    return promisedTodo;
   }
 
-  updateOne(todo: TodoEntity): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        const objectStore = this.getObjectStore('readwrite');
-        const todoStore = objectStore.put(todo);
-        todoStore.onsuccess = (event) =>
-          resolve((event.target as IDBRequest<void>).result);
-        todoStore.onerror = (event) =>
-          reject(
-            new Error('Fail to update', {
-              cause: (event.target as IDBRequest).error,
-            }),
-          );
-      } catch (error) {
-        reject(error);
-      }
-    });
+  async updateOne(todo: TodoEntity): Promise<void> {
+    const objectStore = await this.catchError<IDBObjectStore>(() =>
+      this.getObjectStore('readwrite'),
+    );
+    const todoRequest = objectStore.put(todo);
+    const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
+    return promisedTodo;
   }
 }
 
