@@ -1,3 +1,5 @@
+import type { AddTodoDto } from './indexed';
+
 interface TodoEntity {
   id: number;
   date: string;
@@ -8,11 +10,6 @@ interface TodoEntity {
   categories: string[] | null;
   focusTime: number;
   order: number | null;
-}
-
-interface AddTodoDto
-  extends Omit<TodoEntity, 'id' | 'date' | 'createdAt' | 'focusTime' | 'done'> {
-  date: Date; // @Transform(({ value }) => new Date(value))
 }
 
 type TransactionMode = 'readonly' | 'readwrite';
@@ -71,7 +68,7 @@ class ETIndexedDBAction {
   }
 
   // addTodo
-  async add(todo: AddTodoDto): Promise<void> {
+  add(todo: AddTodoDto): Promise<void> {
     if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
       return Promise.reject(
         new Error('Fail to add todo', {
@@ -88,7 +85,7 @@ class ETIndexedDBAction {
   }
 
   // getList
-  async getAll(): Promise<TodoEntity[]> {
+  getAll(): Promise<TodoEntity[]> {
     // return await this.repo.find({
     //   order: { date: 'ASC', order: 'ASC' }, // -> 순서대로 정렬을 하고 나면 날짜별로도 됐을 거임
     // });
@@ -99,28 +96,28 @@ class ETIndexedDBAction {
     return promisedTodo;
   }
 
-  async getOne(id: number): Promise<TodoEntity> {
+  getOne(id: number): Promise<TodoEntity> {
     const objectStore = this.getObjectStore('readonly');
     const todoRequest = objectStore.get(id);
     const promisedTodo = this.makePromise<TodoEntity>(todoRequest, 'get');
     return promisedTodo;
   }
 
-  async removeOne(id: number): Promise<void> {
+  removeOne(id: number): Promise<void> {
     const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.delete(id);
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
     return promisedTodo;
   }
 
-  async resetAll(): Promise<void> {
+  resetAll(): Promise<void> {
     const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.clear();
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
     return promisedTodo;
   }
 
-  async updateOne(todo: TodoEntity): Promise<void> {
+  updateOne(todo: TodoEntity): Promise<void> {
     const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.put(todo);
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
