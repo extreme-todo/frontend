@@ -1,25 +1,3 @@
-// todo api만 셋팅해 두면 되지 않을까?
-// QUESTION : 새벽 5시 마다 리셋시키는 타이머는 어떻게 하지?.. CRON
-// QUESTION : IDB를 사용하다가 회원가입을 하면 이때까지 작성해 둔 TODO는 날라가는 것일까?..
-// TODO : 백엔드 코드를 참고해서 만들면서, 계산과 액션의 분리를 좀 더 꼼꼼히 해서 나중에 백엔드 코드에 다시 반영을 시킬 수 있도록 하자
-
-/* 
-addTodo * Action_add
-getOneTodo * Action_getOne
-removeTodoOrder <- Calc_minusOrder + Action_update
-minusOrder
-deleteTodo * Action_removeOne
-updateTodo * Action_updateOne
-doTodo * Action_getOne + Calc_doneTodo + Action_updateOne 
-getList <- Action_getAll + Calc_orderedList
-groupByDate * Calc_groupByDate
-reorderTodos
-todosToUpdate * Calc_updateOrder + Action_getAll + Action_updateOne (+Promise.all)
-updateOrder * same as above
-removeTodos <- Cron 사용한 메소드임
-resetTodos * Action_resetAll
-*/
-
 interface TodoEntity {
   id: number;
   date: string;
@@ -92,14 +70,6 @@ class ETIndexedDBAction {
     });
   }
 
-  private catchError<T>(fn: () => T) {
-    try {
-      return fn();
-    } catch (err) {
-      return Promise.reject(err);
-    }
-  }
-
   // addTodo
   async add(todo: AddTodoDto): Promise<void> {
     if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
@@ -110,9 +80,7 @@ class ETIndexedDBAction {
       );
     }
 
-    const objectStore = await this.catchError<IDBObjectStore>(() =>
-      this.getObjectStore('readwrite'),
-    );
+    const objectStore = this.getObjectStore('readwrite');
     // TODO : newTodo 객체 만들기
     const todoRequest = objectStore.add(todo);
     const promisedTodo = this.makePromise<void>(todoRequest, 'add');
@@ -124,94 +92,41 @@ class ETIndexedDBAction {
     // return await this.repo.find({
     //   order: { date: 'ASC', order: 'ASC' }, // -> 순서대로 정렬을 하고 나면 날짜별로도 됐을 거임
     // });
-    const objectStore = await this.catchError<IDBObjectStore>(() =>
-      this.getObjectStore('readonly'),
-    );
+    const objectStore = this.getObjectStore('readonly');
+
     const todoRequest = objectStore.getAll();
     const promisedTodo = this.makePromise<TodoEntity[]>(todoRequest, 'get');
     return promisedTodo;
   }
 
   async getOne(id: number): Promise<TodoEntity> {
-    const objectStore = await this.catchError<IDBObjectStore>(() =>
-      this.getObjectStore('readonly'),
-    );
+    const objectStore = this.getObjectStore('readonly');
     const todoRequest = objectStore.get(id);
     const promisedTodo = this.makePromise<TodoEntity>(todoRequest, 'get');
     return promisedTodo;
   }
 
   async removeOne(id: number): Promise<void> {
-    const objectStore = await this.catchError<IDBObjectStore>(() =>
-      this.getObjectStore('readwrite'),
-    );
+    const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.delete(id);
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
     return promisedTodo;
   }
 
   async resetAll(): Promise<void> {
-    const objectStore = await this.catchError<IDBObjectStore>(() =>
-      this.getObjectStore('readwrite'),
-    );
+    const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.clear();
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
     return promisedTodo;
   }
 
   async updateOne(todo: TodoEntity): Promise<void> {
-    const objectStore = await this.catchError<IDBObjectStore>(() =>
-      this.getObjectStore('readwrite'),
-    );
+    const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.put(todo);
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
     return promisedTodo;
   }
 }
 
-class ETIndexedDBCalc {
-  filterDone(isDone: boolean, todoList: TodoEntity[]): TodoEntity[] {
-    return todoList.filter((todo) => todo.done === isDone);
-  }
-
-  orderedList(todoList: TodoEntity[]): TodoEntity[] {
-    return todoList.sort((a, b) => (a.order as number) - (b.order as number));
-  }
-
-  // QUESTION : date 타입을 string으로 해도.. 문제가 없겠지?.. 나중에 nest 서버랑 같이 쓴다고 했을 때도 문제가 없겠지?..
-  groupByDate(todoList: TodoEntity[]): Map<string, TodoEntity[]> {
-    const mapped = new Map<string, TodoEntity[]>();
-    for (const todo of todoList) {
-      const index = mapped.get(todo.date) || [];
-      index.push(todo);
-      mapped.set(todo.date, index);
-    }
-    return mapped;
-  }
-
-  updateOrder(
-    todoList: TodoEntity[],
-    prevOrder: number,
-    newOrder: number,
-  ): TodoEntity[] {
-    return todoList.map((todo) => {
-      if (todo.order === Number(prevOrder)) {
-        todo.order = Number(newOrder);
-      } else {
-        const isShiftUp = prevOrder > newOrder;
-        const shiftAmount = isShiftUp ? 1 : -1;
-        (todo.order as number) += shiftAmount;
-      }
-      return todo;
-    });
-  }
-
-  doneTodo(todo: TodoEntity) {
-    const copyTodo = Object.assign({}, todo);
-    copyTodo.done = true;
-    copyTodo.order = null;
-    return copyTodo;
-  }
-}
-
-export { ETIndexedDBCalc };
+export { ETIndexedDBAction };
+export type { TodoEntity };
