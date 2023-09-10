@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Welcome from './components/Welcome';
 import useCheckLogin, { setToken } from './hooks/useCheckLogin';
 import styled from '@emotion/styled';
+import PomodoroProvider from './hooks/usePomodoro';
 
 function App() {
   const isLogin = useCheckLogin();
@@ -28,7 +29,9 @@ function App() {
   return (
     <MainContainer>
       <Welcome />
-      <MainTodo isLogin={isLogin} />
+      <PomodoroProvider>
+        <MainTodo isLogin={isLogin} />
+      </PomodoroProvider>
       <RankingAndRecords isLogin={isLogin} />
       <TodoListModal />
     </MainContainer>
