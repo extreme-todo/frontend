@@ -78,7 +78,6 @@ class ETIndexedDBAction {
     }
 
     const objectStore = this.getObjectStore('readwrite');
-    // TODO : newTodo 객체 만들기
     const todoRequest = objectStore.add(todo);
     const promisedTodo = this.makePromise<void>(todoRequest, 'add');
     return promisedTodo;
@@ -118,6 +117,13 @@ class ETIndexedDBAction {
   }
 
   updateOne(todo: TodoEntity): Promise<void> {
+    if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
+      return Promise.reject(
+        new Error('Fail to add todo', {
+          cause: '카테고리는 최대 5개 까지 설정할 수 있습니다.',
+        }),
+      );
+    }
     const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.put(todo);
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
