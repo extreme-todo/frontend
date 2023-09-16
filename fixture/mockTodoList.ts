@@ -1,3 +1,5 @@
+import { AddTodoDto } from '../src/DB/indexed';
+
 const mockFetchTodoList = () => [
   {
     id: 1,
@@ -89,4 +91,13 @@ const mockFetchTodoList = () => [
   },
 ];
 
-export { mockFetchTodoList };
+const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
+  return {
+    date: '2023-08-15',
+    todo: 'Go to grocery store',
+    duration: 60 * 60,
+    categories: null,
+  };
+};
+
+export { mockFetchTodoList, addTodoMock };

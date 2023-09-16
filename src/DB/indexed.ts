@@ -23,14 +23,10 @@ TODO : 날짜를 바꾸면 order는 어떻게 하지?.. 그냥 그 날짜 마지
 날짜를 넘겨서 order를 수정하는 부분이 있다면 update 메서드랑 다 불러야 할까?.. 정리를 제대로 해봐야 할 듯!
 */
 
-interface AddTodoDto
-  extends Omit<TodoEntity, 'id' | 'date' | 'createdAt' | 'focusTime' | 'done'> {
-  date: Date; // @Transform(({ value }) => new Date(value))
-}
+type AddTodoDto = Omit<TodoEntity, 'id' | 'createdAt' | 'focusTime' | 'done'>;
 
-type UpdateTodoDto = Pick<
-  TodoEntity,
-  'duration' | 'todo' | 'categories' | 'order'
+type UpdateTodoDto = Partial<
+  Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'order'>
 >;
 
 class ETIndexed {
@@ -43,17 +39,22 @@ class ETIndexed {
     const getAllTodo = (await this.action.getAll()).filter(
       (todo) => todo.order !== null,
     );
+    console.log(getAllTodo.length);
 
     let newTodoOrder = 0;
     if (getAllTodo.length === 0) {
       newTodoOrder = 1;
     } else {
       const getOrdered = this.calc.orderedList(getAllTodo);
-      newTodoOrder = (getOrdered.pop() as TodoEntity).order as number;
+      newTodoOrder = ((getOrdered.pop() as TodoEntity).order as number) + 1;
     }
+
     const newTodo = {
       ...todo,
       order: newTodoOrder,
+      done: false,
+      focusTime: 0,
+      createdAt: new Date(),
     };
 
     await this.action.add(newTodo);

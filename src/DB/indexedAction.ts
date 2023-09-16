@@ -1,8 +1,10 @@
 import type { AddTodoDto } from './indexed';
 
+type TodoDate = `${number}-${number}-${number}`;
+
 interface TodoEntity {
   id: number;
-  date: string;
+  date: TodoDate;
   todo: string;
   createdAt: Date;
   duration: number;

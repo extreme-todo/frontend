@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import {
   DragDropContext,
   Draggable,
@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import IconAtom from '../atoms/IconAtom';
 import styled from '@emotion/styled';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AddTodoDto, ETIndexed } from '../DB/indexed';
 
 // TODO : id column에 autoIncrement를 설정해 두었기 때문에 todo를 추가할 때는 id를 따로 입력해 주지 않아도 된다.
 interface TodoDto {
@@ -25,166 +26,6 @@ interface TodoDto {
   focusTime: number;
   order: number | null;
 }
-
-/* 테스트용 ************************************ */
-
-const todoStubs = [
-  {
-    id: 1,
-    date: '2023-08-08',
-    todo: 'Go to grocery store',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 1,
-  },
-  {
-    id: 2,
-    date: '2023-08-08',
-    todo: 'Go to Gym',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 0,
-  },
-  {
-    id: 3,
-    date: '2023-08-13',
-    todo: 'Go to institute',
-    createdAt: new Date('Dec 28, 2022 18:00:30'),
-    duration: 60 * 60 * 2,
-    done: true,
-    categories: null,
-    focusTime: 0,
-    order: null,
-  },
-  {
-    id: 4,
-    date: '2023-08-13',
-    todo: 'Go to grocery store',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 0,
-  },
-  {
-    id: 5,
-    date: '2023-08-13',
-    todo: 'write test code',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 1,
-  },
-  {
-    id: 6,
-    date: '2023-08-14',
-    todo: 'work ET',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 2,
-  },
-  {
-    id: 7,
-    date: '2023-08-14',
-    todo: 'go to gym',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 3,
-  },
-  {
-    id: 8,
-    date: '2023-08-15',
-    todo: 'Go to grocery store',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 4,
-  },
-];
-
-const groupByDate = (todos: TodoDto[]) => {
-  const todosMap = new Map<string, TodoDto[]>();
-  for (const todo of todos) {
-    const dateKey = todo.date;
-    const group = todosMap.get(dateKey) || [];
-    group.push(todo);
-    todosMap.set(dateKey, group);
-  }
-  return todosMap;
-};
-
-const groupedStubs = groupByDate(todoStubs);
-
-const DBNAME = 'extreme';
-const STORENAME = 'todos';
-const request = indexedDB.open(DBNAME, 1);
-request.onupgradeneeded = (event) => {
-  const db = (event.target as IDBOpenDBRequest).result;
-  console.dir(db);
-  if (!db.objectStoreNames.contains(STORENAME)) {
-    db.createObjectStore(STORENAME, {
-      keyPath: 'id',
-      autoIncrement: true,
-    });
-    // todoStore.createIndex('data', 'data', {})
-  }
-};
-request.onsuccess = (event) => {
-  const db = (event.target as IDBOpenDBRequest).result;
-  const transaction = db.transaction([STORENAME], 'readwrite');
-  const todoStore = transaction.objectStore(STORENAME);
-  const todo: TodoDto = {
-    date: '2023-08-14',
-    todo: 'work ET',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 2,
-  };
-  todoStore.add(todo);
-};
-
-const fetchTodosFromIndexedDB = (
-  request: IDBOpenDBRequest,
-): Promise<Map<string, TodoDto[]>> => {
-  return new Promise((res, rej) => {
-    request.onsuccess = (event) => {
-      const db = (event?.target as IDBOpenDBRequest).result;
-      const transaction = db.transaction([STORENAME], 'readonly');
-      const todoStore = transaction.objectStore(STORENAME);
-      const getAllRequest = todoStore.getAll();
-
-      getAllRequest.onsuccess = () => {
-        const req = getAllRequest.result as TodoDto[];
-        console.log(req);
-        res(groupByDate(req));
-      };
-      getAllRequest.onerror = () => {
-        rej(new Error('Error fetching data from IndexedDB'));
-      };
-    };
-  });
-};
-/* ************************************ 테스트용 */
 
 const listRender = (mapTodo: Map<string, TodoDto[]>) => {
   const dateList = Array.from(mapTodo.keys());
@@ -219,6 +60,17 @@ const listRender = (mapTodo: Map<string, TodoDto[]>) => {
   return renderList;
 };
 
+const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
+  return {
+    date: '2023-08-15',
+    todo: 'Go to grocery store',
+    duration: 60 * 60,
+    categories: null,
+  };
+};
+
+const db = new ETIndexed();
+
 const TodoListModal = () => {
   const [mapTodo, setMapTodo] = useState<Map<string, TodoDto[]>>();
 
@@ -228,7 +80,7 @@ const TodoListModal = () => {
     data: todos,
     error,
     isLoading,
-  } = useQuery(['todos'], () => fetchTodosFromIndexedDB(request));
+  } = useQuery(['todos'], () => db.getList(true));
 
   const mutation = useMutation({
     // mutationFn: () => {
@@ -309,6 +161,24 @@ const TodoListModal = () => {
     }
   };
 
+  const check = async () => {
+    const oj = await db.getList(false);
+    // const oj = await db.getOneTodo(35);
+    console.log(oj);
+  };
+
+  const onClickHandler = () => {
+    const mock = addTodoMock();
+    // db.addTodo(mock);
+    // db.deleteTodo(30);
+    // db.doTodo(31, '10');
+    // check();
+    // db.orderTodos(6, 3);
+    // db.updateTodo(37, { todo: 'go To School' });
+    // db.resetTodos();
+    // check();
+  };
+
   useEffect(() => {
     // console.log('state가 드디어..');
   }, [mapTodo]);
@@ -316,6 +186,7 @@ const TodoListModal = () => {
   return (
     <>
       <CardAtom>
+        <BtnAtom children={'add Todo'} handler={onClickHandler} />
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && mapTodo ? listRender(mapTodo) : null}
         </DragDropContext>
