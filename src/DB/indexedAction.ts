@@ -118,7 +118,7 @@ class ETIndexedDBAction {
     return promisedTodo;
   }
 
-  updateOne(todo: TodoEntity): Promise<void> {
+  updateOne(todo: TodoEntity): Promise<TodoEntity> {
     if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
       return Promise.reject(
         new Error('Fail to add todo', {
@@ -128,10 +128,10 @@ class ETIndexedDBAction {
     }
     const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.put(todo);
-    const promisedTodo = this.makePromise<void>(todoRequest, 'remove');
+    const promisedTodo = this.makePromise<TodoEntity>(todoRequest, 'update');
     return promisedTodo;
   }
 }
 
 export { ETIndexedDBAction };
-export type { TodoEntity };
+export type { TodoEntity, TodoDate };

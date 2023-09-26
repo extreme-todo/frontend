@@ -26,7 +26,7 @@ TODO : 날짜를 바꾸면 order는 어떻게 하지?.. 그냥 그 날짜 마지
 type AddTodoDto = Omit<TodoEntity, 'id' | 'createdAt' | 'focusTime' | 'done'>;
 
 type UpdateTodoDto = Partial<
-  Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'order'>
+  Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'order' | 'date'>
 >;
 
 class ETIndexed {
@@ -39,9 +39,9 @@ class ETIndexed {
     const getAllTodo = (await this.action.getAll()).filter(
       (todo) => todo.order !== null,
     );
-    console.log(getAllTodo.length);
 
     let newTodoOrder = 0;
+
     if (getAllTodo.length === 0) {
       newTodoOrder = 1;
     } else {
@@ -86,6 +86,7 @@ class ETIndexed {
       prevOrder,
       newOrder,
     );
+
     await Promise.all(modified.map((todo) => this.action.updateOne(todo)));
   }
 
@@ -116,7 +117,8 @@ class ETIndexed {
   async updateTodo(id: number, todo: UpdateTodoDto) {
     const getTodo = await this.action.getOne(id);
     Object.assign(getTodo, todo);
-    await this.action.updateOne(getTodo);
+    const updated = await this.action.updateOne(getTodo);
+    return updated;
   }
 
   async doTodo(id: number, focusTime: string) {
