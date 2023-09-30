@@ -46,7 +46,28 @@ class ETIndexed {
       newTodoOrder = 1;
     } else {
       const getOrdered = this.calc.orderedList(getAllTodo);
-      newTodoOrder = ((getOrdered.pop() as TodoEntity).order as number) + 1;
+
+      const reversedOrdered = [...getOrdered].reverse(); // findLast의 대체수단
+
+      const searchDate = reversedOrdered.find(
+        (el) => new Date(el.date) <= new Date(todo.date),
+      );
+
+      if (searchDate === undefined) {
+        newTodoOrder = 1;
+        const plusedTodo = this.calc.plusOne(getOrdered);
+        await Promise.all(
+          plusedTodo.map((todo) => this.action.updateOne(todo)),
+        );
+      } else {
+        newTodoOrder = Number(searchDate.order) + 1;
+        const plusedTodo = this.calc.plusOne(
+          getOrdered.slice(Number(searchDate.order)),
+        );
+        await Promise.all(
+          plusedTodo.map((todo) => this.action.updateOne(todo)),
+        );
+      }
     }
 
     const newTodo = {
