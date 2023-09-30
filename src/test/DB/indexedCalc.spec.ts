@@ -1,5 +1,6 @@
 import { ETIndexedDBCalc } from '../../DB/indexedCalc';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
+import { TodoEntity } from '../../DB/indexedAction';
 
 describe('ExtremeTodoIndexedDB', () => {
   let mockTodoList: ReturnType<typeof mockFetchTodoList>;
@@ -85,6 +86,15 @@ describe('ExtremeTodoIndexedDB', () => {
       expect(targetTodo[0].order).toBe(3);
       indexedCalc.minusOne(targetTodo);
       expect(targetTodo[0].order).toBe(2);
+    });
+  });
+
+  describe('plusOne', () => {
+    it('주어진 todoList 안에 있는 todo의 order를 +1씩 한다.', () => {
+      const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
+      expect(targetTodo[0].order).toBe(3);
+      indexedCalc.plusOne(targetTodo);
+      expect(targetTodo[0].order).toBe(4);
     });
   });
 });

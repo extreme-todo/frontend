@@ -50,6 +50,13 @@ class ETIndexedDBCalc {
       return todo;
     });
   }
+
+  plusOne(todos: TodoEntity[]) {
+    return todos.map((todo) => {
+      (todo.order as number) += 1;
+      return todo;
+    });
+  }
 }
 
 export { ETIndexedDBCalc };
