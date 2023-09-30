@@ -1,6 +1,7 @@
 import { AddTodoDto } from '../src/DB/indexed';
+import { TodoEntity } from '../src/DB/indexedAction';
 
-const mockFetchTodoList = () => [
+const mockFetchTodoList = (): TodoEntity[] => [
   {
     id: 1,
     date: '2023-08-08',
