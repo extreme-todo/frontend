@@ -8,7 +8,7 @@ import {
   DropResult,
   Droppable,
 } from 'react-beautiful-dnd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import IconAtom from '../atoms/IconAtom';
 import styled from '@emotion/styled';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -81,6 +81,14 @@ const TodoListModal = () => {
     refetchOnWindowFocus: false,
   });
 
+  // 컴포넌트 안에서 전역변수
+  const dropResultRef = useRef<{
+    prevOrder: number;
+    newOrder: number;
+    id?: number;
+    newDate?: TodoDate;
+  }>();
+
   const mutationHandler = async ({
     prevOrder,
     newOrder,
@@ -91,32 +99,43 @@ const TodoListModal = () => {
     newOrder: number;
     id?: number;
     newDate?: TodoDate;
+    todolist?: Map<string, TodoEntity[]>;
   }) => {
+    // if (dropResultRef.current) {
+    // const { prevOrder, newOrder, newDate, id } = dropResultRef.current;
     if (!newDate || !id) {
       await db.orderTodos(prevOrder, newOrder);
     } else {
       await db.updateTodo(id, { date: newDate });
       await db.orderTodos(prevOrder, newOrder);
     }
+    // }
   };
 
-  const { mutate } = useMutation(mutationHandler, {
-    onSuccess() {
+  const { mutate: orderMutate } = useMutation(mutationHandler, {
+    onSettled() {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
     onError(_err: any, _: any, context: any) {
-      queryClient.setQueryData(['todos'], context);
+      queryClient.setQueryData(['todos'], context.prevTodoList);
     },
-    onMutate() {
-      return todos;
+    onMutate({
+      todolist,
+    }: {
+      prevOrder: number;
+      newOrder: number;
+      id?: number;
+      newDate?: TodoDate;
+      todolist?: Map<string, TodoEntity[]>;
+    }) {
+      queryClient.cancelQueries({ queryKey: ['todos'] });
+      const prevTodoList = queryClient.getQueryData(['todos']);
+      queryClient.setQueryData(['todos'], todolist);
+      return { prevTodoList };
     },
   });
 
   /* ************************************ Tanstack Query 테스트용 */
-
-  useEffect(() => {
-    if (!isLoading) console.log('로딩 완료');
-  }, []);
 
   const modifiedSameDate = (
     source: DraggableLocation,
@@ -141,11 +160,16 @@ const TodoListModal = () => {
       .flat()
       .findIndex((todo) => todo.id === targetTodo.id);
 
-    mutate({
+    // dropResultRef.current = {
+    //   prevOrder: sourceIndexInArray + 1,
+    //   newOrder: destinationIndexInArray + 1,
+    // };
+
+    return {
       prevOrder: sourceIndexInArray + 1,
       newOrder: destinationIndexInArray + 1,
-    });
-    return copyMapTodo;
+      todolist: copyMapTodo,
+    };
   };
 
   const modifiedDiffDate = (
@@ -179,13 +203,20 @@ const TodoListModal = () => {
       .flat()
       .findIndex((todo) => todo.id === target.id);
 
-    mutate({
+    // dropResultRef.current = {
+    //   prevOrder: sourceIndexInArray + 1,
+    //   newOrder: destinationIndexInArray + 1,
+    //   id: target.id,
+    //   newDate: destination.droppableId as TodoDate,
+    // };
+
+    return {
       prevOrder: sourceIndexInArray + 1,
       newOrder: destinationIndexInArray + 1,
       id: target.id,
       newDate: destination.droppableId as TodoDate,
-    });
-    return copyMapTodo;
+      todolist: copyMapTodo,
+    };
   };
 
   const onDragDropHandler = (info: DropResult) => {
@@ -195,16 +226,12 @@ const TodoListModal = () => {
     // 같은 날 안에서 이동을 했을 때
 
     if (source.droppableId === destination.droppableId) {
-      return queryClient.setQueryData(
-        ['todos'],
-        modifiedSameDate(source, destination),
-      );
+      const modifiedTodoList = modifiedSameDate(source, destination);
+      orderMutate(modifiedTodoList);
     } else if (source.droppableId !== destination.droppableId) {
       // 다른 날에서 이동했을 때
-      return queryClient.setQueryData(
-        ['todos'],
-        modifiedDiffDate(source, destination),
-      );
+      const modifiedTodoList = modifiedDiffDate(source, destination);
+      orderMutate(modifiedTodoList);
     }
   };
 
