@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom, IconAtom } from '../atoms';
+
 import {
   DragDropContext,
   Draggable,
@@ -8,12 +7,12 @@ import {
   DropResult,
   Droppable,
 } from 'react-beautiful-dnd';
-import { useEffect, useRef, useState } from 'react';
-import IconAtom from '../atoms/IconAtom';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
+import { useOrderingMutation } from '../shared/queries';
 
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
@@ -61,18 +60,9 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
   };
 };
 
-// index -> mySQL
-// addTodo => order 의 마지막 값을 조회해서 그거에 +1.. =>
-// 1. 추가되는 todo가 어느 날짜에 추가될건지..
-// 1-1. 그 날짜에 todo data가 이미 있으면 그 날짜의 마지막 order에서 +1..
-// 1-2. 그 전날 마지막 todo의 order => +1.. -> Map.. -> values.. -> Array.from() -> flat()
-// last order 만 해줄 게 아니었다...
-
 const db = new ETIndexed();
 
 const TodoListModal = () => {
-  /* Tanstack Query 테스트용 ************************************ */
-  const queryClient = useQueryClient();
   const {
     data: todos,
     error,
@@ -80,63 +70,7 @@ const TodoListModal = () => {
   } = useQuery(['todos'], () => db.getList(false), {
     refetchOnWindowFocus: false,
   });
-
-  // 컴포넌트 안에서 전역변수
-  const dropResultRef = useRef<{
-    prevOrder: number;
-    newOrder: number;
-    id?: number;
-    newDate?: TodoDate;
-  }>();
-
-  const mutationHandler = async ({
-    prevOrder,
-    newOrder,
-    id,
-    newDate,
-  }: {
-    prevOrder: number;
-    newOrder: number;
-    id?: number;
-    newDate?: TodoDate;
-    todolist?: Map<string, TodoEntity[]>;
-  }) => {
-    // if (dropResultRef.current) {
-    // const { prevOrder, newOrder, newDate, id } = dropResultRef.current;
-    if (!newDate || !id) {
-      await db.orderTodos(prevOrder, newOrder);
-    } else {
-      await db.updateTodo(id, { date: newDate });
-      await db.orderTodos(prevOrder, newOrder);
-    }
-    // }
-  };
-
-  const { mutate: orderMutate } = useMutation(mutationHandler, {
-    onSettled() {
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
-    },
-    onError(_err: any, _: any, context: any) {
-      queryClient.setQueryData(['todos'], context.prevTodoList);
-    },
-    onMutate({
-      todolist,
-    }: {
-      prevOrder: number;
-      newOrder: number;
-      id?: number;
-      newDate?: TodoDate;
-      todolist?: Map<string, TodoEntity[]>;
-    }) {
-      queryClient.cancelQueries({ queryKey: ['todos'] });
-      const prevTodoList = queryClient.getQueryData(['todos']);
-      queryClient.setQueryData(['todos'], todolist);
-      return { prevTodoList };
-    },
-  });
-
-  /* ************************************ Tanstack Query 테스트용 */
-
+  const orderMutate = useOrderingMutation();
   const modifiedSameDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
@@ -159,11 +93,6 @@ const TodoListModal = () => {
     const destinationIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === targetTodo.id);
-
-    // dropResultRef.current = {
-    //   prevOrder: sourceIndexInArray + 1,
-    //   newOrder: destinationIndexInArray + 1,
-    // };
 
     return {
       prevOrder: sourceIndexInArray + 1,
@@ -202,13 +131,6 @@ const TodoListModal = () => {
     const destinationIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === target.id);
-
-    // dropResultRef.current = {
-    //   prevOrder: sourceIndexInArray + 1,
-    //   newOrder: destinationIndexInArray + 1,
-    //   id: target.id,
-    //   newDate: destination.droppableId as TodoDate,
-    // };
 
     return {
       prevOrder: sourceIndexInArray + 1,
