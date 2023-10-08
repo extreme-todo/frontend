@@ -1,8 +1,18 @@
-import { MainTodo, RankingAndRecords, TodoListModal } from './components';
 import { useEffect } from 'react';
-import Welcome from './components/Welcome';
+
+import {
+  MainTodo,
+  RankingAndRecords,
+  TodoListModal,
+  Welcome,
+} from './components';
 import useCheckLogin, { setToken } from './hooks/useCheckLogin';
+
 import styled from '@emotion/styled';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+const queryClient = new QueryClient();
 
 function App() {
   const isLogin = useCheckLogin();
@@ -26,12 +36,15 @@ function App() {
   }, []);
 
   return (
-    <MainContainer>
-      <Welcome />
-      <MainTodo isLogin={isLogin} />
-      <RankingAndRecords isLogin={isLogin} />
-      <TodoListModal />
-    </MainContainer>
+    <QueryClientProvider client={queryClient}>
+      <MainContainer>
+        <Welcome />
+        <MainTodo isLogin={isLogin} />
+        <RankingAndRecords isLogin={isLogin} />
+        <TodoListModal />
+      </MainContainer>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 }
 

@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom, IconAtom } from '../atoms';
+
 import {
   DragDropContext,
   Draggable,
@@ -8,131 +7,14 @@ import {
   DropResult,
   Droppable,
 } from 'react-beautiful-dnd';
-import { useEffect, useState } from 'react';
-import IconAtom from '../atoms/IconAtom';
+import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-interface TodoDto {
-  id: number;
-  date: string;
-  todo: string;
-  createdAt: Date;
-  duration: number;
-  done: boolean;
-  categories: string[] | null;
-  focusTime: number;
-  order: number | null;
-}
+import { AddTodoDto, ETIndexed } from '../DB/indexed';
+import { TodoEntity, TodoDate } from '../DB/indexedAction';
+import { useOrderingMutation } from '../shared/queries';
 
-/* 테스트용 ************************************ */
-
-const todoStubs = [
-  {
-    id: 1,
-    date: '2023-08-08',
-    todo: 'Go to grocery store',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 1,
-  },
-  {
-    id: 2,
-    date: '2023-08-08',
-    todo: 'Go to Gym',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 0,
-  },
-  {
-    id: 3,
-    date: '2023-08-13',
-    todo: 'Go to institute',
-    createdAt: new Date('Dec 28, 2022 18:00:30'),
-    duration: 60 * 60 * 2,
-    done: true,
-    categories: null,
-    focusTime: 0,
-    order: null,
-  },
-  {
-    id: 4,
-    date: '2023-08-13',
-    todo: 'Go to grocery store',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 0,
-  },
-  {
-    id: 5,
-    date: '2023-08-13',
-    todo: 'write test code',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 1,
-  },
-  {
-    id: 6,
-    date: '2023-08-14',
-    todo: 'work ET',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 2,
-  },
-  {
-    id: 7,
-    date: '2023-08-14',
-    todo: 'go to gym',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 3,
-  },
-  {
-    id: 8,
-    date: '2023-08-15',
-    todo: 'Go to grocery store',
-    createdAt: new Date('Dec 26, 2022 18:00:30'),
-    duration: 60 * 60,
-    done: false,
-    categories: null,
-    focusTime: 0,
-    order: 4,
-  },
-];
-
-const groupByDate = (todos: TodoDto[]) => {
-  const todosMap = new Map<string, TodoDto[]>();
-  for (const todo of todos) {
-    const dateKey = todo.date;
-    const group = todosMap.get(dateKey) || [];
-    group.push(todo);
-    todosMap.set(dateKey, group);
-  }
-  return todosMap;
-};
-
-const groupedStubs = groupByDate(todoStubs);
-
-/* ************************************ 테스트용 */
-
-const listRender = (mapTodo: Map<string, TodoDto[]>) => {
+const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
   const todoList = Array.from(mapTodo.values());
 
@@ -164,59 +46,99 @@ const listRender = (mapTodo: Map<string, TodoDto[]>) => {
 
   return renderList;
 };
+// 'Practice Valorant'
+// 'Go to grocery store'
+// 'Watch English News'
+// 'Start Exercise'
+// 'Check Riff'
+const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
+  return {
+    date: '2023-08-15',
+    todo: 'Watch English News',
+    duration: 60 * 60,
+    categories: null,
+  };
+};
+
+const db = new ETIndexed();
 
 const TodoListModal = () => {
-  const [mapTodo, setMapTodo] = useState<Map<string, TodoDto[]>>(groupedStubs);
-
+  const {
+    data: todos,
+    error,
+    isLoading,
+  } = useQuery(['todos'], () => db.getList(false), {
+    refetchOnWindowFocus: false,
+  });
+  const orderMutate = useOrderingMutation();
   const modifiedSameDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
   ) => {
-    setMapTodo((prev) => {
-      const copyMapTodo = new Map(prev);
-      const copyTodo = copyMapTodo
-        .get(source.droppableId)
-        ?.slice() as unknown as TodoDto[];
+    const copyMapTodo = new Map(todos);
+    const copyTodo = copyMapTodo
+      .get(source.droppableId)
+      ?.slice() as unknown as TodoEntity[];
 
-      // [x]  1. 프론트 엔드 쪽에서 순서를 변경해준다.
-      //      => tanStack Query를 사용한다면 api 요청만 하면 된다. 그걸 구현하게 되면 이 부분은 삭제하면 될 듯!
-      const targetTodo = { ...copyTodo[source.index] };
+    const targetTodo = { ...copyTodo[source.index] };
 
-      copyTodo.splice(source.index, 1);
-      copyTodo.splice(destination.index, 0, targetTodo);
-      copyMapTodo.set(source.droppableId, copyTodo);
+    const sourceIndexInArray = Array.from(copyMapTodo.values())
+      .flat()
+      .findIndex((todo) => todo.id === targetTodo.id);
 
-      // [ ] 그와 동시에 백엔드에 api 요청을 보낸다. -> 할 때 order 정보를 잘 보내줘야 될 듯
-      return copyMapTodo;
-    });
+    copyTodo.splice(source.index, 1);
+    copyTodo.splice(destination.index, 0, targetTodo);
+    copyMapTodo.set(source.droppableId, copyTodo);
+
+    const destinationIndexInArray = Array.from(copyMapTodo.values())
+      .flat()
+      .findIndex((todo) => todo.id === targetTodo.id);
+
+    return {
+      prevOrder: sourceIndexInArray + 1,
+      newOrder: destinationIndexInArray + 1,
+      todolist: copyMapTodo,
+    };
   };
 
   const modifiedDiffDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
   ) => {
-    setMapTodo((prev) => {
-      const copyMapTodo = new Map(prev);
-      const copyPrevTodo = copyMapTodo
-        .get(source.droppableId)
-        ?.slice() as unknown as TodoDto[];
-      // 1. 원래 source 부분에서 해당 todo를 삭제한다.
-      const [...target] = copyPrevTodo.splice(source.index, 1);
-      // 2. 수정 본을 set 한다.
-      copyMapTodo.set(source.droppableId, copyPrevTodo);
+    const copyMapTodo = new Map(todos);
+    const copyPrevTodo = copyMapTodo
+      .get(source.droppableId)
+      ?.slice() as unknown as TodoEntity[];
 
-      const copyCurrTodo = copyMapTodo
-        .get(destination.droppableId)
-        ?.slice() as unknown as TodoDto[];
+    const target = { ...copyPrevTodo[source.index] };
 
-      // 3. 갈 곳에 todo를 추가한다.
-      copyCurrTodo.splice(destination.index, 0, ...target);
+    copyPrevTodo.splice(source.index, 1);
 
-      // 4. 수정 본을 set 한다.
-      copyMapTodo.set(destination.droppableId, copyCurrTodo);
+    const sourceIndexInArray = Array.from(copyMapTodo.values())
+      .flat()
+      .findIndex((todo) => todo.id === target.id);
 
-      return copyMapTodo;
-    });
+    copyMapTodo.set(source.droppableId, copyPrevTodo);
+
+    const copyCurrTodo = copyMapTodo
+      .get(destination.droppableId)
+      ?.slice() as unknown as TodoEntity[];
+
+    copyCurrTodo.splice(destination.index, 0, target);
+
+    copyMapTodo.set(destination.droppableId, copyCurrTodo);
+
+    const destinationIndexInArray = Array.from(copyMapTodo.values())
+      .flat()
+      .findIndex((todo) => todo.id === target.id);
+
+    return {
+      prevOrder: sourceIndexInArray + 1,
+      newOrder: destinationIndexInArray + 1,
+      id: target.id,
+      newDate: destination.droppableId as TodoDate,
+      todolist: copyMapTodo,
+    };
   };
 
   const onDragDropHandler = (info: DropResult) => {
@@ -224,23 +146,28 @@ const TodoListModal = () => {
     // 이동이 없을 때
     if (!destination) return;
     // 같은 날 안에서 이동을 했을 때
+
     if (source.droppableId === destination.droppableId) {
-      modifiedSameDate(source, destination);
+      const modifiedTodoList = modifiedSameDate(source, destination);
+      orderMutate(modifiedTodoList);
     } else if (source.droppableId !== destination.droppableId) {
       // 다른 날에서 이동했을 때
-      modifiedDiffDate(source, destination);
+      const modifiedTodoList = modifiedDiffDate(source, destination);
+      orderMutate(modifiedTodoList);
     }
   };
 
-  useEffect(() => {
-    // console.log('state가 드디어..');
-  }, [mapTodo]);
+  const onClickHandler = () => {
+    const mock = addTodoMock();
+    db.addTodo(mock);
+  };
 
   return (
     <>
       <CardAtom>
+        <BtnAtom children={'add Todo'} handler={onClickHandler} />
         <DragDropContext onDragEnd={onDragDropHandler}>
-          {listRender(mapTodo)}
+          {!isLoading && todos ? listRender(todos) : null}
         </DragDropContext>
       </CardAtom>
     </>
