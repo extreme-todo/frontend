@@ -1,4 +1,5 @@
-import { BtnAtom, CardAtom, TypoAtom, IconAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
+import { TodoCard } from '../molecules';
 
 import {
   DragDropContext,
@@ -23,17 +24,21 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
       {(provided) => (
         <div {...provided.droppableProps} ref={provided.innerRef}>
           <TypoAtom>{date}</TypoAtom>
-          {todoList[idx].map(({ id, todo }, idx) => (
-            <Draggable draggableId={String(id)} index={idx} key={id}>
+          {todoList[idx].map((todo, idx) => (
+            <Draggable draggableId={String(todo.id)} index={idx} key={todo.id}>
               {(provided) => (
                 <DraggableContainer
                   {...provided.draggableProps}
                   ref={provided.innerRef}
                 >
-                  <IconAtom {...provided.dragHandleProps}>
+                  {/* <IconAtom {...provided.dragHandleProps}>
                     <img src={'icons/handle.svg'}></img>
                   </IconAtom>
-                  <TypoAtom>{todo}</TypoAtom>
+                  <TypoAtom>{todo}</TypoAtom> */}
+                  <TodoCard
+                    dragProps={provided.dragHandleProps}
+                    todoData={todo}
+                  />
                 </DraggableContainer>
               )}
             </Draggable>
@@ -53,8 +58,8 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 // 'Check Riff'
 const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
   return {
-    date: '2023-08-15',
-    todo: 'Watch English News',
+    date: '2023-08-16',
+    todo: 'Check Riff',
     duration: 60 * 60,
     categories: null,
   };

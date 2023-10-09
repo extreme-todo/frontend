@@ -3,3 +3,4 @@ export { default as LogInToUnlock } from './LogInToUnlock';
 export type { ILogInToUnlockProps } from './LogInToUnlock';
 export { default as Clock } from './Clock';
 export { default as SideButtons } from './SideButtons';
+export { default as TodoCard } from './TodoCard';
