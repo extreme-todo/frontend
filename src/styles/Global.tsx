@@ -206,7 +206,7 @@ const style = css`
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+ */
 
-    position: relative;
+    /* position: relative; */
   }
   html,
   *,

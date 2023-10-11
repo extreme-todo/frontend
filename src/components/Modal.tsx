@@ -48,8 +48,7 @@ const ModalContainer = styled(CardAtom)`
     ), ${colors.bgYellow}`};
   padding: 2.324375 3.2925;
 
-  position: absolute;
-  z-index: 11;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

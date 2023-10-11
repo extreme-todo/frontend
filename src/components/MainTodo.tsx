@@ -1,16 +1,22 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { Clock, SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
+import { createPortal } from 'react-dom';
+import Modal from './Modal';
+import TodoListModal from './TodoListModal';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
 }
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
   return (
-    <MainTodoContainer>
+    <MainTodoContainer ref={modalRef}>
       <MainTodoContentWrapper>
         <Clock></Clock>
         <MainTodoCenter>
@@ -26,7 +32,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                console.log('clicked');
+                setIsModalOpen(true);
               }}
               imageSrc="icons/hamburger.svg"
             />
@@ -38,6 +44,18 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
             />
           </SideButtons>
         </MainTodoCenter>
+        {isModalOpen &&
+          createPortal(
+            <Modal
+              title="할 일 목록"
+              handleClose={() => {
+                setIsModalOpen(false);
+              }}
+            >
+              <TodoListModal />
+            </Modal>,
+            modalRef.current as HTMLDivElement,
+          )}
       </MainTodoContentWrapper>
     </MainTodoContainer>
   );

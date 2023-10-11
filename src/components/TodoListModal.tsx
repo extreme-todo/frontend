@@ -1,12 +1,15 @@
 import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import { TodoCard } from '../molecules';
+import { Modal } from '../components';
 
 import {
   DragDropContext,
   Draggable,
   DraggableLocation,
+  DraggingStyle,
   DropResult,
   Droppable,
+  NotDraggingStyle,
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
@@ -14,6 +17,23 @@ import styled from '@emotion/styled';
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
 import { useOrderingMutation } from '../shared/queries';
+import { createPortal } from 'react-dom';
+import { JSXElementConstructor, ReactElement, ReactNode } from 'react';
+
+const dragEl = document.getElementById('draggable');
+
+const optionalPortal = (
+  style: DraggingStyle | NotDraggingStyle | undefined,
+  element: ReactElement<HTMLElement, string | JSXElementConstructor<any>>,
+) => {
+  if (
+    Object.getOwnPropertyNames(style).includes('position') &&
+    (style as DraggingStyle).position === 'fixed'
+  ) {
+    return createPortal(element, dragEl as HTMLElement);
+  }
+  return element;
+};
 
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
@@ -26,21 +46,25 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
           <TypoAtom>{date}</TypoAtom>
           {todoList[idx].map((todo, idx) => (
             <Draggable draggableId={String(todo.id)} index={idx} key={todo.id}>
-              {(provided) => (
-                <DraggableContainer
-                  {...provided.draggableProps}
-                  ref={provided.innerRef}
-                >
-                  {/* <IconAtom {...provided.dragHandleProps}>
-                    <img src={'icons/handle.svg'}></img>
-                  </IconAtom>
-                  <TypoAtom>{todo}</TypoAtom> */}
-                  <TodoCard
-                    dragProps={provided.dragHandleProps}
-                    todoData={todo}
-                  />
-                </DraggableContainer>
-              )}
+              {(provided) =>
+                optionalPortal(
+                  provided.draggableProps.style,
+                  (
+                    <DraggableContainer
+                      {...provided.draggableProps}
+                      ref={provided.innerRef}
+                    >
+                      <TodoCard
+                        dragProps={provided.dragHandleProps}
+                        todoData={todo}
+                      />
+                    </DraggableContainer>
+                  ) as ReactElement<
+                    HTMLElement,
+                    string | JSXElementConstructor<any>
+                  >,
+                )
+              }
             </Draggable>
           ))}
           {provided.placeholder}
@@ -169,12 +193,19 @@ const TodoListModal = () => {
 
   return (
     <>
+      {/* <Modal
+        title={'할 일 목록'}
+        handleClose={() => {
+          alert('닫기');
+        }}
+      > */}
       <CardAtom>
         <BtnAtom children={'add Todo'} handler={onClickHandler} />
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? listRender(todos) : null}
         </DragDropContext>
       </CardAtom>
+      {/* </Modal> */}
     </>
   );
 };
