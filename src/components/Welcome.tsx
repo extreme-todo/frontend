@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { BtnAtom, GoogleLoginAtom, TypoAtom } from '../atoms';
 import Modal from './Modal';
-import SettingModal from './SettingModal';
+import Setting from './Setting';
 
 import { usersApi } from '../shared/apis';
 import { useCheckLogin } from '../hooks';
@@ -47,7 +47,7 @@ const Welcome = () => {
             {isModal &&
               createPortal(
                 <Modal title="설정" handleClose={handleClose}>
-                  <SettingModal />
+                  <Setting />
                 </Modal>,
                 welcomeRef.current as HTMLDivElement,
               )}

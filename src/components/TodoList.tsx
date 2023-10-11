@@ -1,6 +1,5 @@
 import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import { TodoCard } from '../molecules';
-import { Modal } from '../components';
 
 import {
   DragDropContext,
@@ -18,23 +17,22 @@ import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
 import { useOrderingMutation } from '../shared/queries';
 import { createPortal } from 'react-dom';
-import { JSXElementConstructor, ReactElement, ReactNode } from 'react';
+import { ReactElement } from 'react';
 
-const dragEl = document.getElementById('draggable');
-
+/* DnD transform 관련 이슈 관련 해결책 */
 const optionalPortal = (
   style: DraggingStyle | NotDraggingStyle | undefined,
-  element: ReactElement<HTMLElement, string | JSXElementConstructor<any>>,
+  element: ReactElement,
 ) => {
   if (
     Object.getOwnPropertyNames(style).includes('position') &&
     (style as DraggingStyle).position === 'fixed'
   ) {
-    return createPortal(element, dragEl as HTMLElement);
+    return createPortal(element, document.body);
   }
   return element;
 };
-
+/* */
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
   const todoList = Array.from(mapTodo.values());
@@ -49,20 +47,15 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
               {(provided) =>
                 optionalPortal(
                   provided.draggableProps.style,
-                  (
-                    <DraggableContainer
-                      {...provided.draggableProps}
-                      ref={provided.innerRef}
-                    >
-                      <TodoCard
-                        dragProps={provided.dragHandleProps}
-                        todoData={todo}
-                      />
-                    </DraggableContainer>
-                  ) as ReactElement<
-                    HTMLElement,
-                    string | JSXElementConstructor<any>
-                  >,
+                  <DraggableContainer
+                    {...provided.draggableProps}
+                    ref={provided.innerRef}
+                  >
+                    <TodoCard
+                      dragProps={provided.dragHandleProps}
+                      todoData={todo}
+                    />
+                  </DraggableContainer>,
                 )
               }
             </Draggable>
@@ -91,7 +84,7 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
 
 const db = new ETIndexed();
 
-const TodoListModal = () => {
+const TodoList = () => {
   const {
     data: todos,
     error,
@@ -99,7 +92,11 @@ const TodoListModal = () => {
   } = useQuery(['todos'], () => db.getList(false), {
     refetchOnWindowFocus: false,
   });
+
+  /* mutation */
   const orderMutate = useOrderingMutation();
+
+  /* DnD Handler */
   const modifiedSameDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
@@ -108,28 +105,22 @@ const TodoListModal = () => {
     const copyTodo = copyMapTodo
       .get(source.droppableId)
       ?.slice() as unknown as TodoEntity[];
-
     const targetTodo = { ...copyTodo[source.index] };
-
     const sourceIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === targetTodo.id);
-
     copyTodo.splice(source.index, 1);
     copyTodo.splice(destination.index, 0, targetTodo);
     copyMapTodo.set(source.droppableId, copyTodo);
-
     const destinationIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === targetTodo.id);
-
     return {
       prevOrder: sourceIndexInArray + 1,
       newOrder: destinationIndexInArray + 1,
       todolist: copyMapTodo,
     };
   };
-
   const modifiedDiffDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
@@ -138,29 +129,20 @@ const TodoListModal = () => {
     const copyPrevTodo = copyMapTodo
       .get(source.droppableId)
       ?.slice() as unknown as TodoEntity[];
-
     const target = { ...copyPrevTodo[source.index] };
-
     copyPrevTodo.splice(source.index, 1);
-
     const sourceIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === target.id);
-
     copyMapTodo.set(source.droppableId, copyPrevTodo);
-
     const copyCurrTodo = copyMapTodo
       .get(destination.droppableId)
       ?.slice() as unknown as TodoEntity[];
-
     copyCurrTodo.splice(destination.index, 0, target);
-
     copyMapTodo.set(destination.droppableId, copyCurrTodo);
-
     const destinationIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === target.id);
-
     return {
       prevOrder: sourceIndexInArray + 1,
       newOrder: destinationIndexInArray + 1,
@@ -169,7 +151,6 @@ const TodoListModal = () => {
       todolist: copyMapTodo,
     };
   };
-
   const onDragDropHandler = (info: DropResult) => {
     const { destination, source } = info;
     // 이동이 없을 때
@@ -210,7 +191,7 @@ const TodoListModal = () => {
   );
 };
 
-export default TodoListModal;
+export default TodoList;
 
 const DraggableContainer = styled.div`
   display: flex;

@@ -5,7 +5,7 @@ import { Clock, SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
-import TodoListModal from './TodoListModal';
+import TodoList from './TodoList';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
@@ -52,7 +52,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
                 setIsModalOpen(false);
               }}
             >
-              <TodoListModal />
+              <TodoList />
             </Modal>,
             modalRef.current as HTMLDivElement,
           )}

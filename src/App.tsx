@@ -1,11 +1,6 @@
 import { useEffect } from 'react';
 
-import {
-  MainTodo,
-  RankingAndRecords,
-  TodoListModal,
-  Welcome,
-} from './components';
+import { MainTodo, RankingAndRecords, TodoList, Welcome } from './components';
 import useCheckLogin, { setToken } from './hooks/useCheckLogin';
 
 import styled from '@emotion/styled';
@@ -41,7 +36,7 @@ function App() {
         <Welcome />
         <MainTodo isLogin={isLogin} />
         <RankingAndRecords isLogin={isLogin} />
-        <TodoListModal />
+        <TodoList />
       </MainContainer>
       <ReactQueryDevtools />
     </QueryClientProvider>
