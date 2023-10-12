@@ -38,6 +38,7 @@ const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
 };
 
 export default Modal;
+export type { IModalProps };
 
 const ModalContainer = styled(CardAtom)`
   background: ${({ theme: { colors } }) =>

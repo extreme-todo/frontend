@@ -1,73 +1,34 @@
-import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
-import { TodoCard } from '../molecules';
-
-import {
-  DragDropContext,
-  Draggable,
-  DraggableLocation,
-  DraggingStyle,
-  DropResult,
-  Droppable,
-  NotDraggingStyle,
-} from 'react-beautiful-dnd';
-import { useQuery } from '@tanstack/react-query';
-import styled from '@emotion/styled';
+import { BtnAtom } from '../atoms';
+import { DateCard, TodoCard } from '../molecules';
 
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
 import { useOrderingMutation } from '../shared/queries';
-import { createPortal } from 'react-dom';
-import { ReactElement } from 'react';
 
-/* DnD transform 관련 이슈 관련 해결책 */
-const optionalPortal = (
-  style: DraggingStyle | NotDraggingStyle | undefined,
-  element: ReactElement,
-) => {
-  if (
-    Object.getOwnPropertyNames(style).includes('position') &&
-    (style as DraggingStyle).position === 'fixed'
-  ) {
-    return createPortal(element, document.body);
-  }
-  return element;
-};
-/* */
+import {
+  DragDropContext,
+  DraggableLocation,
+  DropResult,
+} from 'react-beautiful-dnd';
+import { useQuery } from '@tanstack/react-query';
+
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
   const todoList = Array.from(mapTodo.values());
 
-  const renderList = dateList.map((date, idx) => (
-    <Droppable droppableId={date} key={date}>
-      {(provided) => (
-        <div {...provided.droppableProps} ref={provided.innerRef}>
-          <TypoAtom>{date}</TypoAtom>
-          {todoList[idx].map((todo, idx) => (
-            <Draggable draggableId={String(todo.id)} index={idx} key={todo.id}>
-              {(provided) =>
-                optionalPortal(
-                  provided.draggableProps.style,
-                  <DraggableContainer
-                    {...provided.draggableProps}
-                    ref={provided.innerRef}
-                  >
-                    <TodoCard
-                      dragProps={provided.dragHandleProps}
-                      todoData={todo}
-                    />
-                  </DraggableContainer>,
-                )
-              }
-            </Draggable>
-          ))}
-          {provided.placeholder}
-        </div>
-      )}
-    </Droppable>
+  const renderResult = dateList.map((date, idx) => (
+    <DateCard date={date} key={date}>
+      <>
+        {todoList[idx].map((todo) => (
+          <TodoCard todoData={todo} key={todo.id} />
+        ))}
+      </>
+    </DateCard>
   ));
 
-  return renderList;
+  return renderResult;
 };
+
 // 'Practice Valorant'
 // 'Go to grocery store'
 // 'Watch English News'
@@ -174,26 +135,12 @@ const TodoList = () => {
 
   return (
     <>
-      {/* <Modal
-        title={'할 일 목록'}
-        handleClose={() => {
-          alert('닫기');
-        }}
-      > */}
-      <CardAtom>
-        <BtnAtom children={'add Todo'} handler={onClickHandler} />
-        <DragDropContext onDragEnd={onDragDropHandler}>
-          {!isLoading && todos ? listRender(todos) : null}
-        </DragDropContext>
-      </CardAtom>
-      {/* </Modal> */}
+      <BtnAtom children={'add Todo'} handler={onClickHandler} />
+      <DragDropContext onDragEnd={onDragDropHandler}>
+        {!isLoading && todos ? listRender(todos) : null}
+      </DragDropContext>
     </>
   );
 };
 
 export default TodoList;
-
-const DraggableContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;

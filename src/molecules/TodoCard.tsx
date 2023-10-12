@@ -1,16 +1,32 @@
-import React, { memo, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { IconAtom, TagAtom, TypoAtom } from '../atoms';
-import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
+import {
+  Draggable,
+  DraggingStyle,
+  NotDraggingStyle,
+} from 'react-beautiful-dnd';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
+import { createPortal } from 'react-dom';
 
 interface ITodoCardProps {
-  dragProps: DraggableProvidedDragHandleProps | null | undefined;
   todoData: TodoEntity;
 }
 
-// QUESTION : memo가 의미 있을까?
-const TodoCard = memo(({ dragProps, todoData }: ITodoCardProps) => {
+const optionalPortal = (
+  style: DraggingStyle | NotDraggingStyle | undefined,
+  element: ReactElement,
+) => {
+  if (
+    Object.getOwnPropertyNames(style).includes('position') &&
+    (style as DraggingStyle).position === 'fixed'
+  ) {
+    return createPortal(element, document.body);
+  }
+  return element;
+};
+
+const TodoCard = ({ todoData }: ITodoCardProps) => {
   const {
     id,
     date,
@@ -33,39 +49,50 @@ const TodoCard = memo(({ dragProps, todoData }: ITodoCardProps) => {
 
   return (
     <>
-      <TodoCardContainer
-        onMouseOver={onMouseOverHandler}
-        onMouseOut={onMouseOutHandler}
-      >
-        <IconAtom {...dragProps} size={2}>
-          <img src={'icons/handle.svg'}></img>
-        </IconAtom>
-        <div>
-          <TypoAtom>{todo}</TypoAtom>
-          <TodoCategoryContainer>
-            {categories?.map((category) => {
-              return (
-                <TagAtom
-                  key={category}
-                  styleOption={{
-                    fontsize: 'sm',
-                    size: 'sm',
-                    bg: 'lightGrey_2',
-                  }}
-                >
-                  {category}
+      <Draggable draggableId={String(id)} index={id}>
+        {(provided) =>
+          optionalPortal(
+            provided.draggableProps.style,
+            <TodoCardContainer
+              onMouseOver={onMouseOverHandler}
+              onMouseOut={onMouseOutHandler}
+              {...provided.draggableProps}
+              ref={provided.innerRef}
+            >
+              <IconAtom {...provided.dragHandleProps} size={2}>
+                <img src={'icons/handle.svg'}></img>
+              </IconAtom>
+              <div>
+                <TypoAtom>{todo}</TypoAtom>
+                <TodoCategoryContainer>
+                  {categories?.map((category) => {
+                    return (
+                      <TagAtom
+                        key={category}
+                        styleOption={{
+                          fontsize: 'sm',
+                          size: 'sm',
+                          bg: 'lightGrey_2',
+                        }}
+                      >
+                        {category}
+                      </TagAtom>
+                    );
+                  })}
+                </TodoCategoryContainer>
+              </div>
+              {showEdit ? (
+                <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>
+                  수정
                 </TagAtom>
-              );
-            })}
-          </TodoCategoryContainer>
-        </div>
-        {showEdit ? (
-          <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>수정</TagAtom>
-        ) : null}
-      </TodoCardContainer>
+              ) : null}
+            </TodoCardContainer>,
+          )
+        }
+      </Draggable>
     </>
   );
-});
+};
 
 export default TodoCard;
 
@@ -77,5 +104,4 @@ const TodoCardContainer = styled.div`
 `;
 const TodoCategoryContainer = styled.div`
   display: flex;
-  /* align-items: center; */
 `;
