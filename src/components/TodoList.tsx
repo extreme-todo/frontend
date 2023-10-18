@@ -1,5 +1,5 @@
-import { BtnAtom } from '../atoms';
-import { DateCard, TodoCard } from '../molecules';
+import { BtnAtom, CardAtom } from '../atoms';
+import { DateCard } from '../organisms';
 
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
@@ -16,48 +16,60 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
   const todoList = Array.from(mapTodo.values());
 
-  const renderResult = dateList.map((date, idx) => (
-    <DateCard date={date} key={date}>
-      <>
-        {todoList[idx].map((todo) => (
-          <TodoCard todoData={todo} key={todo.id} />
-        ))}
-      </>
-    </DateCard>
+  const renderList = dateList.map((date, idx) => (
+    <DateCard key={date} date={date} tododata={todoList[idx]} />
   ));
 
-  return renderResult;
+  return renderList;
 };
 
-// 'Practice Valorant'
-// 'Go to grocery store'
-// 'Watch English News'
-// 'Start Exercise'
-// 'Check Riff'
-const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
-  return {
-    date: '2023-08-16',
-    todo: 'Check Riff',
-    duration: 60 * 60,
-    categories: null,
-  };
+const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
+  return [
+    {
+      date: '2023-08-25',
+      todo: 'practice valorant',
+      duration: 60 * 60,
+      categories: ['game', 'practice'],
+    },
+    {
+      date: '2023-08-25',
+      todo: 'go to grocery store',
+      duration: 60 * 60,
+      categories: ['chore'],
+    },
+    {
+      date: '2023-08-20',
+      todo: 'Watch English News',
+      duration: 60 * 60,
+      categories: ['english', 'study'],
+    },
+    {
+      date: '2023-08-20',
+      todo: 'Start Exercise',
+      duration: 60 * 60,
+      categories: ['health'],
+    },
+    {
+      date: '2023-08-10',
+      todo: 'check riff',
+      duration: 60 * 60,
+      categories: ['music', 'guitar'],
+    },
+  ];
 };
 
 const db = new ETIndexed();
 
-const TodoList = () => {
-  const {
-    data: todos,
-    error,
-    isLoading,
-  } = useQuery(['todos'], () => db.getList(false), {
-    refetchOnWindowFocus: false,
-  });
+const TodoListModal = () => {
+  const { data: todos, isLoading } = useQuery(
+    ['todos'],
+    () => db.getList(false),
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
 
-  /* mutation */
   const orderMutate = useOrderingMutation();
-
-  /* DnD Handler */
   const modifiedSameDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
@@ -66,22 +78,28 @@ const TodoList = () => {
     const copyTodo = copyMapTodo
       .get(source.droppableId)
       ?.slice() as unknown as TodoEntity[];
+
     const targetTodo = { ...copyTodo[source.index] };
+
     const sourceIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === targetTodo.id);
+
     copyTodo.splice(source.index, 1);
     copyTodo.splice(destination.index, 0, targetTodo);
     copyMapTodo.set(source.droppableId, copyTodo);
+
     const destinationIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === targetTodo.id);
+
     return {
       prevOrder: sourceIndexInArray + 1,
       newOrder: destinationIndexInArray + 1,
       todolist: copyMapTodo,
     };
   };
+
   const modifiedDiffDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
@@ -90,20 +108,29 @@ const TodoList = () => {
     const copyPrevTodo = copyMapTodo
       .get(source.droppableId)
       ?.slice() as unknown as TodoEntity[];
+
     const target = { ...copyPrevTodo[source.index] };
+
     copyPrevTodo.splice(source.index, 1);
+
     const sourceIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === target.id);
+
     copyMapTodo.set(source.droppableId, copyPrevTodo);
+
     const copyCurrTodo = copyMapTodo
       .get(destination.droppableId)
       ?.slice() as unknown as TodoEntity[];
+
     copyCurrTodo.splice(destination.index, 0, target);
+
     copyMapTodo.set(destination.droppableId, copyCurrTodo);
+
     const destinationIndexInArray = Array.from(copyMapTodo.values())
       .flat()
       .findIndex((todo) => todo.id === target.id);
+
     return {
       prevOrder: sourceIndexInArray + 1,
       newOrder: destinationIndexInArray + 1,
@@ -112,6 +139,7 @@ const TodoList = () => {
       todolist: copyMapTodo,
     };
   };
+
   const onDragDropHandler = (info: DropResult) => {
     const { destination, source } = info;
     // 이동이 없을 때
@@ -130,17 +158,24 @@ const TodoList = () => {
 
   const onClickHandler = () => {
     const mock = addTodoMock();
-    db.addTodo(mock);
+    const temp = async () => {
+      for (let i = 0; i < mock.length; i++) {
+        await db.addTodo(mock[i]);
+      }
+    };
+    temp();
   };
 
   return (
     <>
-      <BtnAtom children={'add Todo'} handler={onClickHandler} />
-      <DragDropContext onDragEnd={onDragDropHandler}>
-        {!isLoading && todos ? listRender(todos) : null}
-      </DragDropContext>
+      <CardAtom>
+        <BtnAtom children={'add Todo'} handler={onClickHandler} />
+        <DragDropContext onDragEnd={onDragDropHandler}>
+          {!isLoading && todos ? listRender(todos) : null}
+        </DragDropContext>
+      </CardAtom>
     </>
   );
 };
 
-export default TodoList;
+export default TodoListModal;
