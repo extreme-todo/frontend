@@ -1,25 +1,11 @@
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { DraggableProvided, DraggingStyle } from 'react-beautiful-dnd';
 import { createPortal } from 'react-dom';
 
 const useDraggableInPortal = () => {
-  const element = useRef<HTMLDivElement>(document.createElement('div')).current;
-
-  useEffect(() => {
-    if (element) {
-      element.style.pointerEvents = 'none';
-      element.style.position = 'absolute';
-      element.style.height = '100%';
-      element.style.width = '100%';
-      element.style.top = '0';
-
-      document.body.appendChild(element);
-
-      return () => {
-        document.body.removeChild(element);
-      };
-    }
-  }, [element]);
+  const element = useRef<HTMLDivElement>(
+    document.getElementById('draggable') as HTMLDivElement,
+  ).current;
 
   return (render: (provided: DraggableProvided) => ReactElement) =>
     (provided: DraggableProvided) => {
