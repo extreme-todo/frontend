@@ -144,8 +144,13 @@ const TodoListModal = () => {
     const { destination, source } = info;
     // 이동이 없을 때
     if (!destination) return;
-    // 같은 날 안에서 이동을 했을 때
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
 
+    // 같은 날 안에서 이동을 했을 때
     if (source.droppableId === destination.droppableId) {
       const modifiedTodoList = modifiedSameDate(source, destination);
       orderMutate(modifiedTodoList);
