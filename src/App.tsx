@@ -36,7 +36,7 @@ function App() {
         <Welcome />
         <MainTodo isLogin={isLogin} />
         <RankingAndRecords isLogin={isLogin} />
-        {/* <TodoList /> */}
+        <TodoList />
       </MainContainer>
       <ReactQueryDevtools />
     </QueryClientProvider>

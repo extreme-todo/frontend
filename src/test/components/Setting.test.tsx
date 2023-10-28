@@ -1,5 +1,5 @@
 import React from 'react';
-import { SettingModal } from '../../components';
+import { Setting } from '../../components';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
@@ -9,7 +9,7 @@ describe('SettingModal', () => {
   beforeEach(() => {
     render(
       <ThemeProvider theme={designTheme}>
-        <SettingModal />
+        <Setting />
       </ThemeProvider>,
     );
   });
