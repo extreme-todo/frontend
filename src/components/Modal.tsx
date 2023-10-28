@@ -26,7 +26,7 @@ const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
             <img src={'icons/close.svg'}></img>
           </IconAtom>
         </HeaderContainer>
-        {children}
+        <ContentContainer>{children}</ContentContainer>
         {/* <FooterContainer>
           <BtnAtom handler={handleDone}>
             <span className="material-symbols-outlined">done</span>
@@ -41,19 +41,21 @@ export default Modal;
 export type { IModalProps };
 
 const ModalContainer = styled(CardAtom)`
+  padding: 2.324375rem 3.2925rem;
+  max-width: 40rem;
+  max-height: 90vh;
+
   background: ${({ theme: { colors } }) =>
     `linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.85) 0%,
       rgba(255, 255, 255, 0) 55.21%
     ), ${colors.bgYellow}`};
-  padding: 2.324375 3.2925;
 
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  overflow: visible;
 `;
 
 const HeaderContainer = styled.div`
@@ -62,6 +64,10 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4rem;
+`;
+
+const ContentContainer = styled.div`
+  overflow: scroll;
 `;
 
 const FooterContainer = styled.div``;
