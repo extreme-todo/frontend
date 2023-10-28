@@ -1,9 +1,19 @@
-import { MainTodo, RankingAndRecords, TodoListModal } from './components';
 import { useEffect } from 'react';
-import Welcome from './components/Welcome';
+
+import {
+  MainTodo,
+  RankingAndRecords,
+  TodoListModal,
+  Welcome,
+} from './components';
 import useCheckLogin, { setToken } from './hooks/useCheckLogin';
+
 import styled from '@emotion/styled';
 import PomodoroProvider from './hooks/usePomodoro';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+const queryClient = new QueryClient();
 
 function App() {
   const isLogin = useCheckLogin();
@@ -27,14 +37,15 @@ function App() {
   }, []);
 
   return (
-    <MainContainer>
-      <Welcome />
-      <PomodoroProvider>
+    <QueryClientProvider client={queryClient}>
+      <MainContainer>
+        <Welcome />
         <MainTodo isLogin={isLogin} />
-      </PomodoroProvider>
-      <RankingAndRecords isLogin={isLogin} />
-      <TodoListModal />
-    </MainContainer>
+        <RankingAndRecords isLogin={isLogin} />
+        <TodoListModal />
+      </MainContainer>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 }
 
