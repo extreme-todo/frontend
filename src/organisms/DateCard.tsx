@@ -12,31 +12,47 @@ interface IDateCardProps {
   tododata: TodoEntity[];
 }
 
+const isSameDay = (dateStr1: Date, dateStr2: Date): boolean => {
+  return (
+    dateStr1.getFullYear() === dateStr2.getFullYear() &&
+    dateStr1.getMonth() === dateStr2.getMonth() &&
+    dateStr1.getDate() === dateStr2.getDate()
+  );
+};
+
 const DateCard = ({ tododata, date }: IDateCardProps) => {
   const optionalPortal = useDraggableInPortal();
 
   return (
     <Droppable droppableId={date}>
       {(provided) => (
-        <div {...provided.droppableProps} ref={provided.innerRef}>
-          <TypoAtom>{date}</TypoAtom>
+        <DroppableContainer
+          {...provided.droppableProps}
+          ref={provided.innerRef}
+        >
+          <DateContainer>
+            <TypoAtom fontSize="sub" fontColor="whiteWine">
+              {isSameDay(new Date(date), new Date()) ? '오늘' : date}
+            </TypoAtom>
+          </DateContainer>
           {tododata.map((todo, idx) => (
             <Draggable draggableId={String(todo.id)} index={idx} key={todo.id}>
-              {optionalPortal((provided) => (
-                <TodoCardContainer
+              {optionalPortal((provided, snapshot) => (
+                <DraggableContainer
                   {...provided.draggableProps}
                   ref={provided.innerRef}
                 >
                   <TodoCard
                     dragHandleProps={provided.dragHandleProps}
                     todoData={todo}
+                    snapshot={snapshot}
                   />
-                </TodoCardContainer>
+                </DraggableContainer>
               ))}
             </Draggable>
           ))}
           {provided.placeholder}
-        </div>
+        </DroppableContainer>
       )}
     </Droppable>
   );
@@ -44,4 +60,17 @@ const DateCard = ({ tododata, date }: IDateCardProps) => {
 
 export default DateCard;
 
-const TodoCardContainer = styled.div``;
+const DroppableContainer = styled.div`
+  background-color: powderblue;
+  width: 100%;
+  margin-bottom: 2rem;
+  > * {
+    margin-bottom: 0.5rem;
+  }
+`;
+
+const DateContainer = styled.div`
+  margin-bottom: 1rem;
+`;
+
+const DraggableContainer = styled.div``;

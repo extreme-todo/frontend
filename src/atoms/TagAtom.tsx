@@ -13,6 +13,7 @@ interface ITagSpanProps {
   size?: 'sm' | 'md' | 'big' | 'big2';
   bold?: 'bold' | 'extraBold';
   shadow?: 'basic_shadow' | 'button_shadow';
+  maxWidth?: number;
 }
 
 /**
@@ -35,11 +36,10 @@ function TagAtom({ children, handler, styleOption }: ITagAtomProps) {
 }
 
 const TagSpan = styled.span<ITagSpanProps>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: fit-content;
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}rem` : null)};
   height: fit-content;
+
   padding: ${({ size }) => {
     switch (size) {
       case 'sm':
@@ -54,10 +54,12 @@ const TagSpan = styled.span<ITagSpanProps>`
         return '0.5rem 1.76rem';
     }
   }};
+
   background: ${({ bg, theme }) =>
     bg ? theme.colors[bg] : theme.colors.white};
   color: ${({ bg, theme }) =>
     bg === 'titleColor' ? theme.colors.white : theme.colors.subFontColor};
+
   border-radius: ${({ size }) => {
     switch (size) {
       case 'sm':
@@ -100,9 +102,11 @@ const TagSpan = styled.span<ITagSpanProps>`
     }
   }};
   line-height: 120%;
+
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  display: block;
 `;
 
 export default TagAtom;

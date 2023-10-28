@@ -11,6 +11,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
+import Modal from './Modal';
 
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
@@ -26,34 +27,49 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
     {
-      date: '2023-08-25',
+      date: '2023-10-30',
       todo: 'practice valorant',
       duration: 60 * 60,
       categories: ['game', 'practice'],
     },
     {
-      date: '2023-08-25',
+      date: '2023-10-30',
       todo: 'go to grocery store',
       duration: 60 * 60,
       categories: ['chore'],
     },
     {
-      date: '2023-08-20',
+      date: '2023-10-29',
       todo: 'Watch English News',
       duration: 60 * 60,
       categories: ['english', 'study'],
     },
     {
-      date: '2023-08-20',
+      date: '2023-10-29',
       todo: 'Start Exercise',
       duration: 60 * 60,
       categories: ['health'],
     },
     {
-      date: '2023-08-10',
+      date: '2023-10-27',
       todo: 'check riff',
       duration: 60 * 60,
-      categories: ['music', 'guitar'],
+      categories: [
+        'music',
+        'guitar',
+        'music theory',
+        'hubby',
+        'lorem ipsum sth sth',
+      ],
+    },
+    {
+      date: '2023-10-27',
+      todo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      duration: 60 * 60,
+      categories: [
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        'guitar',
+      ],
     },
   ];
 };
@@ -173,12 +189,19 @@ const TodoListModal = () => {
 
   return (
     <>
-      <CardAtom>
-        <BtnAtom children={'add Todo'} handler={onClickHandler} />
+      <Modal
+        title={'todolist'}
+        handleClose={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+      >
+        {/* <CardAtom> */}
+        {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? listRender(todos) : null}
         </DragDropContext>
-      </CardAtom>
+        {/* </CardAtom> */}
+      </Modal>
     </>
   );
 };
