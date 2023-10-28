@@ -18,14 +18,8 @@ describe('usePomodoro', () => {
       <>
         focusStep:{settings.focusStep} <br />
         restStep:{settings.restStep} <br />
-        isFocusing:{status.isFocusing
-          ? status.isFocusing.focusedTime
-          : 'false'}{' '}
-        <br />
-        isResting:{status.isResting
-          ? status.isResting.restedTime
-          : 'false'}{' '}
-        <br />
+        isFocusing:{status.isFocusing ? status.focusedTime : 'false'} <br />
+        isResting:{status.isResting ? status.restedTime : 'false'} <br />
         <button data-testid="startFocusButton" onClick={startFocusing}></button>
         <button data-testid="startRestButton" onClick={startResting}></button>
         <button
@@ -70,9 +64,7 @@ describe('usePomodoro', () => {
       expect(getByText(new RegExp('isFocusing:false'))).toBeDefined();
       expect(
         getByText(
-          new RegExp(
-            'isResting:' + initialPomodoroData.status.isResting.restedTime,
-          ),
+          new RegExp('isResting:' + initialPomodoroData.status.restedTime),
         ),
       ).toBeDefined();
     });
@@ -86,9 +78,9 @@ describe('usePomodoro', () => {
       },
       status: {
         isFocusing: false,
-        isResting: {
-          restedTime: 2000,
-        },
+        isResting: true,
+        restedTime: 2000,
+        focusedTime: 0,
       },
     };
 
@@ -119,9 +111,7 @@ describe('usePomodoro', () => {
       ).toBeDefined();
       expect(getByText(new RegExp('isFocusing:false'))).toBeDefined();
       expect(
-        getByText(
-          new RegExp('isResting:' + mockData.status.isResting.restedTime),
-        ),
+        getByText(new RegExp('isResting:' + mockData.status.restedTime)),
       ).toBeDefined();
     });
   });

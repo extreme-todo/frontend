@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useContext,
   useEffect,
@@ -10,20 +10,24 @@ import { IChildProps } from '../shared/interfaces';
 
 export type focusStep = 10 | 20 | 30 | 40 | 50;
 export type restStep = 5 | 10 | 15 | 20;
-export const initialPomodoroData = {
+export const initialPomodoroData: IPomodoroData = {
   settings: {
     focusStep: 30,
     restStep: 10,
   },
   status: {
     isFocusing: false,
-    isResting: { restedTime: 0 },
+    isResting: true,
+    focusedTime: 0,
+    restedTime: 0,
   },
 };
 
 interface IPomodoroStatus {
-  isFocusing: false | { focusedTime: number };
-  isResting: false | { restedTime: number };
+  isFocusing: boolean;
+  isResting: boolean;
+  focusedTime: number;
+  restedTime: number;
 }
 
 interface IPomodoroSettings {
@@ -82,23 +86,21 @@ const PomodoroProvider = ({ children }: IChildProps) => {
 
         setStatus({
           isResting: false,
-          isFocusing: {
-            focusedTime: 0,
-          },
+          isFocusing: true,
+          focusedTime: 0,
+          restedTime: 0,
         });
         interval = setInterval(() => {
           setStatus((prev) => {
             const prevFocusTime =
-              prev.isFocusing !== false ? prev.isFocusing.focusedTime : 0;
+              prev.isFocusing !== false ? prev.focusedTime : 0;
             const newData: IPomodoroStatus = {
               ...prev,
               isResting: false,
-              isFocusing: {
-                focusedTime: prevFocusTime + 1000,
-              },
+              isFocusing: true,
+              focusedTime: prevFocusTime + 1000,
             };
             statusRef.current = newData;
-            // updatePomodoroData<IPomodoroStatus>(newData, 'status');
             return newData;
           });
         }, 1000);
@@ -107,14 +109,12 @@ const PomodoroProvider = ({ children }: IChildProps) => {
         clearInterval(interval);
         interval = setInterval(() => {
           setStatus((prev) => {
-            const prevRestTime =
-              prev.isResting !== false ? prev.isResting.restedTime : 0;
+            const prevRestTime = prev.isResting !== false ? prev.restedTime : 0;
             const newData: IPomodoroStatus = {
               ...prev,
               isFocusing: false,
-              isResting: {
-                restedTime: prevRestTime + 1000,
-              },
+              isResting: true,
+              restedTime: prevRestTime + 1000,
             };
             statusRef.current = newData;
             return newData;
@@ -126,19 +126,10 @@ const PomodoroProvider = ({ children }: IChildProps) => {
   );
 
   useEffect(() => {
-    //TODO: 콘솔 삭제 필요
-    console.log('status changed:', status);
-  }, [status]);
-  useEffect(() => {
-    //TODO: 콘솔 삭제 필요
-    console.log('settings changed:', settings);
-  }, [settings]);
-  useEffect(() => {
     function updatePomodorBeforeUnload() {
       updatePomodoroData<IPomodoroSettings>(settingRef.current, 'settings');
       updatePomodoroData<IPomodoroStatus>(statusRef.current, 'status');
     }
-
     window.addEventListener('beforeunload', updatePomodorBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', updatePomodorBeforeUnload);
