@@ -3,6 +3,7 @@ import { IChildProps } from '../shared/interfaces';
 import { designTheme } from '../styles/theme';
 
 export interface ITagAtomProps extends IChildProps {
+  title?: string;
   handler?: () => void;
   styleOption?: ITagSpanProps;
 }
@@ -20,7 +21,7 @@ interface ITagSpanProps {
  * TagAtom 태그 모양의 아톰
  * handler를 넘기면 button, 없을 때는 div
  */
-function TagAtom({ children, handler, styleOption }: ITagAtomProps) {
+function TagAtom({ children, handler, styleOption, title }: ITagAtomProps) {
   if (handler)
     return (
       <button onClick={handler}>
@@ -30,7 +31,9 @@ function TagAtom({ children, handler, styleOption }: ITagAtomProps) {
   else
     return (
       <div>
-        <TagSpan {...styleOption}>{children}</TagSpan>
+        <TagSpan title={title} {...styleOption}>
+          {children}
+        </TagSpan>
       </div>
     );
 }

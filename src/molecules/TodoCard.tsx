@@ -48,7 +48,9 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
         </IconAtom>
         <TitleCategoryContainer>
           <TitleContainer>
-            <TypoAtom fontSize="body">{todo}</TypoAtom>
+            <TypoAtom title={todo} fontSize="body">
+              {todo}
+            </TypoAtom>
           </TitleContainer>
           <CategoryContainer>
             {!snapshot.isDragging
@@ -56,6 +58,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
                   return (
                     <TagAtom
                       key={category}
+                      title={category}
                       styleOption={{
                         fontsize: 'sm',
                         size: 'sm',
@@ -96,6 +99,7 @@ const DraggableWrapper = styled.div`
 
 const TitleCategoryContainer = styled.div`
   margin-left: 1rem;
+  width: 100%;
 `;
 
 const EditWrapper = styled.div`
@@ -108,14 +112,14 @@ const EditWrapper = styled.div`
 const TitleContainer = styled.div`
   background-color: #ff8888;
   margin-bottom: 0.5rem;
-  box-sizing: border-box;
+  width: 100%;
 
   & > span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: block;
-    width: 20rem;
+    width: 90%;
   }
 `;
 

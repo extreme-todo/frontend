@@ -11,7 +11,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
-import Modal from './Modal';
+import styled from '@emotion/styled';
 
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
@@ -189,21 +189,28 @@ const TodoListModal = () => {
 
   return (
     <>
-      <Modal
+      {/* <Modal
         title={'todolist'}
         handleClose={function (): void {
           throw new Error('Function not implemented.');
         }}
-      >
-        {/* <CardAtom> */}
-        {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
+      > */}
+      {/* <CardAtom> */}
+      {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
+      <TodoListContainer>
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? listRender(todos) : null}
         </DragDropContext>
-        {/* </CardAtom> */}
-      </Modal>
+      </TodoListContainer>
+      {/* </CardAtom> */}
+      {/* </Modal> */}
     </>
   );
 };
 
 export default TodoListModal;
+
+const TodoListContainer = styled.div`
+  width: 35.7275rem;
+  overflow: scroll;
+`;
