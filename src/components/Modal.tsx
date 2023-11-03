@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
 import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
+import { useEffect } from 'react';
 
 interface IModalProps extends IChildProps {
   title: string;
@@ -9,7 +10,16 @@ interface IModalProps extends IChildProps {
   handleDone?: () => void;
 }
 
+const _bodyEl = document.getElementById('root')?.firstChild as HTMLDivElement;
+
 const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
+  useEffect(() => {
+    _bodyEl.style.overflowY = 'hidden';
+    return () => {
+      _bodyEl.style.overflowY = 'auto';
+    };
+  }, []);
+
   return (
     <>
       <ModalContainer>
@@ -26,7 +36,7 @@ const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
             <img src={'icons/close.svg'}></img>
           </IconAtom>
         </HeaderContainer>
-        <ContentContainer>{children}</ContentContainer>
+        {children}
         {/* <FooterContainer>
           <BtnAtom handler={handleDone}>
             <span className="material-symbols-outlined">done</span>
@@ -42,7 +52,9 @@ export type { IModalProps };
 
 const ModalContainer = styled(CardAtom)`
   padding: 2.324375rem 3.2925rem;
-  max-width: 40rem;
+
+  overflow: visible;
+
   max-height: 90vh;
 
   background: ${({ theme: { colors } }) =>
@@ -56,6 +68,8 @@ const ModalContainer = styled(CardAtom)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  z-index: 99;
 `;
 
 const HeaderContainer = styled.div`
@@ -64,10 +78,6 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4rem;
-`;
-
-const ContentContainer = styled.div`
-  overflow: scroll;
 `;
 
 const FooterContainer = styled.div``;
