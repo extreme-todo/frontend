@@ -10,13 +10,12 @@ interface IModalProps extends IChildProps {
   handleDone?: () => void;
 }
 
-const _bodyEl = document.getElementById('root')?.firstChild as HTMLDivElement;
-
 const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
   useEffect(() => {
-    _bodyEl.style.overflowY = 'hidden';
+    const El = document.getElementById('main-container') as HTMLDivElement;
+    El.style.overflowY = 'hidden';
     return () => {
-      _bodyEl.style.overflowY = 'auto';
+      El.style.overflowY = 'auto';
     };
   }, []);
 

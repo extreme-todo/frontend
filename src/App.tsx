@@ -32,11 +32,10 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MainContainer>
+      <MainContainer id="main-container">
         <Welcome />
         <MainTodo isLogin={isLogin} />
         <RankingAndRecords isLogin={isLogin} />
-        <TodoList />
       </MainContainer>
       <ReactQueryDevtools />
     </QueryClientProvider>
@@ -48,7 +47,9 @@ const MainContainer = styled.div`
   height: 100vh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
+  & > div {
+    scroll-snap-align: center;
+  }
 `;
 
 export default App;

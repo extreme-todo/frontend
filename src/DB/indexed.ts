@@ -84,7 +84,6 @@ class ETIndexed {
   async orderTodos(prevOrder: number, newOrder: number) {
     const allTodoList = await this.action.getAll();
     const notNullTodos = allTodoList.filter((todo) => todo.order !== null);
-
     let bigNumber = 0,
       smallNumber = 0;
 
