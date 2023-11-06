@@ -9,7 +9,7 @@ const mockFetchTodoList = (): TodoEntity[] => [
     createdAt: new Date('Dec 26, 2022 18:00:30'),
     duration: 60 * 60,
     done: false,
-    categories: null,
+    categories: ['영어', '학교공부'],
     focusTime: 0,
     order: 3,
   },

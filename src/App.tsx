@@ -1,11 +1,6 @@
 import { useEffect } from 'react';
 
-import {
-  MainTodo,
-  RankingAndRecords,
-  TodoListModal,
-  Welcome,
-} from './components';
+import { MainTodo, RankingAndRecords, TodoList, Welcome } from './components';
 import useCheckLogin, { setToken } from './hooks/useCheckLogin';
 
 import styled from '@emotion/styled';
@@ -37,11 +32,10 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MainContainer>
+      <MainContainer id="main-container">
         <Welcome />
         <MainTodo isLogin={isLogin} />
         <RankingAndRecords isLogin={isLogin} />
-        <TodoListModal />
       </MainContainer>
       <ReactQueryDevtools />
     </QueryClientProvider>
@@ -53,7 +47,9 @@ const MainContainer = styled.div`
   height: 100vh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
+  & > div {
+    scroll-snap-align: center;
+  }
 `;
 
 export default App;

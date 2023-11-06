@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { BtnAtom, GoogleLoginAtom, TypoAtom } from '../atoms';
 import Modal from './Modal';
-import SettingModal from './SettingModal';
+import Setting from './Setting';
 
 import { usersApi } from '../shared/apis';
 import { useCheckLogin } from '../hooks';
@@ -13,6 +13,7 @@ import styled from '@emotion/styled';
 const Welcome = () => {
   const [isModal, setIsModal] = useState<boolean>(false);
   const isLogin = useCheckLogin();
+  const welcomeRef = useRef<HTMLDivElement>(null);
 
   const handleLoginBtn = () => {
     return usersApi.login();
@@ -32,7 +33,7 @@ const Welcome = () => {
 
   return (
     <>
-      <WelcomeContainer>
+      <WelcomeContainer ref={welcomeRef}>
         <TypoAtom fontSize={'h1'}>EXTREME TODO</TypoAtom>
         {isLogin ? (
           <BtnContainer>
@@ -46,9 +47,9 @@ const Welcome = () => {
             {isModal &&
               createPortal(
                 <Modal title="설정" handleClose={handleClose}>
-                  <SettingModal />
+                  <Setting />
                 </Modal>,
-                document.body,
+                welcomeRef.current as HTMLDivElement,
               )}
           </BtnContainer>
         ) : (

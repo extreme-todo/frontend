@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 // TODO : state를 상위 컴포넌트로 뽑아낼 수는 없을까?.. 그게 더 괜찮은 방법이지 않을까?..
 // TODO : 추가적으로 이런 모양의 선택지를 템플릿으로 뽑아낼 수는 없을까?
 // TODO : Compound 적용해보자
-const SettingModal = () => {
+const Setting = () => {
   const [value, setValue] = useState<boolean>(false);
   const [isOver, setIsOver] = useState<boolean>(false);
 
@@ -76,7 +76,7 @@ const SettingModal = () => {
   );
 };
 
-export default SettingModal;
+export default Setting;
 
 const SettingContainer = styled.div`
   display: flex;
