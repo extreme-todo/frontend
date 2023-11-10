@@ -6,7 +6,7 @@ import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
-import { usePomodoroActions, usePomodoroValue } from '../hooks';
+import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
@@ -15,6 +15,7 @@ export interface IMainTodoProps extends IChildProps {
 function MainTodo({ isLogin, children }: IMainTodoProps) {
   const { settings: pomodoroSettings, status } = usePomodoroValue();
   const actions = usePomodoroActions();
+  const currentTodo = useCurrentTodo();
   console.log(actions);
   console.log(pomodoroSettings);
 
@@ -38,14 +39,15 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
             </SideButtons.ProgressButton>
           </SideButtons>
           <CurrentTodoCard>
+            currentTodo: {currentTodo.currentTodo?.todo} <br />
             focusstep: {pomodoroSettings.focusStep} <br />
             reststep: {pomodoroSettings.restStep}
             <br />
             focused:
-            {status.isFocusing ? status.isFocusing.focusedTime : '집중안하는중'}
+            {status.isFocusing ? status.focusedTime : '집중안하는중'}
             <br />
             rested:
-            {status.isResting ? status.isResting.restedTime : '휴식안하는중'}
+            {status.isResting ? status.restedTime : '휴식안하는중'}
             <br />
             <button onClick={() => actions?.setFocusStep(10)}>
               뽀모도로 집중시간 10분

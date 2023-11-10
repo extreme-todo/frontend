@@ -35,7 +35,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MainContainer id="main-container">
         <Welcome />
-        <MainTodo isLogin={isLogin} />
+        <PomodoroProvider>
+          <MainTodo isLogin={isLogin} />
+        </PomodoroProvider>
         <RankingAndRecords isLogin={isLogin} />
       </MainContainer>
       <ReactQueryDevtools />
