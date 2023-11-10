@@ -17,6 +17,6 @@
     "jsx": "react-jsx",
     "removeComments": true
   },
-  "include": ["src"],
-  "exclude": ["src/test"]
+  "include": ["src/**/*"],
+  "exclude": ["src/test", "**/*.test.ts", "**/*.test.tsx"]
 }
