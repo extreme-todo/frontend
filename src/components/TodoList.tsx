@@ -1,75 +1,90 @@
-import { BtnAtom, CardAtom, TypoAtom, IconAtom } from '../atoms';
-
-import {
-  DragDropContext,
-  Draggable,
-  DraggableLocation,
-  DropResult,
-  Droppable,
-} from 'react-beautiful-dnd';
-import { useQuery } from '@tanstack/react-query';
-import styled from '@emotion/styled';
+import { BtnAtom, CardAtom } from '../atoms';
+import { DateCard } from '../organisms';
 
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
 import { useOrderingMutation } from '../shared/queries';
+
+import {
+  DragDropContext,
+  DraggableLocation,
+  DropResult,
+} from 'react-beautiful-dnd';
+import { useQuery } from '@tanstack/react-query';
+import styled from '@emotion/styled';
 
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
   const todoList = Array.from(mapTodo.values());
 
   const renderList = dateList.map((date, idx) => (
-    <Droppable droppableId={date} key={date}>
-      {(provided) => (
-        <div {...provided.droppableProps} ref={provided.innerRef}>
-          <TypoAtom>{date}</TypoAtom>
-          {todoList[idx].map(({ id, todo }, idx) => (
-            <Draggable draggableId={String(id)} index={idx} key={id}>
-              {(provided) => (
-                <DraggableContainer
-                  {...provided.draggableProps}
-                  ref={provided.innerRef}
-                >
-                  <IconAtom {...provided.dragHandleProps}>
-                    <img src={'icons/handle.svg'}></img>
-                  </IconAtom>
-                  <TypoAtom>{todo}</TypoAtom>
-                </DraggableContainer>
-              )}
-            </Draggable>
-          ))}
-          {provided.placeholder}
-        </div>
-      )}
-    </Droppable>
+    <DateCard key={date} date={date} tododata={todoList[idx]} />
   ));
 
   return renderList;
 };
-// 'Practice Valorant'
-// 'Go to grocery store'
-// 'Watch English News'
-// 'Start Exercise'
-// 'Check Riff'
-const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
-  return {
-    date: '2023-08-15',
-    todo: 'Watch English News',
-    duration: 60 * 60,
-    categories: null,
-  };
+
+const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
+  return [
+    {
+      date: '2023-10-30',
+      todo: 'practice valorant',
+      duration: 60 * 60,
+      categories: ['game', 'practice'],
+    },
+    {
+      date: '2023-10-30',
+      todo: 'go to grocery store',
+      duration: 60 * 60,
+      categories: ['chore'],
+    },
+    {
+      date: '2023-10-29',
+      todo: 'Watch English News',
+      duration: 60 * 60,
+      categories: ['english', 'study'],
+    },
+    {
+      date: '2023-10-29',
+      todo: 'Start Exercise',
+      duration: 60 * 60,
+      categories: ['health'],
+    },
+    {
+      date: '2023-10-27',
+      todo: 'check riff',
+      duration: 60 * 60,
+      categories: [
+        'music',
+        'guitar',
+        'music theory',
+        'hubby',
+        'lorem ipsum sth sth',
+      ],
+    },
+    {
+      date: '2023-10-27',
+      todo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      duration: 60 * 60,
+      categories: [
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        'guitar',
+      ],
+    },
+  ];
 };
 
 const db = new ETIndexed();
 
 const TodoListModal = () => {
-  const {
-    data: todos,
-    error,
-    isLoading,
-  } = useQuery(['todos'], () => db.getList(false), {
-    refetchOnWindowFocus: false,
-  });
+  const { data: todos, isLoading } = useQuery(
+    ['todos'],
+    () => db.getList(false),
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
+
   const orderMutate = useOrderingMutation();
   const modifiedSameDate = (
     source: DraggableLocation,
@@ -145,8 +160,13 @@ const TodoListModal = () => {
     const { destination, source } = info;
     // 이동이 없을 때
     if (!destination) return;
-    // 같은 날 안에서 이동을 했을 때
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
 
+    // 같은 날 안에서 이동을 했을 때
     if (source.droppableId === destination.droppableId) {
       const modifiedTodoList = modifiedSameDate(source, destination);
       orderMutate(modifiedTodoList);
@@ -159,24 +179,38 @@ const TodoListModal = () => {
 
   const onClickHandler = () => {
     const mock = addTodoMock();
-    db.addTodo(mock);
+    const temp = async () => {
+      for (let i = 0; i < mock.length; i++) {
+        await db.addTodo(mock[i]);
+      }
+    };
+    temp();
   };
 
   return (
     <>
-      <CardAtom>
-        <BtnAtom children={'add Todo'} handler={onClickHandler} />
+      {/* <Modal
+        title={'todolist'}
+        handleClose={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+      > */}
+      {/* <CardAtom> */}
+      {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
+      <TodoListContainer>
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? listRender(todos) : null}
         </DragDropContext>
-      </CardAtom>
+      </TodoListContainer>
+      {/* </CardAtom> */}
+      {/* </Modal> */}
     </>
   );
 };
 
 export default TodoListModal;
 
-const DraggableContainer = styled.div`
-  display: flex;
-  align-items: center;
+const TodoListContainer = styled.div`
+  width: 35.7275rem;
+  overflow: scroll;
 `;

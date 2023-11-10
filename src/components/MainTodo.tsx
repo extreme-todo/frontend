@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { Clock, SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
-import PomodoroProvider, {
-  usePomodoroActions,
-  usePomodoroValue,
-} from '../hooks/usePomodoro';
+import { createPortal } from 'react-dom';
+import Modal from './Modal';
+import TodoList from './TodoList';
+import { usePomodoroActions, usePomodoroValue } from '../hooks';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
@@ -21,8 +21,11 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
   useEffect(() => {
     console.log('status not changed but rendered anyway');
   }, [status]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
   return (
-    <MainTodoContainer>
+    <MainTodoContainer ref={modalRef}>
       <MainTodoContentWrapper>
         <Clock></Clock>
         <MainTodoCenter>
@@ -58,7 +61,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                console.log('clicked');
+                setIsModalOpen(true);
               }}
               imageSrc="icons/hamburger.svg"
             />
@@ -70,6 +73,18 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
             />
           </SideButtons>
         </MainTodoCenter>
+        {isModalOpen &&
+          createPortal(
+            <Modal
+              title="할 일 목록"
+              handleClose={() => {
+                setIsModalOpen(false);
+              }}
+            >
+              <TodoList />
+            </Modal>,
+            modalRef.current as HTMLDivElement,
+          )}
       </MainTodoContentWrapper>
     </MainTodoContainer>
   );
