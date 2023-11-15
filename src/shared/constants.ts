@@ -1,5 +1,7 @@
 import { ICategory, IRanking, IRecords } from './interfaces';
 
+export const ONE_SECOND = 60000;
+
 export const initialRecords: IRecords = {
   daily: 0,
   weekly: 0,

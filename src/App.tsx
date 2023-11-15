@@ -4,6 +4,7 @@ import { MainTodo, RankingAndRecords, TodoList, Welcome } from './components';
 import useCheckLogin, { setToken } from './hooks/useCheckLogin';
 
 import styled from '@emotion/styled';
+import PomodoroProvider from './hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -34,7 +35,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MainContainer id="main-container">
         <Welcome />
-        <MainTodo isLogin={isLogin} />
+        <PomodoroProvider>
+          <MainTodo isLogin={isLogin} />
+        </PomodoroProvider>
         <RankingAndRecords isLogin={isLogin} />
       </MainContainer>
       <ReactQueryDevtools />
