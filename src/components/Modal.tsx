@@ -32,7 +32,7 @@ const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
             size={4.455}
             backgroundColor={'whiteWine'}
           >
-            <img src={'icons/close.svg'}></img>
+            <img alt="close" src={'icons/close.svg'}></img>
           </IconAtom>
         </HeaderContainer>
         {children}
