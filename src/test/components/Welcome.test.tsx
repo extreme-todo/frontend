@@ -8,7 +8,6 @@ import { usersApi } from '../../shared/apis';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import 'expect-puppeteer';
 
 const mockWelcome = (func: jest.Mock<any, any>) => {
   mockLocalStorage(func);
