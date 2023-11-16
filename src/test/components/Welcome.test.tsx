@@ -24,6 +24,9 @@ describe('Welcome', () => {
     let renderResult: HTMLElement;
 
     beforeEach(() => {
+      const mockElement = document.createElement('div');
+      mockElement.setAttribute('id', 'main-container');
+      document.body.appendChild(mockElement);
       renderResult = mockWelcome(jest.fn((key: string) => null));
     });
 
