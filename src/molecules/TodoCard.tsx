@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { IconAtom, TagAtom, TypoAtom } from '../atoms';
 
+import { EditContext } from '../components/TodoList';
 import { TodoEntity } from '../DB/indexedAction';
 
 import {
@@ -16,7 +17,19 @@ interface ITodoCardProps {
   snapshot: DraggableStateSnapshot;
 }
 
+const useEdit = () => {
+  const value = useContext(EditContext);
+  if (value === undefined)
+    throw new Error('value is undefined', {
+      cause: 'useEdit',
+    });
+  return value;
+};
+
 const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
+  const [isEdit, setIsEdit] = useEdit();
+  const [showEdit, setShowEdit] = useState(false);
+
   const {
     id,
     date,
@@ -29,12 +42,16 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     order,
   } = todoData;
 
-  const [showEdit, setShowEdit] = useState(false);
   const onMouseOverHandler = () => {
     setShowEdit(true);
   };
+
   const onMouseOutHandler = () => {
     setShowEdit(false);
+  };
+
+  const editTagHandler = () => {
+    setIsEdit(true);
   };
 
   return (
@@ -43,9 +60,15 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
       onMouseOut={onMouseOutHandler}
     >
       <DraggableWrapper>
-        <IconAtom {...dragHandleProps} size={2}>
-          <img src={'icons/handle.svg'}></img>
-        </IconAtom>
+        {isEdit ? (
+          <IconAtom size={2}>
+            <img src={'icons/handle.svg'}></img>
+          </IconAtom>
+        ) : (
+          <IconAtom {...dragHandleProps} size={2}>
+            <img src={'icons/handle.svg'}></img>
+          </IconAtom>
+        )}
         <TitleCategoryContainer>
           <TitleContainer>
             <TypoAtom title={todo} fontSize="body">
@@ -53,7 +76,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             </TypoAtom>
           </TitleContainer>
           <CategoryContainer>
-            {!snapshot.isDragging
+            {!snapshot?.isDragging
               ? categories?.map((category) => {
                   return (
                     <TagAtom
@@ -62,7 +85,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
                       styleOption={{
                         fontsize: 'sm',
                         size: 'sm',
-                        bg: 'lightGrey_2',
+                        bg: 'whiteWine',
                         maxWidth: 10,
                       }}
                     >
@@ -76,7 +99,12 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
       </DraggableWrapper>
       <EditWrapper>
         {showEdit ? (
-          <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>수정</TagAtom>
+          <TagAtom
+            handler={editTagHandler}
+            styleOption={{ fontsize: 'sm', size: 'sm' }}
+          >
+            수정
+          </TagAtom>
         ) : null}
       </EditWrapper>
     </TodoCardContainer>
@@ -88,13 +116,11 @@ export default TodoCard;
 const TodoCardContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: #5db1ff;
 `;
 
 const DraggableWrapper = styled.div`
   display: flex;
   width: 80%;
-  background-color: mintcream;
 `;
 
 const TitleCategoryContainer = styled.div`
@@ -106,11 +132,9 @@ const EditWrapper = styled.div`
   width: 20%;
   display: flex;
   justify-content: flex-end;
-  background-color: #f3cef3;
 `;
 
 const TitleContainer = styled.div`
-  background-color: #ff8888;
   margin-bottom: 0.5rem;
   width: 100%;
 

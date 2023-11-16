@@ -1,4 +1,3 @@
-import { BtnAtom, CardAtom } from '../atoms';
 import { DateCard } from '../organisms';
 
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
@@ -12,17 +11,9 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
+import { useState, createContext } from 'react';
 
-const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
-  const dateList = Array.from(mapTodo.keys());
-  const todoList = Array.from(mapTodo.values());
-
-  const renderList = dateList.map((date, idx) => (
-    <DateCard key={date} date={date} tododata={todoList[idx]} />
-  ));
-
-  return renderList;
-};
+type contextType = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -74,9 +65,22 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   ];
 };
 
-const db = new ETIndexed();
+const EditContext = createContext<contextType | undefined>(undefined);
 
+const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
+  const dateList = Array.from(mapTodo.keys());
+  const todoList = Array.from(mapTodo.values());
+
+  const renderList = dateList.map((date, idx) => (
+    <DateCard key={date} date={date} tododata={todoList[idx]} />
+  ));
+
+  return renderList;
+};
+
+const db = new ETIndexed();
 const TodoListModal = () => {
+  const editState = useState(false);
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => db.getList(false),
@@ -199,7 +203,11 @@ const TodoListModal = () => {
       {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
       <TodoListContainer>
         <DragDropContext onDragEnd={onDragDropHandler}>
-          {!isLoading && todos ? listRender(todos) : null}
+          {!isLoading && todos ? (
+            <EditContext.Provider value={editState}>
+              {listRender(todos)}
+            </EditContext.Provider>
+          ) : null}
         </DragDropContext>
       </TodoListContainer>
       {/* </CardAtom> */}
@@ -209,6 +217,7 @@ const TodoListModal = () => {
 };
 
 export default TodoListModal;
+export { EditContext };
 
 const TodoListContainer = styled.div`
   width: 35.7275rem;
