@@ -5,17 +5,23 @@ import { designTheme } from '../../styles/theme';
 import { TodoCard } from '../../molecules';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { DraggableStateSnapshot } from 'react-beautiful-dnd';
+import { EditContext } from '../../components/TodoList';
 
 describe('TodoCard', () => {
   const mockTodo = mockFetchTodoList()[0];
-  const renderTodoCard = (mockSnapshot: DraggableStateSnapshot) => {
+  const renderTodoCard = (
+    mockSnapshot: DraggableStateSnapshot,
+    mockEditValue: [boolean, React.Dispatch<React.SetStateAction<boolean>>],
+  ) => {
     return render(
       <ThemeProvider theme={designTheme}>
-        <TodoCard
-          todoData={mockTodo}
-          dragHandleProps={undefined}
-          snapshot={mockSnapshot}
-        />
+        <EditContext.Provider value={mockEditValue}>
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={mockSnapshot}
+          />
+        </EditContext.Provider>
       </ThemeProvider>,
     );
   };
@@ -32,7 +38,10 @@ describe('TodoCard', () => {
       mode: undefined,
     };
     it('Todo는 제목, 핸들 아이콘, 카테고리로 이루어져 있다.', () => {
-      const { getByText, getByRole } = renderTodoCard(mockSnapshot);
+      const { getByText, getByRole } = renderTodoCard(mockSnapshot, [
+        false,
+        () => {},
+      ]);
 
       const title = getByText('Go to grocery store');
       expect(title).toBeInTheDocument();
@@ -59,7 +68,7 @@ describe('TodoCard', () => {
       mode: undefined,
     };
     it('Todo의 카테고리가 숨겨진다.', () => {
-      const { queryByText } = renderTodoCard(mockSnapshot);
+      const { queryByText } = renderTodoCard(mockSnapshot, [false, () => {}]);
 
       const categories1 = queryByText('영어');
       const categories2 = queryByText('학교공부');

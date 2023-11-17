@@ -1,8 +1,8 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { IconAtom, TagAtom, TypoAtom } from '../atoms';
 
-import { EditContext } from '../components/TodoList';
+import { useEdit } from '../hooks';
 import { TodoEntity } from '../DB/indexedAction';
 
 import {
@@ -16,15 +16,6 @@ interface ITodoCardProps {
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
   snapshot: DraggableStateSnapshot;
 }
-
-const useEdit = () => {
-  const value = useContext(EditContext);
-  if (value === undefined)
-    throw new Error('value is undefined', {
-      cause: 'useEdit',
-    });
-  return value;
-};
 
 const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   const [isEdit, setIsEdit] = useEdit();
