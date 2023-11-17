@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Modal, SettingModal } from '../../components';
+import { Modal, Setting } from '../../components';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import React from 'react';
@@ -9,6 +9,10 @@ describe('Modal', () => {
     let renderResult: ReturnType<typeof render>;
 
     beforeEach(() => {
+      const mockElement = document.createElement('div');
+      mockElement.setAttribute('id', 'main-container');
+      document.body.appendChild(mockElement);
+
       const handleDone = () => {
         console.log('Done');
       };
@@ -18,7 +22,7 @@ describe('Modal', () => {
       renderResult = render(
         <ThemeProvider theme={designTheme}>
           <Modal title="설정" handleDone={handleDone} handleClose={handleClose}>
-            <SettingModal />
+            <Setting />
           </Modal>
         </ThemeProvider>,
       );
@@ -37,3 +41,22 @@ describe('Modal', () => {
     });
   });
 });
+
+/* 
+
+const renderResult = () => {
+      const handleDone = () => {
+        console.log('Done');
+      };
+      const handleClose = () => {
+        console.log('Close');
+      };
+      return render(
+        <ThemeProvider theme={designTheme}>
+          <Modal title="설정" handleDone={handleDone} handleClose={handleClose}>
+            <Setting />
+          </Modal>
+        </ThemeProvider>,
+      );
+    };
+*/

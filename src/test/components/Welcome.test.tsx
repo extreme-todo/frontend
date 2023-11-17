@@ -8,7 +8,6 @@ import { usersApi } from '../../shared/apis';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import 'expect-puppeteer';
 
 const mockWelcome = (func: jest.Mock<any, any>) => {
   mockLocalStorage(func);
@@ -25,6 +24,9 @@ describe('Welcome', () => {
     let renderResult: HTMLElement;
 
     beforeEach(() => {
+      const mockElement = document.createElement('div');
+      mockElement.setAttribute('id', 'main-container');
+      document.body.appendChild(mockElement);
       renderResult = mockWelcome(jest.fn((key: string) => null));
     });
 

@@ -1,6 +1,5 @@
 import { ETIndexedDBCalc } from '../../DB/indexedCalc';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
-import { TodoEntity } from '../../DB/indexedAction';
 
 describe('ExtremeTodoIndexedDB', () => {
   let mockTodoList: ReturnType<typeof mockFetchTodoList>;

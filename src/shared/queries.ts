@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoDate, TodoEntity } from '../DB/indexedAction';
 import { ETIndexed } from '../DB/indexed';
 
-const db = new ETIndexed();
 // ordering
 const useOrderingMutation = () => {
+  const db = new ETIndexed();
   const queryClient = useQueryClient();
   const mutationHandler = async ({
     prevOrder,

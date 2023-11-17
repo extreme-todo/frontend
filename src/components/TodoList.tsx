@@ -65,6 +65,7 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   ];
 };
 
+<<<<<<< HEAD
 const EditContext = createContext<contextType | undefined>(undefined);
 
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
@@ -81,6 +82,10 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 const db = new ETIndexed();
 const TodoListModal = () => {
   const editState = useState(false);
+=======
+const TodoListModal = () => {
+  const db = new ETIndexed();
+>>>>>>> develop
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => db.getList(false),
