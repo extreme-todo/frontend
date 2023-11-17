@@ -74,9 +74,8 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   ];
 };
 
-const db = new ETIndexed();
-
 const TodoListModal = () => {
+  const db = new ETIndexed();
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => db.getList(false),
