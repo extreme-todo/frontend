@@ -1,17 +1,27 @@
 import styled from '@emotion/styled';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { Clock, SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
+import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
 }
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
+  const { settings: pomodoroSettings, status } = usePomodoroValue();
+  const actions = usePomodoroActions();
+  const currentTodo = useCurrentTodo();
+  console.log(actions);
+  console.log(pomodoroSettings);
+
+  useEffect(() => {
+    console.log('status not changed but rendered anyway');
+  }, [status]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +38,28 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
               45
             </SideButtons.ProgressButton>
           </SideButtons>
-          <CurrentTodoCard>지금 할 일</CurrentTodoCard>
+          <CurrentTodoCard>
+            currentTodo: {currentTodo.currentTodo?.todo} <br />
+            focusstep: {pomodoroSettings.focusStep} <br />
+            reststep: {pomodoroSettings.restStep}
+            <br />
+            focused:
+            {status.isFocusing ? status.focusedTime : '집중안하는중'}
+            <br />
+            rested:
+            {status.isResting ? status.restedTime : '휴식안하는중'}
+            <br />
+            <button onClick={() => actions?.setFocusStep(10)}>
+              뽀모도로 집중시간 10분
+            </button>
+            <button onClick={() => actions?.setRestStep(10)}>
+              뽀모도로 휴식시간 10분
+            </button>
+            <button onClick={() => actions?.startFocusing()}>
+              집중시작!!!
+            </button>
+            <button onClick={() => actions?.startResting()}>휴식시작~</button>
+          </CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
