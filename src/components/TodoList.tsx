@@ -14,7 +14,12 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 
-type contextType = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+interface IEdit {
+  editMode: boolean;
+  editTodoId: number | undefined;
+}
+
+type contextType = [IEdit, React.Dispatch<React.SetStateAction<IEdit>>];
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -81,7 +86,13 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 
 const TodoList = () => {
   const db = new ETIndexed();
-  const editState = useState(false);
+  const editState = useState<{
+    editMode: boolean;
+    editTodoId: number | undefined;
+  }>({
+    editMode: false,
+    editTodoId: undefined,
+  });
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => db.getList(false),
@@ -218,7 +229,7 @@ const TodoList = () => {
 };
 
 export default TodoList;
-export { EditContext };
+export { EditContext, type IEdit };
 
 const TodoListContainer = styled.div`
   width: 35.7275rem;
