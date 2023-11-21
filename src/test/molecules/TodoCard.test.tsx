@@ -1,11 +1,11 @@
 import React from 'react';
 import { ThemeProvider } from '@emotion/react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { designTheme } from '../../styles/theme';
 import { TodoCard } from '../../molecules';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { DraggableStateSnapshot } from 'react-beautiful-dnd';
-import { EditContext } from '../../components/TodoList';
+import { EditContext, IEdit } from '../../components/TodoList';
 import { act } from 'react-dom/test-utils';
 
 describe('TodoCard', () => {
@@ -22,9 +22,16 @@ describe('TodoCard', () => {
       mode: undefined,
     };
   };
-  const renderTodoCard = (
+  let mockIsEdit: IEdit;
+  const mockSetIsEdit = ((prevEdit: IEdit) => {
+    mockIsEdit = {
+      ...mockIsEdit,
+      ...prevEdit,
+    };
+  }) as React.Dispatch<React.SetStateAction<IEdit>>;
+  let renderTodoCard = (
     mockSnapshot: DraggableStateSnapshot,
-    mockEditValue: [boolean, React.Dispatch<React.SetStateAction<boolean>>],
+    mockEditValue: [IEdit, React.Dispatch<React.SetStateAction<IEdit>>],
   ) => {
     return render(
       <ThemeProvider theme={designTheme}>
@@ -39,10 +46,16 @@ describe('TodoCard', () => {
     );
   };
 
+  beforeEach(() => {
+    mockIsEdit = (() => {
+      return { editMode: false, editTodoId: undefined };
+    })();
+  });
+
   describe('기본적으로 TodoCard는', () => {
     it('Todo는 제목, 핸들 아이콘, 카테고리로 이루어져 있다.', () => {
       const { getByText, getByRole } = renderTodoCard(setMockSnapshot(false), [
-        false,
+        { editMode: false, editTodoId: undefined },
         () => {},
       ]);
 
@@ -62,7 +75,7 @@ describe('TodoCard', () => {
   describe('drag 시에는', () => {
     it('Todo의 카테고리가 숨겨진다.', () => {
       const { queryByText } = renderTodoCard(setMockSnapshot(true), [
-        false,
+        { editMode: false, editTodoId: undefined },
         () => {},
       ]);
 
@@ -76,7 +89,7 @@ describe('TodoCard', () => {
   describe('TodoCard에', () => {
     it('onMouseOver 이벤트가 발생하면 수정 버튼이 노출된다.', () => {
       const { getByText } = renderTodoCard(setMockSnapshot(false), [
-        false,
+        { editMode: false, editTodoId: undefined },
         () => {},
       ]);
 
@@ -90,7 +103,7 @@ describe('TodoCard', () => {
     it('onMouseOut 이벤트가 발생하면 수정 버튼이 사라진다.', () => {
       const { getByText, queryByText } = renderTodoCard(
         setMockSnapshot(false),
-        [false, () => {}],
+        [{ editMode: false, editTodoId: undefined }, () => {}],
       );
 
       fireEvent.mouseOut(getByText('Go to grocery store'));
@@ -100,14 +113,10 @@ describe('TodoCard', () => {
   });
 
   describe('수정 버튼을 클릭하면', () => {
-    it('context의 edit이 true로 바뀐다.', () => {
-      let isEdit = false;
-      const setIsEdit = (prevEdit: boolean) => {
-        isEdit = prevEdit;
-      };
+    it('context의 editMode가 true로 바뀌고 editTodoId에 id값 1이 할당된다.', () => {
       const { getByText } = renderTodoCard(setMockSnapshot(false), [
-        isEdit,
-        setIsEdit as React.Dispatch<React.SetStateAction<boolean>>,
+        mockIsEdit,
+        mockSetIsEdit,
       ]);
 
       fireEvent.mouseOver(getByText('Go to grocery store'));
@@ -116,7 +125,28 @@ describe('TodoCard', () => {
       expect(editBtn).toBeInTheDocument();
 
       fireEvent.click(editBtn);
-      expect(isEdit).toBe(true);
+      expect(mockIsEdit.editMode).toBe(true);
+      expect(mockIsEdit.editTodoId).toBe(1);
+    });
+
+    it('해당 todoCard의 UI가 title이 input 창으로 바뀐다.', () => {
+      const { getByText, getByRole, queryByText } = renderTodoCard(
+        setMockSnapshot(false),
+        [mockIsEdit, mockSetIsEdit],
+      );
+
+      fireEvent.mouseOver(getByText('Go to grocery store'));
+      expect(queryByText('Go to grocery store')).toBeInTheDocument();
+
+      const editBtn = getByText('수정');
+      fireEvent.click(editBtn);
+
+      expect(queryByText('Go to grocery store')).toBeInTheDocument();
+
+      waitFor(() => {
+        expect(queryByText('Go to grocery store')).not.toBeInTheDocument();
+        expect(getByRole('textbox')).toBeInTheDocument();
+      });
     });
   });
 });

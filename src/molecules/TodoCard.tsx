@@ -17,8 +17,12 @@ interface ITodoCardProps {
   snapshot: DraggableStateSnapshot;
 }
 
+const EditCard = () => {
+  return <input />;
+};
+
 const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
-  const [isEdit, setIsEdit] = useEdit();
+  const [{ editMode, editTodoId }, setIsEdit] = useEdit();
   const [showEdit, setShowEdit] = useState(false);
 
   const {
@@ -42,16 +46,18 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   };
 
   const editTagHandler = () => {
-    setIsEdit(true);
+    setIsEdit({ editMode: true, editTodoId: id });
   };
 
-  return (
+  return editMode && editTodoId === id ? (
+    <EditCard />
+  ) : (
     <TodoCardContainer
       onMouseOver={onMouseOverHandler}
       onMouseOut={onMouseOutHandler}
     >
       <DraggableWrapper>
-        {isEdit ? (
+        {editMode ? (
           <IconAtom size={2}>
             <img src={'icons/handle.svg'}></img>
           </IconAtom>
