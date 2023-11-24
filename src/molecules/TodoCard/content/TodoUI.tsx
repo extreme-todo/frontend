@@ -1,27 +1,13 @@
 import { useState } from 'react';
 
-import { IconAtom, TagAtom, TypoAtom } from '../atoms';
+import { IconAtom, TagAtom, TypoAtom } from '../../../atoms';
 
-import { useEdit } from '../hooks';
-import { TodoEntity } from '../DB/indexedAction';
+import { useEdit } from '../../../hooks';
+import { ITodoCardProps } from '..';
 
-import {
-  DraggableProvidedDragHandleProps,
-  DraggableStateSnapshot,
-} from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
 
-interface ITodoCardProps {
-  todoData: TodoEntity;
-  dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
-  snapshot: DraggableStateSnapshot;
-}
-
-const EditCard = () => {
-  return <input />;
-};
-
-const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
+const TodoUI = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   const [{ editMode, editTodoId }, setIsEdit] = useEdit();
   const [showEdit, setShowEdit] = useState(false);
 
@@ -49,9 +35,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     setIsEdit({ editMode: true, editTodoId: id });
   };
 
-  return editMode && editTodoId === id ? (
-    <EditCard />
-  ) : (
+  return (
     <TodoCardContainer
       onMouseOver={onMouseOverHandler}
       onMouseOut={onMouseOutHandler}
@@ -108,7 +92,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   );
 };
 
-export default TodoCard;
+export default TodoUI;
 
 const TodoCardContainer = styled.div`
   display: flex;
