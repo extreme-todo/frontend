@@ -145,7 +145,7 @@ describe('TodoCard', () => {
 
         waitFor(() => {
           expect(queryByText('Go to grocery store')).not.toBeInTheDocument();
-          expect(getByRole('textbox')).toBeInTheDocument();
+          expect(getByRole('textbox', { name: /title/i })).toBeInTheDocument();
         });
       });
     });
@@ -170,16 +170,31 @@ describe('TodoCard', () => {
 
       it('input가 있고, input에는 기존 title이 입력되어 있습니다.', () => {
         const { getByRole } = renderFn;
-        const target = getByRole('textbox') as HTMLInputElement;
+        const target = getByRole('textbox', {
+          name: /title/i,
+        }) as HTMLInputElement;
 
         expect(target).toBeInTheDocument();
         expect(target.value).toBe('Go to grocery store');
       });
 
       it('categories와 category 추가 버튼이 있습니다.', () => {
-        const { getByText } = renderFn;
+        const { getByText, getByRole } = renderFn;
         expect(getByText('영어')).toBeInTheDocument();
         expect(getByText('학교공부')).toBeInTheDocument();
+
+        const addCategoryBtn = getByRole('button') as HTMLButtonElement;
+        expect(addCategoryBtn).toBeInTheDocument();
+        expect(addCategoryBtn.textContent).toBe('카테고리를 입력하세요');
+      });
+
+      it('category 추가 버튼을 누르면 빈 input창이 나타납니다.', () => {
+        const { getByRole } = renderFn;
+        const addCategoryBtn = getByRole('button') as HTMLButtonElement;
+
+        fireEvent.click(addCategoryBtn);
+
+        expect(getByRole('textbox', { name: /category/i })).toBeInTheDocument();
       });
     });
   });
