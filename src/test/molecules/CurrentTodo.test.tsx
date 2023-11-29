@@ -1,0 +1,45 @@
+import { render } from '@testing-library/react';
+import { TodoEntity } from '../../DB/indexedAction';
+import { mockFetchTodoList } from '../../../fixture/mockTodoList';
+import { CurrentTodo } from '../../molecules';
+import React from 'react';
+
+describe('CurrentTodo', () => {
+  const mockCurrentTodo: TodoEntity = mockFetchTodoList()[0];
+  let component: ReturnType<typeof renderRanking>;
+  const mockDoTodoProp = jest.fn();
+  function renderRanking(todo: TodoEntity) {
+    return render(
+      <CurrentTodo todo={todo} doTodo={mockDoTodoProp}></CurrentTodo>,
+    );
+  }
+
+  describe('Todo가 존재하는 경우', () => {
+    beforeEach(() => {
+      component = renderRanking(mockCurrentTodo);
+      console.log(mockCurrentTodo);
+    });
+
+    it('투두 제목을 렌더링한다', () => {
+      const { getByText } = component;
+      expect(getByText(mockCurrentTodo.todo)).toBeDefined();
+    });
+
+    it('카테고리를 렌더링한다', () => {
+      const { getByText } = component;
+      mockCurrentTodo.categories?.forEach((category) => {
+        expect(getByText(category)).toBeDefined();
+      });
+    });
+
+    it('시간(뽀모도로 단위)를 렌더링한다', () => {
+      const { getByText } = component;
+      expect(getByText(mockCurrentTodo.duration)).toBeDefined();
+    });
+
+    it('todo 완료 버튼을 렌더링한다', () => {
+      const { getByRole } = component;
+      expect(getByRole('image', { name: 'do todo' })).toBeDefined();
+    });
+  });
+});
