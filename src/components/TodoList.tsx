@@ -13,13 +13,7 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
-
-interface IEdit {
-  editMode: boolean;
-  editTodoId: number | undefined;
-}
-
-type contextType = [IEdit, React.Dispatch<React.SetStateAction<IEdit>>];
+import { EditContextProvider } from '../hooks';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -71,8 +65,6 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   ];
 };
 
-const EditContext = createContext<contextType | undefined>(undefined);
-
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
   const todoList = Array.from(mapTodo.values());
@@ -86,13 +78,6 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 
 const TodoList = () => {
   const db = new ETIndexed();
-  const editState = useState<{
-    editMode: boolean;
-    editTodoId: number | undefined;
-  }>({
-    editMode: false,
-    editTodoId: undefined,
-  });
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => db.getList(false),
@@ -216,9 +201,7 @@ const TodoList = () => {
       <TodoListContainer>
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? (
-            <EditContext.Provider value={editState}>
-              {listRender(todos)}
-            </EditContext.Provider>
+            <EditContextProvider>{listRender(todos)}</EditContextProvider>
           ) : null}
         </DragDropContext>
       </TodoListContainer>
@@ -229,7 +212,6 @@ const TodoList = () => {
 };
 
 export default TodoList;
-export { EditContext, type IEdit };
 
 const TodoListContainer = styled.div`
   width: 35.7275rem;
