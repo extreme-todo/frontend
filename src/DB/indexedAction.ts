@@ -26,6 +26,7 @@ class ETIndexedDBAction {
   constructor(
     private db: IDBDatabase | null = null,
     public request = indexedDB.open(DBNAME, 1),
+    public isInit = false,
   ) {
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
@@ -39,6 +40,7 @@ class ETIndexedDBAction {
 
     request.onsuccess = (event) => {
       this.db = (event.target as IDBOpenDBRequest).result;
+      this.isInit = true;
     };
 
     // 에러처리
@@ -47,6 +49,27 @@ class ETIndexedDBAction {
         cause: (event.target as IDBOpenDBRequest).error,
       });
     };
+  }
+
+  public waitForInit() {
+    return new Promise<boolean>((resolve, reject) => {
+      let count = 0;
+      const checkIsInit = () => {
+        if (this.isInit) {
+          resolve(true);
+        } else {
+          if (count > 10) {
+            return reject(false);
+          }
+          count++;
+          setTimeout(() => {
+            checkIsInit();
+          }, 100);
+        }
+      };
+
+      checkIsInit();
+    });
   }
 
   private getObjectStore(mode: TransactionMode) {
