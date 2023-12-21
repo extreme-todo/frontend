@@ -30,10 +30,24 @@ type UpdateTodoDto = Partial<
 >;
 
 class ETIndexed {
-  constructor(
+  private static instance: ETIndexed;
+
+  private constructor(
     private calc = new ETIndexedDBCalc(),
     private action = new ETIndexedDBAction(),
   ) {}
+
+  public static getInstance(): ETIndexed {
+    if (!ETIndexed.instance) {
+      ETIndexed.instance = new ETIndexed();
+      let checktInit = false;
+      ETIndexed.instance.action.waitForInit().then((res) => (checktInit = res));
+
+      if (!checktInit) new Error('DB didnt initialized');
+    }
+
+    return ETIndexed.instance;
+  }
 
   async addTodo(todo: Omit<AddTodoDto, 'order'>) {
     const getAllTodo = (await this.action.getAll()).filter(
@@ -159,6 +173,8 @@ class ETIndexed {
   }
 
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
+    const result = await this.action.waitForInit();
+    console.log('getList result :: ', result);
     const getTodos = await this.action.getAll();
     if (getTodos.length === 0) return new Map();
     const doneTodo = getTodos.filter((todo) => todo.done === isDone);

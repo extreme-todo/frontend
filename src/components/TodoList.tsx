@@ -1,4 +1,4 @@
-import { useState, createContext } from 'react';
+import { useEffect } from 'react';
 
 import { DateCard } from '../organisms';
 
@@ -77,7 +77,16 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 };
 
 const TodoList = () => {
-  const db = new ETIndexed();
+  const db = ETIndexed.getInstance();
+
+  useEffect(() => {
+    const getTodos = async () => {
+      const result = await db.getList(false);
+      console.log('useEffect ::: \n', result);
+    };
+    getTodos();
+  }, []);
+
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => db.getList(false),
