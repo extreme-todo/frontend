@@ -7,11 +7,11 @@ interface IEdit {
 }
 type contextType = [IEdit, React.Dispatch<React.SetStateAction<IEdit>>];
 
-interface IEditContextProps extends IChildProps {}
+// interface IEditContextProps extends IChildProps {}
 
 const EditContext = createContext<contextType | undefined>(undefined);
 
-const EditContextProvider = ({ children }: IEditContextProps): JSX.Element => {
+const EditContextProvider = ({ children }: IChildProps): JSX.Element => {
   const editState = useState<IEdit>({ editMode: false, editTodoId: undefined });
   return (
     <EditContext.Provider value={editState}>{children}</EditContext.Provider>

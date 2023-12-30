@@ -1,16 +1,26 @@
-import { useState } from 'react';
-
 import { IconAtom, TagAtom, TypoAtom } from '../../../atoms';
 
-import { useEdit } from '../../../hooks';
 import { ITodoCardProps } from '..';
 
 import styled from '@emotion/styled';
+interface ITodoUIProps extends ITodoCardProps {
+  handleMouseOver: () => void;
+  handleMouseOut: () => void;
+  handleEditButton: () => void;
+  editMode: boolean;
+  showEdit: boolean;
+}
 
-const TodoUI = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
-  const [{ editMode, editTodoId }, setIsEdit] = useEdit();
-  const [showEdit, setShowEdit] = useState(false);
-
+const TodoUI = ({
+  todoData,
+  editMode,
+  showEdit,
+  dragHandleProps,
+  snapshot,
+  handleMouseOver,
+  handleMouseOut,
+  handleEditButton,
+}: ITodoUIProps) => {
   const {
     id,
     date,
@@ -23,22 +33,10 @@ const TodoUI = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     order,
   } = todoData;
 
-  const onMouseOverHandler = () => {
-    setShowEdit(true);
-  };
-
-  const onMouseOutHandler = () => {
-    setShowEdit(false);
-  };
-
-  const editTagHandler = () => {
-    setIsEdit({ editMode: true, editTodoId: id });
-  };
-
   return (
     <TodoCardContainer
-      onMouseOver={onMouseOverHandler}
-      onMouseOut={onMouseOutHandler}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
     >
       <DraggableWrapper>
         {editMode ? (
@@ -52,9 +50,7 @@ const TodoUI = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
         )}
         <TitleCategoryContainer>
           <TitleContainer>
-            <TypoAtom title={todo} fontSize="body">
-              {todo}
-            </TypoAtom>
+            <TypoAtom fontSize="body">{todo}</TypoAtom>
           </TitleContainer>
           <CategoryContainer>
             {!snapshot?.isDragging
@@ -81,7 +77,7 @@ const TodoUI = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
       <EditWrapper>
         {showEdit ? (
           <TagAtom
-            handler={editTagHandler}
+            handler={handleEditButton}
             styleOption={{ fontsize: 'sm', size: 'sm' }}
           >
             수정
