@@ -1,6 +1,12 @@
 import React from 'react';
 import { ThemeProvider } from '@emotion/react';
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  getByText,
+  render,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { designTheme } from '../../styles/theme';
 import { TodoCard } from '../../molecules';
@@ -246,7 +252,47 @@ describe('TodoCard', () => {
       });
 
       // 중복 입력 예외처리
-      // it('input된 값이 카테고리에 이미 존재하면 추가되지 않는다.', () => {});
+      it('input된 값이 카테고리에 이미 존재하면 추가되지 않는다.', () => {
+        const { queryAllByRole, getByRole } = renderEditUI();
+
+        const categoryInput = getByRole('textbox', { name: 'category_input' });
+        act(() => userEvent.type(categoryInput, '영어{enter}'));
+
+        const Categories = queryAllByRole('generic', {
+          name: 'category_tag',
+        });
+        const tagsContent = Categories.map((tag) => tag.textContent);
+        const filtered = tagsContent.filter((tag) => tag == '영어');
+
+        expect(filtered.length).toBe(1);
+      });
+
+      // 삭제로직
+      it('존재하는 tag를 클릭하면 삭제된다.', () => {
+        const { queryAllByRole, getByRole, getByText } = renderEditUI();
+
+        const categoryInput = getByRole('textbox', { name: 'category_input' });
+        act(() => userEvent.type(categoryInput, '수학공부{enter}'));
+
+        const firstCheckPointCategories = queryAllByRole('generic', {
+          name: 'category_tag',
+        });
+        expect(firstCheckPointCategories.length).toBe(3);
+
+        const thirdTag = getByText('수학공부');
+        act(() => userEvent.click(thirdTag));
+        const secondCheckPointCategories = queryAllByRole('generic', {
+          name: 'category_tag',
+        });
+        expect(secondCheckPointCategories.length).toBe(2);
+
+        const firstTag = getByText('영어');
+        act(() => userEvent.click(firstTag));
+        const lastCheckPointCategories = queryAllByRole('generic', {
+          name: 'category_tag',
+        });
+        expect(lastCheckPointCategories.length).toBe(1);
+      });
     });
 
     // 날짜 관련 (날짜 수정, 수정 취소)

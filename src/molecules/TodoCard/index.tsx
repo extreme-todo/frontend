@@ -57,14 +57,11 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const newCategory = (event.target as HTMLInputElement).value;
     if (!!!newCategory.length) return;
+    if (categoryArray?.includes(newCategory)) return;
     if (event.code === 'Enter') {
-      // console.log('\n\n newCategory ::: ', newCategory);
-
       if (categoryArray) {
         const copy = categoryArray.slice();
         copy.push(newCategory);
-
-        // console.log('\n\n sliced ::: ', copy);
 
         setCategoryArray(copy);
       } else {
@@ -73,6 +70,14 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
 
       setCategoryValue('');
     }
+  };
+
+  const handleClickTag = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.currentTarget.innerHTML;
+    setCategoryArray((prev) => {
+      const deleted = prev?.filter((tag) => tag !== target) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
+      return deleted;
+    });
   };
 
   const renderCard = () => {
@@ -86,6 +91,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             category={categoryValue}
             handleChangeCategory={handleChangeCategory}
             categories={categoryArray}
+            handleClickTag={handleClickTag}
           />
         );
       case false:

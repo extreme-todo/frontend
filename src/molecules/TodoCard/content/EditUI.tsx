@@ -5,6 +5,7 @@ interface IEditUIProps {
   category: string;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
   categories: string[] | null;
+  handleClickTag: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const EditUI = ({
@@ -14,6 +15,7 @@ const EditUI = ({
   handleChangeTitle,
   category,
   handleChangeCategory,
+  handleClickTag,
 }: IEditUIProps) => {
   return (
     <div>
@@ -24,7 +26,7 @@ const EditUI = ({
         aria-label="title"
       />
       {categories?.map((category) => (
-        <div key={category} aria-label="category_tag">
+        <div key={category} aria-label="category_tag" onClick={handleClickTag}>
           {category}
         </div>
       ))}
