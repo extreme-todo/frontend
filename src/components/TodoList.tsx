@@ -1,4 +1,5 @@
-import { BtnAtom, CardAtom } from '../atoms';
+import { useEffect } from 'react';
+
 import { DateCard } from '../organisms';
 
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
@@ -12,17 +13,6 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
-
-const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
-  const dateList = Array.from(mapTodo.keys());
-  const todoList = Array.from(mapTodo.values());
-
-  const renderList = dateList.map((date, idx) => (
-    <DateCard key={date} date={date} tododata={todoList[idx]} />
-  ));
-
-  return renderList;
-};
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -74,8 +64,28 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   ];
 };
 
-const TodoListModal = () => {
-  const db = new ETIndexed();
+const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
+  const dateList = Array.from(mapTodo.keys());
+  const todoList = Array.from(mapTodo.values());
+
+  const renderList = dateList.map((date, idx) => (
+    <DateCard key={date} date={date} tododata={todoList[idx]} />
+  ));
+
+  return renderList;
+};
+
+const TodoList = () => {
+  const db = ETIndexed.getInstance();
+
+  useEffect(() => {
+    const getTodos = async () => {
+      const result = await db.getList(false);
+      console.log('useEffect ::: \n', result);
+    };
+    getTodos();
+  }, []);
+
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => db.getList(false),
@@ -207,7 +217,7 @@ const TodoListModal = () => {
   );
 };
 
-export default TodoListModal;
+export default TodoList;
 
 const TodoListContainer = styled.div`
   width: 35.7275rem;
