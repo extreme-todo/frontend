@@ -7,23 +7,11 @@ interface ITypoProps extends IChildProps {
   fontSize?: keyof typeof designTheme.fontSize;
   fontColor?: keyof typeof designTheme.colors;
   rainbow?: boolean;
-  title?: string;
 }
 
-const TypoAtom = ({
-  children,
-  fontColor,
-  fontSize,
-  rainbow,
-  title,
-}: ITypoProps) => {
+const TypoAtom = ({ children, fontColor, fontSize, rainbow }: ITypoProps) => {
   return (
-    <Typo
-      fontColor={fontColor}
-      fontSize={fontSize}
-      rainbow={rainbow}
-      title={title}
-    >
+    <Typo fontColor={fontColor} fontSize={fontSize} rainbow={rainbow}>
       {children}
     </Typo>
   );

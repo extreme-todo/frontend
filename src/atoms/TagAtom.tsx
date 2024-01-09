@@ -6,6 +6,7 @@ export interface ITagAtomProps extends IChildProps {
   title?: string;
   handler?: () => void;
   styleOption?: ITagSpanProps;
+  ariaLabel?: string;
 }
 
 interface ITagSpanProps {
@@ -21,10 +22,16 @@ interface ITagSpanProps {
  * TagAtom 태그 모양의 아톰
  * handler를 넘기면 button, 없을 때는 div
  */
-function TagAtom({ children, handler, styleOption, title }: ITagAtomProps) {
+function TagAtom({
+  children,
+  handler,
+  styleOption,
+  title,
+  ariaLabel,
+}: ITagAtomProps) {
   if (handler)
     return (
-      <button onClick={handler}>
+      <button onClick={handler} aria-label={ariaLabel}>
         <TagSpan {...styleOption}>{children}</TagSpan>
       </button>
     );
