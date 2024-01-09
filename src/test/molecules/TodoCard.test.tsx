@@ -129,7 +129,7 @@ describe('TodoCard', () => {
         const editBtn = getByText('수정');
         fireEvent.click(editBtn);
 
-        const titleInput = await findByRole('textbox', { name: 'title' });
+        const titleInput = await findByRole('textbox', { name: 'title_input' });
         expect(titleOne).not.toBeInTheDocument();
         expect(titleInput).toBeInTheDocument();
         expect(titleTwo).toBeInTheDocument();
@@ -188,7 +188,7 @@ describe('TodoCard', () => {
 
         expect(categoryInput).toBeInTheDocument();
         expect(categoryInput.placeholder).toBe(
-          '새 카테고리를 입력하고 엔터를 눌러주세요',
+          '카테고리를 입력하고 엔터를 눌러주세요',
         );
         expect(categoryInput.value.length).toBe(0);
       });
@@ -223,12 +223,11 @@ describe('TodoCard', () => {
         const { getByRole, queryAllByRole } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category_input' });
-        let prevCategories = queryAllByRole('generic', {
-          name: 'category_tag',
-        });
+        let prevCategories = queryAllByRole('button', { name: 'category_tag' });
+
         act(() => userEvent.type(categoryInput, '새 카테고리{enter}'));
 
-        const nextCategories = queryAllByRole('generic', {
+        const nextCategories = queryAllByRole('button', {
           name: 'category_tag',
         });
         expect(nextCategories.length).toBe(prevCategories.length + 1);
@@ -239,13 +238,13 @@ describe('TodoCard', () => {
         const { getByRole, queryAllByRole } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category_input' });
-        const prevCategories = queryAllByRole('generic', {
+        const prevCategories = queryAllByRole('button', {
           name: 'category_tag',
         });
 
         act(() => userEvent.type(categoryInput, '{enter}'));
 
-        const nextCategories = queryAllByRole('generic', {
+        const nextCategories = queryAllByRole('button', {
           name: 'category_tag',
         });
         expect(nextCategories.length).toBe(prevCategories.length);
@@ -258,7 +257,7 @@ describe('TodoCard', () => {
         const categoryInput = getByRole('textbox', { name: 'category_input' });
         act(() => userEvent.type(categoryInput, '영어{enter}'));
 
-        const Categories = queryAllByRole('generic', {
+        const Categories = queryAllByRole('button', {
           name: 'category_tag',
         });
         const tagsContent = Categories.map((tag) => tag.textContent);
@@ -267,6 +266,10 @@ describe('TodoCard', () => {
         expect(filtered.length).toBe(1);
       });
 
+      // 5개 이상이면 리젝트
+
+      // 띄워쓰기인가 그거 유효성 검사
+
       // 삭제로직
       it('존재하는 tag를 클릭하면 삭제된다.', () => {
         const { queryAllByRole, getByRole, getByText } = renderEditUI();
@@ -274,21 +277,21 @@ describe('TodoCard', () => {
         const categoryInput = getByRole('textbox', { name: 'category_input' });
         act(() => userEvent.type(categoryInput, '수학공부{enter}'));
 
-        const firstCheckPointCategories = queryAllByRole('generic', {
+        const firstCheckPointCategories = queryAllByRole('button', {
           name: 'category_tag',
         });
         expect(firstCheckPointCategories.length).toBe(3);
 
         const thirdTag = getByText('수학공부');
         act(() => userEvent.click(thirdTag));
-        const secondCheckPointCategories = queryAllByRole('generic', {
+        const secondCheckPointCategories = queryAllByRole('button', {
           name: 'category_tag',
         });
         expect(secondCheckPointCategories.length).toBe(2);
 
         const firstTag = getByText('영어');
         act(() => userEvent.click(firstTag));
-        const lastCheckPointCategories = queryAllByRole('generic', {
+        const lastCheckPointCategories = queryAllByRole('button', {
           name: 'category_tag',
         });
         expect(lastCheckPointCategories.length).toBe(1);
