@@ -72,15 +72,14 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     }
   };
 
-  const handleClickTag = (event: React.MouseEvent<HTMLDivElement>) => {
-    const target = event.currentTarget.innerHTML;
+  const handleClickTag = (category: string) => {
     setCategoryArray((prev) => {
-      const deleted = prev?.filter((tag) => tag !== target) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
+      const deleted = prev?.filter((tag) => tag !== category) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
       return deleted;
     });
   };
 
-  const renderCard = () => {
+  const renderCard = (() => {
     switch (editMode && editTodoId === id) {
       case true:
         return (
@@ -108,9 +107,9 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
           />
         );
     }
-  };
+  })();
 
-  return renderCard();
+  return renderCard;
 };
 
 export default TodoCard;
