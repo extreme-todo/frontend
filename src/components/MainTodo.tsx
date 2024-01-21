@@ -13,15 +13,6 @@ export interface IMainTodoProps extends IChildProps {
 }
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
-  const { settings: pomodoroSettings, status } = usePomodoroValue();
-  const actions = usePomodoroActions();
-  const currentTodo = useCurrentTodo();
-  console.log(actions);
-  console.log(pomodoroSettings);
-
-  useEffect(() => {
-    console.log('status not changed but rendered anyway');
-  }, [status]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -38,28 +29,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
               45
             </SideButtons.ProgressButton>
           </SideButtons>
-          <CurrentTodoCard>
-            currentTodo: {currentTodo.currentTodo?.todo} <br />
-            focusstep: {pomodoroSettings.focusStep} <br />
-            reststep: {pomodoroSettings.restStep}
-            <br />
-            focused:
-            {status.isFocusing ? status.focusedTime : '집중안하는중'}
-            <br />
-            rested:
-            {status.isResting ? status.restedTime : '휴식안하는중'}
-            <br />
-            <button onClick={() => actions?.setFocusStep(10)}>
-              뽀모도로 집중시간 10분
-            </button>
-            <button onClick={() => actions?.setRestStep(10)}>
-              뽀모도로 휴식시간 10분
-            </button>
-            <button onClick={() => actions?.startFocusing()}>
-              집중시작!!!
-            </button>
-            <button onClick={() => actions?.startResting()}>휴식시작~</button>
-          </CurrentTodoCard>
+          <CurrentTodoCard></CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {

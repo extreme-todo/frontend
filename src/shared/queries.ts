@@ -4,7 +4,7 @@ import { ETIndexed } from '../DB/indexed';
 
 // ordering
 const useOrderingMutation = () => {
-  const db = new ETIndexed();
+  const db = ETIndexed.getInstance();
   const queryClient = useQueryClient();
   const mutationHandler = async ({
     prevOrder,

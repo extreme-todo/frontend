@@ -13,6 +13,7 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
+import { BtnAtom } from '../atoms';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -43,7 +44,7 @@ const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
     {
       date: '2023-10-27',
       todo: 'check riff',
-      duration: 60 * 60,
+      duration: 3,
       categories: [
         'music',
         'guitar',
@@ -205,7 +206,7 @@ const TodoList = () => {
         }}
       > */}
       {/* <CardAtom> */}
-      {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
+      <BtnAtom children={'add Todo'} handler={onClickHandler} />
       <TodoListContainer>
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? listRender(todos) : null}
