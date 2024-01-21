@@ -39,8 +39,6 @@ class ETIndexedDBAction {
     };
 
     request.onsuccess = (event) => {
-      console.log('before onsuccess');
-
       this.db = (event.target as IDBOpenDBRequest).result;
       this.isInit = true;
     };
@@ -75,8 +73,6 @@ class ETIndexedDBAction {
   }
 
   private getObjectStore(mode: TransactionMode) {
-    console.log(this.db);
-
     if (!this.db) throw new Error('DB hasnt been initialized yet');
     const transaction = this.db?.transaction([STORENAME], mode);
     const objectStore = transaction.objectStore(STORENAME);
@@ -117,11 +113,8 @@ class ETIndexedDBAction {
     // return await this.repo.find({
     //   order: { date: 'ASC', order: 'ASC' }, // -> 순서대로 정렬을 하고 나면 날짜별로도 됐을 거임
     // });
-    console.log('before object store');
     const objectStore = this.getObjectStore('readonly');
-    console.log('between object store');
     const todoRequest = objectStore.getAll();
-    console.log('after object store');
     const promisedTodo = this.makePromise<TodoEntity[]>(todoRequest, 'get');
     return promisedTodo;
   }
