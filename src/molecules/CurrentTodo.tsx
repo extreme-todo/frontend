@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
@@ -10,13 +10,34 @@ export interface ICurrentTodoProps extends IChildProps {
   doTodo: (focusTime: number) => void;
   focusStep: number;
   focusTime: number;
+  startResting: () => void;
 }
+
 function CurrentTodo({
   todo,
   focusStep,
   focusTime,
   doTodo,
+  startResting,
 }: ICurrentTodoProps) {
+  useEffect(() => {
+    if (
+      Number(
+        getPomodoroStepPercent({
+          curr: focusTime,
+          unit: todo.duration,
+          step: focusStep,
+        }),
+      ) === 100
+    )
+      doAndRest();
+  }, [focusTime]);
+
+  const doAndRest = () => {
+    doTodo(focusTime);
+    startResting();
+  };
+
   return (
     <CurrentTodoContainer>
       <TypoAtom fontSize={'h4'} fontColor={'titleColor'}>
@@ -30,7 +51,6 @@ function CurrentTodo({
       <div className="categories">
         {todo.categories &&
           todo.categories?.map((category, idx) => {
-            console.log(category);
             return (
               <TagAtom
                 styleOption={{ bg: 'whiteWine', size: 'big', fontsize: 'md2' }}
@@ -73,7 +93,7 @@ function CurrentTodo({
         <button
           className="do-todo"
           aria-label="do todo"
-          onClick={() => doTodo(focusTime)}
+          onClick={() => doAndRest()}
         ></button>
       </div>
     </CurrentTodoContainer>
@@ -149,5 +169,6 @@ const TodoProgressBar = styled.div<{ progress: number }>`
     font-size: 1.16219rem;
     font-weight: 700;
     padding-right: 1.4rem;
+    transition: all 0.2s ease-in-out;
   }
 `;

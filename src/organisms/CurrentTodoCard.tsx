@@ -12,25 +12,43 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
   const { settings: pomodoroSettings, status } = usePomodoroValue();
   const actions = usePomodoroActions();
   const currentTodo = useCurrentTodo();
-  console.log(actions);
-  console.log(pomodoroSettings);
-
-  useEffect(() => {
-    console.log(currentTodo);
-  }, [currentTodo]);
 
   return (
     <CurrentTodoWrapper>
       <CardAtom w="58.875rem" h="33.11456rem" className="card">
         {currentTodo.currentTodo ? (
-          <CurrentTodo
-            todo={currentTodo.currentTodo}
-            doTodo={currentTodo.doTodo}
-            focusStep={pomodoroSettings.focusStep}
-            focusTime={status.focusedTime}
-          ></CurrentTodo>
+          <>
+            <CurrentTodo
+              todo={currentTodo.currentTodo}
+              doTodo={currentTodo.doTodo}
+              focusStep={pomodoroSettings.focusStep}
+              focusTime={status.focusedTime}
+              startResting={actions.startResting}
+            ></CurrentTodo>
+            {status.isResting && (
+              <Overlay className="resting overlay">
+                <TypoAtom fontSize="h1" fontColor="titleColor">
+                  휴식
+                </TypoAtom>
+                <button
+                  onClick={() => actions.startFocusing()}
+                  className="end-rest-button"
+                >
+                  <TagAtom
+                    styleOption={{
+                      bg: 'subFontColor',
+                      size: 'big',
+                      fontsize: 'md2',
+                    }}
+                  >
+                    종료
+                  </TagAtom>
+                </button>
+              </Overlay>
+            )}
+          </>
         ) : (
-          <Overlay className="no-todo-overlay">
+          <Overlay className="no-todo overlay">
             <TypoAtom>아직 작성된 할 일이 없어요.</TypoAtom>
             <TypoAtom>오늘 하루를 계획해 볼까요?</TypoAtom>
             {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
@@ -64,17 +82,21 @@ const CurrentTodoWrapper = styled.div`
     transform: translateX(-50%);
     z-index: -2;
   }
-  .no-todo-overlay {
+  .overlay {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-content: center;
     text-align: center;
-    gap: 1rem;
+    gap: 0.63rem;
     height: 100%;
     flex-wrap: wrap;
     .create-todo-button {
       width: fit-content;
+    }
+    .end-rest-button {
+      display: flex;
+      justify-content: center;
     }
   }
 `;

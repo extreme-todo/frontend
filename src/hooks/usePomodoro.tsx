@@ -158,6 +158,7 @@ function usePomodoroActions() {
 function getPomodoroData<T>(type: 'settings' | 'status') {
   const localKey = 'pomodoro-' + type;
   const existingData = localStorage.getItem(localKey);
+
   if (existingData) {
     return JSON.parse(existingData) as T;
   } else {
@@ -170,6 +171,7 @@ function getPomodoroData<T>(type: 'settings' | 'status') {
         initData = initialPomodoroData.status as T;
         break;
     }
+
     updatePomodoroData<T>(initData, type);
     return initData;
   }

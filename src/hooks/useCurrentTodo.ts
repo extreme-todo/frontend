@@ -5,7 +5,7 @@ import { ETIndexed } from '../DB/indexed';
 type TodoResponseDto = TodoEntity;
 
 const useCurrentTodo = () => {
-  const [currentTodo, setCurrentTodo] = useState<TodoResponseDto>(); // TODO: 나중에 TodoEntity로 타입 픽스
+  const [currentTodo, setCurrentTodo] = useState<TodoResponseDto>();
   const localKey = 'currentTodo';
   const db = ETIndexed.getInstance();
 
@@ -29,15 +29,11 @@ const useCurrentTodo = () => {
   }, [db]);
 
   const doTodo = (focusTime: number) => {
-    console.log('🔥 do todo!!!');
-
     if (currentTodo) db.doTodo(currentTodo?.id, focusTime.toString());
     getNextTodo();
   };
 
   const getNextTodo = async (): Promise<TodoEntity> => {
-    console.log('🔥 get next todo');
-
     if (db) {
       const todolist = await db.getList(false);
       const todayTodos: TodoEntity[] = todolist.values().next()
