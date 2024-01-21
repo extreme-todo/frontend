@@ -17,9 +17,15 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { status: pomodoroStatus, settings: pomodoroSettings } =
     usePomodoroValue();
+  const { startResting } = usePomodoroActions();
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // 최초 진입시에는 휴식 상태로 시작
+    startResting();
+  }, []);
 
   useEffect(() => {
     setFocusedPercent(
@@ -49,10 +55,10 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
         <MainTodoCenter>
           <SideButtons>
             <SideButtons.ProgressButton progress={focusedPercent}>
-              {focusedPercent}
+              {focusedPercent}%
             </SideButtons.ProgressButton>
             <SideButtons.ProgressButton progress={restedPercent}>
-              {restedPercent}
+              {restedPercent}%
             </SideButtons.ProgressButton>
           </SideButtons>
           <CurrentTodoCard></CurrentTodoCard>

@@ -119,7 +119,8 @@ const CurrentTodoContainer = styled.div`
     display: flex;
     gap: 0.99rem;
     margin: 0.9rem 0 0.9rem 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: auto;
   }
   .todo-duration {
     margin-bottom: 1rem;
