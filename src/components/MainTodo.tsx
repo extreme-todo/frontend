@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
 import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
+import { getPomodoroStepPercent } from '../shared/utils';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
@@ -14,7 +15,32 @@ export interface IMainTodoProps extends IChildProps {
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { status: pomodoroStatus, settings: pomodoroSettings } =
+    usePomodoroValue();
+  const [focusedPercent, setFocusedPercent] = useState<number>(0);
+  const [restedPercent, setRestedPercent] = useState<number>(0);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setFocusedPercent(
+      Number(
+        getPomodoroStepPercent({
+          curr: pomodoroStatus.focusedTime,
+          unit: 1,
+          step: pomodoroSettings.focusStep,
+        }),
+      ),
+    );
+    setRestedPercent(
+      Number(
+        getPomodoroStepPercent({
+          curr: pomodoroStatus.restedTime,
+          unit: 1,
+          step: pomodoroSettings.restStep,
+        }),
+      ),
+    );
+  }, [pomodoroStatus]);
 
   return (
     <MainTodoContainer ref={modalRef}>
@@ -22,11 +48,11 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
         <Clock></Clock>
         <MainTodoCenter>
           <SideButtons>
-            <SideButtons.ProgressButton progress={45}>
-              45
+            <SideButtons.ProgressButton progress={focusedPercent}>
+              {focusedPercent}
             </SideButtons.ProgressButton>
-            <SideButtons.ProgressButton progress={45}>
-              45
+            <SideButtons.ProgressButton progress={restedPercent}>
+              {restedPercent}
             </SideButtons.ProgressButton>
           </SideButtons>
           <CurrentTodoCard></CurrentTodoCard>
