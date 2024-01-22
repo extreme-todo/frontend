@@ -32,7 +32,9 @@ function TagAtom({
   if (handler)
     return (
       <button onClick={handler} aria-label={ariaLabel}>
-        <TagSpan {...styleOption}>{children}</TagSpan>
+        <TagSpan {...styleOption} isHandler={!!handler}>
+          {children}
+        </TagSpan>
       </button>
     );
   else
@@ -45,7 +47,7 @@ function TagAtom({
     );
 }
 
-const TagSpan = styled.span<ITagSpanProps>`
+const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
   width: fit-content;
   max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}rem` : null)};
   height: fit-content;
@@ -117,6 +119,15 @@ const TagSpan = styled.span<ITagSpanProps>`
   overflow: hidden;
   white-space: nowrap;
   display: block;
+
+  ${({ isHandler, theme }) =>
+    isHandler &&
+    `
+    :hover {
+      background-color: ${theme.colors.bgColor};
+      transition: background-color 0.2s ease-in-out;
+    }
+  `}
 `;
 
 export default TagAtom;
