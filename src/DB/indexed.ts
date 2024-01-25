@@ -168,8 +168,8 @@ class ETIndexed {
 
     const doneMinus = this.calc.minusOne(expectedMinusPart);
 
-    await this.action.updateOne(getTodo);
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
+    await this.action.updateOne(getTodo);
   }
 
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {

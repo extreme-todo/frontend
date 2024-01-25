@@ -28,9 +28,9 @@ const useCurrentTodo = () => {
     getNextTodo();
   }, [db]);
 
-  const doTodo = (focusTime: number) => {
-    if (currentTodo) db.doTodo(currentTodo?.id, focusTime.toString());
-    getNextTodo();
+  const doTodo = async (focusTime: number) => {
+    if (currentTodo) await db.doTodo(currentTodo?.id, focusTime.toString());
+    await getNextTodo();
   };
 
   const getNextTodo = async (): Promise<TodoEntity> => {
