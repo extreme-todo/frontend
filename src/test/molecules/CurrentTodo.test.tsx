@@ -17,7 +17,7 @@ describe('CurrentTodo', () => {
           todo={todo}
           doTodo={mockDoTodoProp}
           focusStep={10}
-          focusTime={10}
+          focusedOnTodo={10}
           startResting={jest.fn()}
         ></CurrentTodo>
         ,

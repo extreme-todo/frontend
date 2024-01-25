@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
@@ -7,35 +7,34 @@ import { formatTime, getPomodoroStepPercent } from '../shared/utils';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
-  doTodo: (focusTime: number) => void;
+  doTodo: (focusTime: number) => Promise<void>;
   focusStep: number;
-  focusTime: number;
+  focusedOnTodo: number;
   startResting: () => void;
 }
 
 function CurrentTodo({
   todo,
   focusStep,
-  focusTime,
+  focusedOnTodo,
   doTodo,
   startResting,
 }: ICurrentTodoProps) {
+  const [todoProgress, setTodoProgress] = useState<number>(0);
   useEffect(() => {
-    if (
+    setTodoProgress(
       Number(
         getPomodoroStepPercent({
-          curr: focusTime,
+          curr: focusedOnTodo,
           unit: todo.duration,
           step: focusStep,
         }),
-      ) === 100
-    )
-      doAndRest();
-  }, [focusTime]);
+      ),
+    );
+  }, [focusedOnTodo]);
 
   const doAndRest = () => {
-    doTodo(focusTime);
-    startResting();
+    doTodo(focusedOnTodo);
   };
 
   return (
@@ -72,23 +71,8 @@ function CurrentTodo({
         </TagAtom>
       </div>
       <div className="progress-and-button">
-        <TodoProgressBar
-          progress={Number(
-            getPomodoroStepPercent({
-              curr: focusTime,
-              unit: todo.duration,
-              step: focusStep,
-            }),
-          )}
-        >
-          <div className="progress">
-            {getPomodoroStepPercent({
-              curr: focusTime,
-              unit: todo.duration,
-              step: focusStep,
-            })}
-            %
-          </div>
+        <TodoProgressBar progress={todoProgress}>
+          <div className="progress">{todoProgress}%</div>
         </TodoProgressBar>
         <button
           className="do-todo"

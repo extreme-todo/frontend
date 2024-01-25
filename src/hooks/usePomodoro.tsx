@@ -8,12 +8,14 @@ import React, {
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 
-export type focusStep = 10 | 20 | 30 | 40 | 50;
-export type restStep = 5 | 10 | 15 | 20;
+export const pomodoroUnit = 60000;
+// TODO : 테스트용 1 제거 필요
+export type focusStep = 1 | 10 | 20 | 30 | 40 | 50;
+export type restStep = 1 | 5 | 10 | 15 | 20;
 export const initialPomodoroData: IPomodoroData = {
   settings: {
-    focusStep: 30,
-    restStep: 10,
+    focusStep: 1,
+    restStep: 1,
   },
   status: {
     isFocusing: false,

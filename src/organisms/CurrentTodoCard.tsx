@@ -4,14 +4,72 @@ import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
 import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
 import { CurrentTodo } from '../molecules';
-import { ETIndexed } from '../DB/indexed';
-import { TodoEntity } from '../DB/indexedAction';
+import { pomodoroUnit } from '../hooks/usePomodoro';
 
 type ICurrentTodoCardProps = IChildProps;
 function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
   const { settings: pomodoroSettings, status } = usePomodoroValue();
+  const [canRest, setCanRest] = useState(false);
+  const [shouldFocus, setShouldFocus] = useState(false);
   const actions = usePomodoroActions();
   const currentTodo = useCurrentTodo();
+
+  useEffect(() => {
+    const ifShouldRest = checkIfShouldRest();
+    const ifCanRest = checkIfCanRest();
+    !ifShouldRest && currentTodo.updateFocus(1000);
+  }, [status.focusedTime]);
+
+  useEffect(() => {
+    checkIfShouldFocus();
+  }, [status.restedTime]);
+
+  const checkIfCanRest = () => {
+    if (
+      currentTodo.currentTodo?.duration &&
+      currentTodo.focusedOnTodo >=
+        currentTodo.currentTodo?.duration *
+          pomodoroSettings.focusStep *
+          pomodoroUnit
+    ) {
+      setCanRest(true);
+      return true;
+    } else {
+      return canRest;
+    }
+  };
+
+  const checkIfShouldRest = () => {
+    if (
+      currentTodo.currentTodo?.duration &&
+      currentTodo.focusedOnTodo ===
+        currentTodo.currentTodo?.duration *
+          pomodoroSettings.focusStep *
+          pomodoroUnit
+    ) {
+      actions.startResting();
+      return true;
+    }
+    if (
+      status.isFocusing &&
+      status.focusedTime === pomodoroSettings.focusStep * pomodoroUnit
+    ) {
+      actions.startResting();
+      return true;
+    }
+    return false;
+  };
+
+  const checkIfShouldFocus = () => {
+    if (
+      status.isResting &&
+      status.restedTime >= pomodoroSettings.restStep * pomodoroUnit
+    ) {
+      setShouldFocus(true);
+    } else {
+      setShouldFocus(false);
+    }
+  };
 
   return (
     <CurrentTodoWrapper>
@@ -20,15 +78,18 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
           <>
             <CurrentTodo
               todo={currentTodo.currentTodo}
-              doTodo={currentTodo.doTodo}
+              doTodo={async () => {
+                await currentTodo.doTodo();
+                setCanRest(false);
+              }}
               focusStep={pomodoroSettings.focusStep}
-              focusTime={status.focusedTime}
+              focusedOnTodo={currentTodo.focusedOnTodo}
               startResting={actions.startResting}
             ></CurrentTodo>
             {status.isResting && (
               <Overlay className="resting overlay">
                 <TypoAtom fontSize="h1" fontColor="titleColor">
-                  휴식
+                  {shouldFocus ? '휴식 종료' : '휴식'}
                 </TypoAtom>
                 <button
                   onClick={() => actions.startFocusing()}
@@ -41,9 +102,33 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
                       fontsize: 'md2',
                     }}
                   >
-                    종료
+                    {canRest
+                      ? '조금 더 집중하기'
+                      : shouldFocus
+                      ? '다음 할 일을 시작하세요'
+                      : '종료'}
                   </TagAtom>
                 </button>
+                {canRest && (
+                  <button
+                    onClick={() => {
+                      currentTodo.doTodo();
+                      actions.startFocusing();
+                      setCanRest(false);
+                    }}
+                    className="end-rest-button"
+                  >
+                    <TagAtom
+                      styleOption={{
+                        bg: 'subFontColor',
+                        size: 'big',
+                        fontsize: 'md2',
+                      }}
+                    >
+                      다음 할 일 하기
+                    </TagAtom>
+                  </button>
+                )}
               </Overlay>
             )}
           </>
