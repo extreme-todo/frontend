@@ -64,6 +64,7 @@ const UsualInput = withTheme(
       borderRadius: styleOption?.borderRadius ?? '1.453rem',
       outlineWidth: 0,
       boxSizing: 'border-box',
+      padding: '0 1rem 0 1rem',
     }),
   ),
 );
