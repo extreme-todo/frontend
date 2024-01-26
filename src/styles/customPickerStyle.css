@@ -1,0 +1,15 @@
+.rdp {
+  background-color: #feca57;
+  border-radius: 1rem;
+  padding: 0.3rem;
+  box-shadow: 0 0 0.4rem #f4b537;
+  --rdp-background-color: #2e86de;
+}
+
+.rdp-day_selected:hover {
+  background-color: #ff6b6b;
+}
+
+.rdp-day_selected {
+  background-color: #54a0ff;
+}
