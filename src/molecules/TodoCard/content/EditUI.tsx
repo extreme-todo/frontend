@@ -30,7 +30,6 @@ const EditUI = ({
   const [selected, setSelected] = useState<Date>(new Date());
   const [isPopper, setIsPopper] = useState(false);
 
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const popperRef = useRef<HTMLDivElement>(null);
 
   const handleButtonClick = () => {
@@ -73,8 +72,6 @@ const EditUI = ({
         )}
       </CategoryContainer>
       <CalendarContainer ref={popperRef}>
-        <IconContainer
-          ref={buttonRef}
           onClick={handleButtonClick}
           aria-label="pick a date"
           type="button"
@@ -82,7 +79,6 @@ const EditUI = ({
           <IconAtom>
             <img src="icons/calendar.svg" />
           </IconAtom>
-        </IconContainer>
         <InputAtom.Underline
           value={format(selected.toString(), 'y-MM-dd')}
           ariaLabel="calendar"
@@ -92,7 +88,6 @@ const EditUI = ({
       </CalendarContainer>
       <DayPickerUI
         isPopper={isPopper}
-        buttonRef={buttonRef}
         popperRef={popperRef}
         selected={selected}
         setIsPopper={setIsPopper}

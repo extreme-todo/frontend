@@ -6,7 +6,6 @@ import { usePopper } from 'react-popper';
 
 interface IDayPickerUIProps {
   isPopper: boolean;
-  buttonRef: React.RefObject<HTMLButtonElement>;
   popperRef: React.RefObject<HTMLDivElement>;
   selected: Date;
   setIsPopper: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,7 +14,6 @@ interface IDayPickerUIProps {
 
 const DayPickerUI = ({
   isPopper,
-  buttonRef,
   popperRef,
   selected,
   setIsPopper,
@@ -31,7 +29,6 @@ const DayPickerUI = ({
 
   const handleClosePopper = () => {
     setIsPopper(false);
-    buttonRef?.current?.focus();
   };
 
   const handleDaySelect: SelectSingleEventHandler = (date) => {
@@ -49,7 +46,6 @@ const DayPickerUI = ({
             allowOutsideClick: true,
             clickOutsideDeactivates: true,
             onDeactivate: handleClosePopper,
-            fallbackFocus: buttonRef.current || undefined,
           }}
         >
           <PickerContainer
