@@ -188,7 +188,7 @@ describe('TodoCard', () => {
 
         expect(categoryInput).toBeInTheDocument();
         expect(categoryInput.placeholder).toBe(
-          '카테고리를 입력하고 엔터를 눌러주세요',
+          '카테고리를 입력하고 엔터를 눌러주세요.',
         );
         expect(categoryInput.value.length).toBe(0);
       });
@@ -269,8 +269,8 @@ describe('TodoCard', () => {
         expect(spyAlert).toBeCalledTimes(1);
       });
 
-      it('태그가 5개를 초과하면 더 이상 추가되지 않고 alert창을 띄워준다.', () => {
-        const { getByRole, queryAllByRole } = renderEditUI();
+      it('태그가 5개를 초과하면 category_input 태그을 없앤다.', () => {
+        const { getByRole, queryAllByRole, queryByRole } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category_input' });
 
@@ -278,16 +278,9 @@ describe('TodoCard', () => {
         act(() => userEvent.type(categoryInput, '두 번째 카테고리{enter}'));
         act(() => userEvent.type(categoryInput, '세 번째 카테고리{enter}'));
 
-        let prevCategories = queryAllByRole('button', { name: 'category_tag' });
+        const removedInput = queryByRole('textbox', { name: 'category_input' });
 
-        act(() => userEvent.type(categoryInput, '네 번째 카테고리{enter}'));
-
-        const nextCategories = queryAllByRole('button', {
-          name: 'category_tag',
-        });
-
-        expect(nextCategories.length).toBe(prevCategories.length);
-        expect(spyAlert).toBeCalledTimes(1);
+        expect(removedInput).toBe(null);
       });
 
       it('카테고리 값에 특수문자와 이모지가 있으면 추가되지 않고 alert창을 띄워준다.', () => {
