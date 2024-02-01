@@ -86,6 +86,9 @@ const EditUI = ({
           styleOption={{ width: '7rem' }}
         />
       </CalendarContainer>
+            handleChange={() => {
+              console.debug('click');
+            }}
       <DayPickerUI
         isPopper={isPopper}
         popperRef={popperRef}
