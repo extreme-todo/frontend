@@ -7,6 +7,8 @@ import styled from '@emotion/styled';
 import PomodoroProvider from './hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import 'react-day-picker/dist/style.css';
+import './styles/customPickerStyle.css';
 
 const queryClient = new QueryClient();
 

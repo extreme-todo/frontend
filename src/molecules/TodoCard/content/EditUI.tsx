@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
 
-import { IconAtom, InputAtom, TagAtom } from '../../../atoms';
+import { IconAtom, InputAtom, TagAtom, TypoAtom } from '../../../atoms';
 
 import styled from '@emotion/styled';
 
 import 'react-day-picker/dist/style.css';
 import { format } from 'date-fns';
 import DayPickerUI from './DayPickerUI';
+import { TodoDate } from '../../../DB/indexedAction';
 
 interface IEditUIProps {
   handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -16,6 +17,7 @@ interface IEditUIProps {
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
   categories: string[] | null;
   handleClickTag: (category: string) => void;
+  date: TodoDate;
 }
 
 const EditUI = ({
@@ -26,8 +28,9 @@ const EditUI = ({
   category,
   handleChangeCategory,
   handleClickTag,
+  date,
 }: IEditUIProps) => {
-  const [selected, setSelected] = useState<Date>(new Date());
+  const [selected, setSelected] = useState<Date>(new Date(date));
   const [isPopper, setIsPopper] = useState(false);
 
   const popperRef = useRef<HTMLDivElement>(null);
@@ -71,24 +74,26 @@ const EditUI = ({
           />
         )}
       </CategoryContainer>
-      <CalendarContainer ref={popperRef}>
+      <AdditionalDataContainer>
+        <CalendarContainer
+          ref={popperRef}
+          title="달력 아이콘을 클릭해 주세요."
           onClick={handleButtonClick}
-          aria-label="pick a date"
-          type="button"
         >
           <IconAtom>
-            <img src="icons/calendar.svg" />
+            <img alt="calendar_icon" src="icons/calendar.svg" />
           </IconAtom>
-        <InputAtom.Underline
-          value={format(selected.toString(), 'y-MM-dd')}
-          ariaLabel="calendar"
-          placeholder={'달력 아이콘을 눌러주세요.'}
-          styleOption={{ width: '7rem' }}
-        />
-      </CalendarContainer>
+          <InputAtom.Underline
+            value={format(selected.toString(), 'y-MM-dd')}
+            ariaLabel="calendar_input"
+            placeholder={'달력 아이콘을 눌러주세요.'}
+            styleOption={{ width: '7rem' }}
             handleChange={() => {
               console.debug('click');
             }}
+          />
+        </CalendarContainer>
+      </AdditionalDataContainer>
       <DayPickerUI
         isPopper={isPopper}
         popperRef={popperRef}
@@ -116,21 +121,29 @@ const CategoryContainer = styled.div`
   }
 `;
 
+const AdditionalDataContainer = styled.div`
+  display: flex;
+  margin-top: 2.485rem;
+`;
+
 const CalendarContainer = styled.div`
+  padding: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
-`;
-
-const IconContainer = styled.button`
-  width: 2rem;
-  height: 2rem;
   border-radius: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 1px;
   :hover {
     background-color: ${({ theme }) => theme.colors.bgColor};
     transition: background-color 0.2s ease-in-out;
+  }
+
+  div:first-of-type {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;

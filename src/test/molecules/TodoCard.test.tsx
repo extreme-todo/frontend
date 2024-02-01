@@ -208,6 +208,19 @@ describe('TodoCard', () => {
       });
 
       // 날짜, 날짜 아이콘?, 날짜 수정 아이콘(이건 필요가 없을지도)
+      it('달력 아이콘이 있다.', () => {
+        const { getByAltText } = renderEditUI();
+        const getIcon = getByAltText('calendar_icon');
+
+        expect(getIcon).toBeDefined();
+      });
+
+      it('날짜 입력 input이 있다.', () => {
+        const { getByRole } = renderEditUI();
+        const calendarInput = getByRole('textbox', { name: 'calendar_input' });
+
+        expect(calendarInput).toBeDefined();
+      });
 
       // 토마토 아이콘, 토마토 드랍다운 버튼
 
@@ -370,13 +383,8 @@ describe('TodoCard', () => {
       });
     });
 
-    // 날짜 관련 (날짜 수정, 수정 취소)
     // 토마토 수정 (토마토 수정, 토마토 토글, 수정, 수정 취소)
     // 취소버튼 눌렀을 때 그대로인 UI
     // 확인버튼 눌렀을 때 추가된 UI
   });
 });
-
-/*
-QUESTION 태그는 어딜 눌러야 취소가 될까?
-*/
