@@ -223,6 +223,15 @@ describe('TodoCard', () => {
       });
 
       // 토마토 아이콘, 토마토 드랍다운 버튼
+      it('Tomato 텍스트와 select 태그가 있다.', () => {
+        const { getByText, getByRole } = renderEditUI();
+
+        const tomato = getByText('🍅');
+        const select = getByRole('combobox', { name: 'tomato_select' });
+
+        expect(tomato).toBeDefined();
+        expect(select).toBeDefined();
+      });
 
       // 취소 버튼
 
@@ -384,6 +393,20 @@ describe('TodoCard', () => {
     });
 
     // 토마토 수정 (토마토 수정, 토마토 토글, 수정, 수정 취소)
+    describe('Tomato', () => {
+      it('click을 하면 1부터 10까지 option태그가 렌더링 된다.', () => {
+        const { getByRole, getAllByRole } = renderEditUI();
+        const select = getByRole('combobox', { name: 'tomato_select' });
+
+        act(() => userEvent.click(select));
+
+        const options = getAllByRole('option', { name: 'tomato_option' });
+
+        expect(options).toBeDefined();
+        expect(options.length).toBe(10);
+      });
+    });
+
     // 취소버튼 눌렀을 때 그대로인 UI
     // 확인버튼 눌렀을 때 추가된 UI
   });

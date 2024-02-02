@@ -93,6 +93,41 @@ const EditUI = ({
             }}
           />
         </CalendarContainer>
+        <TomatoContainer title="뽀모도로 루틴을 몇 번 반복할지 선택해 주세요.">
+          <TypoAtom>🍅</TypoAtom>
+          <TomatoSelector aria-label="tomato_select">
+            <TomatoOption aria-label="tomato_option" value="1">
+              1
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="2">
+              2
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="3">
+              3
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="4">
+              4
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="5">
+              5
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="6">
+              6
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="7">
+              7
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="8">
+              8
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="9">
+              9
+            </TomatoOption>
+            <TomatoOption aria-label="tomato_option" value="10">
+              10
+            </TomatoOption>
+          </TomatoSelector>
+        </TomatoContainer>
       </AdditionalDataContainer>
       <DayPickerUI
         isPopper={isPopper}
@@ -147,3 +182,19 @@ const CalendarContainer = styled.div`
     align-items: center;
   }
 `;
+
+const TomatoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  > span {
+    margin-right: 0.625rem;
+  }
+`;
+
+const TomatoSelector = styled.select`
+  border-radius: 0.3rem;
+  padding: 0.4rem;
+  background-color: ${({ theme }) => theme.colors.whiteWine};
+`;
+
+const TomatoOption = styled.option``;
