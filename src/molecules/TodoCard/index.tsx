@@ -70,6 +70,8 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
         specialCharactersRex.test(newCategory)
       )
         return alert('특수문자와 이모지는 입력할 수 없습니다.');
+
+      // 5개가 되면 input 창을 사라지게 해서 일단은 없어도 되는 조건
       if (categoryArray?.length === 5)
         return alert('category는 5개까지 입력할 수 있습니다.');
 
@@ -112,6 +114,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             handleChangeCategory={handleChangeCategory}
             categories={categoryArray}
             handleClickTag={handleClickTag}
+            date={date}
           />
         );
       case false:
