@@ -233,6 +233,14 @@ describe('TodoCard', () => {
         expect(select).toBeDefined();
       });
 
+      it('default 값과 1부터 10까지의 option, 총 11개의 option 태그가 있다.', () => {
+        const { getAllByRole } = renderEditUI();
+        const options = getAllByRole('option', { name: 'tomato_option' });
+
+        expect(options).toBeDefined();
+        expect(options.length).toBe(11);
+      });
+
       // 취소 버튼
 
       // 수정 버튼
@@ -394,16 +402,23 @@ describe('TodoCard', () => {
 
     // 토마토 수정 (토마토 수정, 토마토 토글, 수정, 수정 취소)
     describe('Tomato', () => {
-      it('click을 하면 1부터 10까지 option태그가 렌더링 된다.', () => {
+      it('option 태그를 클릭하면 select 값이 바뀐다.', () => {
         const { getByRole, getAllByRole } = renderEditUI();
-        const select = getByRole('combobox', { name: 'tomato_select' });
 
-        act(() => userEvent.click(select));
+        let select = getByRole('combobox', {
+          name: 'tomato_select',
+        }) as HTMLSelectElement;
+
+        expect(select.selectedIndex).toBe(0);
 
         const options = getAllByRole('option', { name: 'tomato_option' });
+        act(() => userEvent.selectOptions(select, options[1]));
 
-        expect(options).toBeDefined();
-        expect(options.length).toBe(10);
+        select = getByRole('combobox', {
+          name: 'tomato_select',
+        }) as HTMLSelectElement;
+
+        expect(select.selectedIndex).toBe(1);
       });
     });
 

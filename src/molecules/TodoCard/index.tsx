@@ -115,6 +115,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             categories={categoryArray}
             handleClickTag={handleClickTag}
             date={date}
+            duration={duration}
           />
         );
       case false:

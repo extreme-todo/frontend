@@ -8,6 +8,7 @@ import 'react-day-picker/dist/style.css';
 import { format } from 'date-fns';
 import DayPickerUI from './DayPickerUI';
 import { TodoDate } from '../../../DB/indexedAction';
+import { usePomodoroValue } from '../../../hooks';
 
 interface IEditUIProps {
   handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -18,7 +19,10 @@ interface IEditUIProps {
   categories: string[] | null;
   handleClickTag: (category: string) => void;
   date: TodoDate;
+  duration: number;
 }
+
+const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const EditUI = ({
   handleSubmit,
@@ -29,7 +33,12 @@ const EditUI = ({
   handleChangeCategory,
   handleClickTag,
   date,
+  duration,
 }: IEditUIProps) => {
+  const {
+    settings: { focusStep },
+  } = usePomodoroValue();
+
   const [selected, setSelected] = useState<Date>(new Date(date));
   const [isPopper, setIsPopper] = useState(false);
 
@@ -93,39 +102,29 @@ const EditUI = ({
             }}
           />
         </CalendarContainer>
-        <TomatoContainer title="뽀모도로 루틴을 몇 번 반복할지 선택해 주세요.">
+        <TomatoContainer>
           <TypoAtom>🍅</TypoAtom>
-          <TomatoSelector aria-label="tomato_select">
-            <TomatoOption aria-label="tomato_option" value="1">
-              1
+          <TomatoSelector
+            aria-label="tomato_select"
+            defaultValue={Math.ceil(duration / focusStep)}
+          >
+            <TomatoOption
+              aria-label="tomato_option"
+              data-testid="tomato_option"
+              value={undefined}
+            >
+              뽀모도로 횟수
             </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="2">
-              2
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="3">
-              3
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="4">
-              4
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="5">
-              5
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="6">
-              6
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="7">
-              7
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="8">
-              8
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="9">
-              9
-            </TomatoOption>
-            <TomatoOption aria-label="tomato_option" value="10">
-              10
-            </TomatoOption>
+            {options.map((option) => (
+              <TomatoOption
+                aria-label="tomato_option"
+                data-testid="tomato_option"
+                value={option}
+                key={option}
+              >
+                {option}
+              </TomatoOption>
+            ))}
           </TomatoSelector>
         </TomatoContainer>
       </AdditionalDataContainer>
@@ -195,6 +194,7 @@ const TomatoSelector = styled.select`
   border-radius: 0.3rem;
   padding: 0.4rem;
   background-color: ${({ theme }) => theme.colors.whiteWine};
+  text-align: center;
 `;
 
 const TomatoOption = styled.option``;
