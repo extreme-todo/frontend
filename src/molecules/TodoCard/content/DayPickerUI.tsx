@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import FocusTrap from 'focus-trap-react';
-import { useState } from 'react';
 import { DayPicker, SelectSingleEventHandler } from 'react-day-picker';
 import { usePopper } from 'react-popper';
+import { differenceInCalendarDays } from 'date-fns';
 
 interface IDayPickerUIProps {
   isPopper: boolean;
@@ -22,6 +23,10 @@ const DayPickerUI = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
+
+  function isPastDate(date: Date) {
+    return differenceInCalendarDays(date, new Date()) < 0;
+  }
 
   const popper = usePopper(popperRef.current, popperElement, {
     placement: 'bottom-start',
@@ -63,6 +68,8 @@ const DayPickerUI = ({
               defaultMonth={selected}
               selected={selected}
               onSelect={handleDaySelect}
+              required
+              hidden={isPastDate}
             />
           </PickerContainer>
         </FocusTrap>
