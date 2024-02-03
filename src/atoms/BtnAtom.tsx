@@ -1,12 +1,12 @@
 import { IChildProps } from '../shared/interfaces';
 
 interface IBtnAtomProps extends IChildProps {
-  handler: () => void;
+  handleOnClick: () => void;
 }
 
-function BtnAtom({ children, handler, ...props }: IBtnAtomProps) {
+function BtnAtom({ children, handleOnClick, ...props }: IBtnAtomProps) {
   return (
-    <div onClick={handler} style={{ ...props }}>
+    <div onClick={handleOnClick} style={{ ...props }}>
       {children}
     </div>
   );
