@@ -48,17 +48,14 @@ describe('TodoCard', () => {
     };
   };
 
-  let renderTodoCard = (
-    MainUI: JSX.Element,
-    wrapperUI: typeof wrapperCreator,
-  ) => {
+  let renderUI = (MainUI: JSX.Element, wrapperUI: typeof wrapperCreator) => {
     return render(MainUI, { wrapper: wrapperUI });
   };
 
   describe('TodoUI', () => {
     describe('TodoUI는', () => {
       it('Todo는 제목, 핸들 아이콘, 카테고리로 이루어져 있다.', () => {
-        const { getByText, getByRole } = renderTodoCard(
+        const { getByText, getByRole } = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
@@ -79,7 +76,7 @@ describe('TodoCard', () => {
 
     describe('drag 시에는', () => {
       it('Todo의 카테고리가 숨겨진다.', () => {
-        const { queryByText } = renderTodoCard(
+        const { queryByText } = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
@@ -97,7 +94,7 @@ describe('TodoCard', () => {
 
     describe('TodoUI에', () => {
       it('onMouseOver 이벤트가 발생하면 수정 버튼이 노출된다.', () => {
-        const { getByText } = renderTodoCard(
+        const { getByText } = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
@@ -114,7 +111,7 @@ describe('TodoCard', () => {
       });
 
       it('onMouseOut 이벤트가 발생하면 수정 버튼이 사라진다.', () => {
-        const { getByText, queryByText } = renderTodoCard(
+        const { getByText, queryByText } = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
@@ -130,7 +127,7 @@ describe('TodoCard', () => {
 
     describe('수정 버튼을 클릭하면', () => {
       it('해당 todoCard의 UI가 EditUI로 바뀐다.', async () => {
-        const { getByText, findByRole } = renderTodoCard(
+        const { getByText, findByRole } = renderUI(
           <>
             <TodoCard
               todoData={mockTodo}
@@ -170,7 +167,7 @@ describe('TodoCard', () => {
 
     beforeEach(() => {
       renderEditUI = () => {
-        const renderResult = renderTodoCard(
+        const renderResult = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
@@ -476,7 +473,7 @@ describe('TodoCard', () => {
     describe('Button', () => {
       it('수정 버튼을 누르면 handleEditSubmit 메소드가 호출된다.', () => {
         const mockHandleEditSubmit = jest.fn();
-        const { getByAltText } = renderTodoCard(
+        const { getByAltText } = renderUI(
           <EditUI
             todoData={mockFetchTodoList()[0]}
             handleSubmit={jest.fn()}
