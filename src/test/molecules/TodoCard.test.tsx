@@ -1,19 +1,35 @@
-import React, { ReactNode } from 'react';
-import { ThemeProvider } from '@emotion/react';
-import { act, fireEvent, render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { designTheme } from '../../styles/theme';
+import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 import { TodoCard } from '../../molecules';
-import { mockFetchTodoList } from '../../../fixture/mockTodoList';
-import { DraggableStateSnapshot } from 'react-beautiful-dnd';
-import { EditContextProvider } from '../../hooks';
 import EditUI from '../../molecules/TodoCard/content/EditUI';
+
+import { EditContextProvider } from '../../hooks';
+
 import { IChildProps } from '../../shared/interfaces';
 
+import { mockFetchTodoList } from '../../../fixture/mockTodoList';
+
+import { ThemeProvider } from '@emotion/react';
+import { designTheme } from '../../styles/theme';
+
+import { act, fireEvent, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
 const wrapperCreator = ({ children }: IChildProps) => (
+  <QueryClientProvider client={queryClient}>
     <ThemeProvider theme={designTheme}>
       <EditContextProvider>{children}</EditContextProvider>
     </ThemeProvider>
+  </QueryClientProvider>
 );
 
 describe('TodoCard', () => {
@@ -127,13 +143,7 @@ describe('TodoCard', () => {
               snapshot={setMockSnapshot(false)}
             />
           </>,
-          ({ children }: IChildProps) => (
-            <>
-              <ThemeProvider theme={designTheme}>
-                <EditContextProvider>{children}</EditContextProvider>
-              </ThemeProvider>
-            </>
-          ),
+          wrapperCreator,
         );
         // 해당 todoCard UI
         const titleOne = getByText('Go to grocery store');

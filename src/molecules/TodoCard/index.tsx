@@ -9,6 +9,7 @@ import { useEdit } from '../../hooks';
 import TodoUI from './content/TodoUI';
 import { ReactEventHandler, useState } from 'react';
 import { ETIndexed } from '../../DB/indexed';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -17,7 +18,22 @@ interface ITodoCardProps {
 }
 
 const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
+  const queryClient = useQueryClient();
+
   // useMutation 요거 구현하기
+  const { mutate } = useMutation({
+    mutationFn: (todo: TodoEntity) =>
+      ETIndexed.getInstance().updateTodo(todo.id, todo),
+    onSuccess(data) {
+      console.log('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+    onError(error) {
+      console.log('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
+    },
+  });
+
+  const { id, todo: todoTitle, categories, duration: tomato } = todoData;
 
   const [{ editMode, editTodoId }, setIsEdit] = useEdit();
 
@@ -103,6 +119,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     setIsEdit({ editMode: false, editTodoId: undefined });
   };
   const handleEditSubmit = (todo: TodoEntity) => {
+    mutate(todo);
     setIsEdit({ editMode: false, editTodoId: undefined });
   };
 
