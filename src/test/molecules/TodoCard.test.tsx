@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -8,6 +8,13 @@ import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { EditContextProvider } from '../../hooks';
 import EditUI from '../../molecules/TodoCard/content/EditUI';
+import { IChildProps } from '../../shared/interfaces';
+
+const wrapperCreator = ({ children }: IChildProps) => (
+    <ThemeProvider theme={designTheme}>
+      <EditContextProvider>{children}</EditContextProvider>
+    </ThemeProvider>
+);
 
 describe('TodoCard', () => {
   const mockTodo = mockFetchTodoList()[0];
@@ -25,24 +32,24 @@ describe('TodoCard', () => {
     };
   };
 
-  let renderTodoCard = (mockSnapshot: DraggableStateSnapshot) => {
-    return render(
-        <ThemeProvider theme={designTheme}>
-          <EditContextProvider>
-            <TodoCard
-              todoData={mockTodo}
-              dragHandleProps={undefined}
-              snapshot={mockSnapshot}
-            />
-          </EditContextProvider>
-        </ThemeProvider>
-    );
+  let renderTodoCard = (
+    MainUI: JSX.Element,
+    wrapperUI: typeof wrapperCreator,
+  ) => {
+    return render(MainUI, { wrapper: wrapperUI });
   };
 
   describe('TodoUI', () => {
     describe('TodoUI는', () => {
       it('Todo는 제목, 핸들 아이콘, 카테고리로 이루어져 있다.', () => {
-        const { getByText, getByRole } = renderTodoCard(setMockSnapshot(false));
+        const { getByText, getByRole } = renderTodoCard(
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={setMockSnapshot(false)}
+          />,
+          wrapperCreator,
+        );
 
         const handleIcon = getByRole('img');
         expect(handleIcon).toBeInTheDocument();
@@ -56,7 +63,14 @@ describe('TodoCard', () => {
 
     describe('drag 시에는', () => {
       it('Todo의 카테고리가 숨겨진다.', () => {
-        const { queryByText } = renderTodoCard(setMockSnapshot(true));
+        const { queryByText } = renderTodoCard(
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={setMockSnapshot(true)}
+          />,
+          wrapperCreator,
+        );
 
         const categories1 = queryByText('영어');
         const categories2 = queryByText('학교공부');
@@ -67,7 +81,14 @@ describe('TodoCard', () => {
 
     describe('TodoUI에', () => {
       it('onMouseOver 이벤트가 발생하면 수정 버튼이 노출된다.', () => {
-        const { getByText } = renderTodoCard(setMockSnapshot(false));
+        const { getByText } = renderTodoCard(
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={setMockSnapshot(false)}
+          />,
+          wrapperCreator,
+        );
 
         fireEvent.mouseOver(getByText('Go to grocery store'));
 
@@ -78,7 +99,12 @@ describe('TodoCard', () => {
 
       it('onMouseOut 이벤트가 발생하면 수정 버튼이 사라진다.', () => {
         const { getByText, queryByText } = renderTodoCard(
-          setMockSnapshot(false),
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={setMockSnapshot(false)}
+          />,
+          wrapperCreator,
         );
 
         fireEvent.mouseOut(getByText('Go to grocery store'));
@@ -88,27 +114,26 @@ describe('TodoCard', () => {
 
     describe('수정 버튼을 클릭하면', () => {
       it('해당 todoCard의 UI가 EditUI로 바뀐다.', async () => {
-        renderTodoCard = (mockSnapshot: DraggableStateSnapshot) => {
-          return render(
-            <ThemeProvider theme={designTheme}>
-              <EditContextProvider>
-                <TodoCard
-                  todoData={mockTodo}
-                  dragHandleProps={undefined}
-                  snapshot={mockSnapshot}
-                />
-                <TodoCard
-                  todoData={mockFetchTodoList()[1]}
-                  dragHandleProps={undefined}
-                  snapshot={mockSnapshot}
-                />
-              </EditContextProvider>
-            </ThemeProvider>,
-          );
-        };
-
         const { getByText, findByRole } = renderTodoCard(
-          setMockSnapshot(false),
+          <>
+            <TodoCard
+              todoData={mockTodo}
+              dragHandleProps={undefined}
+              snapshot={setMockSnapshot(false)}
+            />
+            <TodoCard
+              todoData={mockFetchTodoList()[1]}
+              dragHandleProps={undefined}
+              snapshot={setMockSnapshot(false)}
+            />
+          </>,
+          ({ children }: IChildProps) => (
+            <>
+              <ThemeProvider theme={designTheme}>
+                <EditContextProvider>{children}</EditContextProvider>
+              </ThemeProvider>
+            </>
+          ),
         );
         // 해당 todoCard UI
         const titleOne = getByText('Go to grocery store');
@@ -135,7 +160,14 @@ describe('TodoCard', () => {
 
     beforeEach(() => {
       renderEditUI = () => {
-        const renderResult = renderTodoCard(setMockSnapshot(false));
+        const renderResult = renderTodoCard(
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={setMockSnapshot(false)}
+          />,
+          wrapperCreator,
+        );
 
         const title = renderResult.getByText('Go to grocery store');
         fireEvent.mouseOver(title);
@@ -434,29 +466,27 @@ describe('TodoCard', () => {
     describe('Button', () => {
       it('수정 버튼을 누르면 handleEditSubmit 메소드가 호출된다.', () => {
         const mockHandleEditSubmit = jest.fn();
-
-        let renderEditUI = () => {
-          return render(
-            <ThemeProvider theme={designTheme}>
-              <EditUI
-                todoData={mockFetchTodoList()[0]}
-                handleSubmit={jest.fn()}
-                title={mockFetchTodoList()[0].todo}
-                handleChangeTitle={jest.fn()}
-                category={''}
-                handleChangeCategory={jest.fn()}
-                categories={mockFetchTodoList()[0].categories}
-                handleClickTag={jest.fn()}
-                handleEditCancel={jest.fn()}
-                handleEditSubmit={mockHandleEditSubmit}
-                handleDuration={jest.fn()}
-                duration={mockFetchTodoList()[0].duration}
-              />
-            </ThemeProvider>,
-          );
-        };
-
-        const { getByAltText } = renderEditUI();
+        const { getByAltText } = renderTodoCard(
+          <EditUI
+            todoData={mockFetchTodoList()[0]}
+            handleSubmit={jest.fn()}
+            title={mockFetchTodoList()[0].todo}
+            handleChangeTitle={jest.fn()}
+            category={''}
+            handleChangeCategory={jest.fn()}
+            categories={mockFetchTodoList()[0].categories}
+            handleClickTag={jest.fn()}
+            handleEditCancel={jest.fn()}
+            handleEditSubmit={mockHandleEditSubmit}
+            handleDuration={jest.fn()}
+            duration={mockFetchTodoList()[0].duration}
+          />,
+          ({ children }: IChildProps) => (
+            <>
+              <ThemeProvider theme={designTheme}>{children}</ThemeProvider>
+            </>
+          ),
+        );
         const submitBtn = getByAltText('submit_edit');
         act(() => userEvent.click(submitBtn));
 
