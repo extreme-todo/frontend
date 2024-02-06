@@ -1,12 +1,6 @@
 import React from 'react';
 import { ThemeProvider } from '@emotion/react';
-import {
-  act,
-  fireEvent,
-  getByText,
-  render,
-  waitFor,
-} from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { designTheme } from '../../styles/theme';
 import { TodoCard } from '../../molecules';
@@ -14,7 +8,6 @@ import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { EditContextProvider } from '../../hooks';
 import EditUI from '../../molecules/TodoCard/content/EditUI';
-import { TodoEntity } from '../../DB/indexedAction';
 
 describe('TodoCard', () => {
   const mockTodo = mockFetchTodoList()[0];
@@ -34,15 +27,15 @@ describe('TodoCard', () => {
 
   let renderTodoCard = (mockSnapshot: DraggableStateSnapshot) => {
     return render(
-      <ThemeProvider theme={designTheme}>
-        <EditContextProvider>
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={mockSnapshot}
-          />
-        </EditContextProvider>
-      </ThemeProvider>,
+        <ThemeProvider theme={designTheme}>
+          <EditContextProvider>
+            <TodoCard
+              todoData={mockTodo}
+              dragHandleProps={undefined}
+              snapshot={mockSnapshot}
+            />
+          </EditContextProvider>
+        </ThemeProvider>
     );
   };
 
@@ -212,14 +205,14 @@ describe('TodoCard', () => {
         const { getByAltText } = renderEditUI();
         const getIcon = getByAltText('calendar_icon');
 
-        expect(getIcon).toBeDefined();
+        expect(getIcon).toBeInTheDocument();
       });
 
       it('날짜 입력 input이 있다.', () => {
         const { getByRole } = renderEditUI();
         const calendarInput = getByRole('textbox', { name: 'calendar_input' });
 
-        expect(calendarInput).toBeDefined();
+        expect(calendarInput).toBeInTheDocument();
       });
 
       // 토마토 아이콘, 토마토 드랍다운 버튼
@@ -229,8 +222,8 @@ describe('TodoCard', () => {
         const tomato = getByText('🍅');
         const select = getByRole('combobox', { name: 'tomato_select' });
 
-        expect(tomato).toBeDefined();
-        expect(select).toBeDefined();
+        expect(tomato).toBeInTheDocument();
+        expect(select).toBeInTheDocument();
       });
 
       it('default 값과 1부터 10까지의 option, 총 11개의 option 태그가 있다.', () => {
@@ -242,8 +235,22 @@ describe('TodoCard', () => {
       });
 
       // 취소 버튼
+      it('취소 버튼이 있다.', () => {
+        const { getByAltText } = renderEditUI();
+
+        const cancelBtn = getByAltText('cancel_edit');
+
+        expect(cancelBtn).toBeInTheDocument();
+      });
 
       // 수정 버튼
+      it('제출 버튼이 있다.', () => {
+        const { getByAltText } = renderEditUI();
+
+        const submitBtn = getByAltText('submit_edit');
+
+        expect(submitBtn).toBeInTheDocument();
+      });
     });
 
     describe('Category', () => {
@@ -424,5 +431,48 @@ describe('TodoCard', () => {
 
     // 취소버튼 눌렀을 때 그대로인 UI
     // 확인버튼 눌렀을 때 추가된 UI
+    describe('Button', () => {
+      it('수정 버튼을 누르면 handleEditSubmit 메소드가 호출된다.', () => {
+        const mockHandleEditSubmit = jest.fn();
+
+        let renderEditUI = () => {
+          return render(
+            <ThemeProvider theme={designTheme}>
+              <EditUI
+                todoData={mockFetchTodoList()[0]}
+                handleSubmit={jest.fn()}
+                title={mockFetchTodoList()[0].todo}
+                handleChangeTitle={jest.fn()}
+                category={''}
+                handleChangeCategory={jest.fn()}
+                categories={mockFetchTodoList()[0].categories}
+                handleClickTag={jest.fn()}
+                handleEditCancel={jest.fn()}
+                handleEditSubmit={mockHandleEditSubmit}
+                handleDuration={jest.fn()}
+                duration={mockFetchTodoList()[0].duration}
+              />
+            </ThemeProvider>,
+          );
+        };
+
+        const { getByAltText } = renderEditUI();
+        const submitBtn = getByAltText('submit_edit');
+        act(() => userEvent.click(submitBtn));
+
+        expect(mockHandleEditSubmit).toHaveBeenCalled();
+      });
+
+      it('취소 버튼을 누르면 TodoUI가 렌더링 된다.', () => {
+        const { getByAltText, getByText } = renderEditUI();
+
+        const cancelBtn = getByAltText('cancel_edit');
+
+        act(() => userEvent.click(cancelBtn));
+
+        const title = getByText('Go to grocery store');
+        expect(title).toBeInTheDocument();
+      });
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { ReactEventHandler, useRef, useState } from 'react';
 
 import { IconAtom, InputAtom, TagAtom, TypoAtom } from '../../../atoms';
 
@@ -7,10 +7,10 @@ import styled from '@emotion/styled';
 import 'react-day-picker/dist/style.css';
 import { format } from 'date-fns';
 import DayPickerUI from './DayPickerUI';
-import { TodoDate } from '../../../DB/indexedAction';
-import { usePomodoroValue } from '../../../hooks';
+import { TodoDate, TodoEntity } from '../../../DB/indexedAction';
 
 interface IEditUIProps {
+  todoData: TodoEntity;
   handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   title: string;
   handleChangeTitle: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -18,13 +18,16 @@ interface IEditUIProps {
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
   categories: string[] | null;
   handleClickTag: (category: string) => void;
-  date: TodoDate;
+  handleEditCancel: () => void;
+  handleEditSubmit: (todo: TodoEntity) => void;
   duration: number;
+  handleDuration: ReactEventHandler<HTMLSelectElement>;
 }
 
 const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const EditUI = ({
+  todoData,
   handleSubmit,
   categories,
   title,
@@ -32,13 +35,12 @@ const EditUI = ({
   category,
   handleChangeCategory,
   handleClickTag,
-  date,
+  handleEditCancel,
+  handleEditSubmit,
   duration,
+  handleDuration,
 }: IEditUIProps) => {
-  const {
-    settings: { focusStep },
-  } = usePomodoroValue();
-
+  const { date } = todoData;
   const [selected, setSelected] = useState<Date>(new Date(date));
   const [isPopper, setIsPopper] = useState(false);
 
@@ -46,6 +48,14 @@ const EditUI = ({
 
   const handleButtonClick = () => {
     setIsPopper(true);
+  };
+
+  const editData = {
+    ...todoData,
+    categories,
+    date: format(selected.toString(), 'y-MM-dd') as TodoDate,
+    todo: title,
+    duration,
   };
 
   return (
@@ -106,13 +116,10 @@ const EditUI = ({
           <TypoAtom>🍅</TypoAtom>
           <TomatoSelector
             aria-label="tomato_select"
-            defaultValue={Math.ceil(duration / focusStep)}
+            value={duration}
+            onChange={handleDuration}
           >
-            <TomatoOption
-              aria-label="tomato_option"
-              data-testid="tomato_option"
-              value={undefined}
-            >
+            <TomatoOption aria-label="tomato_option" value={undefined}>
               뽀모도로 횟수
             </TomatoOption>
             {options.map((option) => (
@@ -127,6 +134,22 @@ const EditUI = ({
             ))}
           </TomatoSelector>
         </TomatoContainer>
+        <ButtonContainer>
+          <IconAtom
+            size={2.624375}
+            backgroundColor={'whiteWine'}
+            onClick={handleEditCancel}
+          >
+            <img alt="cancel_edit" src={'icons/close.svg'} />
+          </IconAtom>
+          <IconAtom
+            size={2.624375}
+            backgroundColor={'subFontColor'}
+            onClick={() => handleEditSubmit.call(this, editData)}
+          >
+            <img alt="submit_edit" src={'icons/ok.svg'} />
+          </IconAtom>
+        </ButtonContainer>
       </AdditionalDataContainer>
       <DayPickerUI
         isPopper={isPopper}
@@ -145,6 +168,8 @@ const EditWrapper = styled.div`
   padding: 0.759rem;
   border-radius: 10px;
   flex: column;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 1.439375rem;
 `;
 
 const CategoryContainer = styled.div`
@@ -158,6 +183,7 @@ const CategoryContainer = styled.div`
 const AdditionalDataContainer = styled.div`
   display: flex;
   margin-top: 2.485rem;
+  justify-content: space-between;
 `;
 
 const CalendarContainer = styled.div`
@@ -167,6 +193,7 @@ const CalendarContainer = styled.div`
   align-items: center;
   border-radius: 1rem;
   padding: 1px;
+
   :hover {
     background-color: ${({ theme }) => theme.colors.bgColor};
     transition: background-color 0.2s ease-in-out;
@@ -198,3 +225,10 @@ const TomatoSelector = styled.select`
 `;
 
 const TomatoOption = styled.option``;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  div:first-of-type {
+    margin-right: 0.356875rem;
+  }
+`;

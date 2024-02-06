@@ -7,7 +7,8 @@ import {
 import EditUI from './content/EditUI';
 import { useEdit } from '../../hooks';
 import TodoUI from './content/TodoUI';
-import { useState } from 'react';
+import { ReactEventHandler, useState } from 'react';
+import { ETIndexed } from '../../DB/indexed';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -16,23 +17,15 @@ interface ITodoCardProps {
 }
 
 const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
-  const {
-    id,
-    date,
-    todo,
-    createdAt,
-    duration,
-    done,
-    categories,
-    focusTime,
-    order,
-  } = todoData;
+  // useMutation 요거 구현하기
+
+  const [{ editMode, editTodoId }, setIsEdit] = useEdit();
 
   const [showEdit, setShowEdit] = useState(false);
-  const [{ editMode, editTodoId }, setIsEdit] = useEdit();
-  const [titleValue, setTitleValue] = useState(todo);
+  const [titleValue, setTitleValue] = useState(todoTitle);
   const [categoryArray, setCategoryArray] = useState(categories);
-  const [categoryValue, setCategoryValue] = useState('');
+  const [categoryValue, setCategoryValue] = useState(''); // 새로운 카테고리에 대한 input value state
+  const [duration, setDuration] = useState(tomato);
 
   const handleMouseOver = () => {
     setShowEdit(true);
@@ -54,7 +47,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     setCategoryValue(event.target.value);
   };
 
-  const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleTagSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const newCategory = (event.target as HTMLInputElement).value;
     const regularCharacterRex =
       /^[a-zA-Z0-9 \u3131-\uD79D\u4E00-\u9FA5\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF\u2F800-\u2FA1F]+$/;
@@ -95,11 +88,22 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     }
   };
 
-  const handleClickTag = (category: string) => {
+  const handleDeleteTag = (category: string) => {
     setCategoryArray((prev) => {
       const deleted = prev?.filter((tag) => tag !== category) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
       return deleted;
     });
+  };
+
+  const handleDuration: ReactEventHandler<HTMLSelectElement> = (event) => {
+    setDuration(Number(event.currentTarget.value));
+  };
+
+  const handleEditCancel = () => {
+    setIsEdit({ editMode: false, editTodoId: undefined });
+  };
+  const handleEditSubmit = (todo: TodoEntity) => {
+    setIsEdit({ editMode: false, editTodoId: undefined });
   };
 
   const renderCard = (() => {
@@ -107,15 +111,18 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
       case true:
         return (
           <EditUI
-            handleSubmit={handleSubmit}
+            todoData={todoData}
             title={titleValue}
             handleChangeTitle={handleChangeTitle}
             category={categoryValue}
             handleChangeCategory={handleChangeCategory}
+            handleClickTag={handleDeleteTag}
+            handleSubmit={handleTagSubmit}
             categories={categoryArray}
-            handleClickTag={handleClickTag}
-            date={date}
+            handleEditCancel={handleEditCancel}
+            handleEditSubmit={handleEditSubmit}
             duration={duration}
+            handleDuration={handleDuration}
           />
         );
       case false:
