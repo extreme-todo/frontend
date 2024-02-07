@@ -42,12 +42,12 @@ const EditUI = ({
 }: IEditUIProps) => {
   const { date } = todoData;
   const [selected, setSelected] = useState<Date>(new Date(date));
-  const [isPopper, setIsPopper] = useState(false);
+  const [showPopper, setShowPopper] = useState(false);
 
   const popperRef = useRef<HTMLDivElement>(null);
 
   const handleButtonClick = () => {
-    setIsPopper(true);
+    setShowPopper(true);
   };
 
   const editData = {
@@ -152,10 +152,10 @@ const EditUI = ({
         </ButtonContainer>
       </AdditionalDataContainer>
       <DayPickerUI
-        isPopper={isPopper}
+        isPopper={showPopper}
         popperRef={popperRef}
         selected={selected}
-        setIsPopper={setIsPopper}
+        setIsPopper={setShowPopper}
         setSelected={setSelected}
       />
     </EditWrapper>

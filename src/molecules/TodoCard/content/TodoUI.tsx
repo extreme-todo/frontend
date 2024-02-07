@@ -21,17 +21,7 @@ const TodoUI = ({
   handleMouseOut,
   handleEditButton,
 }: ITodoUIProps) => {
-  const {
-    id,
-    date,
-    todo,
-    createdAt,
-    duration,
-    done,
-    categories,
-    focusTime,
-    order,
-  } = todoData;
+  const { todo, categories } = todoData;
 
   return (
     <TodoCardContainer
@@ -53,24 +43,23 @@ const TodoUI = ({
             <TypoAtom fontSize="body">{todo}</TypoAtom>
           </TitleContainer>
           <CategoryContainer>
-            {!snapshot?.isDragging
-              ? categories?.map((category) => {
-                  return (
-                    <TagAtom
-                      key={category}
-                      title={category}
-                      styleOption={{
-                        fontsize: 'sm',
-                        size: 'sm',
-                        bg: 'whiteWine',
-                        maxWidth: 10,
-                      }}
-                    >
-                      {category}
-                    </TagAtom>
-                  );
-                })
-              : null}
+            {snapshot?.isDragging === false ??
+              categories?.map((category) => {
+                return (
+                  <TagAtom
+                    key={category}
+                    title={category}
+                    styleOption={{
+                      fontsize: 'sm',
+                      size: 'sm',
+                      bg: 'whiteWine',
+                      maxWidth: 10,
+                    }}
+                  >
+                    {category}
+                  </TagAtom>
+                );
+              })}
           </CategoryContainer>
         </TitleCategoryContainer>
       </DraggableWrapper>

@@ -6,7 +6,7 @@ import { usePopper } from 'react-popper';
 import { differenceInCalendarDays } from 'date-fns';
 
 interface IDayPickerUIProps {
-  isPopper: boolean;
+  showPopper: boolean;
   popperRef: React.RefObject<HTMLDivElement>;
   selected: Date;
   setIsPopper: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,7 +14,7 @@ interface IDayPickerUIProps {
 }
 
 const DayPickerUI = ({
-  isPopper,
+  showPopper,
   popperRef,
   selected,
   setIsPopper,
@@ -43,7 +43,7 @@ const DayPickerUI = ({
 
   return (
     <>
-      {isPopper && (
+      {showPopper && (
         <FocusTrap
           active
           focusTrapOptions={{
@@ -53,7 +53,7 @@ const DayPickerUI = ({
             onDeactivate: handleClosePopper,
           }}
         >
-          <PickerContainer
+          <div
             tabIndex={-1}
             style={popper.styles.popper}
             className="dialog-sheet"
@@ -63,7 +63,7 @@ const DayPickerUI = ({
             aria-label="Daypicker calendar"
           >
             <DayPicker
-              initialFocus={isPopper}
+              initialFocus={showPopper}
               mode="single"
               defaultMonth={selected}
               selected={selected}
@@ -71,7 +71,7 @@ const DayPickerUI = ({
               required
               hidden={isPastDate}
             />
-          </PickerContainer>
+          </div>
         </FocusTrap>
       )}
     </>
@@ -79,5 +79,3 @@ const DayPickerUI = ({
 };
 
 export default DayPickerUI;
-
-const PickerContainer = styled.div``;

@@ -29,7 +29,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
     onError(error) {
-      console.log('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
+      console.debug('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
     },
   });
 
