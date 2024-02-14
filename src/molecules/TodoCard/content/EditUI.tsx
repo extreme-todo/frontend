@@ -152,10 +152,10 @@ const EditUI = ({
         </ButtonContainer>
       </AdditionalDataContainer>
       <DayPickerUI
-        isPopper={showPopper}
+        showPopper={showPopper}
         popperRef={popperRef}
         selected={selected}
-        setIsPopper={setShowPopper}
+        setShowPopper={setShowPopper}
         setSelected={setSelected}
       />
     </EditWrapper>

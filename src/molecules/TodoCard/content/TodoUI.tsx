@@ -43,23 +43,24 @@ const TodoUI = ({
             <TypoAtom fontSize="body">{todo}</TypoAtom>
           </TitleContainer>
           <CategoryContainer>
-            {snapshot?.isDragging === false ??
-              categories?.map((category) => {
-                return (
-                  <TagAtom
-                    key={category}
-                    title={category}
-                    styleOption={{
-                      fontsize: 'sm',
-                      size: 'sm',
-                      bg: 'whiteWine',
-                      maxWidth: 10,
-                    }}
-                  >
-                    {category}
-                  </TagAtom>
-                );
-              })}
+            {snapshot?.isDragging
+              ? null
+              : categories?.map((category) => {
+                  return (
+                    <TagAtom
+                      key={category}
+                      title={category}
+                      styleOption={{
+                        fontsize: 'sm',
+                        size: 'sm',
+                        bg: 'whiteWine',
+                        maxWidth: 10,
+                      }}
+                    >
+                      {category}
+                    </TagAtom>
+                  );
+                })}
           </CategoryContainer>
         </TitleCategoryContainer>
       </DraggableWrapper>

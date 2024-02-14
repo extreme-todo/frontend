@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styled from '@emotion/styled';
 import FocusTrap from 'focus-trap-react';
 import { DayPicker, SelectSingleEventHandler } from 'react-day-picker';
 import { usePopper } from 'react-popper';
@@ -9,7 +8,7 @@ interface IDayPickerUIProps {
   showPopper: boolean;
   popperRef: React.RefObject<HTMLDivElement>;
   selected: Date;
-  setIsPopper: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowPopper: React.Dispatch<React.SetStateAction<boolean>>;
   setSelected: React.Dispatch<React.SetStateAction<Date>>;
 }
 
@@ -17,7 +16,7 @@ const DayPickerUI = ({
   showPopper,
   popperRef,
   selected,
-  setIsPopper,
+  setShowPopper,
   setSelected,
 }: IDayPickerUIProps) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
@@ -33,7 +32,7 @@ const DayPickerUI = ({
   });
 
   const handleClosePopper = () => {
-    setIsPopper(false);
+    setShowPopper(false);
   };
 
   const handleDaySelect: SelectSingleEventHandler = (date) => {
