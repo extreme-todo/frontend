@@ -1,7 +1,7 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: 'tsconfig.eslint.json',
+    project: './tsconfig.json',
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
@@ -31,8 +31,6 @@ module.exports = {
         'plugin:jest/recommended',
         'plugin:jest-dom/recommended',
         'plugin:testing-library/react',
-        // 'plugin:jest-puppeteer/recommended',
-        // 'plugin:expect-puppeteer/recommended',
       ],
     },
   ],

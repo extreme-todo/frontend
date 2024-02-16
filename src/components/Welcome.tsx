@@ -37,11 +37,11 @@ const Welcome = () => {
         <TypoAtom fontSize={'h1'}>EXTREME TODO</TypoAtom>
         {isLogin ? (
           <BtnContainer>
-            <BtnAtom handler={handleLogoutBtn}>
+            <BtnAtom handleOnClick={handleLogoutBtn}>
               <TypoAtom fontSize="h5">SIGN OUT</TypoAtom>
             </BtnAtom>
             <div></div>
-            <BtnAtom handler={handleSetting}>
+            <BtnAtom handleOnClick={handleSetting}>
               <TypoAtom fontSize="h5">SETTING</TypoAtom>
             </BtnAtom>
             {isModal &&

@@ -13,6 +13,7 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
+import { EditContextProvider } from '../hooks';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -208,7 +209,9 @@ const TodoList = () => {
       {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
       <TodoListContainer>
         <DragDropContext onDragEnd={onDragDropHandler}>
-          {!isLoading && todos ? listRender(todos) : null}
+          {!isLoading && todos ? (
+            <EditContextProvider>{listRender(todos)}</EditContextProvider>
+          ) : null}
         </DragDropContext>
       </TodoListContainer>
       {/* </CardAtom> */}

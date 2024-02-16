@@ -6,3 +6,4 @@ export { default as CardAtom } from './CardAtom';
 export { default as TagAtom } from './TagAtom';
 export { default as ProgressButtonAtom } from './ProgressButtonAtom';
 export { default as IconAtom } from './IconAtom';
+export { default as InputAtom } from './InputAtom';

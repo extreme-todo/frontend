@@ -11,7 +11,6 @@ const CardAtom = styled.div<{
 }>`
   position: relative;
   font-size: 1rem;
-  background-color: white;
   background: ${({ theme: { colors }, bg }) => {
     switch (bg) {
       case 'transparent':
