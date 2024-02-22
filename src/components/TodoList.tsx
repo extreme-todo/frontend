@@ -13,7 +13,7 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
-import { EditContextProvider } from '../hooks';
+import { EditContextProvider, useCurrentTodo } from '../hooks';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -78,6 +78,7 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 
 const TodoList = () => {
   const db = ETIndexed.getInstance();
+  const { currentTodo } = useCurrentTodo();
 
   useEffect(() => {
     const getTodos = async () => {
