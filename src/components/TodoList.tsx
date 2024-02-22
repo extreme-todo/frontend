@@ -14,6 +14,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 import { EditContextProvider, useCurrentTodo } from '../hooks';
+import { NowCard } from '../molecules';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -83,7 +84,6 @@ const TodoList = () => {
   useEffect(() => {
     const getTodos = async () => {
       const result = await db.getList(false);
-      console.log('useEffect ::: \n', result);
     };
     getTodos();
   }, []);
@@ -209,6 +209,7 @@ const TodoList = () => {
       {/* <CardAtom> */}
       {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
       <TodoListContainer>
+        <NowCard currentTodo={currentTodo} />
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? (
             <EditContextProvider>{listRender(todos)}</EditContextProvider>
