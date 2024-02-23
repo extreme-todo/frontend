@@ -1,9 +1,10 @@
 import { TagAtom, TypoAtom } from '../atoms';
 
 import { TodoResponseDto } from '../hooks/useCurrentTodo';
+
 import { TodoEntity } from '../DB/indexedAction';
+
 import styled from '@emotion/styled';
-import { DateCard } from '../organisms';
 import { CategoryContainer } from './TodoCard/content/TodoUI';
 
 // const NowCard = ({ currentTodo }: { currentTodo: TodoEntity }) => {
@@ -12,6 +13,27 @@ const NowCard = ({
 }: {
   currentTodo: TodoResponseDto | undefined; // TODO : undefiend 일 때 fallbackUI를 보여줄까?..
 }) => {
+  const timeS = () => {
+    return Number(currentTodo?.duration) / 100;
+  };
+  const timeM = () => {
+    const sec = timeS();
+    let min: number;
+    if (sec / 60 < 60) {
+      min = sec / 60;
+    } else {
+      min = sec % 60;
+    }
+    return String(min).padStart(2, '0') + '분';
+  };
+  const timeH = () => {
+    const min = timeS() / 60;
+    if (min / 60 < 60) return '';
+    return String(Number(min) / 60) + '시간 ';
+  };
+
+  const time = timeH() + timeM();
+
   return (
     <>
       <TypoAtom fontColor="whiteWine" fontSize="body_bold">
@@ -27,7 +49,7 @@ const NowCard = ({
               bg: 'transparent',
             }}
           >
-            <TypoAtom>{'⏱️ ' + currentTodo?.duration}</TypoAtom>
+            <TypoAtom>{'⏱️ ' + time}</TypoAtom>
           </TagAtom>
           {currentTodo?.categories?.map((category) => (
             <TagAtom
@@ -59,6 +81,7 @@ const NowCardContainer = styled.div`
   border-radius: 1.4525rem;
 
   padding: 1.3125rem 1.8125rem;
+  margin-top: 5px;
   margin-bottom: 2.684375rem;
 `;
 
@@ -67,7 +90,7 @@ const CurrentTodoInfoContainer = styled(CategoryContainer)`
   > :first-of-type {
     margin-right: 0.875rem;
     span:first-of-type {
-      padding: 0.38rem 0rem;
+      padding: 0.38rem 0.1rem 0.38rem 0;
     }
   }
 `;

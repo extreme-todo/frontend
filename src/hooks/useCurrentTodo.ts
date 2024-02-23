@@ -43,7 +43,7 @@ const useCurrentTodo = () => {
       date: '2023-08-08',
       todo: 'Go to grocery store',
       createdAt: new Date('Dec 26, 2022 18:00:30'),
-      duration: 60 * 60,
+      duration: 60 * 30 * 100,
       done: false,
       categories: ['영어 학원', '장보기'],
       focusTime: 0,
