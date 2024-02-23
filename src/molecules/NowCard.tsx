@@ -20,7 +20,7 @@ const NowCard = ({
     const sec = timeS();
     let min: number;
     if (sec / 60 < 60) {
-      min = sec / 60;
+      min = Math.floor(sec / 60);
     } else {
       min = sec % 60;
     }

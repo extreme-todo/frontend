@@ -29,7 +29,7 @@ describe('NowCard', () => {
     it('Todo의 시간을 렌더링 한다.', () => {
       const { getByText } = renderer;
 
-      expect(getByText('⏱️ 3600')).toBeInTheDocument();
+      expect(getByText('⏱️ 00분')).toBeInTheDocument();
     });
     it('Todo의 태그를 렌더링 한다.', () => {
       const { getByText } = renderer;
