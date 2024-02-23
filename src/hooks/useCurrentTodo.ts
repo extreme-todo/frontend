@@ -45,7 +45,7 @@ const useCurrentTodo = () => {
       createdAt: new Date('Dec 26, 2022 18:00:30'),
       duration: 60 * 60,
       done: false,
-      categories: null,
+      categories: ['영어 학원', '장보기'],
       focusTime: 0,
       order: 1,
     };
@@ -57,3 +57,4 @@ const useCurrentTodo = () => {
   };
 };
 export default useCurrentTodo;
+export { type TodoResponseDto };

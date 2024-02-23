@@ -11,6 +11,7 @@ export const designTheme: Theme = {
     lightGrey: '#DFE8F1',
     bgYellow: '#E8EAA8',
     lightGrey_2: '#ECECEC',
+    transparent: 'rgba(0,0,0,0)',
   },
   shadows: {
     basic_shadow: '0px 4px 62px rgba(0, 0, 0, 0.05)',
