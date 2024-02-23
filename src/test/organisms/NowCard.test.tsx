@@ -2,14 +2,23 @@ import React from 'react';
 
 import { NowCard } from '../../molecules';
 
+import { ThemeProvider } from '@emotion/react';
+
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 
 import { render } from '@testing-library/react';
 
+import { designTheme } from '../../styles/theme';
+import { IChildProps } from '../../shared/interfaces';
+
 describe('NowCard', () => {
   let renderer: ReturnType<typeof render>;
   beforeEach(() => {
-    renderer = render(<NowCard currentTodo={mockFetchTodoList()[0]} />);
+    renderer = render(<NowCard currentTodo={mockFetchTodoList()[0]} />, {
+      wrapper: ({ children }: IChildProps) => (
+        <ThemeProvider theme={designTheme}>{children}</ThemeProvider>
+      ),
+    });
   });
   describe('NowCard는', () => {
     it('Todo의 타이틀을 렌더링 한다.', () => {
@@ -20,7 +29,7 @@ describe('NowCard', () => {
     it('Todo의 시간을 렌더링 한다.', () => {
       const { getByText } = renderer;
 
-      expect(getByText('3600')).toBeInTheDocument();
+      expect(getByText('⏱️ 3600')).toBeInTheDocument();
     });
     it('Todo의 태그를 렌더링 한다.', () => {
       const { getByText } = renderer;

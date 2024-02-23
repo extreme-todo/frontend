@@ -64,9 +64,9 @@ const NowCardContainer = styled.div`
 
 const CurrentTodoInfoContainer = styled(CategoryContainer)`
   margin-top: 1rem;
-  > :first-child {
+  > :first-of-type {
     margin-right: 0.875rem;
-    span:first-child {
+    span:first-of-type {
       padding: 0.38rem 0rem;
     }
   }
