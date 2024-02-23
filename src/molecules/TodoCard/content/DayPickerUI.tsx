@@ -64,11 +64,12 @@ const DayPickerUI = ({
             <DayPicker
               initialFocus={showPopper}
               mode="single"
-              defaultMonth={selected}
               selected={selected}
               onSelect={handleDaySelect}
+              defaultMonth={new Date()}
+              fromMonth={new Date()}
+              disabled={{ before: new Date() }}
               required
-              hidden={isPastDate}
             />
           </div>
         </FocusTrap>
