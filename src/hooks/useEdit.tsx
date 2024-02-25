@@ -5,16 +5,28 @@ interface IEdit {
   editMode: boolean;
   editTodoId: number | undefined;
 }
-type contextType = [IEdit, React.Dispatch<React.SetStateAction<IEdit>>];
+type editContextType = [IEdit, (newEditState: IEdit) => void];
+const defaultUseEdit: editContextType = [
+  { editMode: false, editTodoId: undefined },
+  (newEditState: IEdit) => {},
+];
 
-// interface IEditContextProps extends IChildProps {}
-
-const EditContext = createContext<contextType | undefined>(undefined);
+const EditContext = createContext<editContextType>(defaultUseEdit);
 
 const EditContextProvider = ({ children }: IChildProps): JSX.Element => {
-  const editState = useState<IEdit>({ editMode: false, editTodoId: undefined });
+  const [edit, setEdit] = useState<IEdit>({
+    editMode: false,
+    editTodoId: undefined,
+  });
+
+  const handleState = (newEditState: IEdit) => {
+    setEdit(newEditState);
+  };
+
+  const wrapState: editContextType = [edit, handleState];
+
   return (
-    <EditContext.Provider value={editState}>{children}</EditContext.Provider>
+    <EditContext.Provider value={wrapState}>{children}</EditContext.Provider>
   );
 };
 
@@ -27,4 +39,4 @@ const useEdit = () => {
   return value;
 };
 
-export { useEdit, EditContextProvider };
+export { useEdit, EditContextProvider, type IEdit, type editContextType };
