@@ -12,8 +12,8 @@ export const pomodoroUnit = 60000;
 // TODO : 테스트용 1 제거 필요
 export const focusStepList = [1, 10, 20, 30, 40, 50] as const;
 export const restStepList = [1, 5, 10, 15, 20] as const;
-export type focusStep = typeof focusStepList[number];
-export type restStep = typeof restStepList[number];
+export type focusStep = (typeof focusStepList)[number];
+export type restStep = (typeof restStepList)[number];
 export const initialPomodoroData: IPomodoroData = {
   settings: {
     focusStep: 1,
