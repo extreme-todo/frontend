@@ -61,7 +61,6 @@ const DateCard = ({ tododata, date }: IDateCardProps) => {
 export default DateCard;
 
 const DroppableContainer = styled.div`
-  background-color: powderblue;
   width: 100%;
   margin-bottom: 2rem;
   > * {

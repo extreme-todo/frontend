@@ -42,4 +42,5 @@ const IconContainer = styled.div<
       : backgroundColor
       ? theme.colors[backgroundColor]
       : null};
+  cursor: pointer;
 `;

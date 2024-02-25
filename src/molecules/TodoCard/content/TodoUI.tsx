@@ -1,60 +1,51 @@
-import { useState } from 'react';
+import { IconAtom, TagAtom, TypoAtom } from '../../../atoms';
 
-import { IconAtom, TagAtom, TypoAtom } from '../atoms';
+import { ITodoCardProps } from '..';
 
-import { TodoEntity } from '../DB/indexedAction';
-
-import {
-  DraggableProvidedDragHandleProps,
-  DraggableStateSnapshot,
-} from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
-
-interface ITodoCardProps {
-  todoData: TodoEntity;
-  dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
-  snapshot: DraggableStateSnapshot;
+interface ITodoUIProps extends ITodoCardProps {
+  handleMouseOver: () => void;
+  handleMouseOut: () => void;
+  handleEditButton: () => void;
+  editMode: boolean;
+  showEdit: boolean;
 }
 
-const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
-  const {
-    id,
-    date,
-    todo,
-    createdAt,
-    duration,
-    done,
-    categories,
-    focusTime,
-    order,
-  } = todoData;
-
-  const [showEdit, setShowEdit] = useState(false);
-  const onMouseOverHandler = () => {
-    setShowEdit(true);
-  };
-  const onMouseOutHandler = () => {
-    setShowEdit(false);
-  };
+const TodoUI = ({
+  todoData,
+  editMode,
+  showEdit,
+  dragHandleProps,
+  snapshot,
+  handleMouseOver,
+  handleMouseOut,
+  handleEditButton,
+}: ITodoUIProps) => {
+  const { todo, categories } = todoData;
 
   return (
     <TodoCardContainer
-      onMouseOver={onMouseOverHandler}
-      onMouseOut={onMouseOutHandler}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
     >
       <DraggableWrapper>
-        <IconAtom {...dragHandleProps} size={2}>
-          <img src={'icons/handle.svg'}></img>
-        </IconAtom>
+        {editMode ? (
+          <IconAtom size={2}>
+            <img src={'icons/handle.svg'}></img>
+          </IconAtom>
+        ) : (
+          <IconAtom {...dragHandleProps} size={2}>
+            <img src={'icons/handle.svg'}></img>
+          </IconAtom>
+        )}
         <TitleCategoryContainer>
           <TitleContainer>
-            <TypoAtom title={todo} fontSize="body">
-              {todo}
-            </TypoAtom>
+            <TypoAtom fontSize="body">{todo}</TypoAtom>
           </TitleContainer>
           <CategoryContainer>
-            {!snapshot.isDragging
-              ? categories?.map((category) => {
+            {snapshot?.isDragging
+              ? null
+              : categories?.map((category) => {
                   return (
                     <TagAtom
                       key={category}
@@ -62,39 +53,41 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
                       styleOption={{
                         fontsize: 'sm',
                         size: 'sm',
-                        bg: 'lightGrey_2',
+                        bg: 'whiteWine',
                         maxWidth: 10,
                       }}
                     >
                       {category}
                     </TagAtom>
                   );
-                })
-              : null}
+                })}
           </CategoryContainer>
         </TitleCategoryContainer>
       </DraggableWrapper>
       <EditWrapper>
         {showEdit ? (
-          <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>수정</TagAtom>
+          <TagAtom
+            handler={handleEditButton}
+            styleOption={{ fontsize: 'sm', size: 'sm' }}
+          >
+            수정
+          </TagAtom>
         ) : null}
       </EditWrapper>
     </TodoCardContainer>
   );
 };
 
-export default TodoCard;
+export default TodoUI;
 
 const TodoCardContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: #5db1ff;
 `;
 
 const DraggableWrapper = styled.div`
   display: flex;
   width: 80%;
-  background-color: mintcream;
 `;
 
 const TitleCategoryContainer = styled.div`
@@ -106,11 +99,9 @@ const EditWrapper = styled.div`
   width: 20%;
   display: flex;
   justify-content: flex-end;
-  background-color: #f3cef3;
 `;
 
 const TitleContainer = styled.div`
-  background-color: #ff8888;
   margin-bottom: 0.5rem;
   width: 100%;
 

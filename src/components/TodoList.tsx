@@ -13,7 +13,8 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
-import { BtnAtom } from '../atoms';
+import { EditContextProvider } from '../hooks';
+import React from 'react';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -206,10 +207,12 @@ const TodoList = () => {
         }}
       > */}
       {/* <CardAtom> */}
-      <BtnAtom children={'add Todo'} handler={onClickHandler} />
+      {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
       <TodoListContainer>
         <DragDropContext onDragEnd={onDragDropHandler}>
-          {!isLoading && todos ? listRender(todos) : null}
+          {!isLoading && todos ? (
+            <EditContextProvider>{listRender(todos)}</EditContextProvider>
+          ) : null}
         </DragDropContext>
       </TodoListContainer>
       {/* </CardAtom> */}

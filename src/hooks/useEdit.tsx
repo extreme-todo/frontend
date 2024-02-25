@@ -1,0 +1,44 @@
+import React, { createContext, useContext, useState } from 'react';
+import { IChildProps } from '../shared/interfaces';
+
+interface IEdit {
+  editMode: boolean;
+  editTodoId: number | undefined;
+}
+type editContextType = [IEdit, (newEditState: IEdit) => void];
+const defaultUseEdit: editContextType = [
+  { editMode: false, editTodoId: undefined },
+  (newEditState: IEdit) => {
+    return;
+  },
+];
+
+const EditContext = createContext<editContextType>(defaultUseEdit);
+
+const EditContextProvider = ({ children }: IChildProps): JSX.Element => {
+  const [edit, setEdit] = useState<IEdit>({
+    editMode: false,
+    editTodoId: undefined,
+  });
+
+  const handleState = (newEditState: IEdit) => {
+    setEdit(newEditState);
+  };
+
+  const wrapState: editContextType = [edit, handleState];
+
+  return (
+    <EditContext.Provider value={wrapState}>{children}</EditContext.Provider>
+  );
+};
+
+const useEdit = () => {
+  const value = useContext(EditContext);
+  if (value === undefined)
+    throw new Error('value is undefined', {
+      cause: 'useEdit',
+    });
+  return value;
+};
+
+export { useEdit, EditContextProvider, type IEdit, type editContextType };
