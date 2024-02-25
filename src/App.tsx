@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import 'react-day-picker/dist/style.css';
 import './styles/customPickerStyle.css';
+import { ETIndexed } from './DB/indexed';
 
 const queryClient = new QueryClient();
 
