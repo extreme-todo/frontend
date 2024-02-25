@@ -3,7 +3,7 @@ import { CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
 import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
-import { CurrentTodo } from '../molecules';
+import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 
 type ICurrentTodoCardProps = IChildProps;
@@ -74,6 +74,8 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
   return (
     <CurrentTodoWrapper>
       <CardAtom w="58.875rem" h="33.11456rem" className="card">
+        <ExtremeModeIndicator></ExtremeModeIndicator>
+
         {currentTodo.currentTodo ? (
           <>
             <CurrentTodo

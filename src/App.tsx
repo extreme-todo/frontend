@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import PomodoroProvider from './hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ExtremeModeProvider } from './hooks/useExtremeMode';
 
 const queryClient = new QueryClient();
 
@@ -33,13 +34,15 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MainContainer id="main-container">
-        <Welcome />
-        <PomodoroProvider>
-          <MainTodo isLogin={isLogin} />
-        </PomodoroProvider>
-        <RankingAndRecords isLogin={isLogin} />
-      </MainContainer>
+      <PomodoroProvider>
+        <ExtremeModeProvider>
+          <MainContainer id="main-container">
+            <Welcome />
+            <MainTodo isLogin={isLogin} />
+            <RankingAndRecords isLogin={isLogin} />
+          </MainContainer>
+        </ExtremeModeProvider>
+      </PomodoroProvider>
       <ReactQueryDevtools />
     </QueryClientProvider>
   );
