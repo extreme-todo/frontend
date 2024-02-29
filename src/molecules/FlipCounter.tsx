@@ -1,17 +1,21 @@
-import styled from '@emotion/styled';
 import { useState } from 'react';
 
-const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+import styled from '@emotion/styled';
+import TypoAtom from '../atoms/TypoAtom';
 
-const FlipCounter = () => {
-  const [numState, setNumState] = useState(0);
+interface IFlipCounter {
+  flipNumber: Array<number>;
+}
+
+const FlipCounter = ({ flipNumber }: IFlipCounter) => {
+  const [flipIndex, setFlipIndex] = useState(0);
   const [isPlus, setIsPlus] = useState(false);
   const handlePlus = () => {
-    setNumState((prev) => (prev >= 10 ? prev : prev + 1));
+    setFlipIndex((prev) => (prev >= flipNumber.length - 1 ? prev : prev + 1));
     setIsPlus(true);
   };
   const handleMinus = () => {
-    setNumState((prev) => (prev <= 0 ? prev : prev - 1));
+    setFlipIndex((prev) => (prev <= 0 ? prev : prev - 1));
     setIsPlus(false);
   };
 
@@ -19,20 +23,24 @@ const FlipCounter = () => {
     <>
       <button onClick={handlePlus}>플러스</button>
       <FlipContainer>
-        {nums.map((num) => (
+        {flipNumber.map((num) => (
           <NumberCard
             className={
-              (num === (numState - 1) % 10 ? 'prev' : '') +
-              (num === numState ? 'curr ' : '') +
-              (num === (numState + 1) % 10 ? 'next ' : '')
+              (num === flipNumber[flipIndex - 1] ? 'prev' : '') +
+              (num === flipNumber[flipIndex] ? 'curr ' : '') +
+              (num === flipNumber[flipIndex + 1] ? 'next ' : '')
             }
             isPlus={isPlus}
           >
             <div className="upper">
-              <div className="num">{num}</div>
+              <TypoAtom fontSize="h1" className={'num'}>
+                {num}
+              </TypoAtom>
             </div>
             <div className="lower">
-              <div className="num">{num}</div>
+              <TypoAtom fontSize="h1" className={'num'}>
+                {num}
+              </TypoAtom>
             </div>
           </NumberCard>
         ))}
@@ -46,11 +54,11 @@ export default FlipCounter;
 
 const FlipContainer = styled.ul`
   position: relative;
-  width: 25px;
-  height: 32px;
+  width: 7.4375rem;
+  height: 8.625rem;
   margin: 2px;
   border-radius: 6px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7); */
   font-size: 20px;
   font-weight: bold;
   list-style: none;
@@ -63,6 +71,7 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
   left: 0;
   width: 100%;
   height: 100%;
+  padding: 0 5px 0 5px;
 
   div {
     position: absolute;
@@ -90,9 +99,8 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
       height: 200%;
       align-items: center;
       justify-content: center;
-      background-color: #000000;
+      background-color: ${({ theme }) => theme.colors.bgYellow};
       border-radius: 6px;
-      color: white;
     }
 
     &.upper {
@@ -132,20 +140,20 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
 
     .upper {
       z-index: 2;
-      animation: top-to-middle 0.5s linear both;
+      animation: top-to-middle 0.3s linear both;
 
       &::before {
-        animation: show 0.5s linear both;
+        animation: show 0.3s linear both;
         background: linear-gradient(
           to top,
-          rgba(0, 0, 0, 0.1) 0%,
-          rgba(0, 0, 0, 1) 100%
+          rgba(232, 234, 167, 0.1) 0%,
+          rgba(232, 234, 167, 1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(0, 0, 0, 0.1) 0%,
+          rgba(232, 234, 167, 0.1) 0%,
           0%,
-          rgba(0, 0, 0, 1) 100%
+          rgba(232, 234, 167, 1) 100%
         );
         border-radius: 6px;
       }
@@ -153,7 +161,7 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
 
     .lower {
       &::before {
-        animation: show 0.5s linear both;
+        animation: show 0.3s linear both;
       }
     }
   }`;
@@ -164,20 +172,20 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
 
     .lower {
       z-index: 2;
-      animation: bottom-to-middle 0.5s linear both;
+      animation: bottom-to-middle 0.3s linear both;
 
       &::before {
-        animation: show 0.5s linear both;
+        animation: show 0.3s linear both;
         background: linear-gradient(
           to top,
-          rgba(0, 0, 0, 0.1) 0%,
-          rgba(0, 0, 0, 1) 100%
+          rgba(232, 234, 167, 0.1) 0%,
+          rgba(232, 234, 167, 1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(0, 0, 0, 0.1) 0%,
+          rgba(232, 234, 167, 0.1) 0%,
           0%,
-          rgba(0, 0, 0, 1) 100%
+          rgba(232, 234, 167, 1) 100%
         );
         border-radius: 6px;
       }
@@ -185,7 +193,7 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
 
     .upper {
       &::before {
-        animation: show 0.5s linear both;
+        animation: show 0.3s linear both;
       }
     }
   }
@@ -194,32 +202,32 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
 
   &.curr {
     z-index: 2;
-    animation: increase-zindex 0.5s 0.5s linear forwards;
+    animation: increase-zindex 0.3s 0.3s linear forwards;
 
     ${({ isPlus }) => {
       if (isPlus)
         return `
       .upper {
       &::before {
-        animation: hide 0.5s 0.3s linear both;
+        animation: hide 0.3s 0.1s linear both;
       }
     }
 
     .lower {
       z-index: 2;
-      animation: middle-to-bottom 0.5s 0.5s linear both;
+      animation: middle-to-bottom 0.3s 0.3s linear both;
 
       &::before {
-        animation: hide 0.5s 0.3s linear both;
+        animation: hide 0.3s 0.1s linear both;
         background: linear-gradient(
           to top,
-          rgba(0, 0, 0, 1) 0%,
-          rgba(0, 0, 0, 0.1) 100%
+          rgba(232, 234, 167, 1) 0%,
+          rgba(232, 234, 167, 0.1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(0, 0, 0, 1) 0%,
-          rgba(0, 0, 0, 0.1) 100%
+          rgba(232, 234, 167, 1) 0%,
+          rgba(232, 234, 167, 0.1) 100%
         );
         border-radius: 6px;
       }
@@ -229,19 +237,19 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
         return `
       .upper {
         z-index: 2;
-      animation: middle-to-top 0.5s 0.5s linear both;
+      animation: middle-to-top 0.3s 0.3s linear both;
 
       &::before {
-        animation: hide 0.5s 0.3s linear both;
+        animation: hide 0.3s 0.1s linear both;
         background: linear-gradient(
           to top,
-          rgba(0, 0, 0, 1) 0%,
-          rgba(0, 0, 0, 0.1) 100%
+          rgba(232, 234, 167, 1) 0%,
+          rgba(232, 234, 167, 0.1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(0, 0, 0, 1) 0%,
-          rgba(0, 0, 0, 0.1) 100%
+          rgba(232, 234, 167, 1) 0%,
+          rgba(232, 234, 167, 0.1) 100%
         );
         border-radius: 6px;
       }
@@ -249,7 +257,7 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
 
     .lower {
       &::before {
-        animation: hide 0.5s 0.3s linear both;
+        animation: hide 0.3s 0.1s linear both;
       }
     }
       `;
