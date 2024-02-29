@@ -221,13 +221,13 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
         animation: hide 0.3s 0.1s linear both;
         background: linear-gradient(
           to top,
-          rgba(232, 234, 167, 1) 0%,
-          rgba(232, 234, 167, 0.1) 100%
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(232, 234, 167, 1) 0%,
-          rgba(232, 234, 167, 0.1) 100%
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.1) 100%
         );
         border-radius: 6px;
       }
@@ -243,13 +243,13 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
         animation: hide 0.3s 0.1s linear both;
         background: linear-gradient(
           to top,
-          rgba(232, 234, 167, 1) 0%,
-          rgba(232, 234, 167, 0.1) 100%
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(232, 234, 167, 1) 0%,
-          rgba(232, 234, 167, 0.1) 100%
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.1) 100%
         );
         border-radius: 6px;
       }
