@@ -8,7 +8,9 @@ interface IEdit {
 type editContextType = [IEdit, (newEditState: IEdit) => void];
 const defaultUseEdit: editContextType = [
   { editMode: false, editTodoId: undefined },
-  (newEditState: IEdit) => {},
+  (newEditState: IEdit) => {
+    return;
+  },
 ];
 
 const EditContext = createContext<editContextType>(defaultUseEdit);
