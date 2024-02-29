@@ -14,11 +14,14 @@ import { IChildProps } from '../../shared/interfaces';
 describe('NowCard', () => {
   let renderer: ReturnType<typeof render>;
   beforeEach(() => {
-    renderer = render(<NowCard currentTodo={mockFetchTodoList()[0]} />, {
-      wrapper: ({ children }: IChildProps) => (
-        <ThemeProvider theme={designTheme}>{children}</ThemeProvider>
-      ),
-    });
+    renderer = render(
+      <NowCard currentTodo={mockFetchTodoList()[0]} focusStep={30} />,
+      {
+        wrapper: ({ children }: IChildProps) => (
+          <ThemeProvider theme={designTheme}>{children}</ThemeProvider>
+        ),
+      },
+    );
   });
   describe('NowCard는', () => {
     it('Todo의 타이틀을 렌더링 한다.', () => {
@@ -29,7 +32,7 @@ describe('NowCard', () => {
     it('Todo의 시간을 렌더링 한다.', () => {
       const { getByText } = renderer;
 
-      expect(getByText('⏱️ 00분')).toBeInTheDocument();
+      expect(getByText('⏱️ 1시간 30분')).toBeInTheDocument();
     });
     it('Todo의 태그를 렌더링 한다.', () => {
       const { getByText } = renderer;

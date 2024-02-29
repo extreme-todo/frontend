@@ -13,22 +13,21 @@ interface INowCardProps {
 
 // TODO : undefiend 일 때 fallbackUI를 보여줄까?..
 const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
+  /* 시간 로직 */
+  const durationMin = currentTodo?.duration * focusStep;
   const timeM = () => {
-    const sec = timeS();
     let min: number;
-    if (sec / 60 < 60) {
-      min = Math.floor(sec / 60);
+    if (durationMin < 60) {
+      min = durationMin;
     } else {
-      min = sec % 60;
+      min = durationMin % 60;
     }
     return String(min).padStart(2, '0') + '분';
   };
   const timeH = () => {
-    const min = timeS() / 60;
-    if (min / 60 < 60) return '';
-    return String(Number(min) / 60) + '시간 ';
+    if (durationMin < 60) return '';
+    return String(Math.floor(Number(durationMin) / 60)) + '시간 ';
   };
-
   const time = timeH() + timeM();
 
   return (
