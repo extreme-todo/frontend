@@ -7,3 +7,4 @@ export { default as TagAtom } from './TagAtom';
 export { default as ProgressButtonAtom } from './ProgressButtonAtom';
 export { default as IconAtom } from './IconAtom';
 export { default as InputAtom } from './InputAtom';
+export { default as FlipCounter } from './FlipCounter';
