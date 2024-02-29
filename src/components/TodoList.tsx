@@ -13,7 +13,11 @@ import {
 } from 'react-beautiful-dnd';
 import { useQuery } from '@tanstack/react-query';
 import styled from '@emotion/styled';
-import { EditContextProvider, useCurrentTodo } from '../hooks';
+import {
+  EditContextProvider,
+  useCurrentTodo,
+  usePomodoroValue,
+} from '../hooks';
 import { NowCard } from '../molecules';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
@@ -80,6 +84,9 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 const TodoList = () => {
   const db = ETIndexed.getInstance();
   const { currentTodo } = useCurrentTodo();
+  const {
+    settings: { focusStep },
+  } = usePomodoroValue();
 
   useEffect(() => {
     const getTodos = async () => {
@@ -209,7 +216,10 @@ const TodoList = () => {
       {/* <CardAtom> */}
       {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
       <TodoListContainer>
-        <NowCard currentTodo={currentTodo} />
+        <NowCard
+          currentTodo={currentTodo as TodoEntity}
+          focusStep={focusStep}
+        />
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? (
             <EditContextProvider>{listRender(todos)}</EditContextProvider>

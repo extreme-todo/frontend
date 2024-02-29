@@ -1,21 +1,18 @@
 import { TagAtom, TypoAtom } from '../atoms';
 
-import { TodoResponseDto } from '../hooks/useCurrentTodo';
-
-import { TodoEntity } from '../DB/indexedAction';
-
 import styled from '@emotion/styled';
 import { CategoryContainer } from './TodoCard/content/TodoUI';
 
-// const NowCard = ({ currentTodo }: { currentTodo: TodoEntity }) => {
-const NowCard = ({
-  currentTodo,
-}: {
-  currentTodo: TodoResponseDto | undefined; // TODO : undefiend 일 때 fallbackUI를 보여줄까?..
-}) => {
-  const timeS = () => {
-    return Number(currentTodo?.duration) / 100;
-  };
+import { TodoEntity } from '../DB/indexedAction';
+import { focusStep } from '../hooks/usePomodoro';
+
+interface INowCardProps {
+  currentTodo: TodoEntity;
+  focusStep: focusStep;
+}
+
+// TODO : undefiend 일 때 fallbackUI를 보여줄까?..
+const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
   const timeM = () => {
     const sec = timeS();
     let min: number;
