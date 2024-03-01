@@ -1,55 +1,41 @@
-import { useState } from 'react';
-
 import styled from '@emotion/styled';
 import TypoAtom from '../atoms/TypoAtom';
+import { IChildProps } from '../shared/interfaces';
 
-interface IFlipCounter {
-  flipNumber: Array<number>;
+interface IFlipperProps {
+  className: string;
+  isPlus: boolean;
+  flipNumber: number;
 }
 
-const FlipCounter = ({ flipNumber }: IFlipCounter) => {
-  const [flipIndex, setFlipIndex] = useState(0);
-  const [isPlus, setIsPlus] = useState(false);
-  const handlePlus = () => {
-    setFlipIndex((prev) => (prev >= flipNumber.length - 1 ? prev : prev + 1));
-    setIsPlus(true);
-  };
-  const handleMinus = () => {
-    setFlipIndex((prev) => (prev <= 0 ? prev : prev - 1));
-    setIsPlus(false);
-  };
+type IFlipCounterProps = IChildProps;
 
+const Flipper = ({ className, isPlus, flipNumber }: IFlipperProps) => {
+  return (
+    <NumberCard className={className} isPlus={isPlus}>
+      <div className="upper">
+        <TypoAtom fontSize="h1" className={'num'}>
+          {flipNumber}
+        </TypoAtom>
+      </div>
+      <div className="lower">
+        <TypoAtom fontSize="h1" className={'num'}>
+          {flipNumber}
+        </TypoAtom>
+      </div>
+    </NumberCard>
+  );
+};
+
+const FlipCounter = ({ children }: IFlipCounterProps) => {
   return (
     <>
-      <button onClick={handlePlus}>플러스</button>
-      <FlipContainer>
-        {flipNumber.map((num) => (
-          <NumberCard
-            className={
-              (num === flipNumber[flipIndex - 1] ? 'prev' : '') +
-              (num === flipNumber[flipIndex] ? 'curr ' : '') +
-              (num === flipNumber[flipIndex + 1] ? 'next ' : '')
-            }
-            isPlus={isPlus}
-          >
-            <div className="upper">
-              <TypoAtom fontSize="h1" className={'num'}>
-                {num}
-              </TypoAtom>
-            </div>
-            <div className="lower">
-              <TypoAtom fontSize="h1" className={'num'}>
-                {num}
-              </TypoAtom>
-            </div>
-          </NumberCard>
-        ))}
-      </FlipContainer>
-      <button onClick={handleMinus}>마이너스</button>
+      <FlipContainer>{children}</FlipContainer>
     </>
   );
 };
 
+FlipCounter.Flipper = Flipper;
 export default FlipCounter;
 
 const FlipContainer = styled.ul`
