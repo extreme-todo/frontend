@@ -455,9 +455,10 @@ describe('TodoCard', () => {
           name: 'tomato_select',
         }) as HTMLSelectElement;
 
-        expect(select.selectedIndex).toBe(0);
+        expect(select.selectedIndex).toBe(3);
 
         const options = getAllByRole('option', { name: 'tomato_option' });
+
         act(() => userEvent.selectOptions(select, options[1]));
 
         select = getByRole('combobox', {

@@ -47,22 +47,20 @@ const useCurrentTodo = () => {
     setFocusedOnTodo(0);
   };
 
-  const getNextTodo = async (): Promise<TodoEntity> => {
-    if (db) {
-      const todolist = await db.getList(false);
-      const todayTodos: TodoEntity[] = todolist.values().next()
-        .value as TodoEntity[];
-      if (todayTodos != null) {
-        setCurrentTodo(todayTodos[0]);
-        return todayTodos[0];
-      } else {
-        setCurrentTodo(undefined);
-        return {} as TodoEntity;
-      }
-    } else {
-      setCurrentTodo(undefined);
-      return {} as TodoEntity;
-    }
+
+  const getNextTodo = (): TodoResponseDto => {
+    // TODO: 다음 todo를 가져오는 로직 수행
+    return {
+      id: 1,
+      date: '2023-08-08',
+      todo: 'Go to grocery store',
+      createdAt: new Date('Dec 26, 2022 18:00:30'),
+      duration: 6,
+      done: false,
+      categories: ['영어 학원', '장보기'],
+      focusTime: 0,
+      order: 1,
+    };
   };
 
   return {
@@ -73,3 +71,4 @@ const useCurrentTodo = () => {
   };
 };
 export default useCurrentTodo;
+export { type TodoResponseDto };
