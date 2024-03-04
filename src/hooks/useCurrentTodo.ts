@@ -26,7 +26,6 @@ const useCurrentTodo = () => {
       }
     };
     checkLocalStorage();
-    getNextTodo();
   }, [db]);
 
   useEffect(() => {
