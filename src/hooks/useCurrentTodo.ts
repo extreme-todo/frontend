@@ -46,21 +46,22 @@ const useCurrentTodo = () => {
     setFocusedOnTodo(0);
   };
 
-  const getNextTodo = async (): Promise<TodoEntity> => {
+  const getNextTodo = async (): Promise<TodoEntity | undefined> => {
     if (db) {
       const todolist = await db.getList(false);
       const todayTodos: TodoEntity[] = todolist.values().next()
         .value as TodoEntity[];
+
       if (todayTodos != null) {
         setCurrentTodo(todayTodos[0]);
         return todayTodos[0];
       } else {
         setCurrentTodo(undefined);
-        return {} as TodoEntity;
+        return undefined;
       }
     } else {
       setCurrentTodo(undefined);
-      return {} as TodoEntity;
+      return undefined;
     }
   };
 

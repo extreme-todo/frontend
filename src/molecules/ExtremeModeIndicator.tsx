@@ -28,7 +28,7 @@ export default ExtremeModeIndicator;
 
 const ExtremeModeContainer = styled.div`
   position: absolute;
-  z-index: 100;
+  z-index: 1;
   display: flex;
   justify-content: flex-end;
   align-items: center;

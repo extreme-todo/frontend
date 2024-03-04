@@ -75,7 +75,7 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
     <CurrentTodoWrapper>
       <CardAtom w="58.875rem" h="33.11456rem" className="card">
         <ExtremeModeIndicator />
-        {currentTodo.currentTodo ? (
+        {currentTodo.currentTodo?.todo != null ? (
           <>
             <CurrentTodo
               todo={currentTodo.currentTodo}
