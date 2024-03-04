@@ -33,7 +33,7 @@ describe('useExtremeMode', () => {
         jest.fn((key: string, data: string) => null),
       );
       component = render(
-          <TestExtremeMode></TestExtremeMode>, {wrapper: WrapperComponent}
+          <TestExtremeMode />, {wrapper: WrapperComponent}
       );
     });
 
