@@ -114,7 +114,7 @@ const TitleContainer = styled.div`
   }
 `;
 
-const CategoryContainer = styled.div`
+export const CategoryContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
 
