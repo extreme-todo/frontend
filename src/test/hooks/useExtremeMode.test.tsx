@@ -6,7 +6,7 @@ import { DEFAULT_IS_EXTREME, ExtremeModeProvider } from '../../hooks/useExtremeM
 import PomodoroProvider from '../../hooks/usePomodoro';
 ExtremeModeProvider
 
-fdescribe('useExtremeMode', () => {
+describe('useExtremeMode', () => {
   let component: RenderResult;
   const WrapperComponent = ({ children }) => (
     <PomodoroProvider>
