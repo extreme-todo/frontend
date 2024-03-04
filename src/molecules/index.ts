@@ -6,3 +6,4 @@ export { default as SideButtons } from './SideButtons';
 export { default as TodoCard } from './TodoCard';
 export { default as CurrentTodo } from './CurrentTodo';
 export { default as ExtremeModeIndicator } from './ExtremeModeIndicator';
+export { default as NowCard } from './NowCard';
