@@ -9,7 +9,6 @@ import { usersApi } from '../shared/apis';
 import { useCheckLogin } from '../hooks';
 
 import styled from '@emotion/styled';
-import { FlipCounter } from '../molecules';
 
 const Welcome = () => {
   const [isModal, setIsModal] = useState<boolean>(false);
@@ -56,7 +55,6 @@ const Welcome = () => {
         ) : (
           <GoogleLoginAtom onClick={handleLoginBtn} />
         )}
-        <FlipCounter />
       </WelcomeContainer>
     </>
   );
