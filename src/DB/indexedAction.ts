@@ -114,7 +114,6 @@ class ETIndexedDBAction {
     //   order: { date: 'ASC', order: 'ASC' }, // -> 순서대로 정렬을 하고 나면 날짜별로도 됐을 거임
     // });
     const objectStore = this.getObjectStore('readonly');
-
     const todoRequest = objectStore.getAll();
     const promisedTodo = this.makePromise<TodoEntity[]>(todoRequest, 'get');
     return promisedTodo;

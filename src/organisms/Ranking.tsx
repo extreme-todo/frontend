@@ -36,7 +36,6 @@ function Ranking({
       const { data: newCategories } = await fetchCategories();
       if (newCategories) setCategories(newCategories);
       if (newCategories) setSelectedCategory(newCategories[0]);
-      console.log(newCategories);
     } catch (error) {
       window.alert('데이터를 불러올 수 없습니다.' + error);
     }
@@ -162,7 +161,6 @@ function Ranking({
       {!isLogin && (
         <LogInToUnlock
           navigate={() => {
-            console.log('login clicked');
             return;
           }}
         />

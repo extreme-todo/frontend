@@ -7,23 +7,46 @@ import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
 import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
+import { getPomodoroStepPercent } from '../shared/utils';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
 }
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
-  const { settings: pomodoroSettings, status } = usePomodoroValue();
-  const actions = usePomodoroActions();
-  const currentTodo = useCurrentTodo();
-  console.log(actions);
-  console.log(pomodoroSettings);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { status: pomodoroStatus, settings: pomodoroSettings } =
+    usePomodoroValue();
+  const { startResting } = usePomodoroActions();
+  const [focusedPercent, setFocusedPercent] = useState<number>(0);
+  const [restedPercent, setRestedPercent] = useState<number>(0);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log('status not changed but rendered anyway');
-  }, [status]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const modalRef = useRef<HTMLDivElement>(null);
+    // 최초 진입시에는 휴식 상태로 시작
+    startResting();
+  }, []);
+
+  useEffect(() => {
+    setFocusedPercent(
+      Number(
+        getPomodoroStepPercent({
+          curr: pomodoroStatus.focusedTime,
+          unit: 1,
+          step: pomodoroSettings.focusStep,
+        }),
+      ),
+    );
+    setRestedPercent(
+      Number(
+        getPomodoroStepPercent({
+          curr: pomodoroStatus.restedTime,
+          unit: 1,
+          step: pomodoroSettings.restStep,
+        }),
+      ),
+    );
+  }, [pomodoroStatus]);
 
   return (
     <MainTodoContainer ref={modalRef}>
@@ -31,35 +54,14 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
         <Clock></Clock>
         <MainTodoCenter>
           <SideButtons>
-            <SideButtons.ProgressButton progress={45}>
-              45
+            <SideButtons.ProgressButton progress={focusedPercent}>
+              {focusedPercent}%
             </SideButtons.ProgressButton>
-            <SideButtons.ProgressButton progress={45}>
-              45
+            <SideButtons.ProgressButton progress={restedPercent}>
+              {restedPercent}%
             </SideButtons.ProgressButton>
           </SideButtons>
-          <CurrentTodoCard>
-            currentTodo: {currentTodo.currentTodo?.todo} <br />
-            focusstep: {pomodoroSettings.focusStep} <br />
-            reststep: {pomodoroSettings.restStep}
-            <br />
-            focused:
-            {status.isFocusing ? status.focusedTime : '집중안하는중'}
-            <br />
-            rested:
-            {status.isResting ? status.restedTime : '휴식안하는중'}
-            <br />
-            <button onClick={() => actions?.setFocusStep(10)}>
-              뽀모도로 집중시간 10분
-            </button>
-            <button onClick={() => actions?.setRestStep(10)}>
-              뽀모도로 휴식시간 10분
-            </button>
-            <button onClick={() => actions?.startFocusing()}>
-              집중시작!!!
-            </button>
-            <button onClick={() => actions?.startResting()}>휴식시작~</button>
-          </CurrentTodoCard>
+          <CurrentTodoCard></CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
