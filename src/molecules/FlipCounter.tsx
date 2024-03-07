@@ -28,11 +28,7 @@ const Flipper = ({ className, isPlus, flipNumber }: IFlipperProps) => {
 };
 
 const FlipCounter = ({ children }: IFlipCounterProps) => {
-  return (
-    <>
-      <FlipContainer>{children}</FlipContainer>
-    </>
-  );
+  return <FlipContainer>{children}</FlipContainer>;
 };
 
 FlipCounter.Flipper = Flipper;
