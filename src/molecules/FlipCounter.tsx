@@ -36,10 +36,11 @@ export default FlipCounter;
 
 const FlipContainer = styled.ul`
   position: relative;
-  width: 7.4375rem;
-  height: 8.625rem;
+  height: 7.4375rem;
+  width: 8.625rem;
   margin: 2px;
   border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
   /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7); */
   font-size: 20px;
   font-weight: bold;
@@ -53,7 +54,6 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
   left: 0;
   width: 100%;
   height: 100%;
-  padding: 0 5px 0 5px;
 
   div {
     position: absolute;
@@ -81,7 +81,7 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
       height: 200%;
       align-items: center;
       justify-content: center;
-      background-color: ${({ theme }) => theme.colors.bgYellow};
+      background-color: rgb(219, 209, 164);
       border-radius: 6px;
     }
 
@@ -128,14 +128,14 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
         animation: show 0.3s linear both;
         background: linear-gradient(
           to top,
-          rgba(232, 234, 167, 0.1) 0%,
-          rgba(232, 234, 167, 1) 100%
+          rgba(219, 209, 164, 0.1) 0%,
+          rgba(219, 209, 164, 1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(232, 234, 167, 0.1) 0%,
+          rgba(219, 209, 164, 0.1) 0%,
           0%,
-          rgba(232, 234, 167, 1) 100%
+          rgba(219, 209, 164, 1) 100%
         );
         border-radius: 6px;
       }
@@ -160,14 +160,14 @@ const NumberCard = styled.li<{ isPlus: boolean }>`
         animation: show 0.3s linear both;
         background: linear-gradient(
           to top,
-          rgba(232, 234, 167, 0.1) 0%,
-          rgba(232, 234, 167, 1) 100%
+          rgba(219, 209, 164, 0.1) 0%,
+          rgba(219, 209, 164, 1) 100%
         );
         background: linear-gradient(
           to bottom,
-          rgba(232, 234, 167, 0.1) 0%,
+          rgba(219, 209, 164, 0.1) 0%,
           0%,
-          rgba(232, 234, 167, 1) 100%
+          rgba(219, 209, 164, 1) 100%
         );
         border-radius: 6px;
       }
