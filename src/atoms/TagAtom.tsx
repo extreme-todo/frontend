@@ -70,7 +70,9 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
   background: ${({ bg, theme }) =>
     bg ? theme.colors[bg] : theme.colors.white};
   color: ${({ bg, theme }) =>
-    bg === 'titleColor' ? theme.colors.white : theme.colors.subFontColor};
+    bg === 'titleColor' || bg === 'subFontColor'
+      ? theme.colors.white
+      : theme.colors.subFontColor};
 
   border-radius: ${({ size }) => {
     switch (size) {

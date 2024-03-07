@@ -1,59 +1,76 @@
 import { useEffect, useState } from 'react';
+import { TodoEntity } from '../DB/indexedAction';
+import { ETIndexed } from '../DB/indexed';
 
-interface TodoResponseDto {
-  id: number;
-  date: string;
-  todo: string;
-  createdAt: Date;
-  duration: number;
-  done: boolean;
-  categories: string[] | null;
-  focusTime: number;
-  order: number | null;
-}
+type TodoResponseDto = TodoEntity;
 
 const useCurrentTodo = () => {
-  const [currentTodo, setCurrentTodo] = useState<TodoResponseDto>(); // TODO: 나중에 TodoEntity로 타입 픽스
+  const [currentTodo, setCurrentTodo] = useState<TodoResponseDto>();
+  const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
   const localKey = 'currentTodo';
+  const db = ETIndexed.getInstance();
 
   useEffect(() => {
-    const localTodo = localStorage.getItem(localKey);
-    if (localTodo != null) {
-      setCurrentTodo(JSON.parse(localTodo) as TodoResponseDto);
-    } else {
-      const tmpTodo = getNextTodo();
-      if (tmpTodo) {
-        setCurrentTodo(tmpTodo);
-        localStorage.setItem(localKey, JSON.stringify(tmpTodo));
+    const checkLocalStorage = async () => {
+      const localTodo = localStorage.getItem(localKey);
+      if (localTodo != null) {
+        setCurrentTodo(JSON.parse(localTodo) as TodoResponseDto);
       } else {
-        setCurrentTodo(undefined);
+        const nextTodo = await getNextTodo();
+        if (nextTodo) {
+          setCurrentTodo(nextTodo);
+          localStorage.setItem(localKey, JSON.stringify(nextTodo));
+        } else {
+          setCurrentTodo(undefined);
+        }
       }
-    }
-  }, []);
+    };
+    checkLocalStorage();
+  }, [db]);
 
-  const doTodo = () => {
-    // TODO: do todo 로직 수행
-    getNextTodo();
+  useEffect(() => {
+    if (currentTodo != null) {
+      localStorage.setItem(localKey, JSON.stringify(currentTodo));
+    } else {
+      localStorage.removeItem(localKey);
+    }
+  }, [currentTodo]);
+
+  const updateFocus = (focusedTime: number) => {
+    setFocusedOnTodo((prev) => prev + focusedTime);
   };
 
-  const getNextTodo = (): TodoResponseDto => {
-    // TODO: 다음 todo를 가져오는 로직 수행
-    return {
-      id: 1,
-      date: '2023-08-08',
-      todo: 'Go to grocery store',
-      createdAt: new Date('Dec 26, 2022 18:00:30'),
-      duration: 60 * 60,
-      done: false,
-      categories: null,
-      focusTime: 0,
-      order: 1,
-    };
+  const doTodo = async () => {
+    if (currentTodo) await db.doTodo(currentTodo?.id, focusedOnTodo.toString());
+    await getNextTodo();
+    setFocusedOnTodo(0);
+  };
+
+  const getNextTodo = async (): Promise<TodoEntity | undefined> => {
+    if (db) {
+      const todolist = await db.getList(false);
+      const todayTodos: TodoEntity[] = todolist.values().next()
+        .value as TodoEntity[];
+
+      if (todayTodos != null) {
+        setCurrentTodo(todayTodos[0]);
+        return todayTodos[0];
+      } else {
+        setCurrentTodo(undefined);
+        return undefined;
+      }
+    } else {
+      setCurrentTodo(undefined);
+      return undefined;
+    }
   };
 
   return {
     doTodo,
+    updateFocus,
     currentTodo,
+    focusedOnTodo,
   };
 };
 export default useCurrentTodo;
+export { type TodoResponseDto };

@@ -57,7 +57,6 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
       {!isLogin && (
         <LogInToUnlock
           navigate={() => {
-            console.log('login clicked');
             return;
           }}
           subLabel="로그인하고 나의 집중 기록을 확인해보세요!"

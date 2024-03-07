@@ -46,8 +46,10 @@ class ETIndexedDBCalc {
 
   minusOne(todos: TodoEntity[]) {
     return todos.map((todo) => {
-      (todo.order as number) -= 1;
-      return todo;
+      if (todo.order != null) {
+        todo.order -= 1;
+        return todo;
+      } else return todo;
     });
   }
 

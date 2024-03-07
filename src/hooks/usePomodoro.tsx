@@ -8,12 +8,16 @@ import React, {
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 
-export type focusStep = 10 | 20 | 30 | 40 | 50;
-export type restStep = 5 | 10 | 15 | 20;
+export const pomodoroUnit = 60000;
+// TODO : 테스트용 1 제거 필요
+export const focusStepList = [1, 10, 20, 30, 40, 50] as const;
+export const restStepList = [1, 5, 10, 15, 20] as const;
+export type focusStep = (typeof focusStepList)[number];
+export type restStep = (typeof restStepList)[number];
 export const initialPomodoroData: IPomodoroData = {
   settings: {
-    focusStep: 30,
-    restStep: 10,
+    focusStep: 1,
+    restStep: 1,
   },
   status: {
     isFocusing: false,
@@ -158,6 +162,7 @@ function usePomodoroActions() {
 function getPomodoroData<T>(type: 'settings' | 'status') {
   const localKey = 'pomodoro-' + type;
   const existingData = localStorage.getItem(localKey);
+
   if (existingData) {
     return JSON.parse(existingData) as T;
   } else {
@@ -170,6 +175,7 @@ function getPomodoroData<T>(type: 'settings' | 'status') {
         initData = initialPomodoroData.status as T;
         break;
     }
+
     updatePomodoroData<T>(initData, type);
     return initData;
   }

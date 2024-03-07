@@ -18,7 +18,7 @@ const ProgressButtonAtom = styled.button<{
   color: ${({ theme }) => theme.colors.white};
   text-align: center;
   font-family: Pretendard;
-  font-size: 1.74325rem;
+  font-size: 1.4rem;
   font-style: normal;
   font-weight: 400;
   background: conic-gradient(
