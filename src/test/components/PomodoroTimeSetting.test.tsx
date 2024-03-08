@@ -1,6 +1,6 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
-import { PomodoroTimeSetting, TimeSetter } from '../../components';
+import { act, render } from '@testing-library/react';
+import { TimeSetter } from '../../components';
 import { ThemeProvider } from '@emotion/react';
 
 import { IChildProps } from '../../shared/interfaces';
@@ -10,6 +10,8 @@ import userEvent from '@testing-library/user-event';
 
 describe('PomodoroTimeSetting', () => {
   let renderUI: ReturnType<typeof render>;
+  const handlePlus = jest.fn();
+  const handleMinus = jest.fn();
 
   describe('TimeSetter는', () => {
     beforeEach(() => {
@@ -17,7 +19,10 @@ describe('PomodoroTimeSetting', () => {
         <TimeSetter
           flipData={[...focusStepList]}
           title={'집중시간'}
-          initFlipIndex={focusStepList.findIndex((step) => step === 30)}
+          isPlus={true}
+          flipIndex={focusStepList.findIndex((step) => step === 30)}
+          handlePlus={handlePlus}
+          handleMinus={handleMinus}
         />,
         {
           wrapper: ({ children }: IChildProps) => (
@@ -73,43 +78,17 @@ describe('PomodoroTimeSetting', () => {
       expect(minStandar).toBeInTheDocument();
     });
 
-    it('Flip Counter 조작 버튼을 누르면 Flip Counter가 수정된다.', () => {
-      const { getByAltText, getAllByRole } = renderUI;
+    it('Plus, Minus 조작 버튼을 누르면 해당 핸들러가 호출된다.', () => {
+      const { getByAltText } = renderUI;
 
-      const focusMin = getAllByRole('listitem');
-      let minIndex = 0;
-
-      // 버튼 조작 전
-      focusMin.forEach((element, idx) => {
-        if (element.classList.contains('curr')) {
-          minIndex = idx;
-        }
-      });
-      expect(minIndex).toBe(3);
-
-      // 시간 추가 버튼 조작
       const timeup = getByAltText('timeup');
       act(() => userEvent.click(timeup));
-
-      focusMin.forEach((element, idx) => {
-        if (element.classList.contains('curr')) {
-          minIndex = idx;
-        }
-      });
-      expect(minIndex).toBe(4);
 
       const timedown = getByAltText('timedown');
       act(() => userEvent.click(timedown));
 
-      focusMin.forEach((element, idx) => {
-        if (element.classList.contains('curr')) {
-          minIndex = idx;
-        }
-      });
-      expect(minIndex).toBe(3);
+      expect(handlePlus).toBeCalled();
+      expect(handleMinus).toBeCalled();
     });
-  });
-  describe('TimeSetting은', () => {
-    it('확인 버튼을 누르면 localStorage에 설정 값이 반영된다.', () => {});
   });
 });

@@ -2,28 +2,31 @@ import { useState } from 'react';
 
 import { IconAtom, TypoAtom } from '../atoms';
 import { FlipCounter } from '../molecules';
-import { focusStepList, restStepList } from '../hooks/usePomodoro';
+import {
+  focusStepList,
+  restStepList,
+  usePomodoroActions,
+  usePomodoroValue,
+} from '../hooks/usePomodoro';
 import styled from '@emotion/styled';
 
 interface ITimeCounterProps {
   flipData: Array<number>;
   title: string;
-  initFlipIndex: number;
+  flipIndex: number;
+  isPlus: boolean;
+  handlePlus: () => void;
+  handleMinus: () => void;
 }
 
-const TimeSetter = ({ flipData, title, initFlipIndex }: ITimeCounterProps) => {
-  const [flipIndex, setFlipIndex] = useState(initFlipIndex);
-  const [isPlus, setIsPlus] = useState(false);
-
-  const handlePlus = () => {
-    setFlipIndex((prev) => (prev >= flipData.length - 1 ? prev : prev + 1));
-    setIsPlus(true);
-  };
-  const handleMinus = () => {
-    setFlipIndex((prev) => (prev <= 0 ? prev : prev - 1));
-    setIsPlus(false);
-  };
-
+const TimeSetter = ({
+  flipData,
+  title,
+  flipIndex,
+  isPlus,
+  handlePlus,
+  handleMinus,
+}: ITimeCounterProps) => {
   return (
     <TimeSetterContainer>
       <TypoAtom fontSize={'tag'}>{title}</TypoAtom>
@@ -57,30 +60,82 @@ const TimeSetter = ({ flipData, title, initFlipIndex }: ITimeCounterProps) => {
 };
 
 const PomodoroTimeSetting = () => {
-  // initFlipIndex init 해줘야 됨
+  /* pomodoro context */
+  const {
+    settings: { focusStep, restStep },
+  } = usePomodoroValue();
+  const { setFocusStep, setRestStep } = usePomodoroActions();
+
+  /* local state */
+  const [focusFlipIndex, setFocusFlipIndex] = useState(
+    focusStepList.findIndex((time) => time === focusStep),
+  );
+  const [restFlipIndex, setRestFlipIndex] = useState(
+    restStepList.findIndex((time) => time === restStep),
+  );
+  const [isPlus, setIsPlus] = useState(false);
+
+  /* local variable */
+  const newTime = {
+    newFocus: [...focusStepList][focusFlipIndex],
+    resetFocus: [...restStepList][restFlipIndex],
+  };
+
+  /* handler */
+  const handleFocusPlus = () => {
+    setFocusFlipIndex((prev) =>
+      prev >= focusStepList.length - 1 ? prev : prev + 1,
+    );
+    setIsPlus(true);
+  };
+  const handleFocusMinus = () => {
+    setFocusFlipIndex((prev) => (prev <= 0 ? prev : prev - 1));
+    setIsPlus(false);
+  };
+
+  const handleRestPlus = () => {
+    setRestFlipIndex((prev) =>
+      prev >= restStepList.length - 1 ? prev : prev + 1,
+    );
+    setIsPlus(true);
+  };
+  const handleRestMinus = () => {
+    setRestFlipIndex((prev) => (prev <= 0 ? prev : prev - 1));
+    setIsPlus(false);
+  };
+
+  const handleSubmit = () => {
+    if (newTime.newFocus !== focusStep) setFocusStep(newTime.newFocus);
+    if (newTime.resetFocus !== restStep) setRestStep(newTime.resetFocus);
+  };
+
   return (
     <>
       <PomodoroTimeSettingContainer>
         <TimeSetter
           flipData={[...focusStepList]}
           title={'집중시간'}
-          initFlipIndex={0}
+          flipIndex={focusFlipIndex}
+          isPlus={isPlus}
+          handlePlus={handleFocusPlus}
+          handleMinus={handleFocusMinus}
         />
         <TimeSetter
           flipData={[...restStepList]}
           title={'휴식시간'}
-          initFlipIndex={0}
+          flipIndex={restFlipIndex}
+          isPlus={isPlus}
+          handlePlus={handleRestPlus}
+          handleMinus={handleRestMinus}
         />
       </PomodoroTimeSettingContainer>
       <FooterContainer>
         <IconAtom
           size={4.455}
           backgroundColor="subFontColor"
-          onClick={() => {
-            console.log('');
-          }}
+          onClick={handleSubmit}
         >
-          <img alt="ok" src={'icons/ok.svg'} />
+          <img alt="timesubmit" src={'icons/ok.svg'} />
         </IconAtom>
       </FooterContainer>
     </>
