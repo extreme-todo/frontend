@@ -1,16 +1,15 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
+import { CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 import { useEffect } from 'react';
 
 interface IModalProps extends IChildProps {
   title: string;
   handleClose: () => void;
-  handleDone?: () => void;
 }
 
-const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
+const Modal = ({ title, children, handleClose }: IModalProps) => {
   useEffect(() => {
     const El = document.getElementById('main-container') as HTMLDivElement;
     El.style.overflowY = 'hidden';
@@ -36,11 +35,6 @@ const Modal = ({ title, children, handleClose, handleDone }: IModalProps) => {
           </IconAtom>
         </HeaderContainer>
         {children}
-        {/* <FooterContainer>
-          <BtnAtom handler={handleDone}>
-            <span className="material-symbols-outlined">done</span>
-          </BtnAtom>
-        </FooterContainer> */}
       </ModalContainer>
     </>
   );
