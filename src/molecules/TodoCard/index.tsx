@@ -64,12 +64,12 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   };
 
   const handleTagSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const newCategory = (event.target as HTMLInputElement).value;
-    const regularCharacterRex =
-      /^[a-zA-Z0-9 \u3131-\uD79D\u4E00-\u9FA5\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF\u2F800-\u2FA1F]+$/;
-    const specialCharactersRex = /[@~₩?><|\\=_^]/;
-
     if (event.code === 'Enter') {
+      const newCategory = (event.target as HTMLInputElement).value;
+      const regularCharacterRex =
+        /^[a-zA-Z0-9 \u3131-\uD79D\u4E00-\u9FA5\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF\u2F800-\u2FA1F]+$/;
+      const specialCharactersRex = /[@~₩?><|\\=_^]/;
+
       if (!!!newCategory.length) return alert('제목을 입력해주세요.');
       // 한글 중복 입력 처리
       if (event.nativeEvent.isComposing) return;
@@ -97,7 +97,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
 
         setCategoryArray(copy);
       } else {
-        setCategoryArray([newCategory]);
+        setCategoryArray([trimmed]);
       }
 
       setCategoryValue('');
