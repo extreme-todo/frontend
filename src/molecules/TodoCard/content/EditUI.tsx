@@ -172,7 +172,7 @@ const EditWrapper = styled.div`
   border-radius: 1.439375rem;
 `;
 
-const CategoryContainer = styled.div`
+export const CategoryContainer = styled.div`
   margin-top: 0.61rem;
   & > button {
     margin-right: 0.61rem;
@@ -186,7 +186,7 @@ const AdditionalDataContainer = styled.div`
   justify-content: space-between;
 `;
 
-const CalendarContainer = styled.div`
+export const CalendarContainer = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
