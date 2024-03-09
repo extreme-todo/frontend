@@ -9,6 +9,7 @@ interface IInputAtomProps
   extends Pick<HTMLInputElement, 'placeholder' | 'value'> {
   handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleKeyDown?: (params: React.KeyboardEvent<HTMLInputElement>) => void;
+  type?: 'text' | 'range';
   ariaLabel?: string;
   styleOption?: {
     width?: TypeLength;
@@ -22,9 +23,19 @@ interface IInputAtomProps
   };
 }
 
-const Usual = ({ handleChange, ariaLabel, ...props }: IInputAtomProps) => {
+const Usual = ({
+  handleChange,
+  ariaLabel,
+  type = 'text',
+  ...props
+}: IInputAtomProps) => {
   return (
-    <UsualInput onChange={handleChange} aria-label={ariaLabel} {...props} />
+    <UsualInput
+      onChange={handleChange}
+      aria-label={ariaLabel}
+      type={type}
+      {...props}
+    />
   );
 };
 
