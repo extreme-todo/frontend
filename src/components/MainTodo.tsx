@@ -8,19 +8,21 @@ import Modal from './Modal';
 import TodoList from './TodoList';
 import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
 import { getPomodoroStepPercent } from '../shared/utils';
+import PomodoroTimeSetting from './PomodoroTimeSetting';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
 }
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
+  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
   const { status: pomodoroStatus, settings: pomodoroSettings } =
     usePomodoroValue();
   const { startResting } = usePomodoroActions();
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const mainTodoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // 최초 진입시에는 휴식 상태로 시작
@@ -49,15 +51,21 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
   }, [pomodoroStatus]);
 
   return (
-    <MainTodoContainer ref={modalRef}>
+    <MainTodoContainer ref={mainTodoRef}>
       <MainTodoContentWrapper>
         <Clock></Clock>
         <MainTodoCenter>
           <SideButtons>
-            <SideButtons.ProgressButton progress={focusedPercent}>
+            <SideButtons.ProgressButton
+              progress={focusedPercent}
+              onClick={() => setIsTimeModalOpen(true)}
+            >
               {focusedPercent}%
             </SideButtons.ProgressButton>
-            <SideButtons.ProgressButton progress={restedPercent}>
+            <SideButtons.ProgressButton
+              progress={restedPercent}
+              onClick={() => setIsTimeModalOpen(true)}
+            >
               {restedPercent}%
             </SideButtons.ProgressButton>
           </SideButtons>
@@ -65,7 +73,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                setIsModalOpen(true);
+                setIsTodoModalOpen(true);
               }}
               imageSrc="icons/hamburger.svg"
             />
@@ -77,17 +85,29 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
             />
           </SideButtons>
         </MainTodoCenter>
-        {isModalOpen &&
+        {isTodoModalOpen &&
           createPortal(
             <Modal
               title="할 일 목록"
               handleClose={() => {
-                setIsModalOpen(false);
+                setIsTodoModalOpen(false);
               }}
             >
               <TodoList />
             </Modal>,
-            modalRef.current as HTMLDivElement,
+            mainTodoRef.current as HTMLDivElement,
+          )}
+        {isTimeModalOpen &&
+          createPortal(
+            <Modal
+              title="집중시간 / 휴식시간 설정"
+              handleClose={() => {
+                setIsTimeModalOpen(false);
+              }}
+            >
+              <PomodoroTimeSetting />
+            </Modal>,
+            mainTodoRef.current as HTMLDivElement,
           )}
       </MainTodoContentWrapper>
     </MainTodoContainer>
