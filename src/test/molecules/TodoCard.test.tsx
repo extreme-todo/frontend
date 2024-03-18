@@ -219,9 +219,7 @@ describe('TodoCard', () => {
         }) as HTMLInputElement;
 
         expect(categoryInput).toBeInTheDocument();
-        expect(categoryInput.placeholder).toBe(
-          '카테고리를 입력하고 엔터를 눌러주세요.',
-        );
+        expect(categoryInput.placeholder).toBe('카테고리를 입력하세요');
         expect(categoryInput.value.length).toBe(0);
       });
 
@@ -239,19 +237,13 @@ describe('TodoCard', () => {
         expect(categoryInput.value).toBe('add new category');
       });
 
-      // 날짜, 날짜 아이콘?, 날짜 수정 아이콘(이건 필요가 없을지도)
-      it('달력 아이콘이 있다.', () => {
-        const { getByAltText } = renderEditUI();
-        const getIcon = getByAltText('calendar_icon');
-
-        expect(getIcon).toBeInTheDocument();
-      });
-
-      it('날짜 입력 input이 있다.', () => {
+      it('day input에 기존 date가 설정되어 있다.', () => {
         const { getByRole } = renderEditUI();
-        const calendarInput = getByRole('textbox', { name: 'calendar_input' });
+        const calendar = getByRole('textbox', {
+          name: 'calendar_input',
+        }) as HTMLInputElement;
 
-        expect(calendarInput).toBeInTheDocument();
+        expect(calendar.value).toBe('2023-08-08');
       });
 
       // 토마토 아이콘, 토마토 드랍다운 버튼
