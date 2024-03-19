@@ -1,24 +1,24 @@
 import { ReactEventHandler, useState } from 'react';
 
-import { IconAtom, InputAtom, TagAtom, TypoAtom } from '../../../atoms';
+import { IconAtom, InputAtom, TypoAtom } from '../../../atoms';
+import { CalendarInput, CategoryInput } from '../..';
+
+import { TodoDate, TodoEntity } from '../../../DB/indexedAction';
+
+import { format } from 'date-fns';
+import { SelectSingleEventHandler } from 'react-day-picker';
 
 import styled from '@emotion/styled';
 
-import { format } from 'date-fns';
-
-import { TodoDate, TodoEntity } from '../../../DB/indexedAction';
-import CalendarInput from '../../CalendarInput';
-import { SelectSingleEventHandler } from 'react-day-picker';
-
 interface IEditUIProps {
   todoData: TodoEntity;
-  handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleCategorySubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   title: string;
   handleChangeTitle: (event: React.ChangeEvent<HTMLInputElement>) => void;
   category: string;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
   categories: string[] | null;
-  handleClickTag: (category: string) => void;
+  handleClickCategory: (category: string) => void;
   handleEditCancel: () => void;
   handleEditSubmit: (todo: TodoEntity) => void;
   duration: number;
@@ -29,13 +29,13 @@ const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const EditUI = ({
   todoData,
-  handleSubmit,
+  handleCategorySubmit,
   categories,
   title,
   handleChangeTitle,
   category,
   handleChangeCategory,
-  handleClickTag,
+  handleClickCategory,
   handleEditCancel,
   handleEditSubmit,
   duration,
@@ -65,32 +65,13 @@ const EditUI = ({
         placeholder="할 일을 입력하세요"
         ariaLabel="title_input"
       />
-      <CategoryContainer>
-        {categories?.map((category) => (
-          <TagAtom
-            key={category}
-            handler={() => handleClickTag.call(this, category)}
-            ariaLabel="category_tag"
-            styleOption={{
-              fontsize: 'sm',
-              size: 'sm',
-              bg: 'whiteWine',
-              maxWidth: 10,
-            }}
-          >
-            {category}
-          </TagAtom>
-        ))}
-        {categories && categories.length >= 5 ? null : (
-          <InputAtom.Underline
-            value={category}
-            handleChange={handleChangeCategory}
-            handleKeyDown={handleSubmit}
-            placeholder="카테고리를 입력하세요"
-            ariaLabel="category_input"
-          />
-        )}
-      </CategoryContainer>
+      <CategoryInput
+        categories={categories}
+        handleSubmit={handleCategorySubmit}
+        handleClick={handleClickCategory}
+        category={category}
+        handleChangeCategory={handleChangeCategory}
+      />
       <AdditionalDataContainer>
         <CalendarInput
           selectedDay={selected}
@@ -147,13 +128,6 @@ export const EditWrapper = styled.div`
   flex: column;
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 1.439375rem;
-`;
-
-export const CategoryContainer = styled.div`
-  margin-top: 0.61rem;
-  & > button {
-    margin-right: 0.61rem;
-  }
 `;
 
 const AdditionalDataContainer = styled.div`

@@ -63,7 +63,9 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     setCategoryValue(event.target.value);
   };
 
-  const handleTagSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleCategorySubmit = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (event.code === 'Enter') {
       const newCategory = (event.target as HTMLInputElement).value;
       const regularCharacterRex =
@@ -104,7 +106,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     }
   };
 
-  const handleDeleteTag = (category: string) => {
+  const handleDeleteCategory = (category: string) => {
     setCategoryArray((prev) => {
       const deleted = prev?.filter((tag) => tag !== category) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
       return deleted;
@@ -133,8 +135,8 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             handleChangeTitle={handleChangeTitle}
             category={categoryValue}
             handleChangeCategory={handleChangeCategory}
-            handleClickTag={handleDeleteTag}
-            handleSubmit={handleTagSubmit}
+            handleClickCategory={handleDeleteCategory}
+            handleCategorySubmit={handleCategorySubmit}
             categories={categoryArray}
             handleEditCancel={handleEditCancel}
             handleEditSubmit={handleEditSubmit}

@@ -209,20 +209,7 @@ describe('TodoCard', () => {
         expect(titleInput.value).toBe('modified title');
       });
 
-      it('category input이 있고 빈 input이다.', () => {
-        const { getByText, getByRole } = renderEditUI();
-        expect(getByText('영어')).toBeInTheDocument();
-        expect(getByText('학교공부')).toBeInTheDocument();
-
-        const categoryInput = getByRole('textbox', {
-          name: 'category_input',
-        }) as HTMLInputElement;
-
-        expect(categoryInput).toBeInTheDocument();
-        expect(categoryInput.placeholder).toBe('카테고리를 입력하세요');
-        expect(categoryInput.value.length).toBe(0);
-      });
-
+      //  TODO : categoryInput
       it('category input에는 유저가 입력값을 입력할 수 있다.', () => {
         const { getByRole } = renderEditUI();
 
@@ -235,6 +222,12 @@ describe('TodoCard', () => {
         });
 
         expect(categoryInput.value).toBe('add new category');
+      });
+
+      it('기존 category가 있다.', () => {
+        const { getByText } = renderEditUI();
+        expect(getByText('영어')).toBeInTheDocument();
+        expect(getByText('학교공부')).toBeInTheDocument();
       });
 
       it('day input에 기존 date가 설정되어 있다.', () => {
@@ -469,13 +462,13 @@ describe('TodoCard', () => {
         const { getByAltText } = renderUI(
           <EditUI
             todoData={mockFetchTodoList()[0]}
-            handleSubmit={jest.fn()}
+            handleCategorySubmit={jest.fn()}
             title={mockFetchTodoList()[0].todo}
             handleChangeTitle={jest.fn()}
             category={''}
             handleChangeCategory={jest.fn()}
             categories={mockFetchTodoList()[0].categories}
-            handleClickTag={jest.fn()}
+            handleClickCategory={jest.fn()}
             handleEditCancel={jest.fn()}
             handleEditSubmit={mockHandleEditSubmit}
             handleDuration={jest.fn()}
