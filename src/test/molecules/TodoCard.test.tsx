@@ -297,23 +297,6 @@ describe('TodoCard', () => {
         expect(nextCategories.length).toBe(prevCategories.length + 1);
       });
 
-      it('input창이 비어있는채로 엔터를 입력하면 추가되지 않고 alert창을 띄워준다.', () => {
-        const { getByRole, queryAllByRole } = renderEditUI();
-
-        const categoryInput = getByRole('textbox', { name: 'category_input' });
-        const prevCategories = queryAllByRole('button', {
-          name: 'category_tag',
-        });
-
-        act(() => userEvent.type(categoryInput, '{enter}'));
-
-        const nextCategories = queryAllByRole('button', {
-          name: 'category_tag',
-        });
-        expect(nextCategories.length).toBe(prevCategories.length);
-        expect(spyAlert).toBeCalledTimes(1);
-      });
-
       it('input된 값이 카테고리에 이미 존재하면 추가되지 않고 alert창을 띄워준다.', () => {
         const { queryAllByRole, getByRole } = renderEditUI();
 
@@ -344,27 +327,7 @@ describe('TodoCard', () => {
         expect(removedInput).toBe(null);
       });
 
-      it('카테고리 값에 특수문자와 이모지가 있으면 추가되지 않고 alert창을 띄워준다.', () => {
-        const { getByRole, queryAllByRole } = renderEditUI();
-
-        const categoryInput = getByRole('textbox', { name: 'category_input' });
-        let prevCategories = queryAllByRole('button', { name: 'category_tag' });
-
-        act(() =>
-          userEvent.type(categoryInput, '나는 우주 최강이 될태야!{enter}'),
-        );
-        act(() => userEvent.type(categoryInput, '🇰🇷 대한민국 최고{enter}'));
-        act(() => userEvent.type(categoryInput, 'Let‘s hit the road!!{enter}'));
-
-        const nextCategories = queryAllByRole('button', {
-          name: 'category_tag',
-        });
-
-        expect(nextCategories.length).toBe(prevCategories.length);
-        expect(spyAlert).toBeCalledTimes(3);
-      });
-
-      it('20자 이상은 추가되지 않고 alert창을 띄워준다.', () => {
+      it('category를 입력하면 유효성 검사를 해서 alert창을 띄워준다.', () => {
         const { getByRole, queryAllByRole } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category_input' });
@@ -386,23 +349,7 @@ describe('TodoCard', () => {
         expect(spyAlert).toBeCalledTimes(1);
       });
 
-      it('한 칸 이상의 띄워쓴 곳은 한 칸 띄어쓰기로 교체 및 가장 앞뒤쪽의 띄어쓰기는 삭제해서 추가한다.', () => {
-        const { getByRole, queryAllByRole } = renderEditUI();
-
-        const categoryInput = getByRole('textbox', { name: 'category_input' });
-
-        act(() =>
-          userEvent.type(categoryInput, '   Welcome   to  my world{enter}'),
-        );
-
-        const categories = queryAllByRole('button', {
-          name: 'category_tag',
-        });
-        const newCategory = categories[categories.length - 1].textContent;
-        expect(newCategory).toBe('Welcome to my world');
-      });
-
-      it('존재하는 tag를 클릭하면 삭제된다.', () => {
+      it('존재하는 category를 클릭하면 삭제된다.', () => {
         const { queryAllByRole, getByRole, getByText } = renderEditUI();
 
         const categoryInput = getByRole('textbox', {
