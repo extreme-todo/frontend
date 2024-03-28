@@ -1,30 +1,30 @@
-import {
-  KeyboardEventHandler,
-  ReactEventHandler,
-  useRef,
-  useState,
-} from 'react';
+import { KeyboardEventHandler, ReactEventHandler, useState } from 'react';
 
-import { IconAtom, InputAtom, TagAtom } from '../atoms';
-import {
-  CalendarContainer,
-  CategoryContainer,
-} from '../molecules/TodoCard/content/EditUI';
+import { InputAtom, TagAtom } from '../atoms';
+import { EditWrapper } from '../molecules/TodoCard/content/EditUI';
 
-import 'react-day-picker/dist/style.css';
-import { format } from 'date-fns';
-import DayPickerUI from '../molecules/TodoCard/content/DayPickerUI';
+import styled from '@emotion/styled';
+import { CalendarInput, CategoryInput } from '../molecules';
+import { SelectSingleEventHandler } from 'react-day-picker';
+import { usePomodoroValue } from '../hooks';
+import { categoryValidation } from '../shared/inputValidation';
 
 const AddTodo = () => {
+  const {
+    settings: { focusStep },
+  } = usePomodoroValue();
+
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
   const [tomato, setTomato] = useState('1');
 
   /* React Day Picker State and Ref */
-  const [showPopper, setShowPopper] = useState(false);
   const [selected, setSelected] = useState<Date>(new Date());
-  const popperRef = useRef<HTMLDivElement>(null);
+  const handleDaySelect: SelectSingleEventHandler = (date) => {
+    if (!date) return;
+    setSelected(date);
+  };
 
   /* handler */
   const handleTitleInput: ReactEventHandler<HTMLInputElement> = (event) =>
@@ -37,31 +37,14 @@ const AddTodo = () => {
     event,
   ) => {
     if (event.code === 'Enter') {
-      const newCategory = (event.target as HTMLInputElement).value;
-      const regularCharacterRex =
-        /^[a-zA-Z0-9 \u3131-\uD79D\u4E00-\u9FA5\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF\u2F800-\u2FA1F]+$/;
-      const specialCharactersRex = /[@~₩?><|\\=_^]/;
-
-      if (!!!newCategory.length) return alert('제목을 입력해주세요.');
       // 한글 중복 입력 처리
       if (event.nativeEvent.isComposing) return;
-      // 글로벌 문자(영어 포함 한국,중국,일본어)인지 && 특수문자와 이모지 제외처리
-      if (
-        !regularCharacterRex.test(newCategory) ||
-        specialCharactersRex.test(newCategory)
-      )
-        return alert('특수문자와 이모지는 입력할 수 없습니다.');
 
-      // 5개가 되면 input 창을 사라지게 해서 일단은 없어도 되는 조건
-      if (categoryArray?.length === 5)
-        return alert('category는 5개까지 입력할 수 있습니다.');
+      const newCategory = (event.target as HTMLInputElement).value;
 
-      const trimmed = newCategory.replace(/\s+/g, ' ').trim();
+      const trimmed = categoryValidation(newCategory, categoryArray ?? []);
 
-      if (categoryArray?.includes(trimmed))
-        return alert('이미 존재하는 카테고리 입니다.');
-      if (trimmed.length > 20)
-        return alert('20자 이하로만 입력할 수 있습니다.');
+      if (!trimmed) return;
 
       if (categoryArray) {
         const copy = categoryArray.slice();
@@ -83,83 +66,126 @@ const AddTodo = () => {
     });
   };
 
-  const handleButtonClick = () => {
-    setShowPopper(true);
-  };
-
   const handleTomatoInput: ReactEventHandler<HTMLInputElement> = (event) => {
     setTomato(event.currentTarget.value);
   };
 
   return (
-    <>
+    <AddTodoWrapper>
       <InputAtom.Usual
         value={title}
         handleChange={handleTitleInput}
         placeholder="할 일을 입력하세요"
         ariaLabel="title"
       />
-      <CategoryContainer>
-        {categoryArray?.map((category) => (
-          <TagAtom
-            key={category}
-            handler={() => handleClickCategory.call(this, category)}
-            ariaLabel="category_tag"
-            styleOption={{
-              fontsize: 'sm',
-              size: 'sm',
-              bg: 'whiteWine',
-              maxWidth: 10,
-            }}
-          >
-            {category}
-          </TagAtom>
-        ))}
+      <CategoryInput
+        categories={categoryArray}
+        category={category}
+        handleSubmit={handleSubmitCategory}
+        handleClick={handleClickCategory}
+        handleChangeCategory={handleCategoryInput}
+      />
+      <CalendarInput handleDaySelect={handleDaySelect} selectedDay={selected} />
 
-        {categoryArray && categoryArray.length >= 5 ? null : (
-          <InputAtom.Underline
-            value={category}
-            handleChange={handleCategoryInput}
-            handleKeyDown={handleSubmitCategory}
-            placeholder="카테고리를 입력하세요"
-            ariaLabel="category"
-          />
-        )}
-      </CategoryContainer>
-      <CalendarContainer
-        ref={popperRef}
-        title="달력 아이콘을 클릭해 주세요."
-        onClick={handleButtonClick}
-      >
-        <IconAtom>
-          <img alt="calendar_icon" src="icons/calendar.svg" />
-        </IconAtom>
-        <InputAtom.Underline
-          value={format(selected.toString(), 'y-MM-dd')}
-          ariaLabel="calendar"
-          placeholder={'달력 아이콘을 눌러주세요.'}
-          styleOption={{ width: '7rem' }}
-          handleChange={() => {
-            console.debug('click');
-          }}
-        />
-      </CalendarContainer>
-      <DayPickerUI
-        showPopper={showPopper}
-        popperRef={popperRef}
-        selected={selected}
-        setShowPopper={setShowPopper}
-        setSelected={setSelected}
-      />
-      <InputAtom.Usual
+      <TomatoInput
         value={tomato}
-        handleChange={handleTomatoInput}
+        onChange={handleTomatoInput}
         placeholder="할 일을 입력하세요"
-        ariaLabel="tomato"
+        aria-label="tomato"
         type="range"
+        data-value={tomato}
+        data-focusmin={`${focusStep * Number(tomato)}min`}
+        max={10}
+        min={1}
+        step={1}
+        newVal={((Number(tomato) - 1) / (10 - 1)) * 100}
       />
-    </>
+    </AddTodoWrapper>
   );
 };
 
 export default AddTodo;
+
+const AddTodoWrapper = styled(EditWrapper)`
+  background-color: transparent;
+  width: 42.3125rem;
+`;
+
+const TomatoInput = styled.input<{
+  value: string;
+  max: number;
+  min: number;
+  newVal: number;
+}>`
+  display: flex;
+  align-items: center;
+  width: 24rem;
+  height: 0.5rem;
+
+  /* 초기화 */
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    tomato 0%,
+
+    tomato
+      ${({ value, min, max }) =>
+        `${((Number(value) - min) / (max - min)) * 100}%`},
+
+    ${({ theme }) => theme.colors.whiteWine}
+      ${({ value, min, max }) =>
+        `${((Number(value) - min) / (max - min)) * 100}%`},
+
+    ${({ theme }) => theme.colors.whiteWine} 100%
+  );
+  outline: none;
+
+  /* 슬라이더 바 속성  */
+  cursor: pointer;
+  border-radius: 10px;
+
+  position: relative;
+
+  &:before,
+  :after {
+    position: absolute;
+    left: ${({ newVal }) => `calc(${newVal}% + (${10 - newVal * 0.15}px))`};
+
+    margin-left: -1.4rem;
+
+    text-align: center;
+  }
+
+  &:before {
+    content: attr(data-value);
+
+    padding-top: 6.2px;
+    padding-bottom: 6.2px;
+
+    width: 2.8rem;
+    height: 1rem;
+
+    background-color: ${({ theme }) => theme.colors.accentColor};
+    border-radius: 23.24rem;
+
+    cursor: grab;
+
+    box-shadow: ${({ theme }) => theme.shadows.button_shadow};
+  }
+
+  &:after {
+    content: attr(data-focusmin);
+
+    top: 1.5rem;
+    width: 2.8rem;
+  }
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 1px;
+  }
+
+  &:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+`;

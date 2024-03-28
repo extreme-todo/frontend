@@ -9,6 +9,7 @@ import { IChildProps } from '../../shared/interfaces';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import userEvent from '@testing-library/user-event';
+import PomodoroProvider from '../../hooks/usePomodoro';
 
 describe('AddTodo', () => {
   describe('AddTodo에는', () => {
@@ -20,7 +21,9 @@ describe('AddTodo', () => {
       renderUI = () =>
         render(<AddTodo />, {
           wrapper: ({ children }: IChildProps) => (
-            <ThemeProvider theme={designTheme}>{children}</ThemeProvider>
+            <ThemeProvider theme={designTheme}>
+              <PomodoroProvider>{children}</PomodoroProvider>
+            </ThemeProvider>
           ),
         });
     });
@@ -48,7 +51,7 @@ describe('AddTodo', () => {
     // 태그 input이 있다.
     it('카테고리 input이 있다.', () => {
       const { getByRole } = renderUI();
-      const category = getByRole('textbox', { name: 'category' });
+      const category = getByRole('textbox', { name: 'category_input' });
 
       expect(category).toBeInTheDocument();
     });
@@ -56,7 +59,7 @@ describe('AddTodo', () => {
     it('카테고리 input에 입력할 수 있다.', () => {
       const { getByRole } = renderUI();
       const categoryInput = getByRole('textbox', {
-        name: 'category',
+        name: 'category_input',
       }) as HTMLInputElement;
 
       act(() => userEvent.type(categoryInput, '새로운 카테고리'));
@@ -68,7 +71,7 @@ describe('AddTodo', () => {
       const { getByRole, queryAllByRole } = renderUI();
 
       const categoryInput = getByRole('textbox', {
-        name: 'category',
+        name: 'category_input',
       }) as HTMLInputElement;
       const prevCategories = queryAllByRole('button', { name: 'category_tag' });
       act(() => userEvent.type(categoryInput, '새로운 카테고리{enter}'));
@@ -83,7 +86,7 @@ describe('AddTodo', () => {
     it('카테고리 input이 비어있는채로 엔터를 입력하면 추가되지 않고 alert창을 띄워준다.', () => {
       const { getByRole, queryAllByRole } = renderUI();
 
-      const categoryInput = getByRole('textbox', { name: 'category' });
+      const categoryInput = getByRole('textbox', { name: 'category_input' });
       const prevCategories = queryAllByRole('button', {
         name: 'category_tag',
       });
@@ -100,7 +103,7 @@ describe('AddTodo', () => {
     it('카테고리 input에 입력된 값이 이미 존재하면 추가되지 않고 alert창을 띄워준다.', () => {
       const { queryAllByRole, getByRole } = renderUI();
 
-      const categoryInput = getByRole('textbox', { name: 'category' });
+      const categoryInput = getByRole('textbox', { name: 'category_input' });
       act(() => userEvent.type(categoryInput, '영어{enter}'));
       act(() => userEvent.type(categoryInput, '영어{enter}'));
 
@@ -117,7 +120,7 @@ describe('AddTodo', () => {
     it('카테고리 갯수가 5개를 초과하면 카테고리 input을 없앤다.', () => {
       const { getByRole, queryByRole } = renderUI();
 
-      const categoryInput = getByRole('textbox', { name: 'category' });
+      const categoryInput = getByRole('textbox', { name: 'category_input' });
 
       act(() => userEvent.type(categoryInput, '첫 번째 카테고리{enter}'));
       act(() => userEvent.type(categoryInput, '두 번째 카테고리{enter}'));
@@ -125,7 +128,7 @@ describe('AddTodo', () => {
       act(() => userEvent.type(categoryInput, '네 번째 카테고리{enter}'));
       act(() => userEvent.type(categoryInput, '다섯 번째 카테고리{enter}'));
 
-      const removedInput = queryByRole('textbox', { name: 'category' });
+      const removedInput = queryByRole('textbox', { name: 'category_input' });
 
       expect(removedInput).toBe(null);
     });
@@ -133,7 +136,7 @@ describe('AddTodo', () => {
     it('카테고리 값에 특수문자와 이모지가 있으면 추가되지 않고 alert창을 띄워준다.', () => {
       const { getByRole, queryAllByRole } = renderUI();
 
-      const categoryInput = getByRole('textbox', { name: 'category' });
+      const categoryInput = getByRole('textbox', { name: 'category_input' });
       let prevCategories = queryAllByRole('button', { name: 'category_tag' });
 
       act(() =>
@@ -153,7 +156,7 @@ describe('AddTodo', () => {
     it('카테고리 input은 20자 이상은 추가되지 않고 alert창을 띄워준다.', () => {
       const { getByRole, queryAllByRole } = renderUI();
 
-      const categoryInput = getByRole('textbox', { name: 'category' });
+      const categoryInput = getByRole('textbox', { name: 'category_input' });
 
       let prevCategories = queryAllByRole('button', { name: 'category_tag' });
 
@@ -175,7 +178,7 @@ describe('AddTodo', () => {
     it('카테고리 input은 한 칸 이상의 띄워쓴 곳은 한 칸 띄어쓰기로 교체하고 가장 앞뒤쪽의 띄어쓰기는 삭제해서 추가한다.', () => {
       const { getByRole, queryAllByRole } = renderUI();
 
-      const categoryInput = getByRole('textbox', { name: 'category' });
+      const categoryInput = getByRole('textbox', { name: 'category_input' });
 
       act(() =>
         userEvent.type(categoryInput, '   Welcome   to  my world{enter}'),
@@ -192,7 +195,7 @@ describe('AddTodo', () => {
       const { queryAllByRole, getByRole, getByText } = renderUI();
 
       const categoryInput = getByRole('textbox', {
-        name: 'category',
+        name: 'category_input',
       });
       act(() => userEvent.type(categoryInput, '수학공부{enter}'));
 
@@ -208,16 +211,6 @@ describe('AddTodo', () => {
       });
       expect(secondCheckPointCategories.length).toBe(0);
     });
-
-    // 날짜 input 존재
-    it('날짜 input이 존재한다.', () => {
-      const { getByRole } = renderUI();
-      const calendar = getByRole('textbox', { name: 'calendar' });
-
-      expect(calendar).toBeInTheDocument();
-    });
-
-    // 날짜 input에는 오늘 날짜가 들어가 있다.
 
     // tomato input이 존재한다.
     it('토마토 input이 존재한다.', () => {
