@@ -1,15 +1,36 @@
 import { KeyboardEventHandler, ReactEventHandler, useState } from 'react';
 
-import { InputAtom, TagAtom } from '../atoms';
-import { EditWrapper } from '../molecules/TodoCard/content/EditUI';
+import { IconAtom, InputAtom, TagAtom } from '../atoms';
+import {
+  ButtonContainer,
+  EditWrapper,
+} from '../molecules/TodoCard/content/EditUI';
 
 import styled from '@emotion/styled';
 import { CalendarInput, CategoryInput } from '../molecules';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import { usePomodoroValue } from '../hooks';
 import { categoryValidation } from '../shared/inputValidation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { TodoDate } from '../DB/indexedAction';
+import { AddTodoDto, ETIndexed } from '../DB/indexed';
+
+type TodoDto = Omit<AddTodoDto, 'order'>;
 
 const AddTodo = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: (todo: TodoDto) => ETIndexed.getInstance().addTodo(todo),
+    onSuccess(data) {
+      console.log('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+    onError(error) {
+      console.debug('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
+    },
+  });
+
   const {
     settings: { focusStep },
   } = usePomodoroValue();
@@ -70,6 +91,17 @@ const AddTodo = () => {
     setTomato(event.currentTarget.value);
   };
 
+  const handleAddSubmit = (todo: TodoDto) => {
+    mutate(todo);
+  };
+
+  const addData: TodoDto = {
+    date: selected as unknown as TodoDate,
+    todo: title,
+    duration: Number(`${tomato}`),
+    categories: categoryArray,
+  };
+
   return (
     <AddTodoWrapper>
       <InputAtom.Usual
@@ -100,6 +132,15 @@ const AddTodo = () => {
         step={1}
         newVal={((Number(tomato) - 1) / (10 - 1)) * 100}
       />
+      <ButtonContainer>
+        <IconAtom
+          size={2.624375}
+          backgroundColor={'subFontColor'}
+          onClick={() => handleAddSubmit.call(this, addData)}
+        >
+          <img alt="submit_edit" src={'icons/ok.svg'} />
+        </IconAtom>
+      </ButtonContainer>
     </AddTodoWrapper>
   );
 };

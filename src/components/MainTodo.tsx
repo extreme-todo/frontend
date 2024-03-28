@@ -8,13 +8,15 @@ import Modal from './Modal';
 import TodoList from './TodoList';
 import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
 import { getPomodoroStepPercent } from '../shared/utils';
+import AddTodo from './AddTodo';
 
 export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
 }
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { status: pomodoroStatus, settings: pomodoroSettings } =
     usePomodoroValue();
   const { startResting } = usePomodoroActions();
@@ -65,27 +67,39 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                setIsModalOpen(true);
+                setIsListModalOpen(true);
               }}
               imageSrc="icons/hamburger.svg"
             />
             <SideButtons.IconButton
               onClick={() => {
-                console.log('clicked');
+                setIsAddModalOpen(true);
               }}
               imageSrc="icons/add.svg"
             />
           </SideButtons>
         </MainTodoCenter>
-        {isModalOpen &&
+        {isListModalOpen &&
           createPortal(
             <Modal
               title="할 일 목록"
               handleClose={() => {
-                setIsModalOpen(false);
+                setIsListModalOpen(false);
               }}
             >
               <TodoList />
+            </Modal>,
+            modalRef.current as HTMLDivElement,
+          )}
+        {isAddModalOpen &&
+          createPortal(
+            <Modal
+              title="새 할 일 추가하기"
+              handleClose={() => {
+                setIsAddModalOpen(false);
+              }}
+            >
+              <AddTodo />
             </Modal>,
             modalRef.current as HTMLDivElement,
           )}
