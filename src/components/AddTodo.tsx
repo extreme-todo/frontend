@@ -1,23 +1,28 @@
 import { KeyboardEventHandler, ReactEventHandler, useState } from 'react';
 
-import { IconAtom, InputAtom, TagAtom } from '../atoms';
-import {
-  ButtonContainer,
-  EditWrapper,
-} from '../molecules/TodoCard/content/EditUI';
+import { IconAtom, InputAtom, TypoAtom } from '../atoms';
+import { CalendarInput, CategoryInput } from '../molecules';
 
 import styled from '@emotion/styled';
-import { CalendarInput, CategoryInput } from '../molecules';
-import { SelectSingleEventHandler } from 'react-day-picker';
-import { usePomodoroValue } from '../hooks';
+import { EditWrapper } from '../molecules/TodoCard/content/EditUI';
+
 import { categoryValidation } from '../shared/inputValidation';
+
+import { usePomodoroValue } from '../hooks';
+
+import { SelectSingleEventHandler } from 'react-day-picker';
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoDate } from '../DB/indexedAction';
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 
 type TodoDto = Omit<AddTodoDto, 'order'>;
 
-const AddTodo = () => {
+interface IAddTodoProps {
+  handleModalClose: () => void;
+}
+
+const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
@@ -92,7 +97,9 @@ const AddTodo = () => {
   };
 
   const handleAddSubmit = (todo: TodoDto) => {
+    if (title.length <= 0) return alert('제목을 입력해주세요.');
     mutate(todo);
+    handleModalClose();
   };
 
   const addData: TodoDto = {
@@ -103,45 +110,53 @@ const AddTodo = () => {
   };
 
   return (
-    <AddTodoWrapper>
-      <InputAtom.Usual
-        value={title}
-        handleChange={handleTitleInput}
-        placeholder="할 일을 입력하세요"
-        ariaLabel="title"
-      />
-      <CategoryInput
-        categories={categoryArray}
-        category={category}
-        handleSubmit={handleSubmitCategory}
-        handleClick={handleClickCategory}
-        handleChangeCategory={handleCategoryInput}
-      />
-      <CalendarInput handleDaySelect={handleDaySelect} selectedDay={selected} />
+    <>
+      <AddTodoWrapper>
+        <InputAtom.Usual
+          value={title}
+          handleChange={handleTitleInput}
+          placeholder="할 일을 입력하세요"
+          ariaLabel="title"
+        />
+        <CategoryInput
+          categories={categoryArray}
+          category={category}
+          handleSubmit={handleSubmitCategory}
+          handleClick={handleClickCategory}
+          handleChangeCategory={handleCategoryInput}
+        />
+        <CalendarInput
+          handleDaySelect={handleDaySelect}
+          selectedDay={selected}
+        />
 
-      <TomatoInput
-        value={tomato}
-        onChange={handleTomatoInput}
-        placeholder="할 일을 입력하세요"
-        aria-label="tomato"
-        type="range"
-        data-value={tomato}
-        data-focusmin={`${focusStep * Number(tomato)}min`}
-        max={10}
-        min={1}
-        step={1}
-        newVal={((Number(tomato) - 1) / (10 - 1)) * 100}
-      />
-      <ButtonContainer>
+        <TomatoContainer>
+          <TypoAtom>🍅</TypoAtom>
+          <TomatoInput
+            value={tomato}
+            onChange={handleTomatoInput}
+            placeholder="할 일을 입력하세요"
+            aria-label="tomato"
+            type="range"
+            data-value={tomato}
+            data-focusmin={`${focusStep * Number(tomato)}min`}
+            max={10}
+            min={1}
+            step={1}
+            newVal={((Number(tomato) - 1) / (10 - 1)) * 100}
+          />
+        </TomatoContainer>
+      </AddTodoWrapper>
+      <FooterContainer>
         <IconAtom
-          size={2.624375}
+          size={3.6}
           backgroundColor={'subFontColor'}
           onClick={() => handleAddSubmit.call(this, addData)}
         >
           <img alt="submit_edit" src={'icons/ok.svg'} />
         </IconAtom>
-      </ButtonContainer>
-    </AddTodoWrapper>
+      </FooterContainer>
+    </>
   );
 };
 
@@ -150,6 +165,20 @@ export default AddTodo;
 const AddTodoWrapper = styled(EditWrapper)`
   background-color: transparent;
   width: 42.3125rem;
+
+  & > div:first-of-type {
+    margin-bottom: 1rem;
+  }
+`;
+
+const TomatoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+
+  & > span {
+    margin-right: 1.9rem;
+  }
 `;
 
 const TomatoInput = styled.input<{
@@ -229,4 +258,11 @@ const TomatoInput = styled.input<{
   &:active::-webkit-slider-thumb {
     cursor: grabbing;
   }
+`;
+
+const FooterContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 1rem;
 `;

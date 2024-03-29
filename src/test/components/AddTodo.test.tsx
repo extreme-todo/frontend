@@ -10,6 +10,15 @@ import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import userEvent from '@testing-library/user-event';
 import PomodoroProvider from '../../hooks/usePomodoro';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 describe('AddTodo', () => {
   describe('AddTodo에는', () => {
@@ -19,11 +28,13 @@ describe('AddTodo', () => {
     beforeEach(() => {
       spyAlert = jest.spyOn(window, 'alert').mockImplementation();
       renderUI = () =>
-        render(<AddTodo />, {
+        render(<AddTodo handleModalClose={jest.fn()} />, {
           wrapper: ({ children }: IChildProps) => (
-            <ThemeProvider theme={designTheme}>
-              <PomodoroProvider>{children}</PomodoroProvider>
-            </ThemeProvider>
+            <QueryClientProvider client={queryClient}>
+              <ThemeProvider theme={designTheme}>
+                <PomodoroProvider>{children}</PomodoroProvider>
+              </ThemeProvider>
+            </QueryClientProvider>
           ),
         });
     });
@@ -213,6 +224,13 @@ describe('AddTodo', () => {
     });
 
     // tomato input이 존재한다.
+    it('토마토 아이콘이 있다.', () => {
+      const { getByText } = renderUI();
+      const tomato = getByText('🍅');
+
+      expect(tomato).toBeInTheDocument();
+    });
+
     it('토마토 input이 존재한다.', () => {
       const { getByRole } = renderUI();
       const tomato = getByRole('slider', { name: 'tomato' });
