@@ -26,8 +26,8 @@ describe('CalendarInput', () => {
   });
   describe('CalendarInput는 ', () => {
     it('달력 아이콘이 있다.', () => {
-      const { getByAltText } = renderUI();
-      const getIcon = getByAltText('calendar_icon');
+      const { getByText } = renderUI();
+      const getIcon = getByText('🗓️');
 
       expect(getIcon).toBeInTheDocument();
     });
