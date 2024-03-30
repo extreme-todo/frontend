@@ -19,6 +19,7 @@ import {
   usePomodoroValue,
 } from '../hooks';
 import { NowCard } from '../molecules';
+import { BtnAtom } from '../atoms';
 
 const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
   return [
@@ -214,7 +215,7 @@ const TodoList = () => {
         }}
       > */}
       {/* <CardAtom> */}
-      {/* <BtnAtom children={'add Todo'} handler={onClickHandler} /> */}
+      <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} />
       <TodoListContainer>
         <NowCard
           currentTodo={currentTodo as TodoEntity}

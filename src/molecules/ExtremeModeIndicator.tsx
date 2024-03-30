@@ -6,19 +6,31 @@ import { formatTime } from '../shared/utils';
 
 function ExtremeModeIndicator() {
   const { status, settings } = usePomodoroValue();
-  const { isExtreme, leftTime } = useExtremeMode();
+  const { isExtreme, leftTime, setMode } = useExtremeMode();
 
   useEffect(() => {
     return;
   }, [leftTime]);
 
+  const toggleExtremeMode = () => {
+    if (
+      window.confirm(
+        `정말로 익스트림 모드를 ${isExtreme ? '끄시' : '켜시'}겠습니까?`,
+      )
+    ) {
+      setMode(!isExtreme);
+    }
+  };
+
   return (
     <ExtremeModeContainer>
-      <TypoAtom fontSize="h5">{status.isResting && leftTime}</TypoAtom>
+      {isExtreme && (
+        <TypoAtom fontSize="h5">{status.isResting && leftTime}</TypoAtom>
+      )}
       {isExtreme ? (
-        <img src="/icons/extreme-pink.svg"></img>
+        <img src="/icons/extreme-pink.svg" onClick={toggleExtremeMode}></img>
       ) : (
-        <img src="/icons/extreme-gray.svg"></img>
+        <img src="/icons/extreme-gray.svg" onClick={toggleExtremeMode}></img>
       )}
     </ExtremeModeContainer>
   );
