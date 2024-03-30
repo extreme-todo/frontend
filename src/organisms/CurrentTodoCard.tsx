@@ -15,15 +15,22 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
   const currentTodo = useCurrentTodo();
 
   useEffect(() => {
+    checkIfCanRest();
     const ifShouldRest = checkIfShouldRest();
-    const ifCanRest = checkIfCanRest();
-    !ifShouldRest && currentTodo.updateFocus(1000);
+    setTimeout(() => {
+      // 휴식에 대한 비동기 처리가 모두 끝나고 실행되도록 의도함
+      status.isFocusing && !ifShouldRest && currentTodo.updateFocus(1000);
+    }, 0);
   }, [status.focusedTime]);
 
   useEffect(() => {
     checkIfShouldFocus();
   }, [status.restedTime]);
 
+  /**
+   * 쉴 수 있는 상황인지(투두에 기록된 duration을 초과했을 때)
+   * @returns boolean
+   */
   const checkIfCanRest = () => {
     if (
       currentTodo.currentTodo?.duration &&
@@ -32,28 +39,22 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
           pomodoroSettings.focusStep *
           pomodoroUnit
     ) {
-      setCanRest(true);
+      setCanRest((prev) => {
+        if (!prev) actions.startResting();
+        return true;
+      });
       return true;
     } else {
       return canRest;
     }
   };
 
+  /**
+   * 쉬어야 하는 상황인지(집중 단위시간이 다 되었을 때)
+   * @returns boolean
+   */
   const checkIfShouldRest = () => {
-    if (
-      currentTodo.currentTodo?.duration &&
-      currentTodo.focusedOnTodo ===
-        currentTodo.currentTodo?.duration *
-          pomodoroSettings.focusStep *
-          pomodoroUnit
-    ) {
-      actions.startResting();
-      return true;
-    }
-    if (
-      status.isFocusing &&
-      status.focusedTime === pomodoroSettings.focusStep * pomodoroUnit
-    ) {
+    if (status.focusedTime === pomodoroSettings.focusStep * pomodoroUnit) {
       actions.startResting();
       return true;
     }
