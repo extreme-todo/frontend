@@ -6,16 +6,17 @@ import IconAtom from '../atoms/IconAtom';
 import { todosApi, usersApi } from '../shared/apis';
 
 import styled from '@emotion/styled';
+import { useExtremeMode } from '../hooks';
 
 // TODO : state를 상위 컴포넌트로 뽑아낼 수는 없을까?.. 그게 더 괜찮은 방법이지 않을까?..
 // TODO : 추가적으로 이런 모양의 선택지를 템플릿으로 뽑아낼 수는 없을까?
 // TODO : Compound 적용해보자
 const Setting = () => {
-  const [value, setValue] = useState<boolean>(false);
+  const { isExtreme, setMode } = useExtremeMode();
   const [isOver, setIsOver] = useState<boolean>(false);
 
   const handleSwitch = (): void => {
-    setValue((prev) => !prev);
+    setMode(!isExtreme);
   };
 
   const handleReset = () => {
@@ -57,7 +58,7 @@ const Setting = () => {
             </IconAtom>
           </TooltipWrapper>
           {/* TODO : 전역 객체로 처리해주자. 익스트림 모드는 할 일이 끝났을 때만 변경 가능하다 */}
-          <SwitchAtom setValue={handleSwitch} value={value} />
+          <SwitchAtom setValue={handleSwitch} value={isExtreme} />
         </ExtremeContainer>
         <TagAtom
           handler={handleReset}
