@@ -1,4 +1,10 @@
-import React, { createContext, useEffect, useState, useContext } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+} from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { usePomodoroValue } from './usePomodoro';
 
@@ -16,10 +22,14 @@ export const ExtremeModeContext = createContext<IExtremeMode>(
 
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { status, settings } = usePomodoroValue();
-  const setMode = (newMode: boolean) =>
-    setExtremeMode((prev: IExtremeMode) => {
-      return { ...prev, isExtreme: newMode };
-    });
+  const setMode = (newMode: boolean) => {
+    if (status.isFocusing === true) {
+      window.alert('집중 시간에는 모드 변경이 불가능합니다.');
+    } else
+      setExtremeMode((prev: IExtremeMode) => {
+        return { ...prev, isExtreme: newMode };
+      });
+  };
   const getLeftTime = () => {
     if (status.isResting) {
       const leftMs = settings.restStep * 60000 - status.restedTime;
@@ -80,6 +90,10 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   useEffect(() => {
     localStorage.setItem(localKey, JSON.stringify(extremeMode.isExtreme));
   }, [extremeMode]);
+
+  useEffect(() => {
+    setExtremeMode((prev) => ({ ...prev, setMode }));
+  }, [status]);
 
   return (
     <ExtremeModeContext.Provider value={extremeMode}>
