@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { MainTodo, RankingAndRecords, TodoList, Welcome } from './components';
+import { MainTodo, RankingAndRecords, Welcome } from './components';
 import useCheckLogin, { setToken } from './hooks/useCheckLogin';
 
 import styled from '@emotion/styled';
@@ -10,7 +10,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ExtremeModeProvider } from './hooks/useExtremeMode';
 import 'react-day-picker/dist/style.css';
 import './styles/customPickerStyle.css';
-import { ETIndexed } from './DB/indexed';
 
 const queryClient = new QueryClient();
 

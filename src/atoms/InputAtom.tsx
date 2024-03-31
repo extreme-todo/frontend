@@ -71,7 +71,7 @@ const UsualInput = withTheme(
 const UnderlineInput = withTheme(
   styled.input<Pick<IInputAtomProps, 'styleOption'>>(
     ({ styleOption, theme }) => ({
-      width: styleOption?.width ?? '18rem', // TODO : fit-content가 안 먹는다.
+      width: styleOption?.width ?? 'fit-content',
       height: styleOption?.height ?? '1.863rem',
       backgroundColor: styleOption?.backgroundColor ?? `rgba(255, 255, 255, 0)`,
       fontSize: styleOption?.backgroundColor ?? theme.fontSize.tag.size,

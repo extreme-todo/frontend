@@ -6,8 +6,9 @@ import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
-import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
+import { usePomodoroActions, usePomodoroValue } from '../hooks';
 import { getPomodoroStepPercent } from '../shared/utils';
+import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
 
 export interface IMainTodoProps extends IChildProps {
@@ -15,8 +16,10 @@ export interface IMainTodoProps extends IChildProps {
 }
 
 function MainTodo({ isLogin, children }: IMainTodoProps) {
-  const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+
   const { status: pomodoroStatus, settings: pomodoroSettings } =
     usePomodoroValue();
   const { startResting } = usePomodoroActions();
@@ -50,6 +53,10 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
     );
   }, [pomodoroStatus]);
 
+  function handleModalClose(): void {
+    return setIsAddModalOpen(false);
+  }
+
   return (
     <MainTodoContainer ref={mainTodoRef}>
       <MainTodoContentWrapper>
@@ -73,24 +80,24 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                setIsTodoModalOpen(true);
+                setIsListModalOpen(true);
               }}
               imageSrc="icons/hamburger.svg"
             />
             <SideButtons.IconButton
               onClick={() => {
-                console.log('clicked');
+                setIsAddModalOpen(true);
               }}
               imageSrc="icons/add.svg"
             />
           </SideButtons>
         </MainTodoCenter>
-        {isTodoModalOpen &&
+        {isListModalOpen &&
           createPortal(
             <Modal
               title="할 일 목록"
               handleClose={() => {
-                setIsTodoModalOpen(false);
+                setIsListModalOpen(false);
               }}
             >
               <TodoList />
@@ -106,6 +113,18 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
               }}
             >
               <PomodoroTimeSetting />
+            </Modal>,
+            mainTodoRef.current as HTMLDivElement,
+          )}
+        {isAddModalOpen &&
+          createPortal(
+            <Modal
+              title="새 할 일 추가하기"
+              handleClose={() => {
+                setIsAddModalOpen(false);
+              }}
+            >
+              <AddTodo handleModalClose={handleModalClose} />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
           )}
