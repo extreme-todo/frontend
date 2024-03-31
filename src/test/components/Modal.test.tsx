@@ -21,7 +21,7 @@ describe('Modal', () => {
       };
       renderResult = render(
         <ThemeProvider theme={designTheme}>
-          <Modal title="설정" handleDone={handleDone} handleClose={handleClose}>
+          <Modal title="설정" handleClose={handleClose}>
             <Setting />
           </Modal>
         </ThemeProvider>,

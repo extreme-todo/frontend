@@ -6,7 +6,7 @@ interface IBtnAtomProps extends IChildProps {
 
 function BtnAtom({ children, handleOnClick, ...props }: IBtnAtomProps) {
   return (
-    <div onClick={handleOnClick} style={{ ...props }}>
+    <div onClick={handleOnClick} style={{ ...props, cursor: 'pointer' }}>
       {children}
     </div>
   );
