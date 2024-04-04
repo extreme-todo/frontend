@@ -46,3 +46,13 @@ export const categoryValidation = (value: string, categories: Array<any>) => {
 
   return trimmed;
 };
+
+export const titleValidation = (value: string) => {
+  const trimmed = inputValidation(value, {
+    empty: '제목을 입력해주세요',
+  });
+
+  if (!trimmed) return;
+
+  return trimmed;
+};
