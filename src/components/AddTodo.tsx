@@ -6,7 +6,7 @@ import { CalendarInput, CategoryInput } from '../molecules';
 import styled from '@emotion/styled';
 import { EditWrapper } from '../molecules/TodoCard/content/EditUI';
 
-import { categoryValidation } from '../shared/inputValidation';
+import { categoryValidation, titleValidation } from '../shared/inputValidation';
 
 import { usePomodoroValue } from '../hooks';
 
@@ -98,7 +98,9 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
 
   const handleAddSubmit = (todo: TodoDto) => {
     if (title.length <= 0) return alert('제목을 입력해주세요.');
-    mutate(todo);
+    const trimmed = titleValidation(addData.todo);
+    if (!trimmed) return;
+    mutate({ ...todo, todo: trimmed });
     handleModalClose();
   };
 

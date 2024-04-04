@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { SelectSingleEventHandler } from 'react-day-picker';
 
 import styled from '@emotion/styled';
+import { titleValidation } from '../../../shared/inputValidation';
 
 interface IEditUIProps {
   todoData: TodoEntity;
@@ -110,7 +111,11 @@ const EditUI = ({
           <IconAtom
             size={2.624375}
             backgroundColor={'subFontColor'}
-            onClick={() => handleEditSubmit.call(this, editData)}
+            onClick={() => {
+              const trimmed = titleValidation(editData.todo);
+              if (!trimmed) return;
+              handleEditSubmit.call(this, { ...editData, todo: trimmed });
+            }}
           >
             <img alt="submit_edit" src={'icons/ok.svg'} />
           </IconAtom>
