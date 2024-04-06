@@ -20,7 +20,7 @@ import {
 } from '../hooks';
 import { NowCard } from '../molecules';
 
-const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
+const addTodoMock = (): AddTodoDto[] => {
   return [
     {
       date: '2023-10-30',

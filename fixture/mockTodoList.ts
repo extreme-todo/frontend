@@ -92,7 +92,7 @@ const mockFetchTodoList = (): TodoEntity[] => [
   },
 ];
 
-const addTodoMock = (): Omit<AddTodoDto, 'order'> => {
+const addTodoMock = (): AddTodoDto => {
   return {
     date: '2023-08-15',
     todo: 'Go to grocery store',

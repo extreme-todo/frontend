@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import LoginEvent from './LoginEvent';
 import { dummyRanking } from './constants';
 import { IRanking } from './interfaces';
+import { type AddTodoDto } from '../DB/indexed';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 
@@ -84,6 +85,7 @@ export const todosApi = {
   async reset() {
     await baseApi.delete('todos/reset');
   },
+  async addTodo(todo: AddTodoDto) {},
 };
 export const timerApi = {};
 export const settingsApi = {};

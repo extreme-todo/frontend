@@ -16,8 +16,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoDate } from '../DB/indexedAction';
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 
-type TodoDto = Omit<AddTodoDto, 'order'>;
-
 interface IAddTodoProps {
   handleModalClose: () => void;
 }
@@ -26,7 +24,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    mutationFn: (todo: TodoDto) => ETIndexed.getInstance().addTodo(todo),
+    mutationFn: (todo: AddTodoDto) => ETIndexed.getInstance().addTodo(todo),
     onSuccess(data) {
       console.log('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
@@ -96,7 +94,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
     setTomato(event.currentTarget.value);
   };
 
-  const handleAddSubmit = (todo: TodoDto) => {
+  const handleAddSubmit = (todo: AddTodoDto) => {
     if (title.length <= 0) return alert('제목을 입력해주세요.');
     const trimmed = titleValidation(addData.todo);
     if (!trimmed) return;
@@ -104,7 +102,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
     handleModalClose();
   };
 
-  const addData: TodoDto = {
+  const addData: AddTodoDto = {
     date: selected as unknown as TodoDate,
     todo: title,
     duration: Number(`${tomato}`),
