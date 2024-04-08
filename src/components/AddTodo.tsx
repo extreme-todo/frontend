@@ -15,6 +15,7 @@ import { SelectSingleEventHandler } from 'react-day-picker';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoDate } from '../DB/indexedAction';
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
+import { todosApi } from '../shared/apis';
 
 interface IAddTodoProps {
   handleModalClose: () => void;
@@ -24,7 +25,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    mutationFn: (todo: AddTodoDto) => ETIndexed.getInstance().addTodo(todo),
+    mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
     onSuccess(data) {
       console.log('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });

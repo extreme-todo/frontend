@@ -16,7 +16,7 @@ const MAX_RETRY_COUNT = 2;
 
 const baseApi = axios.create({
   // TODO : 배포 시 수정할 것
-  baseURL: 'https://' + SERVER_URL + '/api',
+  baseURL: 'http://' + SERVER_URL + '/api', // 로컬에서는 http로 해야 됨!
   headers: {
     'content-type': 'application/json;charset=UTF-8',
     accept: 'application/json',
@@ -73,6 +73,8 @@ export const usersApi = {
 };
 
 export const todosApi = {
+  _route: '/todos',
+
   getRanking: async (category: string) => {
     return baseApi.get('ranking', { params: { category } });
   },
@@ -85,7 +87,9 @@ export const todosApi = {
   async reset() {
     await baseApi.delete('todos/reset');
   },
-  async addTodo(todo: AddTodoDto) {},
+  async addTodo(todo: AddTodoDto) {
+    await baseApi.post(this._route, todo);
+  },
 };
 export const timerApi = {};
 export const settingsApi = {};
