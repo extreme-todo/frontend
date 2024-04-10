@@ -21,7 +21,7 @@ import {
 import { NowCard } from '../molecules';
 import { BtnAtom } from '../atoms';
 
-const addTodoMock = (): Omit<AddTodoDto, 'order'>[] => {
+const addTodoMock = (): AddTodoDto[] => {
   return [
     {
       date: '2023-10-30',
