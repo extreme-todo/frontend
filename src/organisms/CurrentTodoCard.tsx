@@ -6,8 +6,13 @@ import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
 import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 
-type ICurrentTodoCardProps = IChildProps;
-function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
+interface ICurrentTodoCardProps extends IChildProps {
+  openAddTodoModal: () => void;
+}
+function CurrentTodoCard({
+  children,
+  openAddTodoModal,
+}: ICurrentTodoCardProps) {
   const { settings: pomodoroSettings, status } = usePomodoroValue();
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
@@ -140,7 +145,10 @@ function CurrentTodoCard({ children }: ICurrentTodoCardProps) {
             <TypoAtom>오늘 하루를 계획해 볼까요?</TypoAtom>
             {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
             <button className="create-todo-button">
-              <TagAtom styleOption={{ bg: 'titleColor' }}>
+              <TagAtom
+                styleOption={{ bg: 'titleColor' }}
+                handler={openAddTodoModal}
+              >
                 할 일 기록하기
               </TagAtom>
             </button>

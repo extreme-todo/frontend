@@ -76,7 +76,11 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
               {restedPercent}%
             </SideButtons.ProgressButton>
           </SideButtons>
-          <CurrentTodoCard></CurrentTodoCard>
+          <CurrentTodoCard
+            openAddTodoModal={() => {
+              setIsAddModalOpen(true);
+            }}
+          ></CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
