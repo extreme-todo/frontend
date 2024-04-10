@@ -1,23 +1,25 @@
-import { ReactEventHandler, useRef, useState } from 'react';
+import { ReactEventHandler, useState } from 'react';
 
-import { IconAtom, InputAtom, TagAtom, TypoAtom } from '../../../atoms';
+import { IconAtom, InputAtom, TypoAtom } from '../../../atoms';
+import { CalendarInput, CategoryInput } from '../..';
+
+import { TodoDate, TodoEntity } from '../../../DB/indexedAction';
+
+import { format } from 'date-fns';
+import { SelectSingleEventHandler } from 'react-day-picker';
 
 import styled from '@emotion/styled';
-
-import 'react-day-picker/dist/style.css';
-import { format } from 'date-fns';
-import DayPickerUI from './DayPickerUI';
-import { TodoDate, TodoEntity } from '../../../DB/indexedAction';
+import { titleValidation } from '../../../shared/inputValidation';
 
 interface IEditUIProps {
   todoData: TodoEntity;
-  handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleCategorySubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   title: string;
   handleChangeTitle: (event: React.ChangeEvent<HTMLInputElement>) => void;
   category: string;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
   categories: string[] | null;
-  handleClickTag: (category: string) => void;
+  handleClickCategory: (category: string) => void;
   handleEditCancel: () => void;
   handleEditSubmit: (todo: TodoEntity) => void;
   duration: number;
@@ -28,13 +30,13 @@ const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const EditUI = ({
   todoData,
-  handleSubmit,
+  handleCategorySubmit,
   categories,
   title,
   handleChangeTitle,
   category,
   handleChangeCategory,
-  handleClickTag,
+  handleClickCategory,
   handleEditCancel,
   handleEditSubmit,
   duration,
@@ -42,12 +44,10 @@ const EditUI = ({
 }: IEditUIProps) => {
   const { date } = todoData;
   const [selected, setSelected] = useState<Date>(new Date(date));
-  const [showPopper, setShowPopper] = useState(false);
 
-  const popperRef = useRef<HTMLDivElement>(null);
-
-  const handleButtonClick = () => {
-    setShowPopper(true);
+  const handleDaySelect: SelectSingleEventHandler = (date) => {
+    if (!date) return;
+    setSelected(date);
   };
 
   const editData = {
@@ -66,52 +66,18 @@ const EditUI = ({
         placeholder="할 일을 입력하세요"
         ariaLabel="title_input"
       />
-
-      <CategoryContainer>
-        {categories?.map((category) => (
-          <TagAtom
-            key={category}
-            handler={() => handleClickTag.call(this, category)}
-            ariaLabel="category_tag"
-            styleOption={{
-              fontsize: 'sm',
-              size: 'sm',
-              bg: 'whiteWine',
-              maxWidth: 10,
-            }}
-          >
-            {category}
-          </TagAtom>
-        ))}
-        {categories && categories.length >= 5 ? null : (
-          <InputAtom.Underline
-            value={category}
-            handleChange={handleChangeCategory}
-            handleKeyDown={handleSubmit}
-            placeholder="카테고리를 입력하고 엔터를 눌러주세요."
-            ariaLabel="category_input"
-          />
-        )}
-      </CategoryContainer>
+      <CategoryInput
+        categories={categories}
+        handleSubmit={handleCategorySubmit}
+        handleClick={handleClickCategory}
+        category={category}
+        handleChangeCategory={handleChangeCategory}
+      />
       <AdditionalDataContainer>
-        <CalendarContainer
-          ref={popperRef}
-          title="달력 아이콘을 클릭해 주세요."
-          onClick={handleButtonClick}
-        >
-          <IconAtom>
-            <img alt="calendar_icon" src="icons/calendar.svg" />
-          </IconAtom>
-          <InputAtom.Underline
-            value={format(selected.toString(), 'y-MM-dd')}
-            ariaLabel="calendar_input"
-            placeholder={'달력 아이콘을 눌러주세요.'}
-            styleOption={{ width: '7rem' }}
-            handleChange={() => {
-              console.debug('click');
-            }}
-          />
-        </CalendarContainer>
+        <CalendarInput
+          selectedDay={selected}
+          handleDaySelect={handleDaySelect}
+        />
         <TomatoContainer>
           <TypoAtom>🍅</TypoAtom>
           <TomatoSelector
@@ -145,26 +111,23 @@ const EditUI = ({
           <IconAtom
             size={2.624375}
             backgroundColor={'subFontColor'}
-            onClick={() => handleEditSubmit.call(this, editData)}
+            onClick={() => {
+              const trimmed = titleValidation(editData.todo);
+              if (!trimmed) return;
+              handleEditSubmit.call(this, { ...editData, todo: trimmed });
+            }}
           >
             <img alt="submit_edit" src={'icons/ok.svg'} />
           </IconAtom>
         </ButtonContainer>
       </AdditionalDataContainer>
-      <DayPickerUI
-        showPopper={showPopper}
-        popperRef={popperRef}
-        selected={selected}
-        setShowPopper={setShowPopper}
-        setSelected={setSelected}
-      />
     </EditWrapper>
   );
 };
 
 export default EditUI;
 
-const EditWrapper = styled.div`
+export const EditWrapper = styled.div`
   padding: 0.759rem;
   border-radius: 10px;
   flex: column;
@@ -172,41 +135,10 @@ const EditWrapper = styled.div`
   border-radius: 1.439375rem;
 `;
 
-const CategoryContainer = styled.div`
-  margin-top: 0.61rem;
-  & > button {
-    margin-right: 0.61rem;
-    margin-bottom: 0.61rem;
-  }
-`;
-
 const AdditionalDataContainer = styled.div`
   display: flex;
   margin-top: 2.485rem;
   justify-content: space-between;
-`;
-
-const CalendarContainer = styled.div`
-  padding: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 1rem;
-  padding: 1px;
-
-  :hover {
-    background-color: ${({ theme }) => theme.colors.bgColor};
-    transition: background-color 0.2s ease-in-out;
-  }
-
-  div:first-of-type {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 `;
 
 const TomatoContainer = styled.div`

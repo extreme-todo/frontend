@@ -28,7 +28,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
 
           <IconAtom
             onClick={handleClose}
-            size={4.455}
+            size={3.6}
             backgroundColor={'whiteWine'}
           >
             <img alt="close" src={'icons/close.svg'}></img>
