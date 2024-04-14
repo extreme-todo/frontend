@@ -25,16 +25,18 @@ class ETIndexedDBCalc {
     prevOrder: number,
     newOrder: number,
   ): TodoEntity[] {
-    return todoList.map((todo) => {
-      if (todo.order === Number(prevOrder)) {
-        todo.order = Number(newOrder);
-      } else {
-        const isShiftUp = prevOrder > newOrder;
-        const shiftAmount = isShiftUp ? 1 : -1;
-        (todo.order as number) += shiftAmount;
-      }
-      return todo;
-    });
+    const isPlus = prevOrder > newOrder;
+    if (isPlus) {
+      const calcTodos = this.plusOrder(todoList);
+      const idx = calcTodos.findIndex((todo) => todo.order === prevOrder + 1);
+      calcTodos[idx].order = newOrder;
+      return calcTodos;
+    } else {
+      const calcTodos = this.minusOrder(todoList);
+      const idx = calcTodos.findIndex((todo) => todo.order === prevOrder - 1);
+      calcTodos[idx].order = newOrder;
+      return calcTodos;
+    }
   }
 
   doneTodo(todo: TodoEntity) {
@@ -44,7 +46,7 @@ class ETIndexedDBCalc {
     return copyTodo;
   }
 
-  minusOne(todos: TodoEntity[]) {
+  minusOrder(todos: TodoEntity[]) {
     return todos.map((todo) => {
       if (todo.order != null) {
         todo.order -= 1;
@@ -53,7 +55,7 @@ class ETIndexedDBCalc {
     });
   }
 
-  plusOne(todos: TodoEntity[]) {
+  plusOrder(todos: TodoEntity[]) {
     return todos.map((todo) => {
       (todo.order as number) += 1;
       return todo;
