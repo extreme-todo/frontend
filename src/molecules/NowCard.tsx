@@ -47,20 +47,26 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
           >
             <TypoAtom>{'⏱️ ' + time}</TypoAtom>
           </TagAtom>
-          {currentTodo?.categories?.map((category) => (
-            <TagAtom
-              key={category}
-              title={category}
-              styleOption={{
-                fontsize: 'sm',
-                size: 'sm',
-                bg: 'whiteWine',
-                maxWidth: 10,
-              }}
-            >
-              {category}
-            </TagAtom>
-          ))}
+          {currentTodo?.categories?.map((el) => {
+            let category: string;
+            if (typeof el === 'string') category = el;
+            else category = el.name;
+
+            return (
+              <TagAtom
+                key={category}
+                title={category}
+                styleOption={{
+                  fontsize: 'sm',
+                  size: 'sm',
+                  bg: 'whiteWine',
+                  maxWidth: 10,
+                }}
+              >
+                {category}
+              </TagAtom>
+            );
+          })}
         </CurrentTodoInfoContainer>
       </NowCardContainer>
     </>

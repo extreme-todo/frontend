@@ -45,7 +45,11 @@ const TodoUI = ({
           <CategoryContainer>
             {snapshot?.isDragging
               ? null
-              : categories?.map((category) => {
+              : categories?.map((el) => {
+                  let category: string;
+                  if (typeof el === 'string') category = el;
+                  else category = el.name;
+
                   return (
                     <TagAtom
                       key={category}

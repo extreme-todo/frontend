@@ -3,7 +3,7 @@ import { ReactEventHandler, useState } from 'react';
 import { IconAtom, InputAtom, TypoAtom } from '../../../atoms';
 import { CalendarInput, CategoryInput } from '../..';
 
-import { TodoDate, TodoEntity } from '../../../DB/indexedAction';
+import { CategoryType, TodoDate, TodoEntity } from '../../../DB/indexedAction';
 
 import { format } from 'date-fns';
 import { SelectSingleEventHandler } from 'react-day-picker';
@@ -18,7 +18,7 @@ interface IEditUIProps {
   handleChangeTitle: (event: React.ChangeEvent<HTMLInputElement>) => void;
   category: string;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  categories: string[] | null;
+  categories: CategoryType;
   handleClickCategory: (category: string) => void;
   handleEditCancel: () => void;
   handleEditSubmit: (todo: TodoEntity) => void;

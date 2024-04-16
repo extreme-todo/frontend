@@ -97,7 +97,10 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
 
   const handleDeleteCategory = (category: string) => {
     setCategoryArray((prev) => {
-      const deleted = prev?.filter((tag) => tag !== category) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
+      const deleted = prev?.filter((tag) => {
+        if (typeof tag === 'string') return tag !== category;
+        else tag.name !== category;
+      }) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
       return deleted;
     });
   };
