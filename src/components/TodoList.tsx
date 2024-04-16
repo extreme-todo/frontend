@@ -1,27 +1,35 @@
-import { useEffect } from 'react';
-
+/* component */
+import { NowCard } from '../molecules';
 import { DateCard } from '../organisms';
 
+/* indexed DB */
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
 import { useOrderingMutation } from '../shared/queries';
 
+/* react query */
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+/* react DnD */
 import {
   DragDropContext,
   DraggableLocation,
   DropResult,
 } from 'react-beautiful-dnd';
-import { useQuery } from '@tanstack/react-query';
-import styled from '@emotion/styled';
+
+/* hooks */
 import {
   EditContextProvider,
   useCurrentTodo,
   usePomodoroValue,
 } from '../hooks';
-import { NowCard } from '../molecules';
 
-const addTodoMock = (): AddTodoDto[] => {
+/* etc */
+import styled from '@emotion/styled';
 import { todosApi } from '../shared/apis';
+import { BtnAtom } from '../atoms';
+
+const addTodoMocks = (): AddTodoDto[] => {
   return [
     {
       date: '2023-10-30',
@@ -71,6 +79,7 @@ import { todosApi } from '../shared/apis';
   ];
 };
 
+/* 날짜별 todo 데이터 render 함수 */
 const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   const dateList = Array.from(mapTodo.keys());
   const todoList = Array.from(mapTodo.values());
@@ -83,6 +92,7 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
 };
 
 const TodoList = () => {
+  /* hook 호출 */
   const db = ETIndexed.getInstance();
   const { currentTodo } = useCurrentTodo();
   const {
@@ -103,8 +113,9 @@ const TodoList = () => {
       refetchOnWindowFocus: false,
     },
   );
+  /* custom hook 호출 */
 
-  const orderMutate = useOrderingMutation();
+  /* todo re-ordering 관련 함수  */
   const modifiedSameDate = (
     source: DraggableLocation,
     destination: DraggableLocation,
@@ -175,6 +186,7 @@ const TodoList = () => {
     };
   };
 
+  /* react dnd의 onDragDropHandler */
   const onDragDropHandler = (info: DropResult) => {
     const { destination, source } = info;
     // 이동이 없을 때
@@ -197,7 +209,7 @@ const TodoList = () => {
   };
 
   const onClickHandler = () => {
-    const mock = addTodoMock();
+    const mock = addTodoMocks();
     const temp = async () => {
       for (let i = 0; i < mock.length; i++) {
         await db.addTodo(mock[i]);
