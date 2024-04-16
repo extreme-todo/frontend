@@ -99,13 +99,6 @@ const TodoList = () => {
     settings: { focusStep },
   } = usePomodoroValue();
 
-  useEffect(() => {
-    const getTodos = async () => {
-      const result = await db.getList(false);
-    };
-    getTodos();
-  }, []);
-
   const { data: todos, isLoading } = useQuery(
     ['todos'],
     () => todosApi.getList(false),
