@@ -21,6 +21,7 @@ import {
 import { NowCard } from '../molecules';
 
 const addTodoMock = (): AddTodoDto[] => {
+import { todosApi } from '../shared/apis';
   return [
     {
       date: '2023-10-30',
@@ -97,7 +98,7 @@ const TodoList = () => {
 
   const { data: todos, isLoading } = useQuery(
     ['todos'],
-    () => db.getList(false),
+    () => todosApi.getList(false),
     {
       refetchOnWindowFocus: false,
     },
