@@ -49,11 +49,7 @@ function CurrentTodo({
       </div>
       <div className="categories">
         {todo.categories &&
-          todo.categories?.map((el, idx) => {
-            let category: string;
-            if (typeof el === 'string') category = el;
-            else category = el.name;
-
+          todo.categories?.map((category, idx) => {
             return (
               <TagAtom
                 styleOption={{ bg: 'whiteWine', size: 'big', fontsize: 'md2' }}

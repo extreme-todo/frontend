@@ -1,9 +1,8 @@
-import { CategoryType } from '../DB/indexedAction';
 import { InputAtom, TagAtom } from '../atoms';
 import styled from '@emotion/styled';
 
 interface ICategoryInputProps {
-  categories: CategoryType;
+  categories: string[] | null;
   category: string;
   handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   handleClick: (category: string) => void;
@@ -19,27 +18,21 @@ const CategoryInput = ({
 }: ICategoryInputProps) => {
   return (
     <CategoryContainer>
-      {categories?.map((el) => {
-        let category: string;
-        if (typeof el === 'string') category = el;
-        else category = el.name;
-
-        return (
-          <TagAtom
-            key={category}
-            handler={() => handleClick.call(this, category)}
-            ariaLabel="category_tag"
-            styleOption={{
-              fontsize: 'sm',
-              size: 'sm',
-              bg: 'whiteWine',
-              maxWidth: 10,
-            }}
-          >
-            {category}
-          </TagAtom>
-        );
-      })}
+      {categories?.map((category) => (
+        <TagAtom
+          key={category}
+          handler={() => handleClick.call(this, category)}
+          ariaLabel="category_tag"
+          styleOption={{
+            fontsize: 'sm',
+            size: 'sm',
+            bg: 'whiteWine',
+            maxWidth: 10,
+          }}
+        >
+          {category}
+        </TagAtom>
+      ))}
       {categories && categories.length >= 5 ? null : (
         <InputAtom.Underline
           value={category}
