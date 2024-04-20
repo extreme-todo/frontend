@@ -193,11 +193,13 @@ const TodoList = () => {
     // 같은 날 안에서 이동을 했을 때
     if (source.droppableId === destination.droppableId) {
       const modifiedTodoList = modifiedSameDate(source, destination);
-      orderMutate(modifiedTodoList);
+      // reorderMutate 브랜치에서 작업 중
+      // orderMutate(modifiedTodoList);
     } else if (source.droppableId !== destination.droppableId) {
       // 다른 날에서 이동했을 때
       const modifiedTodoList = modifiedDiffDate(source, destination);
-      orderMutate(modifiedTodoList);
+      // reorderMutate 브랜치에서 작업 중
+      // orderMutate(modifiedTodoList);
     }
   };
 
