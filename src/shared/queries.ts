@@ -19,10 +19,10 @@ const useOrderingMutation = () => {
     todolist?: Map<string, TodoEntity[]>;
   }) => {
     if (!newDate || !id) {
-      await db.orderTodos(prevOrder, newOrder);
+      await db.reorderTodos(prevOrder, newOrder);
     } else {
       await db.updateTodo(id, { date: newDate });
-      await db.orderTodos(prevOrder, newOrder);
+      await db.reorderTodos(prevOrder, newOrder);
     }
   };
   const { mutate } = useMutation(mutationHandler, {

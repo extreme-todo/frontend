@@ -1,6 +1,7 @@
 import type { AddTodoDto } from './indexed';
 
 type TodoDate = `${number}-${number}-${number}`;
+type CategoryType = { id: number; name: string };
 
 interface TodoEntity {
   id: number;
@@ -156,4 +157,4 @@ class ETIndexedDBAction {
 }
 
 export { ETIndexedDBAction };
-export type { TodoEntity, TodoDate };
+export type { TodoEntity, TodoDate, CategoryType };
