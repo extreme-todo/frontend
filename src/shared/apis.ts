@@ -3,6 +3,7 @@ import LoginEvent from './LoginEvent';
 import { dummyRanking } from './constants';
 import { IRanking } from './interfaces';
 import { type AddTodoDto } from '../DB/indexed';
+import { CategoryType, TodoEntity } from '../DB/indexedAction';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 
@@ -89,6 +90,35 @@ export const todosApi = {
   },
   async addTodo(todo: AddTodoDto) {
     await baseApi.post(this._route, todo);
+  },
+  async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
+    const { data } = await baseApi.get<
+      any,
+      AxiosResponse<
+        Record<string, (TodoEntity | { categories: CategoryType[] })[]>
+      >
+    >(this._route, {
+      params: { done: isDone ? 1 : 0 },
+    });
+    const converted = Object.entries(data).map((todos) => {
+      const convertedTodos = todos[1].map((todo) => {
+        const convertCategories = todo.categories
+          ? todo.categories.map((category) => {
+              if (typeof category !== 'string') return category.name;
+              else return category;
+            })
+          : null;
+
+        return {
+          ...todo,
+          categories: convertCategories,
+        } as TodoEntity;
+      });
+
+      return [todos[0], convertedTodos] as const;
+    });
+
+    return new Map(converted);
   },
 };
 export const timerApi = {};
