@@ -44,7 +44,7 @@ class ETIndexedDBCalc {
     return copyTodo;
   }
 
-  minusOne(todos: TodoEntity[]) {
+  minusOrder(todos: TodoEntity[]) {
     return todos.map((todo) => {
       if (todo.order != null) {
         todo.order -= 1;
@@ -53,7 +53,7 @@ class ETIndexedDBCalc {
     });
   }
 
-  plusOne(todos: TodoEntity[]) {
+  plusOrder(todos: TodoEntity[]) {
     return todos.map((todo) => {
       (todo.order as number) += 1;
       return todo;

@@ -72,13 +72,13 @@ class ETIndexed {
 
       if (searchDate === undefined) {
         newTodoOrder = 1;
-        const plusedTodo = this.calc.plusOne(getOrdered);
+        const plusedTodo = this.calc.plusOrder(getOrdered);
         await Promise.all(
           plusedTodo.map((todo) => this.action.updateOne(todo)),
         );
       } else {
         newTodoOrder = Number(searchDate.order) + 1;
-        const plusedTodo = this.calc.plusOne(
+        const plusedTodo = this.calc.plusOrder(
           getOrdered.slice(Number(searchDate.order)),
         );
         await Promise.all(
@@ -98,7 +98,7 @@ class ETIndexed {
     await this.action.add(newTodo);
   }
 
-  async orderTodos(prevOrder: number, newOrder: number) {
+  async reorderTodos(prevOrder: number, newOrder: number) {
     const allTodoList = await this.action.getAll();
     const notNullTodos = allTodoList.filter((todo) => todo.order !== null);
     let bigNumber = 0,
@@ -145,7 +145,7 @@ class ETIndexed {
     const orderedList = this.calc.orderedList(getTodoList);
     const expectedMinusPart = orderedList.slice(order);
 
-    const doneMinus = this.calc.minusOne(expectedMinusPart);
+    const doneMinus = this.calc.minusOrder(expectedMinusPart);
 
     await this.action.removeOne(id);
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
@@ -169,7 +169,7 @@ class ETIndexed {
 
     Object.assign(getTodo, { done: true, order: null, focusTime: focusTime });
 
-    const doneMinus = this.calc.minusOne(expectedMinusPart);
+    const doneMinus = this.calc.minusOrder(expectedMinusPart);
 
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
     await this.action.updateOne(getTodo);
@@ -187,4 +187,4 @@ class ETIndexed {
 }
 
 export { ETIndexed };
-export type { AddTodoDto };
+export type { AddTodoDto, UpdateTodoDto };
