@@ -26,17 +26,19 @@ class ETIndexedDBCalc {
     newOrder: number,
   ): TodoEntity[] {
     const isPlus = prevOrder > newOrder;
+    let calcTodos: TodoEntity[];
+    let idx: number;
+
     if (isPlus) {
-      const calcTodos = this.plusOrder(todoList);
-      const idx = calcTodos.findIndex((todo) => todo.order === prevOrder + 1);
-      calcTodos[idx].order = newOrder;
-      return calcTodos;
+      calcTodos = this.plusOrder(todoList);
+      idx = calcTodos.findIndex((todo) => todo.order === prevOrder + 1);
     } else {
-      const calcTodos = this.minusOrder(todoList);
-      const idx = calcTodos.findIndex((todo) => todo.order === prevOrder - 1);
-      calcTodos[idx].order = newOrder;
-      return calcTodos;
+      calcTodos = this.minusOrder(todoList);
+      idx = calcTodos.findIndex((todo) => todo.order === prevOrder - 1);
     }
+
+    calcTodos[idx].order = newOrder;
+    return calcTodos;
   }
 
   doneTodo(todo: TodoEntity) {
