@@ -93,10 +93,21 @@ const CurrentTodoContainer = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  /* overflow: auto; */
   /* background-color: aliceblue; */
   .todo-title {
     margin-top: 6rem;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    span {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      display: block;
+    }
   }
   .categories {
     width: 100%;
