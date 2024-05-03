@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
+import { timerApi } from '../shared/apis';
 
 export const pomodoroUnit = 60000;
 // TODO : 테스트용 1 제거 필요
@@ -87,7 +88,7 @@ const PomodoroProvider = ({ children }: IChildProps) => {
       },
       startFocusing: () => {
         clearInterval(interval);
-
+        timerApi.addTotalRestTime(status.restedTime / 60000);
         setStatus({
           isResting: false,
           isFocusing: true,
