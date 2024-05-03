@@ -107,7 +107,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
     date: selected as unknown as TodoDate,
     todo: title,
     duration: Number(`${tomato}`),
-    categories: categoryArray,
+    categories: categoryArray.length > 0 ? categoryArray : null,
   };
 
   return (
