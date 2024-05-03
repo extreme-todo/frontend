@@ -54,7 +54,10 @@ const CalendarInput = ({
         popperRef={popperRef}
         selected={selectedDay}
         handleClosePopper={handleClosePopper}
-        handleDaySelect={handleDaySelect}
+        handleDaySelect={(...args) => {
+          handleDaySelect(...args);
+          handleClosePopper();
+        }}
       />
     </>
   );

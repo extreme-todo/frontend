@@ -1,9 +1,8 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import LoginEvent from './LoginEvent';
-import { dummyRanking } from './constants';
-import { IRanking } from './interfaces';
-import { type AddTodoDto } from '../DB/indexed';
+
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
+import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 
@@ -90,6 +89,17 @@ export const todosApi = {
   },
   async addTodo(todo: AddTodoDto) {
     await baseApi.post(this._route, todo);
+  },
+  async reorderTodos(prevOrder: number, newOrder: number) {
+    await baseApi.patch(`${this._route}/reorder`, null, {
+      params: {
+        prevOrder,
+        newOrder,
+      },
+    });
+  },
+  async updateTodo(id: number, todo: UpdateTodoDto) {
+    await baseApi.patch(`${this._route}/${id}`, todo);
   },
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
     const { data } = await baseApi.get<
