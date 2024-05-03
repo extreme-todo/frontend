@@ -1,11 +1,11 @@
 /* component */
+import { BtnAtom } from '../atoms';
 import { NowCard } from '../molecules';
 import { DateCard } from '../organisms';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { TodoEntity, TodoDate } from '../DB/indexedAction';
-import { useOrderingMutation } from '../shared/queries';
 
 /* react query */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -25,9 +25,8 @@ import {
 } from '../hooks';
 
 /* etc */
-import styled from '@emotion/styled';
 import { todosApi } from '../shared/apis';
-import { BtnAtom } from '../atoms';
+import styled from '@emotion/styled';
 
 const addTodoMocks = (): AddTodoDto[] => {
   return [
@@ -91,13 +90,33 @@ const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
   return renderList;
 };
 
+interface orderMutationHandlerArgs {
+  prevOrder: number;
+  newOrder: number;
+  id?: number;
+  newDate?: TodoDate;
+  todolist?: Map<string, TodoEntity[]>;
+}
+
+const orderMutationHandler = async ({
+  prevOrder,
+  newOrder,
+  id,
+  newDate,
+  todolist,
+}: orderMutationHandlerArgs) => {
+  if (!newDate || !id) {
+    await todosApi.reorderTodos(prevOrder, newOrder);
+  } else {
+    await todosApi.updateTodo(id, { date: newDate });
+    await todosApi.reorderTodos(prevOrder, newOrder);
+  }
+};
+
 const TodoList = () => {
   /* hook 호출 */
+  const queryClient = useQueryClient();
   const db = ETIndexed.getInstance();
-  const { currentTodo } = useCurrentTodo();
-  const {
-    settings: { focusStep },
-  } = usePomodoroValue();
 
   const { data: todos, isLoading } = useQuery(
     ['todos'],
@@ -106,7 +125,29 @@ const TodoList = () => {
       refetchOnWindowFocus: false,
     },
   );
+
+  const { mutate: reorderMutate } = useMutation(orderMutationHandler, {
+    onError(_err: any, _: any, context) {
+      alert('걸렸다!!');
+      queryClient.setQueryData(['todos'], context);
+    },
+    onSettled() {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+    onMutate({ todolist }: { todolist?: Map<string, TodoEntity[]> }) {
+      console.log(todolist);
+      queryClient.cancelQueries({ queryKey: ['todos'] });
+      const prevTodoList = queryClient.getQueryData(['todos']);
+      queryClient.setQueryData(['todos'], todolist);
+      return prevTodoList;
+    },
+  });
+
   /* custom hook 호출 */
+  const { currentTodo } = useCurrentTodo();
+  const {
+    settings: { focusStep },
+  } = usePomodoroValue();
 
   /* todo re-ordering 관련 함수  */
   const modifiedSameDate = (
@@ -194,12 +235,12 @@ const TodoList = () => {
     if (source.droppableId === destination.droppableId) {
       const modifiedTodoList = modifiedSameDate(source, destination);
       // reorderMutate 브랜치에서 작업 중
-      // orderMutate(modifiedTodoList);
+      reorderMutate(modifiedTodoList);
     } else if (source.droppableId !== destination.droppableId) {
       // 다른 날에서 이동했을 때
       const modifiedTodoList = modifiedDiffDate(source, destination);
       // reorderMutate 브랜치에서 작업 중
-      // orderMutate(modifiedTodoList);
+      reorderMutate(modifiedTodoList);
     }
   };
 
@@ -222,7 +263,7 @@ const TodoList = () => {
         }}
       > */}
       {/* <CardAtom> */}
-      {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
+      <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} />
       <TodoListContainer>
         <NowCard
           currentTodo={currentTodo as TodoEntity}
