@@ -99,6 +99,7 @@ class ETIndexed {
   }
 
   async reorderTodos(prevOrder: number, newOrder: number) {
+    console.log(prevOrder, newOrder);
     const allTodoList = await this.action.getAll();
     const notNullTodos = allTodoList.filter((todo) => todo.order !== null);
     let bigNumber = 0,
@@ -176,8 +177,7 @@ class ETIndexed {
   }
 
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
-    const result = await this.action.waitForInit();
-    console.log('getList result :: ', result);
+    await this.action.waitForInit();
     const getTodos = await this.action.getAll();
     if (getTodos.length === 0) return new Map();
     const doneTodo = getTodos.filter((todo) => todo.done === isDone);

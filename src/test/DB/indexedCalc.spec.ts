@@ -79,20 +79,20 @@ describe('ExtremeTodoIndexedDB', () => {
     });
   });
 
-  describe('minusOne', () => {
+  describe('minusOrder', () => {
     it('주어진 todolist 안에 있는 todo의 order를 -1씩 한다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
       expect(targetTodo[0].order).toBe(3);
-      indexedCalc.minusOne(targetTodo);
+      indexedCalc.minusOrder(targetTodo);
       expect(targetTodo[0].order).toBe(2);
     });
   });
 
-  describe('plusOne', () => {
+  describe('plusOrder', () => {
     it('주어진 todoList 안에 있는 todo의 order를 +1씩 한다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
       expect(targetTodo[0].order).toBe(3);
-      indexedCalc.plusOne(targetTodo);
+      indexedCalc.plusOrder(targetTodo);
       expect(targetTodo[0].order).toBe(4);
     });
   });
