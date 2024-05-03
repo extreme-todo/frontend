@@ -128,14 +128,12 @@ const TodoList = () => {
 
   const { mutate: reorderMutate } = useMutation(orderMutationHandler, {
     onError(_err: any, _: any, context) {
-      alert('걸렸다!!');
       queryClient.setQueryData(['todos'], context);
     },
     onSettled() {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
     onMutate({ todolist }: { todolist?: Map<string, TodoEntity[]> }) {
-      console.log(todolist);
       queryClient.cancelQueries({ queryKey: ['todos'] });
       const prevTodoList = queryClient.getQueryData(['todos']);
       queryClient.setQueryData(['todos'], todolist);
