@@ -4,7 +4,7 @@ import TodoUI from './content/TodoUI';
 import { useEdit } from '../../hooks';
 
 import { TodoEntity } from '../../DB/indexedAction';
-import { ETIndexed } from '../../DB/indexed';
+import { ETIndexed, UpdateTodoDto } from '../../DB/indexed';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -12,6 +12,7 @@ import {
   DraggableProvidedDragHandleProps,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
+import { todosApi } from '../../shared/apis';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -22,13 +23,18 @@ interface ITodoCardProps {
 const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   const { id } = todoData;
   const queryClient = useQueryClient();
+  const updateMutationHandler = async ({
+    newTodo,
+    id,
+  }: {
+    newTodo: UpdateTodoDto;
+    id: number;
+  }) => await todosApi.updateTodo(id, newTodo);
 
-  // useMutation 요거 구현하기
   const { mutate } = useMutation({
-    mutationFn: (todo: TodoEntity) =>
-      ETIndexed.getInstance().updateTodo(todo.id, todo),
+    mutationFn: updateMutationHandler,
     onSuccess(data) {
-      console.log('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
+      console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
     onError(error) {
@@ -42,6 +48,9 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     setIsEdit({ editMode: true, editTodoId: id });
   };
 
+  const handleEditSubmit = (newTodo: UpdateTodoDto) => {
+    mutate({ newTodo, id });
+    setIsEdit({ editMode: false, editTodoId: undefined });
   };
 
   const handleEditCancel = () => {

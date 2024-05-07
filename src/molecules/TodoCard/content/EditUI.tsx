@@ -13,11 +13,12 @@ import {
   categoryValidation,
   titleValidation,
 } from '../../../shared/inputValidation';
+import { UpdateTodoDto } from '../../../DB/indexed';
 
 interface IEditUIProps {
   todoData: TodoEntity;
+  handleEditSubmit: (todo: UpdateTodoDto) => void;
   handleEditCancel: () => void;
-  handleEditSubmit: (todo: TodoEntity) => void;
 }
 
 const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
