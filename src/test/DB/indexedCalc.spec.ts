@@ -33,6 +33,31 @@ describe('ExtremeTodoIndexedDB', () => {
     });
   });
 
+  describe('searchOrder', () => {
+    let correspondingOrder: typeof mockTodoList;
+
+    beforeEach(() => {
+      const notNullTodos = mockTodoList.filter((todo) => todo.order !== null);
+      correspondingOrder = indexedCalc.orderedList(notNullTodos);
+    });
+
+    it('해당 날짜와 같거나 이전 날짜에 todo가 없으면 0을 반환한다', () => {
+      const orderResult = indexedCalc.searchOrder(
+        [...correspondingOrder].reverse(),
+        '2023-08-07',
+      );
+      expect(orderResult).toBe(0);
+    });
+
+    it('해당 날짜와 같거나 이전 날짜에 todo가 있으면 그 날짜의 마지막 todo의 order를 반환한다', () => {
+      const orderResult = indexedCalc.searchOrder(
+        [...correspondingOrder].reverse(),
+        '2023-08-13',
+      );
+      expect(orderResult).toBe(4);
+    });
+  });
+
   describe('updateOrder', () => {
     let correspondingOrder: typeof mockTodoList;
 
@@ -45,28 +70,28 @@ describe('ExtremeTodoIndexedDB', () => {
 
     it('새로운 order값을 해당 todo의 order를 수정하고', () => {
       let targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
-      expect(targetTodo[0].id === 5).toBe(true);
+      expect(targetTodo[0].id === 6).toBe(true);
 
       indexedCalc.updateOrder(correspondingOrder, 6, 2);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
-      expect(targetTodo[0].id === 5).toBe(false);
+      expect(targetTodo[0].id === 6).toBe(false);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 5).toBe(true);
+      expect(targetTodo[0].id === 6).toBe(true);
     });
 
     it('해당 범위 안에 있는 todo의 order를 수정한다.', () => {
       let targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 4).toBe(true);
+      expect(targetTodo[0].id === 1).toBe(true);
 
       indexedCalc.updateOrder(correspondingOrder, 6, 2);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 4).toBe(false);
+      expect(targetTodo[0].id === 1).toBe(false);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 3);
-      expect(targetTodo[0].id === 4).toBe(true);
+      expect(targetTodo[0].id === 1).toBe(true);
     });
   });
 
@@ -82,18 +107,18 @@ describe('ExtremeTodoIndexedDB', () => {
   describe('minusOrder', () => {
     it('주어진 todolist 안에 있는 todo의 order를 -1씩 한다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
-      expect(targetTodo[0].order).toBe(3);
-      indexedCalc.minusOrder(targetTodo);
       expect(targetTodo[0].order).toBe(2);
+      indexedCalc.minusOrder(targetTodo);
+      expect(targetTodo[0].order).toBe(1);
     });
   });
 
   describe('plusOrder', () => {
     it('주어진 todoList 안에 있는 todo의 order를 +1씩 한다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
-      expect(targetTodo[0].order).toBe(3);
+      expect(targetTodo[0].order).toBe(2);
       indexedCalc.plusOrder(targetTodo);
-      expect(targetTodo[0].order).toBe(4);
+      expect(targetTodo[0].order).toBe(3);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { TodoEntity } from './indexedAction';
+import { TodoDate, TodoEntity } from './indexedAction';
 
 class ETIndexedDBCalc {
   filterDone(isDone: boolean, todoList: TodoEntity[]): TodoEntity[] {
@@ -18,6 +18,13 @@ class ETIndexedDBCalc {
       mapped.set(todo.date, index);
     }
     return mapped;
+  }
+
+  searchOrder(reversedTodoList: TodoEntity[], date: TodoDate): number {
+    const searchDate = reversedTodoList.find(
+      (todo) => new Date(todo.date) <= new Date(date),
+    );
+    return searchDate ? (searchDate.order as number) : 0;
   }
 
   updateOrder(

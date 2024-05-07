@@ -8,7 +8,7 @@
 
 import { ETIndexedDBAction } from './indexedAction';
 import { ETIndexedDBCalc } from './indexedCalc';
-import type { TodoEntity } from './indexedAction';
+import type { TodoDate, TodoEntity } from './indexedAction';
 
 /* 
 removeTodos <- Cron 사용한 메소드임 -> 로그인이 안됐다? useEffect() 안에서 ETIndexedDBAction 이용해서 지금 DB 안에 있는 거 중에.. 어제꺼 Todo 쓰윽 지워버리던지..
@@ -29,7 +29,7 @@ type AddTodoDto = Omit<
 >;
 
 type UpdateTodoDto = Partial<
-  Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'order' | 'date'>
+  Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'date'>
 >;
 
 class ETIndexed {
@@ -57,34 +57,24 @@ class ETIndexed {
       (todo) => todo.order !== null,
     );
 
-    let newTodoOrder = 0;
+    let newTodoOrder = 1;
 
-    if (getAllTodo.length === 0) {
-      newTodoOrder = 1;
-    } else {
+    if (getAllTodo.length !== 0) {
       const getOrdered = this.calc.orderedList(getAllTodo);
 
-      const reversedOrdered = [...getOrdered].reverse(); // findLast의 대체수단
-
-      const searchDate = reversedOrdered.find(
-        (el) => new Date(el.date) <= new Date(todo.date),
+      const orderResult = this.calc.searchOrder(
+        [...getOrdered].reverse(),
+        todo.date,
       );
 
-      if (searchDate === undefined) {
-        newTodoOrder = 1;
-        const plusedTodo = this.calc.plusOrder(getOrdered);
-        await Promise.all(
-          plusedTodo.map((todo) => this.action.updateOne(todo)),
-        );
+      let plusedTodo: TodoEntity[];
+      if (orderResult === 0) {
+        plusedTodo = this.calc.plusOrder(getOrdered);
       } else {
-        newTodoOrder = Number(searchDate.order) + 1;
-        const plusedTodo = this.calc.plusOrder(
-          getOrdered.slice(Number(searchDate.order)),
-        );
-        await Promise.all(
-          plusedTodo.map((todo) => this.action.updateOne(todo)),
-        );
+        newTodoOrder = orderResult + 1;
+        plusedTodo = this.calc.plusOrder(getOrdered.slice(orderResult));
       }
+      await Promise.all(plusedTodo.map((todo) => this.action.updateOne(todo)));
     }
 
     const newTodo = {
@@ -99,7 +89,6 @@ class ETIndexed {
   }
 
   async reorderTodos(prevOrder: number, newOrder: number) {
-    console.log(prevOrder, newOrder);
     const allTodoList = await this.action.getAll();
     const notNullTodos = allTodoList.filter((todo) => todo.order !== null);
     let bigNumber = 0,
@@ -152,9 +141,24 @@ class ETIndexed {
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
   }
 
-  async updateTodo(id: number, todo: UpdateTodoDto) {
+  async updateTodo(id: number, newTodo: UpdateTodoDto) {
     const getTodo = await this.action.getOne(id);
-    Object.assign(getTodo, todo);
+
+    if (getTodo.date !== newTodo.date) {
+      const getAllTodo = (await this.action.getAll()).filter(
+        (todo) => todo.order !== null,
+      );
+      const getOrdered = this.calc.orderedList(getAllTodo);
+      let orderResult = this.calc.searchOrder(
+        [...getOrdered].reverse(),
+        newTodo.date as TodoDate,
+      );
+      orderResult = orderResult === 0 ? 1 : orderResult;
+
+      await this.reorderTodos(getTodo.order as number, orderResult);
+      Object.assign(getTodo, { ...newTodo, order: orderResult });
+    }
+    Object.assign(getTodo, newTodo);
     const updated = await this.action.updateOne(getTodo);
     return updated;
   }
