@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TodoEntity } from '../DB/indexedAction';
-import { ETIndexed } from '../DB/indexed';
+import { useQuery } from '@tanstack/react-query';
+import { todosApi } from '../shared/apis';
 
 type TodoResponseDto = TodoEntity;
 
@@ -8,15 +9,18 @@ const useCurrentTodo = () => {
   const [currentTodo, setCurrentTodo] = useState<TodoResponseDto>();
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
   const localKey = 'currentTodo';
-  const db = ETIndexed.getInstance();
+
+  const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    const checkLocalStorage = async () => {
+    const checkLocalStorage = () => {
       const localTodo = localStorage.getItem(localKey);
       if (localTodo != null) {
         setCurrentTodo(JSON.parse(localTodo) as TodoResponseDto);
       } else {
-        const nextTodo = await getNextTodo();
+        const nextTodo = getNextTodo();
         if (nextTodo) {
           setCurrentTodo(nextTodo);
           localStorage.setItem(localKey, JSON.stringify(nextTodo));
@@ -26,7 +30,7 @@ const useCurrentTodo = () => {
       }
     };
     checkLocalStorage();
-  }, [db]);
+  }, [todos]);
 
   useEffect(() => {
     if (currentTodo != null) {
@@ -40,18 +44,16 @@ const useCurrentTodo = () => {
     setFocusedOnTodo((prev) => prev + focusedTime);
   };
 
-  const doTodo = async () => {
-    if (currentTodo) await db.doTodo(currentTodo?.id, focusedOnTodo.toString());
-    await getNextTodo();
+  const doTodo = () => {
+    // if (currentTodo) await todosApi.doTodo(currentTodo?.id, focusedOnTodo.toString());
+    getNextTodo();
     setFocusedOnTodo(0);
   };
 
-  const getNextTodo = async (): Promise<TodoEntity | undefined> => {
-    if (db) {
-      const todolist = await db.getList(false);
-      const todayTodos: TodoEntity[] = todolist.values().next()
+  const getNextTodo = (): TodoEntity | undefined => {
+    if (todos) {
+      const todayTodos: TodoEntity[] = todos.values().next()
         .value as TodoEntity[];
-
       if (todayTodos != null) {
         setCurrentTodo(todayTodos[0]);
         return todayTodos[0];
