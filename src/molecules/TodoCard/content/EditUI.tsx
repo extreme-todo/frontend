@@ -9,41 +9,80 @@ import { format } from 'date-fns';
 import { SelectSingleEventHandler } from 'react-day-picker';
 
 import styled from '@emotion/styled';
-import { titleValidation } from '../../../shared/inputValidation';
+import {
+  categoryValidation,
+  titleValidation,
+} from '../../../shared/inputValidation';
 
 interface IEditUIProps {
   todoData: TodoEntity;
-  handleCategorySubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
-  title: string;
-  handleChangeTitle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  category: string;
-  handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  categories: string[] | null;
-  handleClickCategory: (category: string) => void;
   handleEditCancel: () => void;
   handleEditSubmit: (todo: TodoEntity) => void;
-  duration: number;
-  handleDuration: ReactEventHandler<HTMLSelectElement>;
 }
 
 const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const EditUI = ({
   todoData,
-  handleCategorySubmit,
-  categories,
-  title,
-  handleChangeTitle,
-  category,
-  handleChangeCategory,
-  handleClickCategory,
-  handleEditCancel,
   handleEditSubmit,
-  duration,
-  handleDuration,
+  handleEditCancel,
 }: IEditUIProps) => {
-  const { date } = todoData;
+  const { date, todo: todoTitle, categories, duration: tomato } = todoData;
+
   const [selected, setSelected] = useState<Date>(new Date(date));
+  const [titleValue, setTitleValue] = useState(todoTitle);
+  const [categoryValue, setCategoryValue] = useState('');
+  const [categoryArray, setCategoryArray] = useState(categories);
+  const [duration, setDuration] = useState(tomato);
+
+  const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitleValue(event.target.value);
+  };
+
+  const handleChangeCategory = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCategoryValue(event.target.value);
+  };
+
+  const handleCategorySubmit = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.code === 'Enter') {
+      // 한글 중복 입력 처리
+      if (event.nativeEvent.isComposing) return;
+
+      const newCategory = (event.target as HTMLInputElement).value;
+
+      const trimmed = categoryValidation(newCategory, categoryArray ?? []);
+
+      if (!trimmed) return;
+
+      if (categoryArray) {
+        const copy = categoryArray.slice();
+        copy.push(trimmed);
+
+        setCategoryArray(copy);
+      } else {
+        setCategoryArray([trimmed]);
+      }
+
+      setCategoryValue('');
+    }
+  };
+
+  const handleDeleteCategory = (category: string) => {
+    setCategoryArray((prev) => {
+      const deleted = prev?.filter((tag) => {
+        return tag !== category;
+      }) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
+
+      if (deleted.length === 0) return null;
+      return deleted;
+    });
+  };
+
+  const handleDuration: ReactEventHandler<HTMLSelectElement> = (event) => {
+    setDuration(Number(event.currentTarget.value));
+  };
 
   const handleDaySelect: SelectSingleEventHandler = (date) => {
     if (!date) return;
@@ -51,26 +90,26 @@ const EditUI = ({
   };
 
   const editData = {
-    ...todoData,
-    categories,
+    id: todoData.id,
+    categories: categoryArray,
     date: format(selected.toString(), 'y-MM-dd') as TodoDate,
-    todo: title,
+    todo: titleValue,
     duration,
   };
 
   return (
     <EditWrapper>
       <InputAtom.Usual
-        value={title}
+        value={titleValue}
         handleChange={handleChangeTitle}
         placeholder="할 일을 입력하세요"
         ariaLabel="title_input"
       />
       <CategoryInput
-        categories={categories}
+        categories={categoryArray}
         handleSubmit={handleCategorySubmit}
-        handleClick={handleClickCategory}
-        category={category}
+        handleClick={handleDeleteCategory}
+        category={categoryValue}
         handleChangeCategory={handleChangeCategory}
       />
       <AdditionalDataContainer>
