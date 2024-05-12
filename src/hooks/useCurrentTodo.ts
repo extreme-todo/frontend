@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TodoEntity } from '../DB/indexedAction';
 import { useQuery } from '@tanstack/react-query';
-import { todosApi } from '../shared/apis';
+import { timerApi, todosApi } from '../shared/apis';
 
 type TodoResponseDto = TodoEntity;
 
@@ -47,6 +47,7 @@ const useCurrentTodo = () => {
   const doTodo = () => {
     // if (currentTodo) await todosApi.doTodo(currentTodo?.id, focusedOnTodo.toString());
     getNextTodo();
+    timerApi.addTotalFocusTime(focusedOnTodo / 60000);
     setFocusedOnTodo(0);
   };
 
