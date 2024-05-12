@@ -3,7 +3,13 @@ import { useEffect, useState } from 'react';
 import { SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
-import { settingsApi, todosApi, usersApi } from '../shared/apis';
+import {
+  rankingApi,
+  settingsApi,
+  timerApi,
+  todosApi,
+  usersApi,
+} from '../shared/apis';
 
 import styled from '@emotion/styled';
 import { useExtremeMode } from '../hooks';
@@ -31,7 +37,13 @@ const Setting = () => {
   };
 
   const handleReset = () => {
-    todosApi.reset();
+    if (confirm('정말로 기록을 초기화 하시겠습니까?')) {
+      Promise.all([
+        todosApi.reset(),
+        rankingApi.resetRanking(),
+        timerApi.reset(),
+      ]).then(() => window.alert('초기화 성공'));
+    }
   };
 
   const handleWithdrawal = () => {
