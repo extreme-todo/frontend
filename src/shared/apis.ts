@@ -152,4 +152,15 @@ export const timerApi = {
     return baseApi.get(`${timerApi._route}/progress`);
   },
 };
+
+export const rankingApi = {
+  _route: 'ranking',
+  getRanking: async (categoryName: string) => {
+    return baseApi.get(`${rankingApi._route}?category=${categoryName}`);
+  },
+  resetRanking: async () => {
+    return baseApi.delete(`${rankingApi._route}/reset`);
+  },
+};
+
 export const settingsApi = {};
