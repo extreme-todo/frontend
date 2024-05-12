@@ -47,7 +47,11 @@ const Setting = () => {
   };
 
   const handleWithdrawal = () => {
-    usersApi.withdrawal();
+    if (confirm('정말로 회원 탈퇴하시겠습니까?')) {
+      usersApi.withdrawal().then(() => {
+        alert('회원 탈퇴 성공');
+      });
+    }
   };
 
   const tooltipMouseOver = () => {
