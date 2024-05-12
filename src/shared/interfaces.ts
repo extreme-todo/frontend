@@ -34,3 +34,8 @@ export interface ICategory {
   name: string;
   id: number;
 }
+
+export interface ISettings {
+  colorMode: 'auto' | 'dark' | 'light';
+  extremeMode: boolean;
+}
