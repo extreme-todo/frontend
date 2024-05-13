@@ -91,7 +91,6 @@ const EditUI = ({
   };
 
   const editData = {
-    id: todoData.id,
     categories: categoryArray,
     date: format(selected.toString(), 'y-MM-dd') as TodoDate,
     todo: titleValue,
