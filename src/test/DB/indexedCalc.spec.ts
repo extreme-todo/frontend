@@ -111,6 +111,11 @@ describe('ExtremeTodoIndexedDB', () => {
       indexedCalc.minusOrder(targetTodo);
       expect(targetTodo[0].order).toBe(1);
     });
+    it('빈 배열이 주어지면 undefined를 반환한다.', () => {
+      const targetTodo = [];
+      const result = indexedCalc.minusOrder(targetTodo);
+      expect(result).toBe(undefined);
+    });
   });
 
   describe('plusOrder', () => {
@@ -119,6 +124,11 @@ describe('ExtremeTodoIndexedDB', () => {
       expect(targetTodo[0].order).toBe(2);
       indexedCalc.plusOrder(targetTodo);
       expect(targetTodo[0].order).toBe(3);
+    });
+    it('빈 배열이 주어지면 undefined를 반환한다.', () => {
+      const targetTodo = [];
+      const result = indexedCalc.plusOrder(targetTodo);
+      expect(result).toBe(undefined);
     });
   });
 });
