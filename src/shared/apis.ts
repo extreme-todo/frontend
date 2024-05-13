@@ -131,5 +131,36 @@ export const todosApi = {
     return new Map(converted);
   },
 };
-export const timerApi = {};
+export const timerApi = {
+  _route: 'timer',
+  addTotalFocusTime: async (addFocusTime: number) => {
+    return baseApi.patch(`${timerApi._route}/total_focus`, { addFocusTime });
+  },
+  getTotalFocusTime: async () => {
+    return baseApi.get(`${timerApi._route}/total_focus`);
+  },
+  addTotalRestTime: async (addRestTime: number) => {
+    return baseApi.patch(`${timerApi._route}/total_rest`, { addRestTime });
+  },
+  getTotalRestTime: async () => {
+    return baseApi.get(`${timerApi._route}/total_rest`);
+  },
+  reset: async () => {
+    return baseApi.delete(`${timerApi._route}/reset`);
+  },
+  getProgress: async () => {
+    return baseApi.get(`${timerApi._route}/progress`);
+  },
+};
+
+export const rankingApi = {
+  _route: 'ranking',
+  getRanking: async (categoryName: string) => {
+    return baseApi.get(`${rankingApi._route}?category=${categoryName}`);
+  },
+  resetRanking: async () => {
+    return baseApi.delete(`${rankingApi._route}/reset`);
+  },
+};
+
 export const settingsApi = {};
