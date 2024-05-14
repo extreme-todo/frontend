@@ -33,31 +33,6 @@ describe('ExtremeTodoIndexedDB', () => {
     });
   });
 
-  describe('searchOrder', () => {
-    let correspondingOrder: typeof mockTodoList;
-
-    beforeEach(() => {
-      const notNullTodos = mockTodoList.filter((todo) => todo.order !== null);
-      correspondingOrder = indexedCalc.orderedList(notNullTodos);
-    });
-
-    it('해당 날짜와 같거나 이전 날짜에 todo가 없으면 0을 반환한다', () => {
-      const orderResult = indexedCalc.searchOrder(
-        [...correspondingOrder].reverse(),
-        '2023-08-07',
-      );
-      expect(orderResult).toBe(0);
-    });
-
-    it('해당 날짜와 같거나 이전 날짜에 todo가 있으면 그 날짜의 마지막 todo의 order를 반환한다', () => {
-      const orderResult = indexedCalc.searchOrder(
-        [...correspondingOrder].reverse(),
-        '2023-08-13',
-      );
-      expect(orderResult).toBe(4);
-    });
-  });
-
   describe('updateOrder', () => {
     let correspondingOrder: typeof mockTodoList;
 

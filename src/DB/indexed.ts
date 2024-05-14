@@ -8,7 +8,7 @@
 
 import { ETIndexedDBAction } from './indexedAction';
 import { ETIndexedDBCalc } from './indexedCalc';
-import type { TodoDate, TodoEntity } from './indexedAction';
+import type { TodoEntity } from './indexedAction';
 
 /* 
 removeTodos <- Cron 사용한 메소드임 -> 로그인이 안됐다? useEffect() 안에서 ETIndexedDBAction 이용해서 지금 DB 안에 있는 거 중에.. 어제꺼 Todo 쓰윽 지워버리던지..
@@ -64,25 +64,21 @@ class ETIndexed {
 
     if (getAllTodo.length !== 0) {
       const getOrdered = this.calc.orderedList(getAllTodo);
-
-      const orderResult = this.calc.searchOrder(
-        [...getOrdered].reverse(),
-        todo.date,
+      const reversedOrdered = [...getOrdered].reverse(); // findLast의 대체수단
+      const searchDate = reversedOrdered.find(
+        (el) => new Date(el.date) <= new Date(todo.date),
       );
 
       let plusedTodo: TodoEntity[];
-      if (orderResult === 0) {
+      if (searchDate === undefined) {
         plusedTodo = this.calc.plusOrder(getOrdered) as TodoEntity[];
       } else {
-        newTodoOrder = orderResult + 1;
+        newTodoOrder = Number(searchDate.order) + 1;
         plusedTodo = this.calc.plusOrder(
-          getOrdered.slice(orderResult),
+          getOrdered.slice(Number(searchDate.order)),
         ) as TodoEntity[];
       }
-      plusedTodo &&
-        (await Promise.all(
-          plusedTodo.map((todo) => this.action.updateOne(todo)),
-        ));
+      await Promise.all(plusedTodo.map((todo) => this.action.updateOne(todo)));
     }
 
     const newTodo = {
@@ -97,6 +93,7 @@ class ETIndexed {
   }
 
   async reorderTodos(prevOrder: number, newOrder: number) {
+    console.log(prevOrder, newOrder);
     const allTodoList = await this.action.getAll();
     const notNullTodos = allTodoList.filter((todo) => todo.order !== null);
     let bigNumber = 0,
@@ -149,47 +146,9 @@ class ETIndexed {
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
   }
 
-  async updateTodo(id: number, newTodo: UpdateTodoDto) {
+  async updateTodo(id: number, todo: UpdateTodoDto) {
     const getTodo = await this.action.getOne(id);
-    if (!getTodo) return alert('해당 할 일을 찾을 수 없습니다!');
-    if (Array.isArray(newTodo.categories) && newTodo.categories.length > 5) {
-      return alert('카테고리는 5개까지 입력 가능합니다.');
-    }
-
-    if (getTodo.date !== newTodo.date) {
-      const getAllTodo = (await this.action.getAll()).filter(
-        (todo) => todo.order !== null,
-      );
-      const getOrdered = this.calc.orderedList(getAllTodo);
-      let orderResult = this.calc.searchOrder(
-        [...getOrdered].reverse(),
-        newTodo.date as TodoDate,
-      );
-      orderResult = orderResult === 0 ? 1 : orderResult;
-
-      if (orderResult !== getTodo.order) {
-        const bigOrder = (
-          (getTodo.order as number) > orderResult ? getTodo.order : orderResult
-        ) as number;
-        const smallOrder = (
-          (getTodo.order as number) < orderResult ? getTodo.order : orderResult
-        ) as number;
-        const reorderTodos = this.calc.updateOrder(
-          getAllTodo.filter(
-            (todo) =>
-              (todo.order as number) <= bigOrder &&
-              (todo.order as number) >= smallOrder,
-          ),
-          getTodo.order as number,
-          orderResult,
-        );
-        await Promise.all(
-          reorderTodos.map((todo) => this.action.updateOne(todo)),
-        );
-        Object.assign(getTodo, { order: orderResult });
-      }
-    }
-    Object.assign(getTodo, newTodo);
+    Object.assign(getTodo, todo);
     const updated = await this.action.updateOne(getTodo);
     return updated;
   }
