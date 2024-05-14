@@ -53,6 +53,9 @@ class ETIndexed {
   }
 
   async addTodo(todo: AddTodoDto) {
+    if (Array.isArray(todo.categories) && todo.categories.length > 5) {
+      return alert('카테고리는 5개 까지 추가할 수 있습니다.');
+    }
     const getAllTodo = (await this.action.getAll()).filter(
       (todo) => todo.order !== null,
     );
@@ -69,12 +72,17 @@ class ETIndexed {
 
       let plusedTodo: TodoEntity[];
       if (orderResult === 0) {
-        plusedTodo = this.calc.plusOrder(getOrdered);
+        plusedTodo = this.calc.plusOrder(getOrdered) as TodoEntity[];
       } else {
         newTodoOrder = orderResult + 1;
-        plusedTodo = this.calc.plusOrder(getOrdered.slice(orderResult));
+        plusedTodo = this.calc.plusOrder(
+          getOrdered.slice(orderResult),
+        ) as TodoEntity[];
       }
-      await Promise.all(plusedTodo.map((todo) => this.action.updateOne(todo)));
+      plusedTodo &&
+        (await Promise.all(
+          plusedTodo.map((todo) => this.action.updateOne(todo)),
+        ));
     }
 
     const newTodo = {
@@ -135,7 +143,7 @@ class ETIndexed {
     const orderedList = this.calc.orderedList(getTodoList);
     const expectedMinusPart = orderedList.slice(order);
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart);
+    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
 
     await this.action.removeOne(id);
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
@@ -143,6 +151,10 @@ class ETIndexed {
 
   async updateTodo(id: number, newTodo: UpdateTodoDto) {
     const getTodo = await this.action.getOne(id);
+    if (!getTodo) return alert('해당 할 일을 찾을 수 없습니다!');
+    if (Array.isArray(newTodo.categories) && newTodo.categories.length > 5) {
+      return alert('카테고리는 5개까지 입력 가능합니다.');
+    }
 
     if (getTodo.date !== newTodo.date) {
       const getAllTodo = (await this.action.getAll()).filter(
@@ -155,8 +167,27 @@ class ETIndexed {
       );
       orderResult = orderResult === 0 ? 1 : orderResult;
 
-      await this.reorderTodos(getTodo.order as number, orderResult);
-      Object.assign(getTodo, { ...newTodo, order: orderResult });
+      if (orderResult !== getTodo.order) {
+        const bigOrder = (
+          (getTodo.order as number) > orderResult ? getTodo.order : orderResult
+        ) as number;
+        const smallOrder = (
+          (getTodo.order as number) < orderResult ? getTodo.order : orderResult
+        ) as number;
+        const reorderTodos = this.calc.updateOrder(
+          getAllTodo.filter(
+            (todo) =>
+              (todo.order as number) <= bigOrder &&
+              (todo.order as number) >= smallOrder,
+          ),
+          getTodo.order as number,
+          orderResult,
+        );
+        await Promise.all(
+          reorderTodos.map((todo) => this.action.updateOne(todo)),
+        );
+        Object.assign(getTodo, { order: orderResult });
+      }
     }
     Object.assign(getTodo, newTodo);
     const updated = await this.action.updateOne(getTodo);
@@ -174,7 +205,7 @@ class ETIndexed {
 
     Object.assign(getTodo, { done: true, order: null, focusTime: focusTime });
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart);
+    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
 
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
     await this.action.updateOne(getTodo);
