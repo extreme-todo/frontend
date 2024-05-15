@@ -3,7 +3,7 @@ import TodoUI from './content/TodoUI';
 
 import { useEdit } from '../../hooks';
 
-import { TodoEntity } from '../../DB/indexedAction';
+import { TodoDate, TodoEntity } from '../../DB/indexedAction';
 import { ETIndexed, UpdateTodoDto } from '../../DB/indexed';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 import { todosApi } from '../../shared/apis';
+import { useCallback } from 'react';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -21,17 +22,56 @@ interface ITodoCardProps {
 }
 
 const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
-  const { id } = todoData;
+  const { id, date: prevDate } = todoData;
   const queryClient = useQueryClient();
-  const updateMutationHandler = async ({
-    newTodo,
-    id,
-  }: {
-    newTodo: UpdateTodoDto;
-    id: number;
-  }) => await todosApi.updateTodo(id, newTodo);
 
-  const { mutate } = useMutation({
+  const updateMutationHandler = useCallback(
+    async ({
+      newTodo,
+      id,
+      prevDate,
+    }: {
+      newTodo: UpdateTodoDto;
+      id: number;
+      // prevDate: TodoDate;
+      prevDate: string;
+    }) => {
+      if (newTodo === prevDate) {
+        await todosApi.updateTodo(id, newTodo);
+      } else {
+        const mapTodos = queryClient.getQueryData(['todos']) as Map<
+          string,
+          TodoEntity[]
+        >;
+        const arrayTodos = Array.from(mapTodos.values()).flat();
+        const { order: prevOrder } = arrayTodos.find(
+          (todo) => todo.id === id,
+        ) as TodoEntity;
+        const searchDate = arrayTodos
+          .reverse()
+          .find(
+            (todo) =>
+              new Date(`${todo.date} 00:00:00`) <=
+              new Date(`${newTodo.date as string} 00:00:00`),
+          ) as TodoEntity;
+        let newOrder: number;
+        if (!searchDate) {
+          newOrder = 1;
+        } else if ((prevOrder as number) > (searchDate.order as number)) {
+          newOrder = (searchDate.order as number) + 1;
+        } else {
+          newOrder = searchDate.order as number;
+        }
+        await todosApi.updateTodo(id, newTodo);
+        if (prevOrder !== newOrder) {
+          await todosApi.reorderTodos(prevOrder as number, newOrder);
+        }
+      }
+    },
+    [queryClient],
+  );
+
+  const { mutate: updateMutate } = useMutation({
     mutationFn: updateMutationHandler,
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
@@ -49,7 +89,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   };
 
   const handleEditSubmit = (newTodo: UpdateTodoDto) => {
-    mutate({ newTodo, id });
+    updateMutate({ newTodo, id, prevDate });
     setIsEdit({ editMode: false, editTodoId: undefined });
   };
 

@@ -116,7 +116,6 @@ const orderMutationHandler = async ({
 const TodoList = () => {
   /* hook 호출 */
   const queryClient = useQueryClient();
-  const db = ETIndexed.getInstance();
 
   const { data: todos, isLoading } = useQuery(
     ['todos'],
@@ -246,7 +245,7 @@ const TodoList = () => {
     const mock = addTodoMocks();
     const temp = async () => {
       for (let i = 0; i < mock.length; i++) {
-        await db.addTodo(mock[i]);
+        await ETIndexed.getInstance().addTodo(mock[i]);
       }
     };
     temp();
