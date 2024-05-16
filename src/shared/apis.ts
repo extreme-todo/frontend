@@ -3,6 +3,7 @@ import LoginEvent from './LoginEvent';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
+import { ISettings } from './interfaces';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 
@@ -163,4 +164,12 @@ export const rankingApi = {
   },
 };
 
-export const settingsApi = {};
+export const settingsApi = {
+  _route: 'settings',
+  getSettings: async <T = ISettings>(): Promise<AxiosResponse<T, any>> => {
+    return baseApi.get<T>(`${settingsApi._route}`);
+  },
+  setSettings: async (settingData: ISettings) => {
+    return baseApi.put(`${settingsApi._route}`, settingData);
+  },
+};

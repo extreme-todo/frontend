@@ -1,12 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
-import { todosApi, usersApi } from '../shared/apis';
+import {
+  rankingApi,
+  settingsApi,
+  timerApi,
+  todosApi,
+  usersApi,
+} from '../shared/apis';
 
 import styled from '@emotion/styled';
 import { useExtremeMode } from '../hooks';
+import { AxiosResponse } from 'axios';
+import { ISettings } from '../shared/interfaces';
 
 // TODO : state를 상위 컴포넌트로 뽑아낼 수는 없을까?.. 그게 더 괜찮은 방법이지 않을까?..
 // TODO : 추가적으로 이런 모양의 선택지를 템플릿으로 뽑아낼 수는 없을까?
@@ -14,17 +22,36 @@ import { useExtremeMode } from '../hooks';
 const Setting = () => {
   const { isExtreme, setMode } = useExtremeMode();
   const [isOver, setIsOver] = useState<boolean>(false);
+  const [settings, setSettings] = useState<ISettings>({
+    colorMode: 'auto',
+    extremeMode: isExtreme,
+  });
 
   const handleSwitch = (): void => {
     setMode(!isExtreme);
+    setSettings((prev) => {
+      const newSettings = { ...prev, extremeMode: !isExtreme };
+      settingsApi.setSettings(newSettings);
+      return newSettings;
+    });
   };
 
   const handleReset = () => {
-    todosApi.reset();
+    if (confirm('정말로 기록을 초기화 하시겠습니까?')) {
+      Promise.all([
+        todosApi.reset(),
+        rankingApi.resetRanking(),
+        timerApi.reset(),
+      ]).then(() => window.alert('초기화 성공'));
+    }
   };
 
   const handleWithdrawal = () => {
-    usersApi.withdrawal();
+    if (confirm('정말로 회원 탈퇴하시겠습니까?')) {
+      usersApi.withdrawal().then(() => {
+        alert('회원 탈퇴 성공');
+      });
+    }
   };
 
   const tooltipMouseOver = () => {
@@ -33,6 +60,20 @@ const Setting = () => {
   const tooltipMouseLeave = () => {
     setIsOver(false);
   };
+
+  const fetchSettings = async () => {
+    const settings = await settingsApi.getSettings();
+    const { data }: AxiosResponse<ISettings, any> = settings;
+    if (data) setMode(data.extremeMode);
+    setSettings({
+      colorMode: data.colorMode,
+      extremeMode: data.extremeMode,
+    });
+  };
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
 
   return (
     <>
