@@ -11,7 +11,7 @@ const mockFetchTodoList = (): TodoEntity[] => [
     done: false,
     categories: ['영어', '학교공부'],
     focusTime: 0,
-    order: 3,
+    order: 2,
   },
   {
     id: 2,
@@ -44,7 +44,7 @@ const mockFetchTodoList = (): TodoEntity[] => [
     done: false,
     categories: null,
     focusTime: 0,
-    order: 2,
+    order: 3,
   },
   {
     id: 5,
@@ -55,7 +55,7 @@ const mockFetchTodoList = (): TodoEntity[] => [
     done: false,
     categories: null,
     focusTime: 0,
-    order: 6,
+    order: 4,
   },
   {
     id: 6,
@@ -66,7 +66,7 @@ const mockFetchTodoList = (): TodoEntity[] => [
     done: false,
     categories: null,
     focusTime: 0,
-    order: 4,
+    order: 6,
   },
   {
     id: 7,

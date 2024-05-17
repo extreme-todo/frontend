@@ -45,28 +45,28 @@ describe('ExtremeTodoIndexedDB', () => {
 
     it('새로운 order값을 해당 todo의 order를 수정하고', () => {
       let targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
-      expect(targetTodo[0].id === 5).toBe(true);
+      expect(targetTodo[0].id === 6).toBe(true);
 
       indexedCalc.updateOrder(correspondingOrder, 6, 2);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
-      expect(targetTodo[0].id === 5).toBe(false);
+      expect(targetTodo[0].id === 6).toBe(false);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 5).toBe(true);
+      expect(targetTodo[0].id === 6).toBe(true);
     });
 
     it('해당 범위 안에 있는 todo의 order를 수정한다.', () => {
       let targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 4).toBe(true);
+      expect(targetTodo[0].id === 1).toBe(true);
 
       indexedCalc.updateOrder(correspondingOrder, 6, 2);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 4).toBe(false);
+      expect(targetTodo[0].id === 1).toBe(false);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 3);
-      expect(targetTodo[0].id === 4).toBe(true);
+      expect(targetTodo[0].id === 1).toBe(true);
     });
   });
 
@@ -82,18 +82,28 @@ describe('ExtremeTodoIndexedDB', () => {
   describe('minusOrder', () => {
     it('주어진 todolist 안에 있는 todo의 order를 -1씩 한다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
-      expect(targetTodo[0].order).toBe(3);
-      indexedCalc.minusOrder(targetTodo);
       expect(targetTodo[0].order).toBe(2);
+      indexedCalc.minusOrder(targetTodo);
+      expect(targetTodo[0].order).toBe(1);
+    });
+    it('빈 배열이 주어지면 undefined를 반환한다.', () => {
+      const targetTodo = [];
+      const result = indexedCalc.minusOrder(targetTodo);
+      expect(result).toBe(undefined);
     });
   });
 
   describe('plusOrder', () => {
     it('주어진 todoList 안에 있는 todo의 order를 +1씩 한다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
-      expect(targetTodo[0].order).toBe(3);
+      expect(targetTodo[0].order).toBe(2);
       indexedCalc.plusOrder(targetTodo);
-      expect(targetTodo[0].order).toBe(4);
+      expect(targetTodo[0].order).toBe(3);
+    });
+    it('빈 배열이 주어지면 undefined를 반환한다.', () => {
+      const targetTodo = [];
+      const result = indexedCalc.plusOrder(targetTodo);
+      expect(result).toBe(undefined);
     });
   });
 });

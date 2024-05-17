@@ -3,25 +3,31 @@ import { IconAtom, TagAtom, TypoAtom } from '../../../atoms';
 import { ITodoCardProps } from '..';
 
 import styled from '@emotion/styled';
+import { useState } from 'react';
 interface ITodoUIProps extends ITodoCardProps {
-  handleMouseOver: () => void;
-  handleMouseOut: () => void;
   handleEditButton: () => void;
   editMode: boolean;
-  showEdit: boolean;
 }
 
 const TodoUI = ({
   todoData,
   editMode,
-  showEdit,
+
   dragHandleProps,
   snapshot,
-  handleMouseOver,
-  handleMouseOut,
+
   handleEditButton,
 }: ITodoUIProps) => {
+  const [showEdit, setShowEdit] = useState(false);
   const { todo, categories } = todoData;
+
+  const handleMouseOver = () => {
+    setShowEdit(true);
+  };
+
+  const handleMouseOut = () => {
+    setShowEdit(false);
+  };
 
   return (
     <TodoCardContainer

@@ -29,7 +29,7 @@ type AddTodoDto = Omit<
 >;
 
 type UpdateTodoDto = Partial<
-  Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'order' | 'date'>
+  Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'date'>
 >;
 
 class ETIndexed {
@@ -53,38 +53,32 @@ class ETIndexed {
   }
 
   async addTodo(todo: AddTodoDto) {
+    if (Array.isArray(todo.categories) && todo.categories.length > 5) {
+      return alert('카테고리는 5개 까지 추가할 수 있습니다.');
+    }
     const getAllTodo = (await this.action.getAll()).filter(
       (todo) => todo.order !== null,
     );
 
-    let newTodoOrder = 0;
+    let newTodoOrder = 1;
 
-    if (getAllTodo.length === 0) {
-      newTodoOrder = 1;
-    } else {
+    if (getAllTodo.length !== 0) {
       const getOrdered = this.calc.orderedList(getAllTodo);
-
       const reversedOrdered = [...getOrdered].reverse(); // findLast의 대체수단
-
       const searchDate = reversedOrdered.find(
         (el) => new Date(el.date) <= new Date(todo.date),
       );
 
+      let plusedTodo: TodoEntity[];
       if (searchDate === undefined) {
-        newTodoOrder = 1;
-        const plusedTodo = this.calc.plusOrder(getOrdered);
-        await Promise.all(
-          plusedTodo.map((todo) => this.action.updateOne(todo)),
-        );
+        plusedTodo = this.calc.plusOrder(getOrdered) as TodoEntity[];
       } else {
         newTodoOrder = Number(searchDate.order) + 1;
-        const plusedTodo = this.calc.plusOrder(
+        plusedTodo = this.calc.plusOrder(
           getOrdered.slice(Number(searchDate.order)),
-        );
-        await Promise.all(
-          plusedTodo.map((todo) => this.action.updateOne(todo)),
-        );
+        ) as TodoEntity[];
       }
+      await Promise.all(plusedTodo.map((todo) => this.action.updateOne(todo)));
     }
 
     const newTodo = {
@@ -146,7 +140,7 @@ class ETIndexed {
     const orderedList = this.calc.orderedList(getTodoList);
     const expectedMinusPart = orderedList.slice(order);
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart);
+    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
 
     await this.action.removeOne(id);
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
@@ -170,7 +164,7 @@ class ETIndexed {
 
     Object.assign(getTodo, { done: true, order: null, focusTime: focusTime });
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart);
+    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
 
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
     await this.action.updateOne(getTodo);

@@ -5,7 +5,7 @@ type CategoryType = { id: number; name: string };
 
 interface TodoEntity {
   id: number;
-  date: TodoDate;
+  date: string;
   todo: string;
   createdAt: Date;
   duration: number;
