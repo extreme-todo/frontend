@@ -48,10 +48,10 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   const [tomato, setTomato] = useState('1');
 
   /* React Day Picker State and Ref */
-  const [selected, setSelected] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const handleDaySelect: SelectSingleEventHandler = (date) => {
     if (!date) return;
-    setSelected(date);
+    setSelectedDate(date);
   };
 
   /* handler */
@@ -107,7 +107,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   };
 
   const addData: AddTodoDto = {
-    date: setTimeInFormat(selected).toISOString(),
+    date: setTimeInFormat(selectedDate).toISOString(),
     todo: title,
     duration: Number(`${tomato}`),
     categories: categoryArray.length > 0 ? categoryArray : null,
@@ -131,7 +131,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
         />
         <CalendarInput
           handleDaySelect={handleDaySelect}
-          selectedDay={selected}
+          selectedDay={selectedDate}
         />
 
         <TomatoContainer>

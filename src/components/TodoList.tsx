@@ -104,7 +104,6 @@ const orderMutationHandler = async ({
   newOrder,
   id,
   newDate,
-  todolist,
 }: orderMutationHandlerArgs) => {
   if (!newDate || !id) {
     await todosApi.reorderTodos(prevOrder, newOrder);
