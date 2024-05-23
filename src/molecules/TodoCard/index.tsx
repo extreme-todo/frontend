@@ -1,19 +1,18 @@
+import { useCallback } from 'react';
 import EditUI from './content/EditUI';
 import TodoUI from './content/TodoUI';
 
 import { useEdit } from '../../hooks';
 
-import { TodoDate, TodoEntity } from '../../DB/indexedAction';
+import { todosApi } from '../../shared/apis';
+import { TodoEntity } from '../../DB/indexedAction';
 import { ETIndexed, UpdateTodoDto } from '../../DB/indexed';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
 import {
   DraggableProvidedDragHandleProps,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
-import { todosApi } from '../../shared/apis';
-import { useCallback } from 'react';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -33,7 +32,6 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     }: {
       newTodo: UpdateTodoDto;
       id: number;
-      // prevDate: TodoDate;
       prevDate: string;
     }) => {
       if (newTodo === prevDate) {

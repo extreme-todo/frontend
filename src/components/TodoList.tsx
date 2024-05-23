@@ -5,7 +5,7 @@ import { DateCard } from '../organisms';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
-import { TodoEntity, TodoDate } from '../DB/indexedAction';
+import { TodoEntity } from '../DB/indexedAction';
 
 /* react query */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -27,6 +27,7 @@ import {
 /* etc */
 import { todosApi } from '../shared/apis';
 import styled from '@emotion/styled';
+import { setTimeInFormat } from '../shared/timeUtils';
 
 const addTodoMocks = (): AddTodoDto[] => {
   return [
@@ -94,7 +95,7 @@ interface orderMutationHandlerArgs {
   prevOrder: number;
   newOrder: number;
   id?: number;
-  newDate?: TodoDate;
+  newDate?: string;
   todolist?: Map<string, TodoEntity[]>;
 }
 
@@ -108,7 +109,9 @@ const orderMutationHandler = async ({
   if (!newDate || !id) {
     await todosApi.reorderTodos(prevOrder, newOrder);
   } else {
-    await todosApi.updateTodo(id, { date: newDate });
+    await todosApi.updateTodo(id, {
+      date: setTimeInFormat(new Date(newDate)).toISOString(),
+    });
     await todosApi.reorderTodos(prevOrder, newOrder);
   }
 };
@@ -212,7 +215,7 @@ const TodoList = () => {
       prevOrder: sourceIndexInArray + 1,
       newOrder: destinationIndexInArray + 1,
       id: target.id,
-      newDate: destination.droppableId as TodoDate,
+      newDate: destination.droppableId,
       todolist: copyMapTodo,
     };
   };
