@@ -1,3 +1,6 @@
+import { format } from 'date-fns';
+import { TodoEntity } from '../DB/indexedAction';
+
 /**
  * 분을 입력하면 일,시간,분으로 변환해주는 포매터
  * @param time min ex) 720
@@ -23,6 +26,30 @@ export const formatTime = (time: number): string => {
   return (isMinus ? '-' : '') + time + '분';
 };
 
+/**
+ * calendarInput에서 오늘 날짜를 선택하면 시간은 현재 시간이 된다.
+ * 하지만 ET 내부 규칙에 따라
+ * local 기준으로 시간이 00:00:00인 상황에서 UTC로 변환해야 한다.
+ * setTimeInFormat은 이런 규칙을 준수하기 위해 사용된다.
+ * date-fns의 setMinutes와 같은 메소드를 사용해서 시간을 설정해도 되지만,
+ * 그렇게 하면 시간, 분, 초 각각에 메소드를 사용해주어야 하기 때문에 이 함수를 만들었다.
+ * @param date
+ * @returns
+ */
+export const setTimeInFormat = (date: Date) => {
+  return new Date(`${getDateInFormat(date)} 00:00:00`);
+};
+
+/**
+ * 일반 Date 타입의 형식이 오면 해당 primitive value의 연,월,일을 가지고 온다.
+ * '2024-05-22T15:00:00'처럼 UTC형식이 오면 local time으로 변환하지 않고
+ * 2024-05-22을 그대로 가지고 온다.
+ * @param date
+ * @returns {string} yyyy-mm-dd 형식으로 반환한다.
+ */
+export const getDateInFormat = (date: Date): string => {
+  return format(date, 'y-MM-dd');
+};
 /**
  * 뽀모도로 단위와 현재 진행 시간 비율을 백분율로 리턴
  * - ex) 890000, 30, 5
