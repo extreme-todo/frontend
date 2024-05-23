@@ -6,7 +6,7 @@ import {
   TypoAtom,
 } from '../atoms';
 
-import { format } from 'date-fns';
+import { getDateInFormat } from '../shared/timeUtils';
 
 import styled from '@emotion/styled';
 import 'react-day-picker/dist/style.css';
@@ -40,7 +40,7 @@ const CalendarInput = ({
       >
         <TypoAtom>🗓️</TypoAtom>
         <InputAtom.Underline
-          value={format(selectedDay.toString(), 'y-MM-dd')}
+          value={getDateInFormat(selectedDay)}
           ariaLabel="calendar_input"
           placeholder={'달력 아이콘을 눌러주세요.'}
           styleOption={{ width: '7rem' }}
