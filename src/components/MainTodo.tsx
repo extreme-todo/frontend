@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
 import { usePomodoroActions, usePomodoroValue } from '../hooks';
-import { getPomodoroStepPercent } from '../shared/utils';
+import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
 

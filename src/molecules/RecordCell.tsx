@@ -3,7 +3,7 @@ import React from 'react';
 import { TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
 import { css } from '@emotion/react';
-import { formatTime } from '../shared/utils';
+import { formatTime } from '../shared/timeUtils';
 
 interface IRankingProps extends IChildProps {
   label: string;

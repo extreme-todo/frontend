@@ -5,7 +5,7 @@ import RankingChart from '../molecules/RankingChart';
 import LogInToUnlock from '../molecules/LogInToUnlock';
 import styled from '@emotion/styled';
 import RankingTexts from '../molecules/RankingTexts';
-import { formatTime } from '../shared/utils';
+import { formatTime } from '../shared/timeUtils';
 import CartegorySelector from '../molecules/CartegorySelector';
 import {
   dummyCategories,
