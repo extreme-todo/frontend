@@ -50,6 +50,18 @@ export const setTimeInFormat = (date: Date) => {
 export const getDateInFormat = (date: Date): string => {
   return format(date, 'y-MM-dd');
 };
+
+export const groupByDate = (todos: TodoEntity[]) => {
+  const todosMap = new Map<string, TodoEntity[]>();
+  for (const todo of todos) {
+    const convertedDate = getDateInFormat(new Date(todo.date));
+    const group = todosMap.get(convertedDate) || [];
+    group.push(todo);
+    todosMap.set(convertedDate, group);
+  }
+  return todosMap;
+};
+
 /**
  * 뽀모도로 단위와 현재 진행 시간 비율을 백분율로 리턴
  * - ex) 890000, 30, 5
