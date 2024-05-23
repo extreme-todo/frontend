@@ -34,7 +34,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
       id: number;
       prevDate: string;
     }) => {
-      if (newTodo === prevDate) {
+      if (newTodo.date === prevDate) {
         await todosApi.updateTodo(id, newTodo);
       } else {
         const mapTodos = queryClient.getQueryData(['todos']) as Map<
@@ -47,11 +47,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
         ) as TodoEntity;
         const searchDate = arrayTodos
           .reverse()
-          .find(
-            (todo) =>
-              new Date(`${todo.date} 00:00:00`) <=
-              new Date(`${newTodo.date as string} 00:00:00`),
-          ) as TodoEntity;
+          .find((todo) => todo.date <= (newTodo.date as string)) as TodoEntity;
         let newOrder: number;
         if (!searchDate) {
           newOrder = 1;
