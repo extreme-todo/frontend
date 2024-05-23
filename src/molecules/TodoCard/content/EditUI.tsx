@@ -3,17 +3,17 @@ import { ReactEventHandler, useState } from 'react';
 import { IconAtom, InputAtom, TypoAtom } from '../../../atoms';
 import { CalendarInput, CategoryInput } from '../..';
 
-import { TodoDate, TodoEntity } from '../../../DB/indexedAction';
+import { UpdateTodoDto } from '../../../DB/indexed';
+import { TodoEntity } from '../../../DB/indexedAction';
 
-import { format } from 'date-fns';
-import { SelectSingleEventHandler } from 'react-day-picker';
-
-import styled from '@emotion/styled';
+import { setTimeInFormat } from '../../../shared/timeUtils';
 import {
   categoryValidation,
   titleValidation,
 } from '../../../shared/inputValidation';
-import { UpdateTodoDto } from '../../../DB/indexed';
+
+import { SelectSingleEventHandler } from 'react-day-picker';
+import styled from '@emotion/styled';
 
 interface IEditUIProps {
   todoData: TodoEntity;
@@ -92,7 +92,7 @@ const EditUI = ({
 
   const editData = {
     categories: categoryArray,
-    date: format(selected.toString(), 'y-MM-dd') as TodoDate,
+    date: setTimeInFormat(selected).toISOString(),
     todo: titleValue,
     duration,
   };
