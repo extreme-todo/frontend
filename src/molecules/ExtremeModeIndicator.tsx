@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useExtremeMode, usePomodoroValue } from '../hooks';
 import styled from '@emotion/styled';
 import { TypoAtom } from '../atoms';
-import { formatTime } from '../shared/utils';
+import { formatTime } from '../shared/timeUtils';
 
 function ExtremeModeIndicator() {
   const { status, settings } = usePomodoroValue();
