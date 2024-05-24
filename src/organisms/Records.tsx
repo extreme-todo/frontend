@@ -21,7 +21,7 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
         setRecords(newRecords);
       }
     } catch {
-      window.alert('데이터를 불러올 수 없습니다.');
+      console.error('데이터를 불러올 수 없습니다.');
     }
   };
 
