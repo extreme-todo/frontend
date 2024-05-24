@@ -4,6 +4,7 @@ import LoginEvent from './LoginEvent';
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 import { ISettings } from './interfaces';
+import { groupByDate } from './timeUtils';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 
@@ -105,31 +106,26 @@ export const todosApi = {
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
     const { data } = await baseApi.get<
       any,
-      AxiosResponse<
-        Record<string, (TodoEntity | { categories: CategoryType[] })[]>
-      >
+      AxiosResponse<(TodoEntity | { categories: CategoryType[] })[]>
     >(this._route, {
       params: { done: isDone ? 1 : 0 },
     });
-    const converted = Object.entries(data).map((todos) => {
-      const convertedTodos = todos[1].map((todo) => {
-        const convertCategories = todo.categories
-          ? todo.categories.map((category) => {
-              if (typeof category !== 'string') return category.name;
-              else return category;
-            })
-          : null;
 
+    const modifiedCategories = data.map((todo) => {
+      if (todo.categories && typeof todo.categories[0] !== 'string') {
+        const stringified = (todo.categories as CategoryType[]).map(
+          (category) => category.name,
+        );
         return {
           ...todo,
-          categories: convertCategories,
+          categories: stringified,
         } as TodoEntity;
-      });
-
-      return [todos[0], convertedTodos] as const;
+      } else {
+        return todo as TodoEntity;
+      }
     });
 
-    return new Map(converted);
+    return groupByDate(modifiedCategories);
   },
 };
 export const timerApi = {

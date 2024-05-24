@@ -3,7 +3,7 @@ import { IChildProps } from '../shared/interfaces';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
 import { TagAtom, TypoAtom } from '../atoms';
-import { formatTime, getPomodoroStepPercent } from '../shared/utils';
+import { formatTime, getPomodoroStepPercent } from '../shared/timeUtils';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;

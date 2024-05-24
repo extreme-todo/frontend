@@ -1,11 +1,10 @@
 import type { AddTodoDto } from './indexed';
 
-type TodoDate = `${number}-${number}-${number}`;
 type CategoryType = { id: number; name: string };
 
 interface TodoEntity {
   id: number;
-  date: string;
+  date: string; // toISOstring() 처리된 Date
   todo: string;
   createdAt: Date;
   duration: number;
@@ -157,4 +156,4 @@ class ETIndexedDBAction {
 }
 
 export { ETIndexedDBAction };
-export type { TodoEntity, TodoDate, CategoryType };
+export type { TodoEntity, CategoryType };

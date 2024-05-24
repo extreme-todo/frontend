@@ -1,21 +1,24 @@
+/* react */
 import { KeyboardEventHandler, ReactEventHandler, useState } from 'react';
 
+/* atomics */
 import { IconAtom, InputAtom, TypoAtom } from '../atoms';
 import { CalendarInput, CategoryInput } from '../molecules';
-
-import styled from '@emotion/styled';
 import { EditWrapper } from '../molecules/TodoCard/content/EditUI';
 
-import { categoryValidation, titleValidation } from '../shared/inputValidation';
-
+/* custom hooks */
 import { usePomodoroValue } from '../hooks';
 
-import { SelectSingleEventHandler } from 'react-day-picker';
-
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { TodoDate } from '../DB/indexedAction';
-import { AddTodoDto, ETIndexed } from '../DB/indexed';
+/* custom functions or methods */
 import { todosApi } from '../shared/apis';
+import { categoryValidation, titleValidation } from '../shared/inputValidation';
+import { setTimeInFormat } from '../shared/timeUtils';
+import { AddTodoDto, ETIndexed } from '../DB/indexed';
+
+/* packages */
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SelectSingleEventHandler } from 'react-day-picker';
+import styled from '@emotion/styled';
 
 interface IAddTodoProps {
   handleModalClose: () => void;
@@ -45,10 +48,10 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   const [tomato, setTomato] = useState('1');
 
   /* React Day Picker State and Ref */
-  const [selected, setSelected] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const handleDaySelect: SelectSingleEventHandler = (date) => {
     if (!date) return;
-    setSelected(date);
+    setSelectedDate(date);
   };
 
   /* handler */
@@ -104,7 +107,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   };
 
   const addData: AddTodoDto = {
-    date: selected as unknown as TodoDate,
+    date: setTimeInFormat(selectedDate).toISOString(),
     todo: title,
     duration: Number(`${tomato}`),
     categories: categoryArray.length > 0 ? categoryArray : null,
@@ -128,7 +131,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
         />
         <CalendarInput
           handleDaySelect={handleDaySelect}
-          selectedDay={selected}
+          selectedDay={selectedDate}
         />
 
         <TomatoContainer>
