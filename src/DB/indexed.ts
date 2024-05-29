@@ -147,6 +147,9 @@ class ETIndexed {
   }
 
   async updateTodo(id: number, todo: UpdateTodoDto) {
+    if (Array.isArray(todo.categories) && todo.categories.length > 5) {
+      return alert('카테고리는 5개 까지 추가할 수 있습니다.');
+    }
     const getTodo = await this.action.getOne(id);
     Object.assign(getTodo, todo);
     const updated = await this.action.updateOne(getTodo);
