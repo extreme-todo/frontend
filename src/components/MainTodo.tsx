@@ -65,13 +65,21 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <SideButtons>
             <SideButtons.ProgressButton
               progress={focusedPercent}
-              onClick={() => setIsTimeModalOpen(true)}
+              onClick={() => {
+                setIsTimeModalOpen(true);
+                setIsAddModalOpen(false);
+                setIsListModalOpen(false);
+              }}
             >
               {focusedPercent}%
             </SideButtons.ProgressButton>
             <SideButtons.ProgressButton
               progress={restedPercent}
-              onClick={() => setIsTimeModalOpen(true)}
+              onClick={() => {
+                setIsTimeModalOpen(true);
+                setIsAddModalOpen(false);
+                setIsListModalOpen(false);
+              }}
             >
               {restedPercent}%
             </SideButtons.ProgressButton>
@@ -79,18 +87,22 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <CurrentTodoCard
             openAddTodoModal={() => {
               setIsAddModalOpen(true);
+              setIsTimeModalOpen(false);
             }}
           ></CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
                 setIsListModalOpen(true);
+                setIsTimeModalOpen(false);
+                setIsAddModalOpen(false);
               }}
               imageSrc="icons/hamburger.svg"
             />
             <SideButtons.IconButton
               onClick={() => {
                 setIsAddModalOpen(true);
+                setIsTimeModalOpen(false);
               }}
               imageSrc="icons/add.svg"
             />
