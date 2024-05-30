@@ -12,10 +12,8 @@ interface ITodoUIProps extends ITodoCardProps {
 const TodoUI = ({
   todoData,
   editMode,
-
   dragHandleProps,
   snapshot,
-
   handleEditButton,
 }: ITodoUIProps) => {
   const [showEdit, setShowEdit] = useState(false);
