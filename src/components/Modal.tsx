@@ -11,13 +11,10 @@ interface IModalProps extends IChildProps {
 
 const Modal = ({ title, children, handleClose }: IModalProps) => {
   useEffect(() => {
-    const bodyElement = document.getElementById('root') as HTMLDivElement;
     const El = document.getElementById('main-container') as HTMLDivElement;
     El.style.overflowY = 'hidden';
-    bodyElement.style.background = `linear-gradient(328deg, #7b5da8, #b26ab6, #5bb8b0)`;
     return () => {
       El.style.overflowY = 'auto';
-      bodyElement.style.background = `linear-gradient(328deg, #b8a2e4, #edbff1, #8ef0e8)`;
     };
   }, []);
 
