@@ -88,6 +88,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
             openAddTodoModal={() => {
               setIsAddModalOpen(true);
               setIsTimeModalOpen(false);
+              setIsListModalOpen(false);
             }}
           ></CurrentTodoCard>
           <SideButtons>
@@ -103,6 +104,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
               onClick={() => {
                 setIsAddModalOpen(true);
                 setIsTimeModalOpen(false);
+                setIsListModalOpen(false);
               }}
               imageSrc="icons/add.svg"
             />
