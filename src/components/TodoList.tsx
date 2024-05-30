@@ -265,7 +265,14 @@ const TodoList = () => {
       <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} />
       <TodoListContainer>
         <NowCard
-          currentTodo={currentTodo as TodoEntity}
+          currentTodo={
+            currentTodo ||
+            ({
+              duration: 0,
+              todo: '목록이 비어있습니다 :)',
+              categories: undefined,
+            } as unknown as TodoEntity)
+          }
           focusStep={focusStep}
         />
         <DragDropContext onDragEnd={onDragDropHandler}>
