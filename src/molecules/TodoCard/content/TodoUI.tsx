@@ -3,7 +3,6 @@ import { IconAtom, TagAtom, TypoAtom } from '../../../atoms';
 import { ITodoCardProps } from '..';
 
 import styled from '@emotion/styled';
-import { useState } from 'react';
 interface ITodoUIProps extends ITodoCardProps {
   handleEditButton: () => void;
   editMode: boolean;
@@ -16,22 +15,10 @@ const TodoUI = ({
   snapshot,
   handleEditButton,
 }: ITodoUIProps) => {
-  const [showEdit, setShowEdit] = useState(false);
   const { todo, categories } = todoData;
 
-  const handleMouseOver = () => {
-    setShowEdit(true);
-  };
-
-  const handleMouseOut = () => {
-    setShowEdit(false);
-  };
-
   return (
-    <TodoCardContainer
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}
-    >
+    <TodoCardContainer>
       <DraggableWrapper>
         {editMode ? (
           <IconAtom size={2}>
@@ -68,15 +55,13 @@ const TodoUI = ({
           </CategoryContainer>
         </TitleCategoryContainer>
       </DraggableWrapper>
-      <EditWrapper>
-        {showEdit ? (
-          <TagAtom
-            handler={handleEditButton}
-            styleOption={{ fontsize: 'sm', size: 'sm' }}
-          >
-            수정
-          </TagAtom>
-        ) : null}
+      <EditWrapper id="editWrapper">
+        <TagAtom
+          handler={handleEditButton}
+          styleOption={{ fontsize: 'sm', size: 'sm' }}
+        >
+          수정
+        </TagAtom>
       </EditWrapper>
     </TodoCardContainer>
   );
@@ -87,6 +72,11 @@ export default TodoUI;
 const TodoCardContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  &:hover {
+    #editWrapper {
+      display: flex;
+    }
+  }
 `;
 
 const DraggableWrapper = styled.div`
@@ -101,7 +91,7 @@ const TitleCategoryContainer = styled.div`
 
 const EditWrapper = styled.div`
   width: 20%;
-  display: flex;
+  display: none;
   justify-content: flex-end;
 `;
 
