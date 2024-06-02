@@ -93,7 +93,7 @@ describe('TodoCard', () => {
     });
 
     describe('TodoUI에', () => {
-      it('onMouseOver 이벤트가 발생하면 수정 버튼이 노출된다.', () => {
+      it('수정 버튼이 있다.', () => {
         const { getByText } = renderUI(
           <TodoCard
             todoData={mockTodo}
@@ -109,9 +109,8 @@ describe('TodoCard', () => {
           expect(getByText('수정')).toBeInTheDocument();
         });
       });
-
-      it('onMouseOut 이벤트가 발생하면 수정 버튼이 사라진다.', () => {
-        const { getByText, queryByText } = renderUI(
+      it('삭제 버튼이 있다.', () => {
+        const { getByText } = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
@@ -120,14 +119,17 @@ describe('TodoCard', () => {
           wrapperCreator,
         );
 
-        fireEvent.mouseOut(getByText('Go to grocery store'));
-        expect(queryByText('수정')).not.toBeInTheDocument();
+        fireEvent.mouseOver(getByText('Go to grocery store'));
+
+        act(() => {
+          expect(getByText('삭제')).toBeInTheDocument();
+        });
       });
     });
 
     describe('수정 버튼을 클릭하면', () => {
       it('해당 todoCard의 UI가 EditUI로 바뀐다.', async () => {
-        const { getByText, findByRole } = renderUI(
+        const { getByText, getAllByText, findByRole } = renderUI(
           <>
             <TodoCard
               todoData={mockTodo}
@@ -151,8 +153,8 @@ describe('TodoCard', () => {
 
         fireEvent.mouseOver(titleOne);
 
-        const editBtn = getByText('수정');
-        fireEvent.click(editBtn);
+        const editBtn = getAllByText('수정');
+        fireEvent.click(editBtn[0]);
 
         const titleInput = await findByRole('textbox', { name: 'title_input' });
         expect(titleOne).not.toBeInTheDocument();
@@ -409,17 +411,8 @@ describe('TodoCard', () => {
         const { getByAltText } = renderUI(
           <EditUI
             todoData={mockFetchTodoList()[0]}
-            handleCategorySubmit={jest.fn()}
-            title={mockFetchTodoList()[0].todo}
-            handleChangeTitle={jest.fn()}
-            category={''}
-            handleChangeCategory={jest.fn()}
-            categories={mockFetchTodoList()[0].categories}
-            handleClickCategory={jest.fn()}
             handleEditCancel={jest.fn()}
             handleEditSubmit={mockHandleEditSubmit}
-            handleDuration={jest.fn()}
-            duration={mockFetchTodoList()[0].duration}
           />,
           ({ children }: IChildProps) => (
             <>
