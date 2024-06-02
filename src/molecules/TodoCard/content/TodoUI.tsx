@@ -5,6 +5,7 @@ import { ITodoCardProps } from '..';
 import styled from '@emotion/styled';
 interface ITodoUIProps extends ITodoCardProps {
   handleEditButton: () => void;
+  handleDeleteButton: () => void;
   editMode: boolean;
 }
 
@@ -14,6 +15,7 @@ const TodoUI = ({
   dragHandleProps,
   snapshot,
   handleEditButton,
+  handleDeleteButton,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
 
@@ -62,6 +64,12 @@ const TodoUI = ({
         >
           수정
         </TagAtom>
+        <TagAtom
+          handler={handleDeleteButton}
+          styleOption={{ fontsize: 'sm', size: 'sm' }}
+        >
+          삭제
+        </TagAtom>
       </EditWrapper>
     </TodoCardContainer>
   );
@@ -93,6 +101,7 @@ const EditWrapper = styled.div`
   width: 20%;
   display: none;
   justify-content: flex-end;
+  gap: 10px;
 `;
 
 const TitleContainer = styled.div`
