@@ -39,7 +39,7 @@ const Setting = () => {
   const handleReset = () => {
     if (confirm('정말로 기록을 초기화 하시겠습니까?')) {
       Promise.all([
-        todosApi.reset(),
+        todosApi.resetTodos(),
         rankingApi.resetRanking(),
         timerApi.reset(),
       ]).then(() => window.alert('초기화 성공'));

@@ -86,7 +86,7 @@ export const todosApi = {
   getCategories: async () => {
     return baseApi.get('categories');
   },
-  async reset() {
+  async resetTodos() {
     await baseApi.delete('todos/reset');
   },
   async addTodo(todo: AddTodoDto) {
