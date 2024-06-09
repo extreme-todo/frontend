@@ -65,7 +65,6 @@ const PomodoroProvider = ({ children }: IChildProps) => {
     getPomodoroData<IPomodoroStatus>('status'),
   );
 
-  const settingRef = useRef<IPomodoroSettings>(settings);
   const statusRef = useRef<IPomodoroStatus>(status);
 
   let interval: NodeJS.Timer;
@@ -129,17 +128,6 @@ const PomodoroProvider = ({ children }: IChildProps) => {
     }),
     [],
   );
-
-  useEffect(() => {
-    function updatePomodorBeforeUnload() {
-      updatePomodoroData<IPomodoroSettings>(settingRef.current, 'settings');
-      updatePomodoroData<IPomodoroStatus>(statusRef.current, 'status');
-    }
-    window.addEventListener('beforeunload', updatePomodorBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', updatePomodorBeforeUnload);
-    };
-  }, []);
 
   return (
     <PomodoroActionsContext.Provider value={actions}>

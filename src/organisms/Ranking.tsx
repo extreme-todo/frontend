@@ -50,7 +50,7 @@ function Ranking({
         }
       }
     } catch (error) {
-      console.errort('데이터를 불러올 수 없습니다.' + error);
+      console.error('데이터를 불러올 수 없습니다.' + error);
     }
   };
 
