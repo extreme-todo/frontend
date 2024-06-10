@@ -78,7 +78,10 @@ class ETIndexed {
           getOrdered.slice(Number(searchDate.order)),
         ) as TodoEntity[];
       }
-      await Promise.all(plusedTodo.map((todo) => this.action.updateOne(todo)));
+      plusedTodo &&
+        (await Promise.all(
+          plusedTodo.map((todo) => this.action.updateOne(todo)),
+        ));
     }
 
     const newTodo = {
@@ -147,6 +150,9 @@ class ETIndexed {
   }
 
   async updateTodo(id: number, todo: UpdateTodoDto) {
+    if (Array.isArray(todo.categories) && todo.categories.length > 5) {
+      return alert('카테고리는 5개 까지 추가할 수 있습니다.');
+    }
     const getTodo = await this.action.getOne(id);
     Object.assign(getTodo, todo);
     const updated = await this.action.updateOne(getTodo);
@@ -170,13 +176,13 @@ class ETIndexed {
     await this.action.updateOne(getTodo);
   }
 
-  async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
+  async getList(isDone: boolean): Promise<TodoEntity[]> {
     await this.action.waitForInit();
     const getTodos = await this.action.getAll();
-    if (getTodos.length === 0) return new Map();
+    if (getTodos.length === 0) return [];
     const doneTodo = getTodos.filter((todo) => todo.done === isDone);
     const orderedTodo = this.calc.orderedList(doneTodo);
-    return this.calc.groupByDate(orderedTodo);
+    return orderedTodo;
   }
 }
 
