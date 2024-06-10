@@ -15,10 +15,10 @@ export interface IMainTodoProps extends IChildProps {
   isLogin: boolean;
 }
 
+type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
+
 function MainTodo({ isLogin, children }: IMainTodoProps) {
-  const [isListModalOpen, setIsListModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+  const [isModal, setIsModal] = useState<ModalType | null>(null);
 
   const { status: pomodoroStatus, settings: pomodoroSettings } =
     usePomodoroValue();
@@ -54,7 +54,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
   }, [pomodoroStatus]);
 
   function handleModalClose(): void {
-    return setIsAddModalOpen(false);
+    return setIsModal(null);
   }
 
   return (
@@ -65,67 +65,71 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           <SideButtons>
             <SideButtons.ProgressButton
               progress={focusedPercent}
-              onClick={() => setIsTimeModalOpen(true)}
+              onClick={() => {
+                setIsModal('timeModal');
+              }}
             >
               {focusedPercent}%
             </SideButtons.ProgressButton>
             <SideButtons.ProgressButton
               progress={restedPercent}
-              onClick={() => setIsTimeModalOpen(true)}
+              onClick={() => {
+                setIsModal('timeModal');
+              }}
             >
               {restedPercent}%
             </SideButtons.ProgressButton>
           </SideButtons>
           <CurrentTodoCard
             openAddTodoModal={() => {
-              setIsAddModalOpen(true);
+              setIsModal('addTodoModal');
             }}
           ></CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                setIsListModalOpen(true);
+                setIsModal('todolistModal');
               }}
               imageSrc="icons/hamburger.svg"
             />
             <SideButtons.IconButton
               onClick={() => {
-                setIsAddModalOpen(true);
+                setIsModal('addTodoModal');
               }}
               imageSrc="icons/add.svg"
             />
           </SideButtons>
         </MainTodoCenter>
-        {isListModalOpen &&
+        {isModal === 'todolistModal' &&
           createPortal(
             <Modal
               title="할 일 목록"
               handleClose={() => {
-                setIsListModalOpen(false);
+                setIsModal(null);
               }}
             >
               <TodoList />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
           )}
-        {isTimeModalOpen &&
+        {isModal === 'timeModal' &&
           createPortal(
             <Modal
               title="집중시간 / 휴식시간 설정"
               handleClose={() => {
-                setIsTimeModalOpen(false);
+                setIsModal(null);
               }}
             >
               <PomodoroTimeSetting />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
           )}
-        {isAddModalOpen &&
+        {isModal === 'addTodoModal' &&
           createPortal(
             <Modal
               title="새 할 일 추가하기"
               handleClose={() => {
-                setIsAddModalOpen(false);
+                setIsModal(null);
               }}
             >
               <AddTodo handleModalClose={handleModalClose} />

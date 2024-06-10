@@ -76,7 +76,6 @@ export const usersApi = {
 
 export const todosApi = {
   _route: '/todos',
-
   getRanking: async (category: string) => {
     return baseApi.get('ranking', { params: { category } });
   },
@@ -126,6 +125,10 @@ export const todosApi = {
     });
 
     return groupByDate(modifiedCategories);
+  },
+  async deleteTodo(id: number) {
+    console.log(this._route);
+    await baseApi.delete(`${this._route}/${id}`);
   },
 };
 export const timerApi = {
