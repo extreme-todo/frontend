@@ -5,6 +5,7 @@ import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 import { ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
+import { TodoModuleType } from './todoModule';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 
@@ -74,9 +75,6 @@ export const usersApi = {
   },
 };
 
-export const todosApi = {
-  _route: '/todos',
-
   getRanking: async (category: string) => {
     return baseApi.get('ranking', { params: { category } });
   },
@@ -86,28 +84,32 @@ export const todosApi = {
   getCategories: async () => {
     return baseApi.get('categories');
   },
+export const todosApi: TodoModuleType = {
   async resetTodos() {
     await baseApi.delete('todos/reset');
   },
   async addTodo(todo: AddTodoDto) {
-    await baseApi.post(this._route, todo);
+    await baseApi.post('/todos', todo);
   },
-  async reorderTodos(prevOrder: number, newOrder: number) {
-    await baseApi.patch(`${this._route}/reorder`, null, {
+  async reorderTodos(
+    prevOrder: number,
+    newOrder: number,
+  ): Promise<TodoEntity[]> {
+    return await baseApi.patch(`/todos/reorder`, null, {
       params: {
         prevOrder,
         newOrder,
       },
     });
   },
-  async updateTodo(id: number, todo: UpdateTodoDto) {
-    await baseApi.patch(`${this._route}/${id}`, todo);
+  async updateTodo(id: number, todo: UpdateTodoDto): Promise<TodoEntity> {
+    return await baseApi.patch(`/todos/${id}`, todo);
   },
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
     const { data } = await baseApi.get<
       any,
       AxiosResponse<(TodoEntity | { categories: CategoryType[] })[]>
-    >(this._route, {
+    >('/todos', {
       params: { done: isDone ? 1 : 0 },
     });
 
@@ -127,7 +129,23 @@ export const todosApi = {
 
     return groupByDate(modifiedCategories);
   },
+  async getOneTodo(id: number) {
+    return await baseApi.get(`/todos/${id}`);
+  },
+  async deleteTodo(id: number) {
+    return await baseApi.delete(`/todos/${id}`);
+  },
+  // TODO : doTodo 메소드는 반드시 사용되어야 할 메소드인데 아직 어디에도 사용이 안 되고 있는 거 같은데?
+  async doTodo(id: number, focusTime: string) {
+    return await baseApi.get(`/todos/${id}/done`, {
+      params: { focusTime },
+    });
+  },
+  async removeTodosBeforeToday(currentDate: string) {
+    // return await baseApi.delete('/todos', { params: { currentDate } });
+  },
 };
+
 export const timerApi = {
   _route: 'timer',
   addTotalFocusTime: async (addFocusTime: number) => {
