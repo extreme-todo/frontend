@@ -154,6 +154,7 @@ const style = css`
     animation: AnimationName 59s ease infinite;
     height: 100vh;
     width: 100vw;
+    overscroll-behavior: none;
   }
 
   @-webkit-keyframes AnimationName {

@@ -68,11 +68,22 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   const { mutate: updateMutate } = useMutation({
     mutationFn: updateMutationHandler,
     onSuccess(data) {
-      console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
+      console.debug('\n\n\n ✅ data in TodoCard‘s updateTodos ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
     onError(error) {
-      console.debug('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
+      console.debug('\n\n\n 🚨 error in TodoCard‘s updateTodos 🚨 \n\n', error);
+    },
+  });
+
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: ({ id }: { id: number }) => todosApi.deleteTodo(id),
+    onSuccess(data) {
+      console.debug('\n\n\n ✅ data in TodoCard‘s deleteTodo ✅ \n\n', data);
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+    onError(error) {
+      console.debug('\n\n\n 🚨 error in TodoCard‘s deleteTodo 🚨 \n\n', error);
     },
   });
 
@@ -89,6 +100,10 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
 
   const handleEditCancel = () => {
     setIsEdit({ editMode: false, editTodoId: undefined });
+  };
+
+  const handleDeleteButton = () => {
+    deleteMutate({ id });
   };
 
   const renderCard = (() => {
@@ -109,6 +124,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             todoData={todoData}
             editMode={editMode}
             handleEditButton={handleEditButton}
+            handleDeleteButton={handleDeleteButton}
           />
         );
     }
