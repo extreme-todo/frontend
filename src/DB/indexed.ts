@@ -197,9 +197,7 @@ class ETIndexed implements TodoModuleType {
     await this.action.waitForInit();
     const getTodos = await this.action.getAll();
     if (getTodos.length === 0) return;
-    const stailTodos = getTodos.filter(
-      (todo) => new Date(todo.date) <= new Date(currentDate),
-    );
+    const stailTodos = getTodos.filter((todo) => todo.date <= currentDate);
     await Promise.all(
       stailTodos.map((todo) => this.action.removeOne(todo.todo)),
     );
