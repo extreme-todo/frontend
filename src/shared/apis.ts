@@ -142,7 +142,7 @@ export const todosApi: TodoModuleType = {
     });
   },
   async removeTodosBeforeToday(currentDate: string) {
-    // return await baseApi.delete('/todos', { params: { currentDate } });
+    return await baseApi.delete('/todos', { params: { currentDate } });
   },
 };
 
