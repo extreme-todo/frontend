@@ -11,7 +11,6 @@ import { ETIndexedDBCalc } from './indexedCalc';
 import type { TodoEntity } from './indexedAction';
 import { groupByDate } from '../shared/timeUtils';
 import { TodoModuleType } from '../shared/todoModule';
-import { format } from 'date-fns';
 
 /* 
 removeTodos <- Cron 사용한 메소드임 -> 로그인이 안됐다? useEffect() 안에서 ETIndexedDBAction 이용해서 지금 DB 안에 있는 거 중에.. 어제꺼 Todo 쓰윽 지워버리던지..
@@ -188,18 +187,19 @@ class ETIndexed implements TodoModuleType {
   }
 
   /**
+   * timeUtils에 있는 setTimeInFormat를 사용해서 해당 날짜 05:00:00를 기준으로 toISOString()메소드를 호출해야 한다.
+   * cf) removeTodosBeforeToday(setTimeInFormat(new Date(), '05:00:00').toISOString())
+   * @param {string} currentDate UTC형식의 시간입니다. toISOString 메소드를 사용한 결과
    *
-   * @param {string} currentDate UTC형식의 시간입니다. toISOString 메소드를 사용한 결과입니다.
    * @returns
    */
   async removeTodosBeforeToday(currentDate: string) {
     await this.action.waitForInit();
     const getTodos = await this.action.getAll();
     if (getTodos.length === 0) return;
-    const stailTodos = getTodos.filter((todo) => {
-      const pivotTime = format(new Date(currentDate), 'y-MM-dd');
-      return new Date(todo.date) <= new Date(`${pivotTime} 05:00:00`);
-    });
+    const stailTodos = getTodos.filter(
+      (todo) => new Date(todo.date) <= new Date(currentDate),
+    );
     await Promise.all(
       stailTodos.map((todo) => this.action.removeOne(todo.todo)),
     );
