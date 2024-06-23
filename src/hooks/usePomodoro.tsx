@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useEffect,
@@ -66,6 +66,7 @@ const PomodoroProvider = ({ children }: IChildProps) => {
   );
 
   const statusRef = useRef<IPomodoroStatus>(status);
+  const settingsRef = useRef<IPomodoroSettings>(settings);
 
   let interval: NodeJS.Timer;
 
@@ -74,14 +75,14 @@ const PomodoroProvider = ({ children }: IChildProps) => {
       setFocusStep: (step: focusStep) => {
         setSetting((prev) => {
           const newData = { ...prev, focusStep: step };
-          updatePomodoroData<IPomodoroSettings>(newData, 'settings');
+          settingsRef.current = newData;
           return newData;
         });
       },
       setRestStep: (step: restStep) => {
         setSetting((prev) => {
           const newData = { ...prev, restStep: step };
-          updatePomodoroData<IPomodoroSettings>(newData, 'settings');
+          settingsRef.current = newData;
           return newData;
         });
       },
@@ -128,6 +129,26 @@ const PomodoroProvider = ({ children }: IChildProps) => {
     }),
     [],
   );
+
+  useEffect(() => {
+    function updatePomodorBeforeUnload(
+      status: IPomodoroStatus,
+      settings: IPomodoroSettings,
+    ) {
+      console.log(status, settings);
+
+      updatePomodoroData<IPomodoroStatus>(status, 'status');
+      updatePomodoroData<IPomodoroSettings>(settings, 'settings');
+    }
+    window.addEventListener('beforeunload', () =>
+      updatePomodorBeforeUnload(statusRef.current, settingsRef.current),
+    );
+    return () => {
+      window.removeEventListener('beforeunload', () =>
+        updatePomodorBeforeUnload(statusRef.current, settingsRef.current),
+      );
+    };
+  }, []);
 
   return (
     <PomodoroActionsContext.Provider value={actions}>
