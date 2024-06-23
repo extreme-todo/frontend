@@ -26,7 +26,7 @@ import {
 
 /* etc */
 import { todosApi } from '../shared/apis';
-import styled from '@emotion/styled';\
+import styled from '@emotion/styled';
 import { groupByDate, setTimeInFormat } from '../shared/timeUtils';
 import { memo, useMemo } from 'react';
 
