@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { TodoEntity } from '../DB/indexedAction';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { timerApi, todosApi } from '../shared/apis';
 
 type TodoResponseDto = TodoEntity;
@@ -14,13 +14,31 @@ const useCurrentTodo = () => {
     refetchOnWindowFocus: false,
   });
 
+  const quertClient = useQueryClient();
+
+  async function doTodoMutateHandler({
+    id,
+    focusTime,
+  }: {
+    id: number;
+    focusTime: number;
+  }) {
+    if (currentTodo) await todosApi.doTodo(id, focusTime);
+  }
+
+  const { mutate: doTodoMutate } = useMutation(doTodoMutateHandler, {
+    onSuccess: () => {
+      quertClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
+
   useEffect(() => {
     const checkLocalStorage = () => {
       const localTodo = localStorage.getItem(localKey);
       if (localTodo != null) {
         setCurrentTodo(JSON.parse(localTodo) as TodoResponseDto);
       } else {
-        const nextTodo = getNextTodo();
+        const nextTodo = getNextTodo(todos);
         if (nextTodo) {
           setCurrentTodo(nextTodo);
           localStorage.setItem(localKey, JSON.stringify(nextTodo));
@@ -45,13 +63,16 @@ const useCurrentTodo = () => {
   };
 
   const doTodo = () => {
-    // if (currentTodo) await todosApi.doTodo(currentTodo?.id, focusedOnTodo.toString());
-    getNextTodo();
+    if (currentTodo)
+      doTodoMutate({ id: currentTodo.id, focusTime: focusedOnTodo });
+    getNextTodo(todos);
     timerApi.addTotalFocusTime(focusedOnTodo / 60000);
     setFocusedOnTodo(0);
   };
 
-  const getNextTodo = (): TodoEntity | undefined => {
+  const getNextTodo = (
+    todos: Map<string, TodoEntity[]> | undefined,
+  ): TodoEntity | undefined => {
     if (todos) {
       const todayTodos: TodoEntity[] = todos.values().next()
         .value as TodoEntity[];
