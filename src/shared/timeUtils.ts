@@ -1,6 +1,8 @@
 import { format } from 'date-fns';
 import { TodoEntity } from '../DB/indexedAction';
 
+type FormatTimeType = `${number}:${number}:${number}`;
+
 /**
  * 분을 입력하면 일,시간,분으로 변환해주는 포매터
  * @param time min ex) 720
@@ -36,8 +38,11 @@ export const formatTime = (time: number): string => {
  * @param date
  * @returns
  */
-export const setTimeInFormat = (date: Date) => {
-  return new Date(`${getDateInFormat(date)} 00:00:00`);
+export const setTimeInFormat = (
+  date: Date,
+  time: FormatTimeType = '00:00:00',
+) => {
+  return new Date(`${getDateInFormat(date)} ${time}`);
 };
 
 /**

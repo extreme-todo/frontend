@@ -9,6 +9,8 @@
 import { ETIndexedDBAction } from './indexedAction';
 import { ETIndexedDBCalc } from './indexedCalc';
 import type { TodoEntity } from './indexedAction';
+import { groupByDate } from '../shared/timeUtils';
+import { TodoModuleType } from '../shared/todoModule';
 
 /* 
 removeTodos <- Cron 사용한 메소드임 -> 로그인이 안됐다? useEffect() 안에서 ETIndexedDBAction 이용해서 지금 DB 안에 있는 거 중에.. 어제꺼 Todo 쓰윽 지워버리던지..
@@ -32,7 +34,7 @@ type UpdateTodoDto = Partial<
   Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'date'>
 >;
 
-class ETIndexed {
+class ETIndexed implements TodoModuleType {
   private static instance: ETIndexed;
 
   private constructor(
@@ -96,7 +98,6 @@ class ETIndexed {
   }
 
   async reorderTodos(prevOrder: number, newOrder: number) {
-    console.log(prevOrder, newOrder);
     const allTodoList = await this.action.getAll();
     const notNullTodos = allTodoList.filter((todo) => todo.order !== null);
     let bigNumber = 0,
@@ -176,13 +177,30 @@ class ETIndexed {
     await this.action.updateOne(getTodo);
   }
 
-  async getList(isDone: boolean): Promise<TodoEntity[]> {
+  async getList(isDone: boolean) {
     await this.action.waitForInit();
     const getTodos = await this.action.getAll();
-    if (getTodos.length === 0) return [];
+    if (getTodos.length === 0) return new Map();
     const doneTodo = getTodos.filter((todo) => todo.done === isDone);
     const orderedTodo = this.calc.orderedList(doneTodo);
-    return orderedTodo;
+    return groupByDate(orderedTodo);
+  }
+
+  /**
+   * timeUtils에 있는 setTimeInFormat를 사용해서 해당 날짜 05:00:00를 기준으로 toISOString()메소드를 호출해야 한다.
+   * cf) removeTodosBeforeToday(setTimeInFormat(new Date(), '05:00:00').toISOString())
+   * @param {string} currentDate UTC형식의 시간입니다. toISOString 메소드를 사용한 결과
+   *
+   * @returns
+   */
+  async removeTodosBeforeToday(currentDate: string) {
+    await this.action.waitForInit();
+    const getTodos = await this.action.getAll();
+    if (getTodos.length === 0) return;
+    const stailTodos = getTodos.filter((todo) => todo.date <= currentDate);
+    await Promise.all(
+      stailTodos.map((todo) => this.action.removeOne(todo.todo)),
+    );
   }
 }
 

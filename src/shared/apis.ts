@@ -5,6 +5,7 @@ import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 import { ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
+import { TodoModuleType } from './todoModule';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 
@@ -73,9 +74,8 @@ export const usersApi = {
     await baseApi.post('users/revoke');
   },
 };
-
+// export const todosApi: TodoModuleType = {
 export const todosApi = {
-  _route: '/todos',
   getRanking: async (category: string) => {
     return baseApi.get('ranking', { params: { category } });
   },
@@ -85,35 +85,35 @@ export const todosApi = {
   getCategories: async () => {
     return baseApi.get('categories');
   },
-  async reset() {
+  async resetTodos() {
     await baseApi.delete('todos/reset');
   },
   async addTodo(todo: AddTodoDto) {
-    await baseApi.post(this._route, todo);
+    await baseApi.post('/todos', todo);
   },
   async doTodo(id: number, focusTime: number) {
-    await baseApi.patch(`${this._route}/${id}/done`, null, {
+    await baseApi.patch(`/todos/${id}/done`, null, {
       params: {
         focusTime,
       },
     });
   },
   async reorderTodos(prevOrder: number, newOrder: number) {
-    await baseApi.patch(`${this._route}/reorder`, null, {
+    await baseApi.patch(`/todos/reorder`, null, {
       params: {
         prevOrder,
         newOrder,
       },
     });
   },
-  async updateTodo(id: number, todo: UpdateTodoDto) {
-    await baseApi.patch(`${this._route}/${id}`, todo);
+  async updateTodo(id: number, todo: UpdateTodoDto): Promise<TodoEntity> {
+    return await baseApi.patch(`/todos/${id}`, todo);
   },
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
     const { data } = await baseApi.get<
       any,
       AxiosResponse<(TodoEntity | { categories: CategoryType[] })[]>
-    >(this._route, {
+    >('/todos', {
       params: { done: isDone ? 1 : 0 },
     });
 
@@ -133,9 +133,14 @@ export const todosApi = {
 
     return groupByDate(modifiedCategories);
   },
+  async getOneTodo(id: number) {
+    return await baseApi.get(`/todos/${id}`);
+  },
   async deleteTodo(id: number) {
-    console.log(this._route);
-    await baseApi.delete(`${this._route}/${id}`);
+    await baseApi.delete(`/todos/${id}`);
+  },
+  async removeTodosBeforeToday(currentDate: string) {
+    return await baseApi.delete('/todos', { params: { currentDate } });
   },
 };
 export const timerApi = {
