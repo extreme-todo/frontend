@@ -114,7 +114,6 @@ const TodoList = () => {
     ['todos'],
     () => todosApi.getList(false),
     {
-      refetchOnWindowFocus: false,
     },
   );
 

@@ -11,7 +11,6 @@ const useCurrentTodo = () => {
   const localKey = 'currentTodo';
 
   const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
-    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
