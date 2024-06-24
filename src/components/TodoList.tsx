@@ -114,6 +114,7 @@ const TodoList = () => {
     ['todos'],
     () => todosApi.getList(false),
     {
+      staleTime: 1000 * 60 * 20,
     },
   );
 

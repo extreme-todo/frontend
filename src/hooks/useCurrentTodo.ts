@@ -11,6 +11,7 @@ const useCurrentTodo = () => {
   const localKey = 'currentTodo';
 
   const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
+    staleTime: 1000 * 60 * 20,
   });
 
   useEffect(() => {
