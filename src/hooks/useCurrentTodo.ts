@@ -11,7 +11,7 @@ const useCurrentTodo = () => {
   const localKey = 'currentTodo';
 
   const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 20,
   });
 
   const quertClient = useQueryClient();

@@ -11,7 +11,9 @@ import { ExtremeModeProvider } from './hooks/useExtremeMode';
 import 'react-day-picker/dist/style.css';
 import './styles/customPickerStyle.css';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchOnWindowFocus: false } },
+});
 
 function App() {
   const isLogin = useCheckLogin();
