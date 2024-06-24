@@ -74,7 +74,8 @@ export const usersApi = {
     await baseApi.post('users/revoke');
   },
 };
-
+// export const todosApi: TodoModuleType = {
+export const todosApi = {
   getRanking: async (category: string) => {
     return baseApi.get('ranking', { params: { category } });
   },
@@ -84,18 +85,21 @@ export const usersApi = {
   getCategories: async () => {
     return baseApi.get('categories');
   },
-export const todosApi: TodoModuleType = {
   async resetTodos() {
     await baseApi.delete('todos/reset');
   },
   async addTodo(todo: AddTodoDto) {
     await baseApi.post('/todos', todo);
   },
-  async reorderTodos(
-    prevOrder: number,
-    newOrder: number,
-  ): Promise<TodoEntity[]> {
-    return await baseApi.patch(`/todos/reorder`, null, {
+  async doTodo(id: number, focusTime: number) {
+    await baseApi.patch(`/todos/${id}/done`, null, {
+      params: {
+        focusTime,
+      },
+    });
+  },
+  async reorderTodos(prevOrder: number, newOrder: number) {
+    await baseApi.patch(`/todos/reorder`, null, {
       params: {
         prevOrder,
         newOrder,
@@ -133,19 +137,12 @@ export const todosApi: TodoModuleType = {
     return await baseApi.get(`/todos/${id}`);
   },
   async deleteTodo(id: number) {
-    return await baseApi.delete(`/todos/${id}`);
-  },
-  // TODO : doTodo 메소드는 반드시 사용되어야 할 메소드인데 아직 어디에도 사용이 안 되고 있는 거 같은데?
-  async doTodo(id: number, focusTime: string) {
-    return await baseApi.get(`/todos/${id}/done`, {
-      params: { focusTime },
-    });
+    await baseApi.delete(`/todos/${id}`);
   },
   async removeTodosBeforeToday(currentDate: string) {
     return await baseApi.delete('/todos', { params: { currentDate } });
   },
 };
-
 export const timerApi = {
   _route: 'timer',
   addTotalFocusTime: async (addFocusTime: number) => {

@@ -7,6 +7,9 @@ import React, {
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { usePomodoroValue } from './usePomodoro';
+import { rankingApi, timerApi, todosApi } from '../shared/apis';
+import { ETIndexed } from '../DB/indexed';
+import { useIsOnline } from './useIsOnline';
 
 export interface IExtremeMode {
   isExtreme: boolean;
@@ -22,6 +25,7 @@ export const ExtremeModeContext = createContext<IExtremeMode>(
 
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { status, settings } = usePomodoroValue();
+  const isOnline = useIsOnline();
   const setMode = (newMode: boolean) => {
     if (status.isFocusing === true) {
       window.alert('집중 시간에는 모드 변경이 불가능합니다.');
@@ -36,10 +40,17 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       const minutes = (leftMs % 3600000) / 60000;
       if (leftMs < 0) {
         setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
-        // TODO: 실제 초기화 로직 필요
-        setTimeout(() => {
-          setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
-        }, 5000);
+        const resetOnlineTodos = [
+          todosApi.reset(),
+          rankingApi.resetRanking(),
+          timerApi.reset(),
+        ];
+        const resetOfflineTodos = [ETIndexed.getInstance().resetTodos()];
+        Promise.all(isOnline ? resetOnlineTodos : resetOfflineTodos).then(
+          () => {
+            setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
+          },
+        );
       } else {
         setLeftTime(
           Math.floor(minutes) +

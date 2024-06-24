@@ -28,6 +28,7 @@ import {
 import { todosApi } from '../shared/apis';
 import styled from '@emotion/styled';
 import { groupByDate, setTimeInFormat } from '../shared/timeUtils';
+import { memo, useMemo } from 'react';
 
 const addTodoMocks = (): AddTodoDto[] => {
   return [
@@ -79,17 +80,7 @@ const addTodoMocks = (): AddTodoDto[] => {
   ];
 };
 
-/* 날짜별 todo 데이터 render 함수 */
-const listRender = (mapTodo: Map<string, TodoEntity[]>) => {
-  const dateList = Array.from(mapTodo.keys());
-  const todoList = Array.from(mapTodo.values());
-
-  const renderList = dateList.map((date, idx) => (
-    <DateCard key={date} date={date} tododata={todoList[idx]} />
-  ));
-
-  return renderList;
-};
+const MemoDateCard = memo(DateCard);
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
@@ -253,6 +244,22 @@ const TodoList = () => {
     temp();
   };
 
+  /* render helper function */
+  /* 날짜별 todo 데이터 render 함수 */
+  const listRender = useMemo(() => {
+    const dateList = todos && Array.from(todos.keys());
+    const todoList = todos && Array.from(todos.values());
+
+    const renderList =
+      dateList &&
+      todoList &&
+      dateList.map((date, idx) => (
+        <MemoDateCard key={date} date={date} tododata={todoList[idx]} />
+      ));
+
+    return renderList;
+  }, [todos]);
+
   return (
     <>
       {/* <Modal
@@ -265,12 +272,19 @@ const TodoList = () => {
       <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} />
       <TodoListContainer>
         <NowCard
-          currentTodo={currentTodo as TodoEntity}
+          currentTodo={
+            currentTodo ||
+            ({
+              duration: 0,
+              todo: '목록이 비어있습니다 :)',
+              categories: undefined,
+            } as unknown as TodoEntity)
+          }
           focusStep={focusStep}
         />
         <DragDropContext onDragEnd={onDragDropHandler}>
           {!isLoading && todos ? (
-            <EditContextProvider>{listRender(todos)}</EditContextProvider>
+            <EditContextProvider>{listRender}</EditContextProvider>
           ) : null}
         </DragDropContext>
       </TodoListContainer>

@@ -37,7 +37,7 @@ function Ranking({
       if (newCategories) setCategories(newCategories);
       if (newCategories) setSelectedCategory(newCategories[0]);
     } catch (error) {
-      window.alert('데이터를 불러올 수 없습니다.' + error);
+      console.error('데이터를 불러올 수 없습니다.' + error);
     }
   };
 
@@ -50,7 +50,7 @@ function Ranking({
         }
       }
     } catch (error) {
-      window.alert('데이터를 불러올 수 없습니다.' + error);
+      console.error('데이터를 불러올 수 없습니다.' + error);
     }
   };
 

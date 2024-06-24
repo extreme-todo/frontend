@@ -14,7 +14,7 @@ interface INowCardProps {
 // TODO : undefiend 일 때 fallbackUI를 보여줄까?..
 const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
   /* 시간 로직 */
-  const durationMin = currentTodo?.duration * focusStep;
+  const durationMin = currentTodo.duration * focusStep;
   const timeM = () => {
     let min: number;
     if (durationMin < 60) {
@@ -36,7 +36,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
         NOW
       </TypoAtom>
       <NowCardContainer>
-        <TypoAtom fontSize="h2">{currentTodo?.todo}</TypoAtom>
+        <TypoAtom fontSize="h2">{currentTodo.todo}</TypoAtom>
         <CurrentTodoInfoContainer>
           <TagAtom
             styleOption={{
@@ -47,7 +47,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
           >
             <TypoAtom>{'⏱️ ' + time}</TypoAtom>
           </TagAtom>
-          {currentTodo?.categories?.map((category) => (
+          {currentTodo.categories?.map((category) => (
             <TagAtom
               key={category}
               title={category}
