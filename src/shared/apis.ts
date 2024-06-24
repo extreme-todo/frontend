@@ -7,14 +7,14 @@ import { ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
+const MAX_RETRY_COUNT = 2;
+const EXTREME_TOKEN = 'extreme-token';
+const EXTREME_EMAIL = 'extreme-email';
+const LOGINEVENT = LoginEvent.getInstance();
 
 interface AxiosCustomRequest extends AxiosRequestConfig {
   retryCount: number;
 }
-
-const LOGINEVENT = LoginEvent.getInstance();
-
-const MAX_RETRY_COUNT = 2;
 
 const baseApi = axios.create({
   // TODO : 배포 시 수정할 것
@@ -31,16 +31,19 @@ baseApi.interceptors.request.use((config) => {
   const email = localStorage.getItem('extremeEmail');
 
   if (config.headers) {
-    config.headers['extreme-token'] = accessToken
+    config.headers[EXTREME_TOKEN] = accessToken
       ? accessToken
       : (false as boolean);
-    config.headers['extreme-email'] = email ? email : (false as boolean);
+    config.headers[EXTREME_EMAIL] = email ? email : (false as boolean);
   }
   return config;
 });
 
 baseApi.interceptors.response.use(
   (config) => {
+    if (EXTREME_TOKEN in config.headers)
+      localStorage.setItem('extremeToken', config.headers[EXTREME_TOKEN]);
+
     return config;
   },
   (err: AxiosError) => {
