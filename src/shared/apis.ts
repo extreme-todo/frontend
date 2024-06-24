@@ -91,6 +91,13 @@ export const todosApi = {
   async addTodo(todo: AddTodoDto) {
     await baseApi.post(this._route, todo);
   },
+  async doTodo(id: number, focusTime: number) {
+    await baseApi.patch(`${this._route}/${id}/done`, null, {
+      params: {
+        focusTime,
+      },
+    });
+  },
   async reorderTodos(prevOrder: number, newOrder: number) {
     await baseApi.patch(`${this._route}/reorder`, null, {
       params: {
