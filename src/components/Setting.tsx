@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useExtremeMode } from '../hooks';
 import { AxiosResponse } from 'axios';
 import { ISettings } from '../shared/interfaces';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 // TODO : state를 상위 컴포넌트로 뽑아낼 수는 없을까?.. 그게 더 괜찮은 방법이지 않을까?..
 // TODO : 추가적으로 이런 모양의 선택지를 템플릿으로 뽑아낼 수는 없을까?
@@ -27,6 +28,48 @@ const Setting = () => {
     extremeMode: isExtreme,
   });
 
+  const handleReset = async () => {
+    // if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
+    console.log('handleReset 작동');
+    await Promise.all([
+      todosApi.resetTodos(),
+      rankingApi.resetRanking(),
+      timerApi.reset(),
+    ]);
+  };
+
+  const handleWithdrawal = async () => {
+    // if (!window.confirm('정말로 회원 탈퇴하시겠습니까?')) return;
+    console.log('handleWithdrawal 작동');
+    await usersApi.withdrawal();
+  };
+
+  const queryClient = useQueryClient();
+  const { mutate: resetMutation } = useMutation(handleReset, {
+    onSuccess() {
+      // window.alert('초기화 성공');
+      queryClient.invalidateQueries(['todos']);
+    },
+    onError(error) {
+      console.error(
+        '\n\n\n 🚨 error in SettingModal‘s useMutation 🚨 \n\n',
+        error,
+      );
+    },
+  });
+  const { mutate: withdrawMutation } = useMutation(handleWithdrawal, {
+    onSuccess() {
+      // window.alert('회원 탈퇴 성공');
+      queryClient.invalidateQueries(['todos']);
+    },
+    onError(error) {
+      console.error(
+        '\n\n\n 🚨 error in SettingModal‘s useMutation 🚨 \n\n',
+        error,
+      );
+    },
+  });
+
   const handleSwitch = (): void => {
     setMode(!isExtreme);
     setSettings((prev) => {
@@ -34,24 +77,6 @@ const Setting = () => {
       settingsApi.setSettings(newSettings);
       return newSettings;
     });
-  };
-
-  const handleReset = () => {
-    if (confirm('정말로 기록을 초기화 하시겠습니까?')) {
-      Promise.all([
-        todosApi.resetTodos(),
-        rankingApi.resetRanking(),
-        timerApi.reset(),
-      ]).then(() => window.alert('초기화 성공'));
-    }
-  };
-
-  const handleWithdrawal = () => {
-    if (confirm('정말로 회원 탈퇴하시겠습니까?')) {
-      usersApi.withdrawal().then(() => {
-        alert('회원 탈퇴 성공');
-      });
-    }
   };
 
   const tooltipMouseOver = () => {
@@ -102,13 +127,13 @@ const Setting = () => {
           <SwitchAtom setValue={handleSwitch} value={isExtreme} />
         </ExtremeContainer>
         <TagAtom
-          handler={handleReset}
+          handler={resetMutation}
           styleOption={{ size: 'sm', fontsize: 'sm' }}
         >
           데이터 초기화
         </TagAtom>
         <TagAtom
-          handler={handleWithdrawal}
+          handler={withdrawMutation}
           styleOption={{ size: 'sm', fontsize: 'sm' }}
         >
           회원탈퇴

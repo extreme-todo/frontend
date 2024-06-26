@@ -1,16 +1,35 @@
 import React from 'react';
 import { Setting } from '../../components';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import { todosApi, usersApi } from '../../shared/apis';
+import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
+import PomodoroProvider from '../../hooks/usePomodoro';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 describe('SettingModal', () => {
   beforeEach(() => {
+    jest.spyOn(window, 'alert').mockImplementation();
+    jest.spyOn(window, 'confirm').mockImplementation(() => true);
     render(
-      <ThemeProvider theme={designTheme}>
-        <Setting />
-      </ThemeProvider>,
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={designTheme}>
+          <PomodoroProvider>
+            <ExtremeModeProvider>
+              <Setting />
+            </ExtremeModeProvider>
+          </PomodoroProvider>
+        </ThemeProvider>
+      </QueryClientProvider>,
     );
   });
 
@@ -23,8 +42,8 @@ describe('SettingModal', () => {
       expect(screen.getByAltText('tooltip')).toBeInTheDocument();
     });
 
-    it('switch버튼이 OFF 값을 가지고 있다.', () => {
-      const switchBtn = screen.getByText('OFF');
+    it('switch버튼이 ON 값을 가지고 있다.', () => {
+      const switchBtn = screen.getByText('ON');
 
       expect(switchBtn).toBeInTheDocument();
     });
@@ -50,11 +69,11 @@ describe('SettingModal', () => {
   });
 
   describe('switch버튼은', () => {
-    it('OFF가 초기값이고 누르면 ON로 바뀐다.', () => {
-      const switchBtn = screen.getByText('OFF');
+    it('ON이 초기값이고 누르면 OFF로 바뀐다.', () => {
+      const switchBtn = screen.getByText('ON');
 
       fireEvent.click(switchBtn);
-      expect(screen.queryByText('ON')).toBeInTheDocument();
+      expect(screen.queryByText('OFF')).toBeInTheDocument();
     });
   });
 
@@ -66,14 +85,14 @@ describe('SettingModal', () => {
     });
   });
 
-  describe('회원탈퇴 버튼을 누르면', () => {
-    it('withdrawal 메소드가 호출된다.', () => {
+  describe('회원탈퇴 버튼을 누르고  ', () => {
+    it('withdrawal 메소드가 호출된다.', async () => {
       const spyOnWithdrawal = jest
         .spyOn(usersApi, 'withdrawal')
         .mockImplementation();
 
       const withdrawBtn = screen.getByText('회원탈퇴');
-      fireEvent.click(withdrawBtn);
+      await act(async () => fireEvent.click(withdrawBtn));
 
       expect(spyOnWithdrawal).toBeCalled();
     });
@@ -86,17 +105,17 @@ describe('SettingModal', () => {
   });
 
   describe('데이터 초기화 버튼을 누르면', () => {
-    it('reset 메소드가 호출된다.', () => {
-      const spyOnReset = jest.spyOn(todosApi, 'reset').mockImplementation();
+    it('reset 메소드가 호출된다.', async () => {
+      const spyOnReset = jest
+        .spyOn(todosApi, 'resetTodos')
+        .mockImplementation();
 
       const resetBtn = screen.getByText('데이터 초기화');
-      fireEvent.click(resetBtn);
+      await act(async () => {
+        fireEvent.click(resetBtn);
+      });
 
       expect(spyOnReset).toBeCalled();
     });
   });
-
-  // 데이터 초기화를 누르면
-  // 예외처리도 있다.
-  // 데이터 초기화가 된다.
 });
