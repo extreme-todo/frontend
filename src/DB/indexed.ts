@@ -130,12 +130,12 @@ class ETIndexed implements TodoModuleType {
     await this.action.resetAll();
   }
 
-  async getOneTodo(id: number) {
+  async getOneTodo(id: string) {
     const todo = await this.action.getOne(id);
     return todo;
   }
 
-  async deleteTodo(id: number) {
+  async deleteTodo(id: string) {
     const getTodo = await this.action.getOne(id);
     const order = Number(getTodo.order);
 
@@ -150,7 +150,7 @@ class ETIndexed implements TodoModuleType {
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
   }
 
-  async updateTodo(id: number, todo: UpdateTodoDto) {
+  async updateTodo(id: string, todo: UpdateTodoDto) {
     if (Array.isArray(todo.categories) && todo.categories.length > 5) {
       return alert('카테고리는 5개 까지 추가할 수 있습니다.');
     }
@@ -160,7 +160,7 @@ class ETIndexed implements TodoModuleType {
     return updated;
   }
 
-  async doTodo(id: number, focusTime: string) {
+  async doTodo(id: string, focusTime: string) {
     const getTodo = await this.action.getOne(id);
     const order = Number(getTodo.order);
 
@@ -198,9 +198,7 @@ class ETIndexed implements TodoModuleType {
     const getTodos = await this.action.getAll();
     if (getTodos.length === 0) return;
     const stailTodos = getTodos.filter((todo) => todo.date <= currentDate);
-    await Promise.all(
-      stailTodos.map((todo) => this.action.removeOne(todo.todo)),
-    );
+    await Promise.all(stailTodos.map((todo) => this.action.removeOne(todo.id)));
   }
 }
 

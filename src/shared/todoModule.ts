@@ -8,11 +8,11 @@ export interface TodoModuleType {
   resetTodos(): Promise<void>;
   addTodo(todo: AddTodoDto): any;
   reorderTodos(prevOrder: number, newOrder: number): any;
-  updateTodo(id: number, todo: UpdateTodoDto): any;
+  updateTodo(id: string, todo: UpdateTodoDto): any;
   getList(isDone: boolean): Promise<Map<string, TodoEntity[]>>;
-  getOneTodo(id: number): Promise<TodoEntity>;
-  deleteTodo(id: number): any;
-  doTodo(id: number, focusTime: string): any;
+  getOneTodo(id: string): Promise<TodoEntity>;
+  deleteTodo(id: string): any;
+  doTodo(id: string, focusTime: string): any;
   removeTodosBeforeToday(currentDate: string): any;
 }
 
@@ -42,7 +42,7 @@ export class TodoModule implements TodoModuleType {
     throw new Error('Method not implemented.');
   }
   updateTodo(
-    id: number,
+    id: string,
     todo: Partial<
       Pick<TodoEntity, 'date' | 'todo' | 'duration' | 'categories'>
     >,
@@ -52,13 +52,13 @@ export class TodoModule implements TodoModuleType {
   getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
     throw new Error('Method not implemented.');
   }
-  getOneTodo(id: number): Promise<TodoEntity> {
+  getOneTodo(id: string): Promise<TodoEntity> {
     throw new Error('Method not implemented.');
   }
-  deleteTodo(id: number) {
+  deleteTodo(id: string) {
     throw new Error('Method not implemented.');
   }
-  doTodo(id: number, focusTime: string) {
+  doTodo(id: string, focusTime: string) {
     throw new Error('Method not implemented.');
   }
   removeTodosBeforeToday() {

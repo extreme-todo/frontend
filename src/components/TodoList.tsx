@@ -85,7 +85,7 @@ const MemoDateCard = memo(DateCard);
 interface orderMutationHandlerArgs {
   prevOrder: number;
   newOrder: number;
-  id?: number;
+  id?: string;
   newDate?: string;
   todolist?: Map<string, TodoEntity[]>;
 }

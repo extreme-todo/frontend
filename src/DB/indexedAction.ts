@@ -3,7 +3,7 @@ import type { AddTodoDto } from './indexed';
 type CategoryType = { id: number; name: string };
 
 interface TodoEntity {
-  id: number;
+  id: string;
   date: string; // toISOstring() 처리된 Date
   todo: string;
   createdAt: Date;
@@ -33,7 +33,6 @@ class ETIndexedDBAction {
       if (!db.objectStoreNames.contains(STORENAME)) {
         db.createObjectStore(STORENAME, {
           keyPath: 'id',
-          autoIncrement: true,
         });
       }
     };
@@ -124,14 +123,14 @@ class ETIndexedDBAction {
     return promisedTodo;
   }
 
-  getOne(id: number): Promise<TodoEntity> {
+  getOne(id: string): Promise<TodoEntity> {
     const objectStore = this.getObjectStore('readonly');
     const todoRequest = objectStore.get(id);
     const promisedTodo = this.makePromise<TodoEntity>(todoRequest, 'get');
     return promisedTodo;
   }
 
-  removeOne(id: number): Promise<void> {
+  removeOne(id: string): Promise<void> {
     const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.delete(id);
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');

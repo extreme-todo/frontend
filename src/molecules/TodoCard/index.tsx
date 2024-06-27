@@ -31,7 +31,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
       prevDate,
     }: {
       newTodo: UpdateTodoDto;
-      id: number;
+      id: string;
       prevDate: string;
     }) => {
       if (newTodo.date === prevDate) {
@@ -77,7 +77,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
   });
 
   const { mutate: deleteMutate } = useMutation({
-    mutationFn: ({ id }: { id: number }) => todosApi.deleteTodo(id),
+    mutationFn: ({ id }: { id: string }) => todosApi.deleteTodo(id),
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s deleteTodo ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });

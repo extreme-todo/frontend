@@ -3,7 +3,7 @@ import { IChildProps } from '../shared/interfaces';
 
 interface IEdit {
   editMode: boolean;
-  editTodoId: number | undefined;
+  editTodoId: string | undefined;
 }
 type editContextType = [IEdit, (newEditState: IEdit) => void];
 const defaultUseEdit: editContextType = [
