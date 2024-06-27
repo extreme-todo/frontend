@@ -103,7 +103,12 @@ class ETIndexedDBAction {
     }
 
     const objectStore = this.getObjectStore('readwrite');
-    const todoRequest = objectStore.add(todo);
+    const todoRequest = objectStore.add({
+      ...todo,
+      id: `${new Date().getTime()}-${Math.random()
+        .toString(36)
+        .substring(2, 9)}`,
+    });
     const promisedTodo = this.makePromise<void>(todoRequest, 'add');
     return promisedTodo;
   }
