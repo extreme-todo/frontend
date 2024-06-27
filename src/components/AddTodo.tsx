@@ -30,7 +30,7 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
   const { mutate } = useMutation({
     mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
     onSuccess(data) {
-      console.log('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
+      console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
     onError(error) {
