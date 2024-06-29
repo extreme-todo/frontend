@@ -53,10 +53,6 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
     );
   }, [pomodoroStatus]);
 
-  function handleModalClose(): void {
-    return setIsModal(null);
-  }
-
   return (
     <MainTodoContainer ref={mainTodoRef}>
       <MainTodoContentWrapper>
@@ -132,7 +128,7 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
                 setIsModal(null);
               }}
             >
-              <AddTodo handleModalClose={handleModalClose} />
+              <AddTodo />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
           )}
