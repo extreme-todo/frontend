@@ -103,7 +103,6 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
     const trimmed = titleValidation(addData.todo);
     if (!trimmed) return;
     mutate({ ...todo, todo: trimmed });
-    handleModalClose();
   };
 
   const addData: AddTodoDto = {
