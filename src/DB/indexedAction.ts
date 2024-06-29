@@ -92,7 +92,9 @@ class ETIndexedDBAction {
   }
 
   // addTodo
-  add(todo: AddTodoDto): Promise<void> {
+  // TODO : 나중에 백엔드에서 데이터를 만들고 indexed에 동기화를 할 때도
+  // add를 사용해서 indexedDB에 데이터를 추가할 예정
+  add(todo: TodoEntity): Promise<void> {
     if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
       return Promise.reject(
         new Error('Fail to add todo', {
@@ -102,12 +104,7 @@ class ETIndexedDBAction {
     }
 
     const objectStore = this.getObjectStore('readwrite');
-    const todoRequest = objectStore.add({
-      ...todo,
-      id: `${new Date().getTime()}-${Math.random()
-        .toString(36)
-        .substring(2, 9)}`,
-    });
+    const todoRequest = objectStore.add(todo);
     const promisedTodo = this.makePromise<void>(todoRequest, 'add');
     return promisedTodo;
   }

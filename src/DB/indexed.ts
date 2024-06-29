@@ -89,9 +89,12 @@ class ETIndexed implements TodoModuleType {
     const newTodo = {
       ...todo,
       order: newTodoOrder,
-      done: false,
       focusTime: 0,
+      done: false,
       createdAt: new Date(),
+      id: `${new Date().getTime()}-${Math.random()
+        .toString(36)
+        .substring(2, 9)}`,
     };
 
     await this.action.add(newTodo);
