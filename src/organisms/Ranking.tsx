@@ -7,17 +7,12 @@ import styled from '@emotion/styled';
 import RankingTexts from '../molecules/RankingTexts';
 import { formatTime } from '../shared/timeUtils';
 import CartegorySelector from '../molecules/CartegorySelector';
-import {
-  dummyCategories,
-  dummyRanking,
-  initialCategories,
-  initialRanking,
-} from '../shared/constants';
-import { AxiosResponse } from 'axios';
+
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface IRankingProps extends IChildProps {
-  fetchRanking: (category: string) => Promise<AxiosResponse<IRanking>>;
-  fetchCategories: () => Promise<AxiosResponse<ICategory[]>>;
+  fetchRanking: (category: string) => Promise<IRanking>;
+  fetchCategories: () => Promise<ICategory[]>;
   isLogin: boolean;
 }
 
@@ -28,49 +23,29 @@ function Ranking({
   isLogin,
 }: IRankingProps) {
   const [ranking, setRanking] = useState<IRanking>();
-  const [categories, setCategories] = useState<ICategory[]>();
   const [selectedCategory, setSelectedCategory] = useState<ICategory>();
 
-  const getCateData = async () => {
-    try {
-      const { data: newCategories } = await fetchCategories();
-      if (newCategories) setCategories(newCategories);
-      if (newCategories) setSelectedCategory(newCategories[0]);
-    } catch (error) {
-      console.error('데이터를 불러올 수 없습니다.' + error);
-    }
-  };
+  const { data: categories } = useQuery(['category'], () => fetchCategories(), {
+    staleTime: 1000 * 60 * 20,
+  });
 
-  const getRankData = async () => {
-    try {
-      if (selectedCategory) {
-        const { data: newRanking } = await fetchRanking(selectedCategory.name);
-        if (newRanking.group) {
-          setRanking(newRanking);
-        }
-      }
-    } catch (error) {
-      console.error('데이터를 불러올 수 없습니다.' + error);
-    }
-  };
+  useEffect(() => {
+    if (categories) selectCategory(categories[0]);
+  }, [categories]);
 
   const selectCategory = (category: ICategory) => {
     setSelectedCategory(category);
+    fetchRanking(category.name).then((res) => setRanking(res));
   };
 
   useEffect(() => {
-    if (isLogin) {
-      getCateData();
-    } else {
-      setCategories(dummyCategories);
-      setSelectedCategory(dummyCategories[0]);
-      setRanking(dummyRanking);
-    }
+    // if (isLogin) {
+    // } else {
+    //   setCategories(dummyCategories);
+    //   setSelectedCategory(dummyCategories[0]);
+    //   setRanking(dummyRanking);
+    // }
   }, [isLogin]);
-
-  useEffect(() => {
-    isLogin && getRankData();
-  }, [selectedCategory, isLogin]);
 
   return (
     <>
@@ -107,7 +82,7 @@ function Ranking({
             </div>
             <div className="one_line time">
               {ranking?.user ? (
-                formatTime(ranking.user.time ?? 0)
+                formatTime(ranking.user.time / 60000 ?? 0)
                   .split(/(\d+)/)
                   .slice(1)
                   .map((text, idx) => {
