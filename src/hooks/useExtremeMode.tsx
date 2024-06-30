@@ -4,6 +4,7 @@ import React, {
   useState,
   useContext,
   useCallback,
+  useRef,
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { usePomodoroValue } from './usePomodoro';
@@ -25,6 +26,8 @@ export const ExtremeModeContext = createContext<IExtremeMode>(
 
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { status, settings } = usePomodoroValue();
+  const [resetFlag, setResetFlag] = useState<boolean>(false); // true 면 reset 완료
+  const prevStatus = useRef(status.isResting);
   const isOnline = useIsOnline();
   const setMode = (newMode: boolean) => {
     if (status.isFocusing === true) {
@@ -38,20 +41,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
     if (status.isResting) {
       const leftMs = settings.restStep * 60000 - status.restedTime;
       const minutes = (leftMs % 3600000) / 60000;
-      if (leftMs < 0) {
-        setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
-        const resetOnlineTodos = [
-          todosApi.reset(),
-          rankingApi.resetRanking(),
-          timerApi.reset(),
-        ];
-        const resetOfflineTodos = [ETIndexed.getInstance().resetTodos()];
-        Promise.all(isOnline ? resetOnlineTodos : resetOfflineTodos).then(
-          () => {
-            setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
-          },
-        );
-      } else {
+      if (leftMs >= 0) {
         setLeftTime(
           Math.floor(minutes) +
             '분 ' +
@@ -59,11 +49,42 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
             '초 뒤에 모든 기록이 삭제됩니다.',
         );
       }
+      return leftMs;
     }
   };
 
   useEffect(() => {
-    getLeftTime();
+    const leftMs = getLeftTime();
+    if (
+      prevStatus.current === status.isResting &&
+      resetFlag === false &&
+      Number(leftMs) < 0
+    ) {
+      setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
+      if (resetFlag === false) {
+        const resetOfflineTodos = [ETIndexed.getInstance().resetTodos()];
+        Promise.all(
+          isOnline
+            ? [
+                todosApi.resetTodos(),
+                rankingApi.resetRanking(),
+                timerApi.reset(),
+              ]
+            : resetOfflineTodos,
+        )
+          .then(() => {
+            setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
+          })
+          .catch(() => {
+            setLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
+          });
+        setResetFlag(true);
+      }
+    }
+    if (prevStatus.current != status.isResting) {
+      setResetFlag(false);
+      prevStatus.current = status.isResting;
+    }
   }, [status]);
 
   const [extremeMode, setExtremeMode] = useState<IExtremeMode>({
