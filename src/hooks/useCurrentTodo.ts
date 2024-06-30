@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { TodoEntity } from '../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { timerApi, todosApi } from '../shared/apis';
+import { getDateInFormat } from '../shared/timeUtils';
 
 type TodoResponseDto = TodoEntity;
 
@@ -78,7 +79,11 @@ const useCurrentTodo = () => {
     if (todos) {
       const todayTodos: TodoEntity[] = todos.values().next()
         .value as TodoEntity[];
-      if (todayTodos != null) {
+      if (
+        todayTodos != null &&
+        getDateInFormat(new Date(todayTodos[0].date)) ===
+          getDateInFormat(new Date())
+      ) {
         setCurrentTodo(todayTodos[0]);
         return todayTodos[0];
       } else {
