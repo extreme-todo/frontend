@@ -3,7 +3,7 @@ import type { AddTodoDto } from './indexed';
 type CategoryType = { id: number; name: string };
 
 interface TodoEntity {
-  id: number;
+  id: string;
   date: string; // toISOstring() 처리된 Date
   todo: string;
   createdAt: Date;
@@ -33,7 +33,6 @@ class ETIndexedDBAction {
       if (!db.objectStoreNames.contains(STORENAME)) {
         db.createObjectStore(STORENAME, {
           keyPath: 'id',
-          autoIncrement: true,
         });
       }
     };
@@ -93,7 +92,9 @@ class ETIndexedDBAction {
   }
 
   // addTodo
-  add(todo: AddTodoDto): Promise<void> {
+  // TODO : 나중에 백엔드에서 데이터를 만들고 indexed에 동기화를 할 때도
+  // add를 사용해서 indexedDB에 데이터를 추가할 예정
+  add(todo: TodoEntity): Promise<void> {
     if (todo.categories && todo.categories.length > MAX_CATEGORY_LENGTH) {
       return Promise.reject(
         new Error('Fail to add todo', {
@@ -119,14 +120,14 @@ class ETIndexedDBAction {
     return promisedTodo;
   }
 
-  getOne(id: number): Promise<TodoEntity> {
+  getOne(id: string): Promise<TodoEntity> {
     const objectStore = this.getObjectStore('readonly');
     const todoRequest = objectStore.get(id);
     const promisedTodo = this.makePromise<TodoEntity>(todoRequest, 'get');
     return promisedTodo;
   }
 
-  removeOne(id: number): Promise<void> {
+  removeOne(id: string): Promise<void> {
     const objectStore = this.getObjectStore('readwrite');
     const todoRequest = objectStore.delete(id);
     const promisedTodo = this.makePromise<void>(todoRequest, 'remove');

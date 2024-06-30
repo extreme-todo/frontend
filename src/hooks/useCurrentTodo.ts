@@ -20,7 +20,7 @@ const useCurrentTodo = () => {
     id,
     focusTime,
   }: {
-    id: number;
+    id: string;
     focusTime: number;
   }) {
     if (currentTodo) await todosApi.doTodo(id, focusTime);

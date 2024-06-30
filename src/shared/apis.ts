@@ -94,7 +94,7 @@ export const todosApi = {
   async addTodo(todo: AddTodoDto) {
     await baseApi.post('/todos', todo);
   },
-  async doTodo(id: number, focusTime: number) {
+  async doTodo(id: string, focusTime: number) {
     await baseApi.patch(`/todos/${id}/done`, null, {
       params: {
         focusTime,
@@ -109,7 +109,7 @@ export const todosApi = {
       },
     });
   },
-  async updateTodo(id: number, todo: UpdateTodoDto): Promise<TodoEntity> {
+  async updateTodo(id: string, todo: UpdateTodoDto): Promise<TodoEntity> {
     return await baseApi.patch(`/todos/${id}`, todo);
   },
   async getList(isDone: boolean): Promise<Map<string, TodoEntity[]>> {
@@ -136,10 +136,10 @@ export const todosApi = {
 
     return groupByDate(modifiedCategories);
   },
-  async getOneTodo(id: number) {
+  async getOneTodo(id: string) {
     return await baseApi.get(`/todos/${id}`);
   },
-  async deleteTodo(id: number) {
+  async deleteTodo(id: string) {
     await baseApi.delete(`/todos/${id}`);
   },
   async removeTodosBeforeToday(currentDate: string) {
