@@ -35,7 +35,9 @@ const useCurrentTodo = () => {
   useEffect(() => {
     const checkLocalStorage = () => {
       const localTodo = localStorage.getItem(localKey);
-      if (localTodo != null) {
+      if (todos?.size === 0) {
+        setCurrentTodo(undefined);
+      } else if (localTodo != null) {
         setCurrentTodo(JSON.parse(localTodo) as TodoResponseDto);
       } else {
         const nextTodo = getNextTodo(todos);
