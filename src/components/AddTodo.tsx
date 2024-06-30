@@ -20,11 +20,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
 
-interface IAddTodoProps {
-  handleModalClose: () => void;
-}
-
-const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
+const AddTodo = () => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
@@ -103,7 +99,6 @@ const AddTodo = ({ handleModalClose }: IAddTodoProps) => {
     const trimmed = titleValidation(addData.todo);
     if (!trimmed) return;
     mutate({ ...todo, todo: trimmed });
-    handleModalClose();
   };
 
   const addData: AddTodoDto = {

@@ -20,28 +20,42 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
 
   return (
     <>
-      <ModalContainer>
-        <HeaderContainer>
-          <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
-            {title}
-          </TypoAtom>
+      <ModalBackground>
+        <ModalContainer>
+          <HeaderContainer>
+            <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
+              {title}
+            </TypoAtom>
 
-          <IconAtom
-            onClick={handleClose}
-            size={3.6}
-            backgroundColor={'whiteWine'}
-          >
-            <img alt="close" src={'icons/close.svg'}></img>
-          </IconAtom>
-        </HeaderContainer>
-        {children}
-      </ModalContainer>
+            <IconAtom
+              onClick={handleClose}
+              size={3.6}
+              backgroundColor={'whiteWine'}
+            >
+              <img alt="close" src={'icons/close.svg'}></img>
+            </IconAtom>
+          </HeaderContainer>
+          {children}
+        </ModalContainer>
+      </ModalBackground>
     </>
   );
 };
 
 export default Modal;
 export type { IModalProps };
+
+const ModalBackground = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  z-index: 99;
+`;
 
 const ModalContainer = styled(CardAtom)`
   padding: 2.324375rem 3.2925rem;
@@ -57,12 +71,14 @@ const ModalContainer = styled(CardAtom)`
       rgba(255, 255, 255, 0) 55.21%
     ), ${colors.bgYellow}`};
 
+  /* 
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 
-  z-index: 99;
+  z-index: 99; 
+  */
 `;
 
 const HeaderContainer = styled.div`
