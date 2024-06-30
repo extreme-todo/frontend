@@ -3,11 +3,20 @@ import { IChildProps } from '../shared/interfaces';
 import { CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 import { useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface IModalProps extends IChildProps {
   title: string;
   handleClose: () => void;
 }
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const Modal = ({ title, children, handleClose }: IModalProps) => {
   useEffect(() => {
@@ -20,7 +29,11 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
 
   return (
     <>
+<<<<<<< HEAD
       <ModalBackground>
+=======
+      <QueryClientProvider client={queryClient}>
+>>>>>>> 38573c6 (Update : #95 Setting 모달 테스트 코드 수정)
         <ModalContainer>
           <HeaderContainer>
             <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
@@ -37,7 +50,11 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
           </HeaderContainer>
           {children}
         </ModalContainer>
+<<<<<<< HEAD
       </ModalBackground>
+=======
+      </QueryClientProvider>
+>>>>>>> 38573c6 (Update : #95 Setting 모달 테스트 코드 수정)
     </>
   );
 };

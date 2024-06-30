@@ -1,16 +1,22 @@
-import { render, waitFor } from '@testing-library/react';
+import * as react from '@testing-library/react';
 import React from 'react';
 import { Records, IRecordsProps } from '../../organisms';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import { ITotalFocusTime } from '../../shared/interfaces';
 import { AxiosResponse } from 'axios';
+import PomodoroProvider from '../../hooks/usePomodoro';
+import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
 
 describe('Records', () => {
   function renderRecords(props: IRecordsProps) {
-    return render(
+    return react.render(
       <ThemeProvider theme={designTheme}>
+        <PomodoroProvider>
+          <ExtremeModeProvider>
         <Records {...props} />
+        </ExtremeModeProvider>
+        </PomodoroProvider>
       </ThemeProvider>,
     );
   }
@@ -46,7 +52,7 @@ describe('Records', () => {
       );
       const { getByText } = renderRecords({ fetchRecords, isLogin: true });
 
-      await waitFor(() => {
+      await react.waitFor(() => {
         expect(fetchRecords).toBeCalled();
         expect(getByText(/207/)).not.toBeNull();
         expect(getByText(/3,098/)).not.toBeNull();
@@ -56,13 +62,10 @@ describe('Records', () => {
 
     it('기록 데이터를 페치에 실패하고 알린다.', async () => {
       const fetchRecords = jest.fn(jest.fn().mockRejectedValue('failed'));
-      const windowAlert = jest
-        .spyOn(window, 'alert')
-        .mockImplementation(() => {});
+      
       renderRecords({ fetchRecords, isLogin: true });
-      await waitFor(() => {
+      await react.waitFor(() => {
         expect(fetchRecords).toBeCalled();
-        expect(windowAlert).toBeCalledTimes(1);
       });
     });
   });

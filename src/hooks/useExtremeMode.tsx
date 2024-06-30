@@ -41,7 +41,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       if (leftMs < 0) {
         setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
         const resetOnlineTodos = [
-          todosApi.reset(),
+          todosApi.resetTodos(),
           rankingApi.resetRanking(),
           timerApi.reset(),
         ];
