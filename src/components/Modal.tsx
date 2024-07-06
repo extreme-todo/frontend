@@ -29,32 +29,26 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
 
   return (
     <>
-<<<<<<< HEAD
-      <ModalBackground>
-=======
       <QueryClientProvider client={queryClient}>
->>>>>>> 38573c6 (Update : #95 Setting 모달 테스트 코드 수정)
-        <ModalContainer>
-          <HeaderContainer>
-            <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
-              {title}
-            </TypoAtom>
+        <ModalBackground>
+          <ModalContainer>
+            <HeaderContainer>
+              <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
+                {title}
+              </TypoAtom>
 
-            <IconAtom
-              onClick={handleClose}
-              size={3.6}
-              backgroundColor={'whiteWine'}
-            >
-              <img alt="close" src={'icons/close.svg'}></img>
-            </IconAtom>
-          </HeaderContainer>
-          {children}
-        </ModalContainer>
-<<<<<<< HEAD
-      </ModalBackground>
-=======
+              <IconAtom
+                onClick={handleClose}
+                size={3.6}
+                backgroundColor={'whiteWine'}
+              >
+                <img alt="close" src={'icons/close.svg'}></img>
+              </IconAtom>
+            </HeaderContainer>
+            {children}
+          </ModalContainer>
+        </ModalBackground>
       </QueryClientProvider>
->>>>>>> 38573c6 (Update : #95 Setting 모달 테스트 코드 수정)
     </>
   );
 };
