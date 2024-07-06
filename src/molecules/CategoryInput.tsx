@@ -50,8 +50,10 @@ const CategoryInput = ({
 export default CategoryInput;
 
 const CategoryContainer = styled.div`
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  row-gap: 0.3125rem;
+  column-gap: 0.625rem;
   margin-top: 0.61rem;
-  & > button {
-    margin-right: 0.61rem;
-  }
 `;
