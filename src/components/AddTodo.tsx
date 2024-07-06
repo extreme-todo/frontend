@@ -19,6 +19,7 @@ import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
+import { AxiosError } from 'axios';
 
 const AddTodo = () => {
   const [title, setTitle] = useState('');
@@ -38,8 +39,10 @@ const AddTodo = () => {
       setCategoryArray([]);
       setTomato('1');
     },
-    onError(error) {
+    onError(error: AxiosError) {
       console.debug('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
+      const errorString = '에러 발생 ' + error.code + ' ' + error.message;
+      alert(errorString);
     },
   });
 
