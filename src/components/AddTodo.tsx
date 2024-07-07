@@ -28,6 +28,7 @@ const AddTodo = () => {
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
+      queryClient.invalidateQueries({ queryKey: ['category'] });
     },
     onError(error) {
       console.debug('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);

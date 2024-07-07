@@ -76,19 +76,28 @@ function Ranking({
                   shadow: 'button_shadow',
                 }}
               >
-                {(selectedCategory && selectedCategory?.name) ?? '카테고리'}
+                {selectedCategory?.name ?? '카테고리'}
               </RankingTexts.Tag>
               <RankingTexts.Typo fontSize={'h3'}>에</RankingTexts.Typo>
             </div>
             <div className="one_line time">
               {ranking?.user ? (
-                formatTime(ranking.user.time / 60000 ?? 0)
+                formatTime(Number((ranking.user.time / 60000 ?? 0).toFixed(2)))
                   .split(/(\d+)/)
                   .slice(1)
                   .map((text, idx) => {
                     return (
                       <RankingTexts.Typo
-                        fontSize={idx % 2 === 0 ? 'h1' : 'h3_bold'}
+                        fontSize={(() => {
+                          if (idx % 2 !== 0) {
+                            return 'h3_bold';
+                          }
+                          if (text.length > 3) {
+                            return 'h3';
+                          } else {
+                            return 'h1';
+                          }
+                        })()}
                         key={idx + text}
                       >
                         {text}

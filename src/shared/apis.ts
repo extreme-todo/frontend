@@ -86,7 +86,9 @@ export const todosApi = {
     return baseApi.get('timer/progress');
   },
   getCategories: async () => {
-    const categories: ICategory[] = await baseApi.get('categories');
+    const { data: categories }: AxiosResponse<ICategory[]> = await baseApi.get(
+      'categories',
+    );
     return categories;
   },
   async resetTodos() {
@@ -172,7 +174,7 @@ export const timerApi = {
 export const rankingApi = {
   _route: 'ranking',
   getRanking: async (categoryName: string) => {
-    const ranking: IRanking = await baseApi.get(
+    const { data: ranking }: AxiosResponse<IRanking> = await baseApi.get(
       `${rankingApi._route}?category=${categoryName}`,
     );
     return ranking;

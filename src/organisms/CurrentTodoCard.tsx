@@ -20,6 +20,12 @@ function CurrentTodoCard({
   const currentTodo = useCurrentTodo();
 
   useEffect(() => {
+    if (currentTodo.currentTodo == null) {
+      actions.startResting();
+    }
+  }, [currentTodo]);
+
+  useEffect(() => {
     checkIfCanRest();
     const ifShouldRest = checkIfShouldRest();
     setTimeout(() => {
@@ -85,9 +91,8 @@ function CurrentTodoCard({
           <>
             <CurrentTodo
               todo={currentTodo.currentTodo}
-              doTodo={async () => {
-                await currentTodo.doTodo();
-                setCanRest(false);
+              doTodo={() => {
+                currentTodo.doTodo();
               }}
               focusStep={pomodoroSettings.focusStep}
               focusedOnTodo={currentTodo.focusedOnTodo}

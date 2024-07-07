@@ -7,7 +7,7 @@ import { formatTime, getPomodoroStepPercent } from '../shared/timeUtils';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
-  doTodo: (focusTime: number) => Promise<void>;
+  doTodo: (focusTime: number) => void;
   focusStep: number;
   focusedOnTodo: number;
   startResting: () => void;

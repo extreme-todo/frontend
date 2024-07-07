@@ -56,6 +56,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   useEffect(() => {
     const leftMs = getLeftTime();
     if (
+      extremeMode.isExtreme &&
       prevStatus.current === status.isResting &&
       resetFlag === false &&
       Number(leftMs) < 0

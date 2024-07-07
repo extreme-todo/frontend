@@ -51,8 +51,8 @@ const CSContainer = styled.div`
   align-content: flex-start;
   flex-grow: 1;
   flex-basis: 0;
-  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-  mask-size: calc(100% - 0.8rem) 100%, 0.8rem 100%;
+  /* mask-image: linear-gradient(to bottom, black 50%, transparent 100%); */
+  /* mask-size: calc(100% - 0.8rem) 100%, 0.8rem 100%; */
 
   &::-webkit-scrollbar {
     mask-image: none;
