@@ -37,34 +37,36 @@ describe('ExtremeTodoIndexedDB', () => {
 
     it('새로운 order값을 해당 todo의 order를 수정하고', () => {
       let targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
-      expect(targetTodo[0].id === 6).toBe(true);
+      expect(targetTodo[0].id === '1719637019004-3vvw35y').toBe(true);
 
       indexedCalc.updateOrder(correspondingOrder, 6, 2);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 6);
-      expect(targetTodo[0].id === 6).toBe(false);
+      expect(targetTodo[0].id === '1719637019004-3vvw35y').toBe(false);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 6).toBe(true);
+      expect(targetTodo[0].id === '1719637019004-3vvw35y').toBe(true);
     });
 
     it('해당 범위 안에 있는 todo의 order를 수정한다.', () => {
       let targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 1).toBe(true);
+      expect(targetTodo[0].id === '1719637016087-a58bpkm').toBe(true);
 
       indexedCalc.updateOrder(correspondingOrder, 6, 2);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 2);
-      expect(targetTodo[0].id === 1).toBe(false);
+      expect(targetTodo[0].id === '1719637016087-a58bpkm').toBe(false);
 
       targetTodo = correspondingOrder.filter((todo) => todo.order === 3);
-      expect(targetTodo[0].id === 1).toBe(true);
+      expect(targetTodo[0].id === '1719637016087-a58bpkm').toBe(true);
     });
   });
 
   describe('doneTodo', () => {
     it('해당 id의 done을 true로 하고 order을 null로 변경한다.', () => {
-      const targetTodo = mockTodoList.filter((todo) => todo.id === 1);
+      const targetTodo = mockTodoList.filter(
+        (todo) => todo.id === '1719637016087-a58bpkm',
+      );
       const done = indexedCalc.doneTodo(targetTodo[0]);
       expect(done.done).toBe(true);
       expect(done.order).toBe(null);

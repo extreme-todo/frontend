@@ -3,11 +3,20 @@ import { IChildProps } from '../shared/interfaces';
 import { CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 import { useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface IModalProps extends IChildProps {
   title: string;
   handleClose: () => void;
 }
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const Modal = ({ title, children, handleClose }: IModalProps) => {
   useEffect(() => {
@@ -20,24 +29,26 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
 
   return (
     <>
-      <ModalBackground>
-        <ModalContainer>
-          <HeaderContainer>
-            <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
-              {title}
-            </TypoAtom>
+      <QueryClientProvider client={queryClient}>
+        <ModalBackground>
+          <ModalContainer>
+            <HeaderContainer>
+              <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
+                {title}
+              </TypoAtom>
 
-            <IconAtom
-              onClick={handleClose}
-              size={3.6}
-              backgroundColor={'whiteWine'}
-            >
-              <img alt="close" src={'icons/close.svg'}></img>
-            </IconAtom>
-          </HeaderContainer>
-          {children}
-        </ModalContainer>
-      </ModalBackground>
+              <IconAtom
+                onClick={handleClose}
+                size={3.6}
+                backgroundColor={'whiteWine'}
+              >
+                <img alt="close" src={'icons/close.svg'}></img>
+              </IconAtom>
+            </HeaderContainer>
+            {children}
+          </ModalContainer>
+        </ModalBackground>
+      </QueryClientProvider>
     </>
   );
 };

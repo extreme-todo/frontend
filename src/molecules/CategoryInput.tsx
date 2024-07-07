@@ -1,5 +1,6 @@
 import { InputAtom, TagAtom } from '../atoms';
 import styled from '@emotion/styled';
+import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 
 interface ICategoryInputProps {
   categories: string[] | null;
@@ -33,7 +34,7 @@ const CategoryInput = ({
           {category}
         </TagAtom>
       ))}
-      {categories && categories.length >= 5 ? null : (
+      {categories && categories.length >= MAX_CATEGORY_ARRAY_LENGTH ? null : (
         <InputAtom.Underline
           value={category}
           handleChange={handleChangeCategory}
@@ -49,8 +50,10 @@ const CategoryInput = ({
 export default CategoryInput;
 
 const CategoryContainer = styled.div`
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  row-gap: 0.3125rem;
+  column-gap: 0.625rem;
   margin-top: 0.61rem;
-  & > button {
-    margin-right: 0.61rem;
-  }
 `;

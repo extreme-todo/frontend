@@ -74,7 +74,7 @@ export const usersApi = {
     localStorage.removeItem('extremeToken');
   },
   async withdrawal() {
-    await baseApi.post('users/revoke');
+    await baseApi.delete('users/revoke');
   },
 };
 // export const todosApi: TodoModuleType = {
