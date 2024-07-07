@@ -3,7 +3,7 @@ import LoginEvent from './LoginEvent';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
-import { ISettings } from './interfaces';
+import { ICategory, IRanking, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
 import { TodoModuleType } from './todoModule';
 
@@ -86,7 +86,8 @@ export const todosApi = {
     return baseApi.get('timer/progress');
   },
   getCategories: async () => {
-    return baseApi.get('categories');
+    const categories: ICategory[] = await baseApi.get('categories');
+    return categories;
   },
   async resetTodos() {
     await baseApi.delete('todos/reset');
@@ -171,7 +172,10 @@ export const timerApi = {
 export const rankingApi = {
   _route: 'ranking',
   getRanking: async (categoryName: string) => {
-    return baseApi.get(`${rankingApi._route}?category=${categoryName}`);
+    const ranking: IRanking = await baseApi.get(
+      `${rankingApi._route}?category=${categoryName}`,
+    );
+    return ranking;
   },
   resetRanking: async () => {
     return baseApi.delete(`${rankingApi._route}/reset`);

@@ -35,7 +35,7 @@ function Ranking({
 
   const selectCategory = (category: ICategory) => {
     setSelectedCategory(category);
-    fetchRanking(category.name).then((res) => setRanking(res));
+    fetchRanking(category?.name).then((res) => setRanking(res));
   };
 
   useEffect(() => {
@@ -76,7 +76,7 @@ function Ranking({
                   shadow: 'button_shadow',
                 }}
               >
-                {selectedCategory?.name ?? '카테고리'}
+                {(selectedCategory && selectedCategory?.name) ?? '카테고리'}
               </RankingTexts.Tag>
               <RankingTexts.Typo fontSize={'h3'}>에</RankingTexts.Typo>
             </div>
@@ -117,7 +117,7 @@ function Ranking({
             padding="1.5rem"
             style={{ display: 'block', boxSizing: 'border-box' }}
           >
-            {ranking?.group.length ? (
+            {ranking && ranking.group && ranking?.group.length ? (
               <RankingChart
                 options={Object.keys(ranking.group[0])}
                 series={Object.values(ranking.group[0])}

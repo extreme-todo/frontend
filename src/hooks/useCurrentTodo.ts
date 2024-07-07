@@ -15,7 +15,7 @@ const useCurrentTodo = () => {
     staleTime: 1000 * 60 * 20,
   });
 
-  const quertClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   async function doTodoMutateHandler({
     id,
@@ -28,29 +28,20 @@ const useCurrentTodo = () => {
   }
 
   const { mutate: doTodoMutate } = useMutation(doTodoMutateHandler, {
-    onSuccess: () => {
-      quertClient.invalidateQueries({ queryKey: ['todos'] });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
 
   useEffect(() => {
-    const checkLocalStorage = () => {
-      const localTodo = localStorage.getItem(localKey);
-      if (todos?.size === 0) {
-        setCurrentTodo(undefined);
-      } else if (localTodo != null) {
-        setCurrentTodo(JSON.parse(localTodo) as TodoResponseDto);
-      } else {
-        const nextTodo = getNextTodo(todos);
-        if (nextTodo) {
-          setCurrentTodo(nextTodo);
-          localStorage.setItem(localKey, JSON.stringify(nextTodo));
-        } else {
-          setCurrentTodo(undefined);
-        }
-      }
-    };
-    checkLocalStorage();
+    const nextTodo = getNextTodo();
+    if (nextTodo) {
+      setCurrentTodo(nextTodo);
+      localStorage.setItem(localKey, JSON.stringify(nextTodo));
+    } else {
+      setCurrentTodo(undefined);
+    }
+    // TODO : 추후 오프라인일 경우 indexed db에서 현재 투두를 가져와야 할 듯
   }, [todos]);
 
   useEffect(() => {
@@ -68,17 +59,17 @@ const useCurrentTodo = () => {
   const doTodo = () => {
     if (currentTodo)
       doTodoMutate({ id: currentTodo.id, focusTime: focusedOnTodo });
-    getNextTodo(todos);
+    getNextTodo();
     timerApi.addTotalFocusTime(focusedOnTodo / 60000);
     setFocusedOnTodo(0);
   };
 
-  const getNextTodo = (
-    todos: Map<string, TodoEntity[]> | undefined,
-  ): TodoEntity | undefined => {
+  const getNextTodo = (): TodoEntity | undefined => {
     if (todos) {
       const todayTodos: TodoEntity[] = todos.values().next()
         .value as TodoEntity[];
+      console.log(todayTodos);
+
       if (
         todayTodos != null &&
         getDateInFormat(new Date(todayTodos[0].date)) ===
