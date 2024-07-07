@@ -19,8 +19,14 @@ import { AddTodoDto, ETIndexed } from '../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
+import { AxiosError } from 'axios';
 
 const AddTodo = () => {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
+  const [tomato, setTomato] = useState('1');
+
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
@@ -28,20 +34,21 @@ const AddTodo = () => {
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
+      setTitle('');
+      setCategory('');
+      setCategoryArray([]);
+      setTomato('1');
     },
-    onError(error) {
+    onError(error: AxiosError) {
       console.debug('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
+      const errorString = '에러 발생 ' + error.code + ' ' + error.message;
+      alert(errorString);
     },
   });
 
   const {
     settings: { focusStep },
   } = usePomodoroValue();
-
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
-  const [tomato, setTomato] = useState('1');
 
   /* React Day Picker State and Ref */
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
