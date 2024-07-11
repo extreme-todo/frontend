@@ -67,11 +67,6 @@ export const usersApi = {
     );
     return data;
   },
-  logout(): void {
-    localStorage.removeItem('extremeEmail');
-    window.dispatchEvent(LOGINEVENT.getEvent());
-    localStorage.removeItem('extremeToken');
-  },
   async withdrawal() {
     await baseApi.delete('users/revoke');
   },
