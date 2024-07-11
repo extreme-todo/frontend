@@ -17,8 +17,7 @@ interface AxiosCustomRequest extends AxiosRequestConfig {
 }
 
 const baseApi = axios.create({
-  // TODO : 배포 시 수정할 것
-  baseURL: 'https://' + SERVER_URL + '/api', // 로컬에서는 http로 해야 됨!
+  baseURL: SERVER_URL + '/api',
   headers: {
     'content-type': 'application/json;charset=UTF-8',
     accept: 'application/json',
