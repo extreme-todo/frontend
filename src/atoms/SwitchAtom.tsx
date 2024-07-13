@@ -1,6 +1,4 @@
 import TypoAtom from './TypoAtom';
-
-import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 
 interface ISwitchAtomProps {
@@ -11,7 +9,7 @@ interface ISwitchAtomProps {
 function SwitchAtom({ value, setValue }: ISwitchAtomProps) {
   return (
     <SwitchContainter value={value} onClick={setValue}>
-      <Switch layout>
+      <Switch value={value}>
         <TypoAtom fontColor={'titleColor'} fontSize={'tag'}>
           {/* TODO : string을 외부에서 주입받을 수 있도록 하기 -> 확장성이 더 개선되고 아톰이라는 말에 더 어울림 */}
           {value ? `ON` : `OFF`}
@@ -24,14 +22,19 @@ function SwitchAtom({ value, setValue }: ISwitchAtomProps) {
 export default SwitchAtom;
 
 // TODO : 색 피그마에 맞게 수정하기
-const Switch = styled(motion.div)`
+const Switch = styled.div<{ value: boolean }>`
   width: 4.074375rem;
   height: 2.5rem;
   border-radius: 2.5rem;
   display: flex;
-  justify-content: center;
+  justify-content: ${({ value }) => (value ? 'flex-start' : 'flex-end')};
   align-items: center;
   background-color: ${({ theme: { colors } }) => colors.white};
+
+  & > span {
+    width: 100%;
+    text-align: center;
+  }
 `;
 
 const SwitchContainter = styled.div<Partial<ISwitchAtomProps>>`
