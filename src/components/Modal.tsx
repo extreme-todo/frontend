@@ -49,28 +49,26 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
   }, []);
 
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <ModalBackground>
-          <ModalContainer>
-            <HeaderContainer>
-              <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
-                {title}
-              </TypoAtom>
+    <QueryClientProvider client={queryClient}>
+      <ModalBackground>
+        <ModalContainer>
+          <HeaderContainer>
+            <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
+              {title}
+            </TypoAtom>
 
-              <IconAtom
-                onClick={handleClose}
-                size={3.6}
-                backgroundColor={'whiteWine'}
-              >
-                <img alt="close" src={'icons/close.svg'}></img>
-              </IconAtom>
-            </HeaderContainer>
-            {children}
-          </ModalContainer>
-        </ModalBackground>
-      </QueryClientProvider>
-    </>
+            <IconAtom
+              onClick={handleClose}
+              size={3.6}
+              backgroundColor={'whiteWine'}
+            >
+              <img alt="close" src={'icons/close.svg'}></img>
+            </IconAtom>
+          </HeaderContainer>
+          {children}
+        </ModalContainer>
+      </ModalBackground>
+    </QueryClientProvider>
   );
 };
 
@@ -103,14 +101,23 @@ const ModalContainer = styled(CardAtom)`
       rgba(255, 255, 255, 0) 55.21%
     ), ${colors.bgYellow}`};
 
-  /* 
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  z-index: 99; 
-  */
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
+    border-radius: 30px 30px 0px 0px;
+    width: 70vw;
+    position: fixed;
+    /* 모바일 애니메이션 */
+    animation: renderAnimation 0.4s forwards;
+    @keyframes renderAnimation {
+      0% {
+        bottom: -100vh;
+      }
+      100% {
+        bottom: 0;
+        position: fixed;
+      }
+    }
+  }
 `;
 
 const HeaderContainer = styled.div`
