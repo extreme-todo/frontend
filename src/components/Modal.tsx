@@ -20,10 +20,31 @@ const queryClient = new QueryClient({
 
 const Modal = ({ title, children, handleClose }: IModalProps) => {
   useEffect(() => {
-    const El = document.getElementById('main-container') as HTMLDivElement;
-    El.style.overflowY = 'hidden';
+    const preventDefault = (e: Event) => {
+      e.preventDefault();
+    };
+
+    const preventArrowKeys = (e: KeyboardEvent) => {
+      if (
+        [
+          'ArrowUp',
+          'ArrowDown',
+          'Space',
+          'PageDown',
+          'PageUp',
+          'End',
+          'Home',
+        ].includes(e.code)
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('wheel', preventDefault, { passive: false });
+    window.addEventListener('keydown', preventArrowKeys, { passive: false });
     return () => {
-      El.style.overflowY = 'auto';
+      window.removeEventListener('wheel', preventDefault);
+      window.removeEventListener('keydown', preventArrowKeys);
     };
   }, []);
 
@@ -99,5 +120,3 @@ const HeaderContainer = styled.div`
   align-items: center;
   margin-bottom: 4rem;
 `;
-
-const FooterContainer = styled.div``;
