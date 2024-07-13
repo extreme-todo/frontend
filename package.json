@@ -18,7 +18,6 @@
     "apexcharts": "^3.37.2",
     "axios": "^0.27.2",
     "focus-trap-react": "^10.2.3",
-    "framer-motion": "^10.3.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-beautiful-dnd": "^13.1.1",
