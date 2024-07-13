@@ -32,31 +32,29 @@ const Welcome = () => {
   };
 
   return (
-    <>
-      <WelcomeContainer ref={welcomeRef}>
-        <TypoAtom fontSize={'h1'}>EXTREME TODO</TypoAtom>
-        {isLogin ? (
-          <BtnContainer>
-            <BtnAtom handleOnClick={handleLogoutBtn}>
-              <TypoAtom fontSize="h5">SIGN OUT</TypoAtom>
-            </BtnAtom>
-            <div></div>
-            <BtnAtom handleOnClick={handleSetting}>
-              <TypoAtom fontSize="h5">SETTING</TypoAtom>
-            </BtnAtom>
-            {isModal &&
-              createPortal(
-                <Modal title="설정" handleClose={handleClose}>
-                  <Setting />
-                </Modal>,
-                welcomeRef.current as HTMLDivElement,
-              )}
-          </BtnContainer>
-        ) : (
-          <GoogleLoginAtom onClick={handleLoginBtn} />
-        )}
-      </WelcomeContainer>
-    </>
+    <WelcomeContainer ref={welcomeRef}>
+      <TypoAtom fontSize={'h1'}>EXTREME TODO</TypoAtom>
+      {isLogin ? (
+        <BtnContainer>
+          <BtnAtom handleOnClick={handleLogoutBtn}>
+            <TypoAtom fontSize="h5">SIGN OUT</TypoAtom>
+          </BtnAtom>
+          <div></div>
+          <BtnAtom handleOnClick={handleSetting}>
+            <TypoAtom fontSize="h5">SETTING</TypoAtom>
+          </BtnAtom>
+          {isModal &&
+            createPortal(
+              <Modal title="설정" handleClose={handleClose}>
+                <Setting />
+              </Modal>,
+              welcomeRef.current as HTMLDivElement,
+            )}
+        </BtnContainer>
+      ) : (
+        <GoogleLoginAtom onClick={handleLoginBtn} />
+      )}
+    </WelcomeContainer>
   );
 };
 
@@ -69,10 +67,10 @@ const WelcomeContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  row-gap: 1.5rem;
 
   > span:first-of-type {
     font-style: normal;
-    line-height: 119px;
     display: flex;
     align-items: center;
     text-align: center;
