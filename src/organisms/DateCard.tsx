@@ -1,5 +1,5 @@
 import { TypoAtom } from '../atoms';
-import { TodoCard } from '../molecules';
+import { TodoCard } from '../components';
 
 import { useDraggableInPortal } from '../hooks';
 import { TodoEntity } from '../DB/indexedAction';

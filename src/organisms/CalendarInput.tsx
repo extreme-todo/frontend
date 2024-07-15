@@ -1,10 +1,6 @@
 import { useRef, useState } from 'react';
-import {
-  InputAtom,
-  DayPickerUI,
-  type IDayPickerUIProps,
-  TypoAtom,
-} from '../atoms';
+import { InputAtom, TypoAtom } from '../atoms';
+import { DayPickerUI, type IDayPickerUIProps } from '../molecules';
 
 import { getDateInFormat } from '../shared/timeUtils';
 

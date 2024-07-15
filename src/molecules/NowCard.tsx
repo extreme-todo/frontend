@@ -1,7 +1,7 @@
 import { TagAtom, TypoAtom } from '../atoms';
 
 import styled from '@emotion/styled';
-import { CategoryContainer } from './TodoCard/content/TodoUI';
+import { CategoryContainer } from '../components/TodoCard/content/TodoUI';
 
 import { TodoEntity } from '../DB/indexedAction';
 import { focusStep } from '../hooks/usePomodoro';
