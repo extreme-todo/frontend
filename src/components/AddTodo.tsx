@@ -3,8 +3,9 @@ import { KeyboardEventHandler, ReactEventHandler, useState } from 'react';
 
 /* atomics */
 import { IconAtom, InputAtom, TypoAtom } from '../atoms';
-import { CalendarInput, CategoryInput } from '../molecules';
-import { EditWrapper } from '../molecules/TodoCard/content/EditUI';
+import { CategoryInput } from '../molecules';
+import { CalendarInput } from '../organisms';
+import { EditWrapper } from './TodoCard/content/EditUI';
 
 /* custom hooks */
 import { usePomodoroValue } from '../hooks';

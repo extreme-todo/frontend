@@ -1,7 +1,8 @@
 import { ReactEventHandler, useState } from 'react';
 
 import { IconAtom, InputAtom, TypoAtom } from '../../../atoms';
-import { CalendarInput, CategoryInput } from '../..';
+import { CategoryInput } from '../../../molecules';
+import { CalendarInput } from '../../../organisms';
 
 import { UpdateTodoDto } from '../../../DB/indexed';
 import { TodoEntity } from '../../../DB/indexedAction';

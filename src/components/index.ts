@@ -10,3 +10,4 @@ export {
   default as PomodoroTimeSetting,
   TimeSetter,
 } from './PomodoroTimeSetting';
+export { default as TodoCard } from './TodoCard';
