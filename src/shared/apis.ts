@@ -5,7 +5,7 @@ import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 import { ICategory, IRanking, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
-import { TodoModuleType } from './todoModule';
+import { TodoModuleType } from './TodoModule';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
