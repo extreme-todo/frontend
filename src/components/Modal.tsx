@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
 import { CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface IModalProps extends IChildProps {
@@ -19,11 +19,23 @@ const queryClient = new QueryClient({
 });
 
 const Modal = ({ title, children, handleClose }: IModalProps) => {
-  useEffect(() => {
-    const preventDefault = (e: Event) => {
-      e.preventDefault();
-    };
+  const [isRender, setIsRender] = useState(true);
 
+  const handleCloseModal = () => {
+    setIsRender(false);
+    setTimeout(() => {
+      handleClose();
+    }, 400); // 애니메이션 시간과 맞춤
+  };
+
+  useEffect(() => {
+    const El = document.getElementById('main-container') as HTMLDivElement;
+    El.style.overflowY = 'hidden';
+    return () => {
+      El.style.overflowY = 'auto';
+    };
+  });
+  useEffect(() => {
     const preventArrowKeys = (e: KeyboardEvent) => {
       if (
         [
@@ -40,10 +52,8 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
       }
     };
 
-    window.addEventListener('wheel', preventDefault, { passive: false });
     window.addEventListener('keydown', preventArrowKeys, { passive: false });
     return () => {
-      window.removeEventListener('wheel', preventDefault);
       window.removeEventListener('keydown', preventArrowKeys);
     };
   }, []);
@@ -58,7 +68,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
             </TypoAtom>
 
             <IconAtom
-              onClick={handleClose}
+              onClick={handleCloseModal}
               size={3.6}
               backgroundColor={'whiteWine'}
             >
