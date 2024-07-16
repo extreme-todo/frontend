@@ -269,7 +269,7 @@ const TodoList = () => {
         }}
       > */}
       {/* <CardAtom> */}
-      <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} />
+      {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
       <TodoListContainer>
         <NowCard
           currentTodo={
@@ -299,4 +299,9 @@ export default TodoList;
 const TodoListContainer = styled.div`
   width: 35.7275rem;
   overflow: scroll;
+
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
+    width: 110%;
+  }
 `;

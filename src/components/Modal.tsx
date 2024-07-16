@@ -103,8 +103,9 @@ const ModalContainer = styled(CardAtom)`
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
+    max-height: 60vh;
     border-radius: 30px 30px 0px 0px;
-    width: 70vw;
+    width: 80vw;
     position: fixed;
     /* 모바일 애니메이션 */
     animation: renderAnimation 0.4s forwards;
