@@ -79,18 +79,6 @@ export const usersApi = {
 };
 // export const todosApi: TodoModuleType = {
 export const todosApi = {
-  getRanking: async (category: string) => {
-    return baseApi.get('ranking', { params: { category } });
-  },
-  getRecords: async () => {
-    return baseApi.get('timer/progress');
-  },
-  getCategories: async () => {
-    const { data: categories }: AxiosResponse<ICategory[]> = await baseApi.get(
-      'categories',
-    );
-    return categories;
-  },
   async resetTodos() {
     await baseApi.delete('todos/reset');
   },
@@ -169,6 +157,9 @@ export const timerApi = {
   getProgress: async () => {
     return baseApi.get(`${timerApi._route}/progress`);
   },
+  getRecords: async () => {
+    return baseApi.get('timer/progress');
+  },
 };
 
 export const rankingApi = {
@@ -181,6 +172,15 @@ export const rankingApi = {
   },
   resetRanking: async () => {
     return baseApi.delete(`${rankingApi._route}/reset`);
+  },
+};
+
+export const categoryApi = {
+  getCategories: async () => {
+    const { data: categories }: AxiosResponse<ICategory[]> = await baseApi.get(
+      'categories',
+    );
+    return categories;
   },
 };
 
