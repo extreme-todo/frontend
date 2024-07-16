@@ -62,25 +62,18 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       Number(leftMs) < 0
     ) {
       setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
-      if (resetFlag === false) {
-        const resetOfflineTodos = [ETIndexed.getInstance().resetTodos()];
-        Promise.all(
-          isOnline
-            ? [
-                todosApi.resetTodos(),
-                rankingApi.resetRanking(),
-                timerApi.reset(),
-              ]
-            : resetOfflineTodos,
-        )
-          .then(() => {
-            setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
-          })
-          .catch(() => {
-            setLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
-          });
-        setResetFlag(true);
-      }
+      Promise.all(
+        isOnline
+          ? [todosApi.resetTodos(), rankingApi.resetRanking(), timerApi.reset()]
+          : [ETIndexed.getInstance().resetTodos()],
+      )
+        .then(() => {
+          setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
+        })
+        .catch(() => {
+          setLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
+        });
+      setResetFlag(true);
     }
     if (prevStatus.current != status.isResting) {
       setResetFlag(false);

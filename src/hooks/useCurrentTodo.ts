@@ -9,7 +9,6 @@ type TodoResponseDto = TodoEntity;
 const useCurrentTodo = () => {
   const [currentTodo, setCurrentTodo] = useState<TodoResponseDto>();
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
-  const localKey = 'currentTodo';
 
   const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
     staleTime: 1000 * 60 * 20,
@@ -37,20 +36,11 @@ const useCurrentTodo = () => {
     const nextTodo = getNextTodo();
     if (nextTodo) {
       setCurrentTodo(nextTodo);
-      localStorage.setItem(localKey, JSON.stringify(nextTodo));
     } else {
       setCurrentTodo(undefined);
     }
     // TODO : 추후 오프라인일 경우 indexed db에서 현재 투두를 가져와야 할 듯
   }, [todos]);
-
-  useEffect(() => {
-    if (currentTodo != null) {
-      localStorage.setItem(localKey, JSON.stringify(currentTodo));
-    } else {
-      localStorage.removeItem(localKey);
-    }
-  }, [currentTodo]);
 
   const updateFocus = (focusedTime: number) => {
     setFocusedOnTodo((prev) => prev + focusedTime);
