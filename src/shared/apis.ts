@@ -3,7 +3,7 @@ import LoginEvent from './LoginEvent';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
-import { ISettings } from './interfaces';
+import { ICategory, IRanking, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
 import { TodoModuleType } from './todoModule';
 
@@ -79,15 +79,6 @@ export const usersApi = {
 };
 // export const todosApi: TodoModuleType = {
 export const todosApi = {
-  getRanking: async (category: string) => {
-    return baseApi.get('ranking', { params: { category } });
-  },
-  getRecords: async () => {
-    return baseApi.get('timer/progress');
-  },
-  getCategories: async () => {
-    return baseApi.get('categories');
-  },
   async resetTodos() {
     await baseApi.delete('todos/reset');
   },
@@ -166,15 +157,30 @@ export const timerApi = {
   getProgress: async () => {
     return baseApi.get(`${timerApi._route}/progress`);
   },
+  getRecords: async () => {
+    return baseApi.get('timer/progress');
+  },
 };
 
 export const rankingApi = {
   _route: 'ranking',
   getRanking: async (categoryName: string) => {
-    return baseApi.get(`${rankingApi._route}?category=${categoryName}`);
+    const { data: ranking }: AxiosResponse<IRanking> = await baseApi.get(
+      `${rankingApi._route}?category=${categoryName}`,
+    );
+    return ranking;
   },
   resetRanking: async () => {
     return baseApi.delete(`${rankingApi._route}/reset`);
+  },
+};
+
+export const categoryApi = {
+  getCategories: async () => {
+    const { data: categories }: AxiosResponse<ICategory[]> = await baseApi.get(
+      'categories',
+    );
+    return categories;
   },
 };
 
