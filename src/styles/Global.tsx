@@ -218,6 +218,27 @@ const style = css`
 
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+
+    /* basic 16px 1280+ */
+    /* 노트북 & 테블릿 가로 (해상도 1024px ~ 1279px)*/
+    @media all and (min-width: 1024px) and (max-width: 1279px) {
+      font-size: 14px;
+    }
+
+    /* 테블릿 가로 (해상도 768px ~ 1023px)*/
+    @media all and (min-width: 768px) and (max-width: 1023px) {
+      font-size: 10px;
+    }
+
+    /* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px)*/
+    @media all and (min-width: 480px) and (max-width: 767px) {
+      font-size: 7px;
+    }
+
+    /* 모바일 세로 (해상도 ~ 479px)*/
+    @media all and (max-width: 479px) {
+      font-size: 7px;
+    }
   }
 `;
 
