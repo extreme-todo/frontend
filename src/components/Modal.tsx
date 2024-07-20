@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
 import { CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface IModalProps extends IChildProps {
@@ -27,7 +27,6 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
       handleClose();
     }, 400); // 애니메이션 시간과 맞춤
   };
-
   useEffect(() => {
     const El = document.getElementById('main-container') as HTMLDivElement;
     El.style.overflowY = 'hidden';
@@ -60,8 +59,8 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ModalBackground>
-        <ModalContainer>
+      <ModalBackground isRender={isRender}>
+        <ModalContainer isRender={isRender}>
           <HeaderContainer>
             <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
               {title}
@@ -85,7 +84,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
 export default Modal;
 export type { IModalProps };
 
-const ModalBackground = styled.div`
+const ModalBackground = styled.div<{ isRender: boolean }>`
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.1);
@@ -95,10 +94,34 @@ const ModalBackground = styled.div`
   position: absolute;
   top: 0;
   z-index: 99;
+
+  animation: ${({ isRender }) =>
+    isRender
+      ? 'renderAnimation 0.4s forwards'
+      : 'closeAnimation 0.4s forwards'};
+
+  @keyframes renderAnimation {
+    0% {
+      background-color: rgba(0, 0, 0, 0);
+    }
+    100% {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  @keyframes closeAnimation {
+    0% {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    100% {
+      background-color: rgba(0, 0, 0, 0);
+    }
+  }
 `;
 
-const ModalContainer = styled(CardAtom)`
+const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
   padding: 2.324375rem 3.2925rem;
+  min-width: 120px;
 
   overflow: visible;
 
@@ -111,6 +134,29 @@ const ModalContainer = styled(CardAtom)`
       rgba(255, 255, 255, 0) 55.21%
     ), ${colors.bgYellow}`};
 
+  animation: ${({ isRender }) =>
+    isRender
+      ? 'renderAnimation 0.4s forwards'
+      : 'closeAnimation 0.4s forwards'};
+
+  @keyframes renderAnimation {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes closeAnimation {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
     max-height: 60vh;
@@ -118,14 +164,21 @@ const ModalContainer = styled(CardAtom)`
     width: 80vw;
     position: fixed;
     /* 모바일 애니메이션 */
-    animation: renderAnimation 0.4s forwards;
     @keyframes renderAnimation {
       0% {
         bottom: -100vh;
       }
       100% {
         bottom: 0;
-        position: fixed;
+      }
+    }
+
+    @keyframes closeAnimation {
+      0% {
+        bottom: 0;
+      }
+      100% {
+        bottom: -100vh;
       }
     }
   }
