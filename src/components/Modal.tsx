@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
 const Modal = ({ title, children, handleClose }: IModalProps) => {
   const [isRender, setIsRender] = useState(true);
 
-  const closeModal = () => {
+  const handleCloseModal = () => {
     setIsRender(false);
     setTimeout(() => {
       handleClose();
@@ -54,6 +54,28 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
       window.removeEventListener('wheel', preventDefault);
       window.removeEventListener('keydown', preventArrowKeys);
     };
+  });
+  useEffect(() => {
+    const preventArrowKeys = (e: KeyboardEvent) => {
+      if (
+        [
+          'ArrowUp',
+          'ArrowDown',
+          'Space',
+          'PageDown',
+          'PageUp',
+          'End',
+          'Home',
+        ].includes(e.code)
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('keydown', preventArrowKeys, { passive: false });
+    return () => {
+      window.removeEventListener('keydown', preventArrowKeys);
+    };
   }, []);
 
   return (
@@ -66,7 +88,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
             </TypoAtom>
 
             <IconAtom
-              onClick={closeModal}
+              onClick={handleCloseModal}
               size={3.6}
               backgroundColor={'whiteWine'}
             >
@@ -158,8 +180,9 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
+    max-height: 60vh;
     border-radius: 30px 30px 0px 0px;
-    width: 70vw;
+    width: 80vw;
     position: fixed;
     /* 모바일 애니메이션 */
     @keyframes renderAnimation {

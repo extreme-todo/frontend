@@ -228,16 +228,20 @@ const style = css`
     /* 테블릿 가로 (해상도 768px ~ 1023px)*/
     @media all and (min-width: 768px) and (max-width: 1023px) {
       font-size: 10px;
+      img {
+        width: 13px;
+        height: 13px;
+      }
     }
 
     /* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px)*/
-    @media all and (min-width: 480px) and (max-width: 767px) {
-      font-size: 7px;
-    }
-
     /* 모바일 세로 (해상도 ~ 479px)*/
-    @media all and (max-width: 479px) {
+    @media all and (max-width: 767px) {
       font-size: 7px;
+      img {
+        width: 10px;
+        height: 10px;
+      }
     }
   }
 `;

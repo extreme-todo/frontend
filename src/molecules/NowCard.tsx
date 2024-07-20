@@ -31,7 +31,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
   const time = timeH() + timeM();
 
   return (
-    <>
+    <NowCardWrapper>
       <TypoAtom fontColor="whiteWine" fontSize="body_bold">
         NOW
       </TypoAtom>
@@ -63,11 +63,18 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
           ))}
         </CurrentTodoInfoContainer>
       </NowCardContainer>
-    </>
+    </NowCardWrapper>
   );
 };
 
 export default NowCard;
+
+const NowCardWrapper = styled.div`
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
+    display: none;
+  }
+`;
 
 const NowCardContainer = styled.div`
   display: flex;
