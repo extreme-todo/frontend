@@ -33,6 +33,12 @@ export const designTheme: Theme = {
     tooltip: { size: '1.25rem', weight: 300 },
     switch: { size: '1.161875rem', weight: 700 },
   },
+  responsiveDevice: {
+    desktop: `all and (min-width: 1024px) and (max-width: 1279px)`,
+    tablet_h: `all and (min-width: 768px) and (max-width: 1023px)`,
+    tablet_v: `all and (min-width: 480px) and (max-width: 767px)`,
+    mobile: `all and (max-width: 479px)`,
+  },
 } as const;
 
 // #e55039

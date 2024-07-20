@@ -17,14 +17,14 @@ function Clock() {
 
   return (
     <ClockContainer>
-      <TypoAtom fontSize="sub" rainbow={true}>
+      <TypoAtom fontSize="sub" rainbow={true} className="clock-date">
         {currentTime.toLocaleDateString('ko-KR', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
         })}
       </TypoAtom>
-      <TypoAtom fontSize="h1" rainbow={true}>
+      <TypoAtom fontSize="h1" rainbow={true} className="clock-time">
         {currentTime.getHours().toString().padStart(2, '0')}:
         {currentTime.getMinutes().toString().padStart(2, '0')}
       </TypoAtom>
@@ -37,6 +37,17 @@ const ClockContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  @media ${({ theme }) => theme.responsiveDevice.mobile},
+    ${({ theme }) => theme.responsiveDevice.tablet_v} {
+    position: fixed;
+    top: 4rem;
+    .clock-date {
+      font-size: 4rem;
+    }
+    .clock-time {
+      font-size: 12rem;
+    }
+  }
 `;
 
 export default Clock;
