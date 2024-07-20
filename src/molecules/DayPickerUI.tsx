@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import FocusTrap from 'focus-trap-react';
 import { DayPicker, SelectSingleEventHandler } from 'react-day-picker';
-import { usePopper } from 'react-popper';
+import { PopperAtom } from '../atoms';
 
 interface IDayPickerUIProps {
   showPopper: boolean;
@@ -21,9 +21,6 @@ const DayPickerUI = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
-  const popper = usePopper(popperRef.current, popperElement, {
-    placement: 'bottom-start',
-  });
 
   return (
     <>
@@ -37,14 +34,15 @@ const DayPickerUI = ({
             onDeactivate: handleClosePopper,
           }}
         >
-          <div
+          <PopperAtom
+            popperElement={popperElement}
+            setPopperElement={setPopperElement}
+            popperRef={popperRef}
+            placement={'bottom-start'}
             tabIndex={-1}
-            style={popper.styles.popper}
             className="dialog-sheet"
-            {...popper.attributes.popper}
-            ref={setPopperElement}
             role="dialog"
-            aria-label="Daypicker calendar"
+            ariaLabel="Daypicker calendar"
           >
             <DayPicker
               initialFocus={showPopper}
@@ -56,7 +54,7 @@ const DayPickerUI = ({
               disabled={{ before: new Date() }}
               required
             />
-          </div>
+          </PopperAtom>
         </FocusTrap>
       )}
     </>

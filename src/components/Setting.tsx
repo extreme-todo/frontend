@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { SwitchAtom, TagAtom, TypoAtom } from '../atoms';
+import { PopperAtom, SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
 import {
@@ -22,15 +22,18 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 // TODO : Compound 적용해보자
 const Setting = () => {
   const { isExtreme, setMode } = useExtremeMode();
+
   const [isOver, setIsOver] = useState<boolean>(false);
   const [settings, setSettings] = useState<ISettings>({
     colorMode: 'auto',
     extremeMode: isExtreme,
   });
+  const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
+
+  const popperRef = useRef<HTMLDivElement>(null);
 
   const handleReset = async () => {
     // if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
-    console.log('handleReset 작동');
     await Promise.all([
       todosApi.resetTodos(),
       rankingApi.resetRanking(),
@@ -40,7 +43,6 @@ const Setting = () => {
 
   const handleWithdrawal = async () => {
     // if (!window.confirm('정말로 회원 탈퇴하시겠습니까?')) return;
-    console.log('handleWithdrawal 작동');
     await usersApi.withdrawal();
   };
 
@@ -105,24 +107,31 @@ const Setting = () => {
       <SettingContainer>
         <ExtremeContainer>
           <TypoAtom fontSize={'h4'}>익스트림 모드</TypoAtom>
-          <TooltipWrapper>
-            {isOver ? (
+          {isOver ? (
+            <PopperAtom
+              popperElement={popperEl}
+              setPopperElement={setPopperEl}
+              popperRef={popperRef}
+              placement={'top'}
+              offset={[0, 15]}
+            >
               <Tooltip>
                 <TypoAtom fontSize={'tooltip'}>
                   쉬는 시간을 초과할 시 작성했던 todo와 일간, 주간, 월간 기록이
                   모두 삭제됩니다!
                 </TypoAtom>
               </Tooltip>
-            ) : null}
-            <IconAtom
-              onMouseOver={tooltipMouseOver}
-              onMouseLeave={tooltipMouseLeave}
-              backgroundColor={'whiteWine'}
-              size={1.5625}
-            >
-              <img alt="tooltip" src="icons/tooltip.svg"></img>
-            </IconAtom>
-          </TooltipWrapper>
+            </PopperAtom>
+          ) : null}
+          <IconAtom
+            ref={popperRef}
+            onMouseOver={tooltipMouseOver}
+            onMouseLeave={tooltipMouseLeave}
+            backgroundColor={'whiteWine'}
+            size={1.5625}
+          >
+            <img alt="tooltip" src="icons/tooltip.svg"></img>
+          </IconAtom>
           {/* TODO : 전역 객체로 처리해주자. 익스트림 모드는 할 일이 끝났을 때만 변경 가능하다 */}
           <SwitchAtom setValue={handleSwitch} value={isExtreme} />
         </ExtremeContainer>
@@ -157,11 +166,11 @@ const ExtremeContainer = styled.div`
   display: flex;
   align-items: center;
 
-  > :nth-of-type(2) {
-    margin-left: 0.3125rem;
+  & > :first-child {
+    margin-right: 0.3125rem;
   }
 
-  > :last-child {
+  & > :last-child {
     margin-left: 1.8125rem;
   }
 `;
@@ -171,15 +180,10 @@ const Tooltip = styled.div`
   padding: 8px;
   border-radius: 8px;
 
-  position: absolute;
   width: 20rem;
   white-space: normal;
   line-height: 1.3;
-
   z-index: 22;
-  top: -320%;
-  left: 50%;
-  transform: translateX(-50%);
 
   &:after {
     content: '';
@@ -191,8 +195,4 @@ const Tooltip = styled.div`
     border-style: solid;
     border-color: white transparent transparent transparent;
   }
-`;
-
-const TooltipWrapper = styled.div`
-  position: relative;
 `;

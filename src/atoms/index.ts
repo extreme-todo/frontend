@@ -1,4 +1,3 @@
-export { default as GoogleLoginAtom } from './GoogleLoginAtom';
 export { default as TypoAtom } from './TypoAtom';
 export { default as BtnAtom } from './BtnAtom';
 export { default as SwitchAtom } from './SwitchAtom';
@@ -8,4 +7,4 @@ export { default as ProgressButtonAtom } from './ProgressButtonAtom';
 export { default as IconAtom } from './IconAtom';
 export { default as Overlay } from './Overlay';
 export { default as InputAtom } from './InputAtom';
-export { default as DayPickerUI, type IDayPickerUIProps } from './DayPickerUI';
+export { default as PopperAtom } from './PopperAtom';

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { BtnAtom, GoogleLoginAtom, TypoAtom } from '../atoms';
+import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
 import Modal from './Modal';
 import Setting from './Setting';
 
@@ -52,7 +52,12 @@ const Welcome = () => {
             )}
         </BtnContainer>
       ) : (
-        <GoogleLoginAtom onClick={handleLoginBtn} />
+        <IconAtom onClick={handleLoginBtn}>
+          <img
+            src="btn_google_signin_dark_pressed_web@2x.png"
+            alt="google login button"
+          />
+        </IconAtom>
       )}
     </WelcomeContainer>
   );

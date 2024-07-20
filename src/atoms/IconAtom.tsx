@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { designTheme } from '../styles/theme';
-import { ReactElement } from 'react';
+import { forwardRef, ReactElement } from 'react';
 
 interface IIconAtomProps
   extends Pick<
@@ -12,18 +12,23 @@ interface IIconAtomProps
   backgroundColor?: keyof typeof designTheme.colors | 'transparent';
 }
 
-const IconAtom = ({
-  size = 4.455,
-  children,
-  backgroundColor = 'transparent',
-  ...props
-}: IIconAtomProps) => {
-  return (
-    <IconContainer backgroundColor={backgroundColor} size={size} {...props}>
-      {children}
-    </IconContainer>
-  );
-};
+const IconAtom = forwardRef<HTMLDivElement, IIconAtomProps>(
+  (
+    { size = 4.455, children, backgroundColor = 'transparent', ...props },
+    ref,
+  ) => {
+    return (
+      <IconContainer
+        backgroundColor={backgroundColor}
+        size={size}
+        {...props}
+        ref={ref}
+      >
+        {children}
+      </IconContainer>
+    );
+  },
+);
 
 export default IconAtom;
 
