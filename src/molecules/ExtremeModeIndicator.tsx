@@ -25,7 +25,9 @@ function ExtremeModeIndicator() {
   return (
     <ExtremeModeContainer>
       {isExtreme && (
-        <TypoAtom fontSize="h5">{status.isResting && leftTime}</TypoAtom>
+        <TypoAtom fontSize="h5" className="extreme-status">
+          {status.isResting && leftTime}
+        </TypoAtom>
       )}
       {isExtreme ? (
         <img src="/icons/extreme-pink.svg" onClick={toggleExtremeMode}></img>
@@ -49,5 +51,17 @@ const ExtremeModeContainer = styled.div`
   img {
     width: 3.4375rem;
     height: 3.4375rem;
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    margin-right: 8rem;
+    img {
+      width: 8rem;
+      height: 8rem;
+    }
+    .extreme-status {
+      width: fit-content;
+      word-break: break-all;
+    }
   }
 `;

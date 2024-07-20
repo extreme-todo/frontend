@@ -39,7 +39,7 @@ function CurrentTodo({
 
   return (
     <CurrentTodoContainer>
-      <TypoAtom fontSize={'h4'} fontColor={'titleColor'}>
+      <TypoAtom fontSize={'h4'} fontColor={'titleColor'} className="title">
         지금 할 일
       </TypoAtom>
       <div className="todo-title">
@@ -136,6 +136,65 @@ const CurrentTodoContainer = styled.div`
       width: 6.973rem;
       height: 6.973rem;
       flex-shrink: 0;
+      background-size: contain;
+    }
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    height: 100%;
+    position: relative;
+    .title {
+      font-size: 6rem;
+      font-weight: 600;
+    }
+    .todo-title {
+      overflow: auto;
+      padding-right: 16rem;
+      box-sizing: border-box;
+      max-height: 50%;
+      span {
+        vertical-align: middle;
+        font-size: 8rem;
+        white-space: normal;
+        overflow: initial;
+      }
+    }
+    .categories {
+      margin: 4rem 0 4rem 0;
+      span {
+        font-size: 4rem;
+        border-radius: 6rem;
+        padding: 1rem 3rem 1rem 3rem;
+      }
+    }
+    .todo-duration {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2rem;
+      span {
+        font-size: 4rem;
+      }
+      div > span {
+        font-size: 3rem;
+        border-radius: 6rem;
+        padding: 0.5rem 3rem 0.5rem 3rem;
+      }
+    }
+    .progress-and-button {
+      position: absolute;
+      height: calc(100% - 12rem);
+      width: 6rem;
+      top: 0;
+      right: 0;
+      flex-direction: row-reverse;
+      box-sizing: border-box;
+      .do-todo {
+        position: absolute;
+        right: 8rem;
+        background-position: center;
+      }
     }
   }
 `;
@@ -166,5 +225,20 @@ const TodoProgressBar = styled.div<{ progress: number }>`
     font-weight: 700;
     padding-right: 1.4rem;
     transition: all 0.2s ease-in-out;
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 100%;
+    height: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem 0 1rem 0;
+    .progress {
+      height: ${({ progress }) => `${progress}%`};
+      width: 70%;
+      overflow: hidden;
+      padding: 0;
+      color: transparent;
+    }
   }
 `;

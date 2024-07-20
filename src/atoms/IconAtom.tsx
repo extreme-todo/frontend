@@ -10,6 +10,7 @@ interface IIconAtomProps
   children: ReactElement<HTMLImageElement>;
   size?: number;
   backgroundColor?: keyof typeof designTheme.colors | 'transparent';
+  className?: string;
 }
 
 const IconAtom = forwardRef<HTMLDivElement, IIconAtomProps>(

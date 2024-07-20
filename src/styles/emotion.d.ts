@@ -38,5 +38,11 @@ declare module '@emotion/react' {
       tooltip: fontSize;
       switch: fontSize;
     };
+    responsiveDevice: {
+      desktop: string;
+      tablet_h: string;
+      tablet_v: string;
+      mobile: string;
+    };
   }
 }

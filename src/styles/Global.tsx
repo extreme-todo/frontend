@@ -235,6 +235,7 @@ const style = css`
     }
 
     /* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px)*/
+    /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 767px) {
       font-size: 7px;
       img {
