@@ -35,6 +35,7 @@ const AddTodo = () => {
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
+      queryClient.invalidateQueries({ queryKey: ['category'] });
       setTitle('');
       setCategory('');
       setCategoryArray([]);
