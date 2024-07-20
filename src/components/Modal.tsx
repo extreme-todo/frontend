@@ -21,17 +21,20 @@ const queryClient = new QueryClient({
 const Modal = ({ title, children, handleClose }: IModalProps) => {
   const [isRender, setIsRender] = useState(true);
 
-  const closeModal = () => {
+  const handleCloseModal = () => {
     setIsRender(false);
     setTimeout(() => {
       handleClose();
     }, 400); // 애니메이션 시간과 맞춤
   };
   useEffect(() => {
-    const preventDefault = (e: Event) => {
-      e.preventDefault();
+    const El = document.getElementById('main-container') as HTMLDivElement;
+    El.style.overflowY = 'hidden';
+    return () => {
+      El.style.overflowY = 'auto';
     };
-
+  });
+  useEffect(() => {
     const preventArrowKeys = (e: KeyboardEvent) => {
       if (
         [
@@ -48,10 +51,8 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
       }
     };
 
-    window.addEventListener('wheel', preventDefault, { passive: false });
     window.addEventListener('keydown', preventArrowKeys, { passive: false });
     return () => {
-      window.removeEventListener('wheel', preventDefault);
       window.removeEventListener('keydown', preventArrowKeys);
     };
   }, []);
@@ -66,7 +67,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
             </TypoAtom>
 
             <IconAtom
-              onClick={closeModal}
+              onClick={handleCloseModal}
               size={3.6}
               backgroundColor={'whiteWine'}
             >
@@ -158,8 +159,9 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
+    max-height: 60vh;
     border-radius: 30px 30px 0px 0px;
-    width: 70vw;
+    width: 80vw;
     position: fixed;
     /* 모바일 애니메이션 */
     @keyframes renderAnimation {
