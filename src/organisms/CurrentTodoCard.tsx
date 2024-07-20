@@ -203,7 +203,7 @@ const CurrentTodoWrapper = styled.div`
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
     height: 100%;
-    .overlay {
+    .resting {
       gap: 2rem;
       > span {
         font-size: 12rem;
@@ -213,6 +213,25 @@ const CurrentTodoWrapper = styled.div`
           font-size: 6rem;
           border-radius: 6rem;
           padding: 1rem 4rem;
+        }
+      }
+    }
+    .no-todo {
+      padding: 2rem;
+      box-sizing: border-box;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+      > span {
+        font-size: 4rem;
+        text-align: left;
+      }
+      .create-todo-button {
+        span {
+          font-size: 3rem;
+          margin-top: 2rem;
+          border-radius: 6rem;
+          padding: 1rem 3rem;
         }
       }
     }
