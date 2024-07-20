@@ -152,12 +152,44 @@ const MainTodoContentWrapper = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 4rem;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const MainTodoCenter = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 3.06rem;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 100%;
+    height: 100%;
+    padding: 24rem 4rem 4rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 0px;
+    box-sizing: border-box;
+    row-gap: 0;
+    > :nth-child(2) {
+      grid-column: 1 / span 2;
+    }
+    > :nth-child(1),
+    > :nth-child(3) {
+      margin-top: -12rem;
+      z-index: 5;
+      /* position: absolute;
+      bottom: 0; */
+    }
+    > :nth-child(1) {
+      justify-content: flex-start;
+    }
+    > :nth-child(3) {
+      justify-content: flex-end;
+    }
+  }
 `;
 
 export default MainTodo;

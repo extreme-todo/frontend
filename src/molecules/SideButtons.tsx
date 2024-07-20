@@ -16,6 +16,19 @@ const SideButtonsWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 1.38rem;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    flex-direction: row;
+    justify-content: center;
+    &:first-child {
+      order: 1;
+    }
+    .icon {
+      width: 8rem;
+      height: 8rem;
+      border-radius: 8rem;
+    }
+  }
 `;
 
 const SideButton = ({
@@ -27,7 +40,12 @@ const SideButton = ({
 }) => {
   return (
     <button>
-      <IconAtom onClick={onClick} size={4.455} backgroundColor={'whiteWine'}>
+      <IconAtom
+        onClick={onClick}
+        size={4.455}
+        backgroundColor={'whiteWine'}
+        className="icon"
+      >
         <img src={imageSrc} />
       </IconAtom>
     </button>

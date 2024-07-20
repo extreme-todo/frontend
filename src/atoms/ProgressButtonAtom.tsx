@@ -33,6 +33,13 @@ const ProgressButtonAtom = styled.button<{
         (100 - progress) +
         '%'}
   );
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 8rem;
+    font-size: 2.5rem;
+  }
 `;
 
 export default ProgressButtonAtom;
