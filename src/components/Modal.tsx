@@ -28,45 +28,18 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
     }, 400); // 애니메이션 시간과 맞춤
   };
   useEffect(() => {
-    const preventDefault = (e: Event) => {
-      e.preventDefault();
-    };
-
-    const preventArrowKeys = (e: KeyboardEvent) => {
-      if (
-        [
-          'ArrowUp',
-          'ArrowDown',
-          'Space',
-          'PageDown',
-          'PageUp',
-          'End',
-          'Home',
-        ].includes(e.code)
-      ) {
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener('wheel', preventDefault, { passive: false });
-    window.addEventListener('keydown', preventArrowKeys, { passive: false });
+    const El = document.getElementById('main-container') as HTMLDivElement;
+    El.style.overflowY = 'hidden';
     return () => {
-      window.removeEventListener('wheel', preventDefault);
-      window.removeEventListener('keydown', preventArrowKeys);
+      El.style.overflowY = 'auto';
     };
-  });
+  }, []);
   useEffect(() => {
     const preventArrowKeys = (e: KeyboardEvent) => {
       if (
-        [
-          'ArrowUp',
-          'ArrowDown',
-          'Space',
-          'PageDown',
-          'PageUp',
-          'End',
-          'Home',
-        ].includes(e.code)
+        ['ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'End', 'Home'].includes(
+          e.code,
+        )
       ) {
         e.preventDefault();
       }
