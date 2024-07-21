@@ -7,16 +7,43 @@ interface ICategorySelectorProps {
   categories?: ICategory[];
   selected?: ICategory;
   selectHandler: (category: ICategory) => void;
+  isMobile?: boolean;
 }
 
 function CartegorySelector({
   categories,
   selected,
   selectHandler,
+  isMobile,
 }: ICategorySelectorProps) {
   return (
-    <CSContainer>
-      {categories &&
+    <CSContainer isMobile={isMobile ?? false}>
+      {isMobile && categories && selected && (
+        <TagAtom
+          styleOption={{
+            bg: 'whiteWine',
+          }}
+        >
+          <select
+            className="category-select-mobile"
+            value={selected.id}
+            onChange={(e) => {
+              const category: ICategory | undefined = categories.find(
+                (v) => v.id === Number(e.target.value),
+              );
+              if (category) {
+                selectHandler(category);
+              }
+            }}
+          >
+            {categories.map((category) => {
+              return <option value={category.id} label={category.name} />;
+            })}
+          </select>
+        </TagAtom>
+      )}
+      {!isMobile &&
+        categories &&
         selected &&
         categories.map((category) => {
           return (
@@ -38,7 +65,7 @@ function CartegorySelector({
   );
 }
 
-const CSContainer = styled.div`
+const CSContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -72,6 +99,14 @@ const CSContainer = styled.div`
     flex-basis: 100%;
     height: fit-content;
   }
+  .category-select-mobile {
+    background-color: transparent;
+    border: none;
+    font-size: 2.5rem;
+    /* appearance: unset; */
+    width: fit-content;
+  }
+  ${({ isMobile }) => isMobile && ``}
 `;
 
 export default CartegorySelector;

@@ -8,7 +8,8 @@ import RankingTexts from '../molecules/RankingTexts';
 import { formatTime } from '../shared/timeUtils';
 import CartegorySelector from '../molecules/CartegorySelector';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export interface IRankingProps extends IChildProps {
   fetchRanking: (category: string) => Promise<IRanking>;
@@ -24,6 +25,7 @@ function Ranking({
 }: IRankingProps) {
   const [ranking, setRanking] = useState<IRanking>();
   const [selectedCategory, setSelectedCategory] = useState<ICategory>();
+  const isMobile = useIsMobile();
 
   const { data: categories } = useQuery(['category'], () => fetchCategories(), {
     staleTime: 1000 * 60 * 20,
@@ -50,16 +52,12 @@ function Ranking({
   return (
     <>
       <RankingContainer data-testid={'ranking-component'}>
-        <div
-          style={{
-            textAlign: 'left',
-            width: '100%',
-            gridColumn: '1/3',
-            gridRow: 'auto',
-            height: '100%',
-          }}
-        >
-          <Ranking.titleLabel fontSize="h3_bold" fontColor="titleColor">
+        <div className="ranking-title-wrapper">
+          <Ranking.titleLabel
+            fontSize="h3_bold"
+            fontColor="titleColor"
+            className="ranking-title"
+          >
             카테고리 별 랭킹
           </Ranking.titleLabel>
         </div>
@@ -114,6 +112,7 @@ function Ranking({
             categories={categories}
             selected={selectedCategory}
             selectHandler={selectCategory}
+            isMobile={isMobile}
           />
         </RankingLeftContainer>
 
@@ -167,6 +166,26 @@ const RankingContainer = styled.div`
   box-sizing: border-box;
   padding: 2.75rem;
   grid-column-gap: 2.5rem;
+  .ranking-title-wrapper {
+    text-align: left;
+    width: 100%;
+    grid-column: 1/3;
+    grid-row: auto;
+    height: 100%;
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    padding-bottom: 12rem;
+    .ranking-title-wrapper {
+      height: fit-content;
+    }
+    .ranking-title {
+      font-size: 6rem;
+      height: fit-content;
+    }
+    display: flex;
+    flex-direction: column;
+  }
 `;
 const RankingLeftContainer = styled.div`
   width: 100%;
@@ -179,6 +198,17 @@ const RankingLeftContainer = styled.div`
   > :nth-of-type(2) {
     height: 20vmin;
   }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    flex: 1;
+    gap: 2rem;
+    span {
+      font-size: 3rem;
+    }
+    .one_line:nth-child(3) > span {
+      font-size: 8rem;
+    }
+  }
 `;
 
 const RankingRightContainer = styled.div`
@@ -186,6 +216,10 @@ const RankingRightContainer = styled.div`
   height: auto;
   grid-column: 2 / 4;
   box-sizing: border-box;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    flex: 1;
+  }
 `;
 
 const NoData = styled.div`

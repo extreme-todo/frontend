@@ -27,6 +27,10 @@ const SideButtonsWrapper = styled.div`
       width: 8rem;
       height: 8rem;
       border-radius: 8rem;
+      img {
+        width: 4rem;
+        height: 4rem;
+      }
     }
   }
 `;

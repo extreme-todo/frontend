@@ -47,6 +47,28 @@ const RNRContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   gap: 1.225rem;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 100%;
+    height: 100%;
+    padding: 24rem 4rem 4rem 4rem;
+    flex-direction: column;
+    position: relative;
+    > :first-child {
+      position: absolute;
+      z-index: 5;
+      bottom: 7rem;
+      left: 50%;
+      transform: translateX(-50%);
+      span {
+        font-size: 4rem;
+        padding: 1rem 3rem;
+        border-radius: 4rem;
+        background: ${({ theme }) =>
+          `linear-gradient(180deg,rgba(255, 255, 255, 0.85) 0%,rgba(255, 255, 255, 0) 55.21%), ${theme.colors.bgYellow}`};
+      }
+    }
+  }
 `;
 
 RankingAndRecords.CardAtom = CardAtom;

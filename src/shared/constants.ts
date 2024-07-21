@@ -22,6 +22,25 @@ export const initialRanking: IRanking = {
   },
 };
 
+export const responsiveBreakpoints = {
+  mobile: {
+    min: 0,
+    max: 479,
+  },
+  tablet_v: {
+    min: 480,
+    max: 767,
+  },
+  tablet_h: {
+    min: 768,
+    max: 1279,
+  },
+  desktop: {
+    min: 1024,
+    max: 1279,
+  },
+};
+
 export const dummyRanking: IRanking = {
   group: [
     {
