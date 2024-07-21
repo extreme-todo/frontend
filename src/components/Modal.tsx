@@ -152,7 +152,7 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
   }
 
   /* 모바일 세로 (해상도 ~ 479px)*/
-  @media all and (max-width: 479px) {
+  @media ${({ theme }) => theme.responsiveDevice.mobile} {
     max-height: 60vh;
     border-radius: 30px 30px 0px 0px;
     width: 80vw;
