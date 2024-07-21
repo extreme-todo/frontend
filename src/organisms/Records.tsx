@@ -5,6 +5,7 @@ import LogInToUnlock from '../molecules/LogInToUnlock';
 import RecordCell from '../molecules/RecordCell';
 import { AxiosResponse } from 'axios';
 import { dummyRecords, initialRecords } from '../shared/constants';
+import styled from '@emotion/styled';
 
 export interface IRecordsProps extends IChildProps {
   isLogin: boolean;
@@ -30,16 +31,8 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
   }, [isLogin]);
 
   return (
-    <>
-      <div
-        style={{
-          textAlign: 'left',
-          width: '100%',
-          position: 'absolute',
-          top: '2.375rem',
-          left: '2.75rem',
-        }}
-      >
+    <RecordsContainer>
+      <div className="records-title">
         <Records.titleLabel fontSize="h3_bold" fontColor="titleColor">
           나의 집중 기록
         </Records.titleLabel>
@@ -49,6 +42,7 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
         w="83.87rem"
         h="36.18rem"
         margin="8.37rem 4.31rem 6.93rem 4.31rem"
+        className="records-card"
       >
         <RecordCell label="전일 대비" record={records.daily} />
         <RecordCell label="전주 대비" record={records.weekly} />
@@ -62,12 +56,60 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
           subLabel="로그인하고 나의 집중 기록을 확인해보세요!"
         />
       )}
-    </>
+    </RecordsContainer>
   );
 }
 
 Records.titleLabel = TypoAtom;
 Records.RecordCell = RecordCell;
 Records.CardAtom = CardAtom;
+
+const RecordsContainer = styled.div`
+  .records-title {
+    text-align: left;
+    width: 100%;
+    position: absolute;
+    top: 2.375rem;
+    left: 2.75rem;
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    height: 100%;
+    width: 100%;
+    padding: 2.75rem;
+    padding-bottom: 12rem;
+    box-sizing: border-box;
+    .records-title {
+      position: initial;
+      span {
+        font-size: 6rem;
+      }
+    }
+    .records-card {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      background: transparent;
+      box-shadow: none;
+      justify-content: flex-start;
+
+      > * {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: flex-start;
+        white-space: normal;
+        flex-wrap: wrap;
+        > * {
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+`;
 
 export default Records;
