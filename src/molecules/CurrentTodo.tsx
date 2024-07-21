@@ -71,7 +71,7 @@ function CurrentTodo({
         </TagAtom>
       </div>
       <div className="progress-and-button">
-        <TodoProgressBar progress={todoProgress}>
+        <TodoProgressBar progress={Math.min(todoProgress, 100)}>
           <div className="progress">{todoProgress}%</div>
         </TodoProgressBar>
         <button
