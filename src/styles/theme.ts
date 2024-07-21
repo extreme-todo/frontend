@@ -1,4 +1,5 @@
 import { Theme } from '@emotion/react';
+import { responsiveBreakpoints } from '../shared/constants';
 
 export const designTheme: Theme = {
   colors: {
@@ -34,10 +35,10 @@ export const designTheme: Theme = {
     switch: { size: '1.161875rem', weight: 700 },
   },
   responsiveDevice: {
-    desktop: `all and (min-width: 1024px) and (max-width: 1279px)`,
-    tablet_h: `all and (min-width: 768px) and (max-width: 1023px)`,
-    tablet_v: `all and (min-width: 480px) and (max-width: 767px)`,
-    mobile: `all and (max-width: 479px)`,
+    desktop: `all and (min-width: ${responsiveBreakpoints.desktop.min}px) and (max-width: ${responsiveBreakpoints.desktop.max}px)`,
+    tablet_h: `all and (min-width: ${responsiveBreakpoints.tablet_h.min}px) and (max-width: ${responsiveBreakpoints.tablet_h.max}px)`,
+    tablet_v: `all and (min-width: ${responsiveBreakpoints.tablet_v.min}px) and (max-width: ${responsiveBreakpoints.tablet_v.max}px)`,
+    mobile: `all and (max-width: ${responsiveBreakpoints.mobile.max}px)`,
   },
 } as const;
 
