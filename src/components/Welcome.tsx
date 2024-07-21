@@ -52,7 +52,7 @@ const Welcome = () => {
             )}
         </BtnContainer>
       ) : (
-        <IconAtom onClick={handleLoginBtn}>
+        <IconAtom className="login-button" onClick={handleLoginBtn}>
           <img
             src="btn_google_signin_dark_pressed_web@2x.png"
             alt="google login button"
@@ -92,6 +92,20 @@ const WelcomeContainer = styled.div`
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    > span:first-of-type {
+      font-size: 12rem;
+    }
+    .login-button {
+      width: 36rem;
+      height: 8.7rem;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
   }
 `;
 

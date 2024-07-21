@@ -97,7 +97,8 @@ const RecordsContainer = styled.div`
       background: transparent;
       box-shadow: none;
       justify-content: flex-start;
-
+      top: 0;
+      left: 0;
       > * {
         flex-direction: column;
         gap: 2rem;
