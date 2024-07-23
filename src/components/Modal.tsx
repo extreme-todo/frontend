@@ -29,9 +29,12 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
   };
   useEffect(() => {
     const El = document.getElementById('main-container') as HTMLDivElement;
+    const HTML = document.getElementsByTagName('html')[0];
     El.style.overflowY = 'hidden';
+    HTML.style.overscrollBehaviorY = 'none';
     return () => {
       El.style.overflowY = 'auto';
+      HTML.style.overscrollBehaviorY = '';
     };
   }, []);
   useEffect(() => {
@@ -114,6 +117,8 @@ const ModalBackground = styled.div<{ isRender: boolean }>`
 `;
 
 const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
+  overscroll-behavior: none;
+
   padding: 2.324375rem 3.2925rem;
   min-width: 120px;
 
