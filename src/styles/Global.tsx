@@ -152,8 +152,8 @@ const style = css`
     -moz-animation: AnimationName 59s ease infinite;
     -o-animation: AnimationName 59s ease infinite;
     animation: AnimationName 59s ease infinite;
-    height: 100vh;
-    width: 100vw;
+    height: 100dvh;
+    width: 100dvw;
     overscroll-behavior: none;
   }
 
