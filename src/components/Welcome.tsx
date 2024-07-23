@@ -66,8 +66,8 @@ const Welcome = () => {
 export default Welcome;
 
 const WelcomeContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;

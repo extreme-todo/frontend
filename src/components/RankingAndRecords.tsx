@@ -38,8 +38,8 @@ function RankingAndRecords({ children, isLogin }: IRankingAndRecordsProps) {
 }
 
 const RNRContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   padding: 12.2vmin;
   display: flex;
   justify-content: center;

@@ -79,8 +79,8 @@ export default Modal;
 export type { IModalProps };
 
 const ModalBackground = styled.div<{ isRender: boolean }>`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
@@ -119,7 +119,7 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
 
   overflow: visible;
 
-  max-height: 90vh;
+  max-height: 90dvh;
 
   background: ${({ theme: { colors } }) =>
     `linear-gradient(
@@ -153,14 +153,14 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media ${({ theme }) => theme.responsiveDevice.mobile} {
-    max-height: 60vh;
+    max-height: 60dvh;
     border-radius: 30px 30px 0px 0px;
-    width: 80vw;
+    width: 80dvw;
     position: fixed;
     /* 모바일 애니메이션 */
     @keyframes renderAnimation {
       0% {
-        bottom: -100vh;
+        bottom: -100dvh;
       }
       100% {
         bottom: 0;
@@ -172,7 +172,7 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
         bottom: 0;
       }
       100% {
-        bottom: -100vh;
+        bottom: -100dvh;
       }
     }
   }
