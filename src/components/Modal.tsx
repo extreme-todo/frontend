@@ -161,7 +161,8 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
   }
 
   /* 모바일 세로 (해상도 ~ 479px)*/
-  @media ${({ theme }) => theme.responsiveDevice.mobile} {
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
     max-height: 90dvh;
     border-radius: 30px 30px 0px 0px;
     width: 80dvw;
@@ -194,7 +195,8 @@ const HeaderContainer = styled.div`
   align-items: center;
   margin-bottom: 4rem;
 
-  @media ${({ theme }) => theme.responsiveDevice.mobile} {
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
     .modalTitle {
       font-size: x-large;
     }
