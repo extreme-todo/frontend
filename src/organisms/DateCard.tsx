@@ -31,7 +31,11 @@ const DateCard = ({ tododata, date }: IDateCardProps) => {
           ref={provided.innerRef}
         >
           <DateContainer>
-            <TypoAtom fontSize="sub" fontColor="whiteWine">
+            <TypoAtom
+              className="dateTitle"
+              fontSize="sub"
+              fontColor="whiteWine"
+            >
               {isSameDay(new Date(date), new Date()) ? '오늘' : date}
             </TypoAtom>
           </DateContainer>
@@ -70,6 +74,12 @@ const DroppableContainer = styled.div`
 
 const DateContainer = styled.div`
   margin-bottom: 1rem;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    .dateTitle {
+      font-size: large;
+    }
+  }
 `;
 
 const DraggableContainer = styled.div``;

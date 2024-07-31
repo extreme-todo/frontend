@@ -86,6 +86,13 @@ const TodoCardContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     overflow-x: hidden;
+    #editWrapper {
+      button {
+        span {
+          font-size: 2.1rem;
+        }
+      }
+    }
   }
 `;
 
@@ -101,7 +108,6 @@ const TitleCategoryContainer = styled.div`
 const EditWrapper = styled.div`
   display: none;
   gap: 10px;
-  background-color: aquamarine;
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     display: flex;
@@ -109,9 +115,8 @@ const EditWrapper = styled.div`
 `;
 
 const TitleContainer = styled.div`
-  margin-bottom: 0.5rem;
   width: 100%;
-  background-color: tomato;
+  margin-bottom: 0.5rem;
 
   & > span {
     overflow: hidden;
