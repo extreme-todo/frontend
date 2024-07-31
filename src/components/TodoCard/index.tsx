@@ -122,7 +122,6 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             dragHandleProps={dragHandleProps}
             snapshot={snapshot}
             todoData={todoData}
-            editMode={editMode}
             handleEditButton={handleEditButton}
             handleDeleteButton={handleDeleteButton}
           />
