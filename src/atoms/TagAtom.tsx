@@ -133,3 +133,4 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
 `;
 
 export default TagAtom;
+export { type ITagSpanProps };
