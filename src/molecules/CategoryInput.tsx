@@ -1,6 +1,7 @@
 import { InputAtom, TagAtom } from '../atoms';
 import styled from '@emotion/styled';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
+import { memo, useMemo } from 'react';
 
 interface ICategoryInputProps {
   categories: string[] | null;
@@ -47,7 +48,7 @@ const CategoryInput = ({
   );
 };
 
-export default CategoryInput;
+export default memo(CategoryInput);
 
 const CategoryContainer = styled.div`
   flex-wrap: wrap;

@@ -1,4 +1,4 @@
-import { ReactEventHandler, useState } from 'react';
+import { ReactEventHandler, useCallback, useMemo, useState } from 'react';
 
 import { IconAtom, InputAtom, TypoAtom } from '../../../atoms';
 import { CategoryInput } from '../../../molecules';
@@ -37,41 +37,48 @@ const EditUI = ({
   const [categoryArray, setCategoryArray] = useState(categories);
   const [duration, setDuration] = useState(tomato);
 
-  const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitleValue(event.target.value);
-  };
+  const handleChangeTitle = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setTitleValue(event.target.value);
+    },
+    [],
+  );
 
-  const handleChangeCategory = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCategoryValue(event.target.value);
-  };
+  const handleChangeCategory = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setCategoryValue(event.target.value);
+    },
+    [],
+  );
 
-  const handleCategorySubmit = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (event.code === 'Enter') {
-      // 한글 중복 입력 처리
-      if (event.nativeEvent.isComposing) return;
+  const handleCategorySubmit = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.code === 'Enter') {
+        // 한글 중복 입력 처리
+        if (event.nativeEvent.isComposing) return;
 
-      const newCategory = (event.target as HTMLInputElement).value;
+        const newCategory = (event.target as HTMLInputElement).value;
 
-      const trimmed = categoryValidation(newCategory, categoryArray ?? []);
+        const trimmed = categoryValidation(newCategory, categoryArray ?? []);
 
-      if (!trimmed) return;
+        if (!trimmed) return;
 
-      if (categoryArray) {
-        const copy = categoryArray.slice();
-        copy.push(trimmed);
+        if (categoryArray) {
+          const copy = categoryArray.slice();
+          copy.push(trimmed);
 
-        setCategoryArray(copy);
-      } else {
-        setCategoryArray([trimmed]);
+          setCategoryArray(copy);
+        } else {
+          setCategoryArray([trimmed]);
+        }
+
+        setCategoryValue('');
       }
+    },
+    [categoryArray],
+  );
 
-      setCategoryValue('');
-    }
-  };
-
-  const handleDeleteCategory = (category: string) => {
+  const handleDeleteCategory = useCallback((category: string) => {
     setCategoryArray((prev) => {
       const deleted = prev?.filter((tag) => {
         return tag !== category;
@@ -80,23 +87,29 @@ const EditUI = ({
       if (deleted.length === 0) return null;
       return deleted;
     });
-  };
+  }, []);
 
-  const handleDuration: ReactEventHandler<HTMLSelectElement> = (event) => {
-    setDuration(Number(event.currentTarget.value));
-  };
+  const handleDuration: ReactEventHandler<HTMLSelectElement> = useCallback(
+    (event) => {
+      setDuration(Number(event.currentTarget.value));
+    },
+    [],
+  );
 
-  const handleDaySelect: SelectSingleEventHandler = (date) => {
+  const handleDaySelect: SelectSingleEventHandler = useCallback((date) => {
     if (!date) return;
     setSelected(date);
-  };
+  }, []);
 
-  const editData = {
-    categories: categoryArray,
-    date: setTimeInFormat(selected).toISOString(),
-    todo: titleValue,
-    duration,
-  };
+  const editData = useMemo(
+    () => ({
+      categories: categoryArray,
+      date: setTimeInFormat(selected).toISOString(),
+      todo: titleValue,
+      duration,
+    }),
+    [categoryArray, selected, titleValue, duration],
+  );
 
   return (
     <EditWrapper>

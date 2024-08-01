@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { InputAtom, TypoAtom } from '../atoms';
 import { DayPickerUI, type IDayPickerUIProps } from '../molecules';
 
@@ -59,7 +59,7 @@ const CalendarInput = ({
   );
 };
 
-export default CalendarInput;
+export default memo(CalendarInput);
 
 export const CalendarContainer = styled.div`
   padding: 0;
