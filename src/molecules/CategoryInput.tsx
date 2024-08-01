@@ -1,6 +1,7 @@
-import { InputAtom, TagAtom } from '../atoms';
+import { InputAtom, ITagSpanProps, TagAtom } from '../atoms';
 import styled from '@emotion/styled';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
+import { useIsMobile } from '../hooks/useIsMobile';
 import { memo, useMemo } from 'react';
 
 interface ICategoryInputProps {
@@ -18,6 +19,24 @@ const CategoryInput = ({
   category,
   handleChangeCategory,
 }: ICategoryInputProps) => {
+  const isMobile = useIsMobile();
+  const tagSize: ITagSpanProps = useMemo(
+    () =>
+      isMobile
+        ? {
+            fontsize: 'md2',
+            size: 'md',
+            bg: 'whiteWine',
+            maxWidth: 10,
+          }
+        : {
+            fontsize: 'sm',
+            size: 'sm',
+            bg: 'whiteWine',
+            maxWidth: 10,
+          },
+    [isMobile],
+  );
   return (
     <CategoryContainer>
       {categories?.map((category) => (
@@ -25,12 +44,7 @@ const CategoryInput = ({
           key={category}
           handler={() => handleClick.call(this, category)}
           ariaLabel="category_tag"
-          styleOption={{
-            fontsize: 'sm',
-            size: 'sm',
-            bg: 'whiteWine',
-            maxWidth: 10,
-          }}
+          styleOption={tagSize}
         >
           {category}
         </TagAtom>
@@ -54,7 +68,13 @@ const CategoryContainer = styled.div`
   flex-wrap: wrap;
   display: flex;
   align-items: center;
-  row-gap: 0.3125rem;
+  row-gap: 1.3125rem;
   column-gap: 0.625rem;
   margin-top: 0.61rem;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    input {
+      font-size: 1.8rem;
+    }
+  }
 `;
