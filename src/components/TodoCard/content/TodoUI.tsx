@@ -1,8 +1,10 @@
-import { TagAtom, TypoAtom } from '../../../atoms';
+import { ITagSpanProps, TagAtom, TypoAtom } from '../../../atoms';
 
 import { ITodoCardProps } from '..';
 
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
 interface ITodoUIProps extends ITodoCardProps {
   handleEditButton: () => void;
@@ -17,13 +19,35 @@ const TodoUI = ({
   handleDeleteButton,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
+  const isMobile = useIsMobile();
+  const tagSize: ITagSpanProps = useMemo(
+    () =>
+      isMobile
+        ? {
+            fontsize: 'md2',
+            size: 'md',
+            bg: 'whiteWine',
+            maxWidth: 10,
+          }
+        : {
+            fontsize: 'sm',
+            size: 'sm',
+            bg: 'whiteWine',
+            maxWidth: 10,
+          },
+    [isMobile],
+  );
 
   return (
     <TodoCardContainer>
       <DraggableWrapper {...dragHandleProps}>
         <TitleCategoryContainer>
           <TitleContainer>
-            <TypoAtom className="todoTitle" fontSize="body">
+            <TypoAtom
+              className="todoTitle"
+              fontSize="body"
+              padding={`${0.2}rem ${0}rem`}
+            >
               {todo}
             </TypoAtom>
           </TitleContainer>
@@ -34,12 +58,7 @@ const TodoUI = ({
                   <TagAtom
                     key={category}
                     title={category}
-                    styleOption={{
-                      fontsize: 'sm',
-                      size: 'sm',
-                      bg: 'whiteWine',
-                      maxWidth: 10,
-                    }}
+                    styleOption={tagSize}
                   >
                     {category}
                   </TagAtom>
