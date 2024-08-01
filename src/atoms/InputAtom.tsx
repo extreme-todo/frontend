@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { designTheme } from '../styles/theme';
 import { withTheme } from '@emotion/react';
+import { memo } from 'react';
 
 type TypePadding = `${number} ${number} ${number} ${number}`;
 type TypeLength = `${number}rem` | `${number}%` | `${number}px`;
@@ -22,27 +23,24 @@ interface IInputAtomProps
   };
 }
 
-const Usual = ({ handleChange, ariaLabel, ...props }: IInputAtomProps) => {
+const Usual = memo(({ handleChange, ariaLabel, ...props }: IInputAtomProps) => {
   return (
     <UsualInput onChange={handleChange} aria-label={ariaLabel} {...props} />
   );
-};
+});
 
-const Underline = ({
-  handleChange,
-  handleKeyDown,
-  ariaLabel,
-  ...props
-}: IInputAtomProps) => {
-  return (
-    <UnderlineInput
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      aria-label={ariaLabel}
-      {...props}
-    />
-  );
-};
+const Underline = memo(
+  ({ handleChange, handleKeyDown, ariaLabel, ...props }: IInputAtomProps) => {
+    return (
+      <UnderlineInput
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        aria-label={ariaLabel}
+        {...props}
+      />
+    );
+  },
+);
 
 const InputAtom = {
   Usual,
