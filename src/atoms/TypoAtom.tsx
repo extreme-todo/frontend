@@ -8,6 +8,7 @@ interface ITypoProps extends IChildProps {
   fontColor?: keyof typeof designTheme.colors;
   rainbow?: boolean;
   className?: string;
+  padding?: `${number}rem ${number}rem`;
 }
 
 const TypoAtom = ({
@@ -16,6 +17,7 @@ const TypoAtom = ({
   fontSize,
   rainbow,
   className,
+  padding,
 }: ITypoProps) => {
   return (
     <Typo
@@ -23,6 +25,7 @@ const TypoAtom = ({
       fontSize={fontSize}
       rainbow={rainbow}
       className={className}
+      padding={padding}
     >
       {children}
     </Typo>
@@ -45,4 +48,5 @@ const Typo = styled.span<ITypoProps>`
       ? designTheme.fontSize[fontSize].weight
       : designTheme.fontSize.body.weight};
   ${({ rainbow }) => rainbow && rainbowStyle};
+  padding: ${({ padding }) => padding || 0};
 `;
