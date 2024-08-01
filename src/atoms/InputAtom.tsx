@@ -4,12 +4,13 @@ import { withTheme } from '@emotion/react';
 import { memo } from 'react';
 
 type TypePadding = `${number} ${number} ${number} ${number}`;
-type TypeLength = `${number}rem` | `${number}%` | `${number}px`;
+type TypeLength = `${number}rem` | `${number}%` | `${number}px` | `${number}ch`;
 
 interface IInputAtomProps
   extends Pick<HTMLInputElement, 'placeholder' | 'value'> {
   handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleKeyDown?: (params: React.KeyboardEvent<HTMLInputElement>) => void;
+  className?: string;
   ariaLabel?: string;
   styleOption?: {
     width?: TypeLength;
@@ -67,9 +68,13 @@ const UsualInput = withTheme(
   ),
 );
 const UnderlineInput = withTheme(
-  styled.input<Pick<IInputAtomProps, 'styleOption'>>(
-    ({ styleOption, theme }) => ({
-      width: styleOption?.width ?? 'fit-content',
+  styled.input<Pick<IInputAtomProps, 'styleOption' | 'value' | 'placeholder'>>(
+    ({ styleOption, value, placeholder, theme }) => ({
+      width: styleOption?.width
+        ? styleOption?.width
+        : value.length > 10
+        ? value.length + 10 + 'ch'
+        : placeholder.length + 5 + 'ch',
       height: styleOption?.height ?? '1.863rem',
       backgroundColor: styleOption?.backgroundColor ?? `rgba(255, 255, 255, 0)`,
       fontSize: styleOption?.backgroundColor ?? theme.fontSize.tag.size,
@@ -82,6 +87,7 @@ const UnderlineInput = withTheme(
       border: 'none',
       borderBottom: `1px solid ${theme.colors.whiteWine}`,
       textAlign: 'center',
+      borderRadius: '0px',
     }),
   ),
 );
