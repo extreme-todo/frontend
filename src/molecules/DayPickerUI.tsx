@@ -30,7 +30,7 @@ const DayPickerUI = ({
           focusTrapOptions={{
             initialFocus: false,
             allowOutsideClick: true,
-            clickOutsideDeactivates: true,
+            clickOutsideDeactivates: false,
             onDeactivate: handleClosePopper,
           }}
         >
@@ -52,6 +52,7 @@ const DayPickerUI = ({
               defaultMonth={new Date()}
               fromMonth={new Date()}
               disabled={{ before: new Date() }}
+              onDayBlur={handleClosePopper}
               required
             />
           </PopperAtom>
