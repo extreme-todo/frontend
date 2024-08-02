@@ -11,7 +11,12 @@ import {
 import { IconAtom, InputAtom, TypoAtom } from '../atoms';
 import { CategoryInput } from '../molecules';
 import { CalendarInput } from '../organisms';
-import { EditWrapper } from './TodoCard/content/EditUI';
+import {
+  EditWrapper,
+  options,
+  TomatoOption,
+  TomatoSelector,
+} from './TodoCard/content/EditUI';
 
 /* custom hooks */
 import { usePomodoroValue } from '../hooks';
@@ -27,8 +32,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
 import { AxiosError } from 'axios';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const AddTodo = () => {
+  const isMobile = useIsMobile();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
@@ -37,7 +44,8 @@ const AddTodo = () => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
+    // mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
+    mutationFn: (todo: AddTodoDto) => ETIndexed.getInstance().addTodo(todo),
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
@@ -111,12 +119,11 @@ const AddTodo = () => {
     });
   }, []);
 
-  const handleTomatoInput: ReactEventHandler<HTMLInputElement> = useCallback(
-    (event) => {
-      setTomato(event.currentTarget.value);
-    },
-    [],
-  );
+  const handleTomatoInput: ReactEventHandler<
+    HTMLInputElement | HTMLSelectElement
+  > = useCallback((event) => {
+    setTomato(event.currentTarget.value);
+  }, []);
 
   const addData: AddTodoDto = useMemo(
     () => ({
@@ -146,6 +153,7 @@ const AddTodo = () => {
           handleChange={handleTitleInput}
           placeholder="할 일을 입력하세요"
           ariaLabel="title"
+          className="todoTitle"
         />
         <CategoryInput
           categories={categoryArray}
@@ -158,22 +166,43 @@ const AddTodo = () => {
           handleDaySelect={handleDaySelect}
           selectedDay={selectedDate}
         />
-
         <TomatoContainer>
           <TypoAtom>🍅</TypoAtom>
-          <TomatoInput
-            value={tomato}
-            onChange={handleTomatoInput}
-            placeholder="할 일을 입력하세요"
-            aria-label="tomato"
-            type="range"
-            data-value={tomato}
-            data-focusmin={`${focusStep * Number(tomato)}min`}
-            max={10}
-            min={1}
-            step={1}
-            newVal={((Number(tomato) - 1) / (10 - 1)) * 100}
-          />
+          {isMobile ? (
+            <TomatoSelector
+              aria-label="tomato_select"
+              value={tomato}
+              onChange={handleTomatoInput}
+            >
+              <TomatoOption aria-label="tomato_option" value={undefined}>
+                뽀모도로 횟수
+              </TomatoOption>
+              {options.map((option) => (
+                <TomatoOption
+                  aria-label="tomato_option"
+                  data-testid="tomato_option"
+                  value={option}
+                  key={option}
+                >
+                  {option}
+                </TomatoOption>
+              ))}
+            </TomatoSelector>
+          ) : (
+            <TomatoInput
+              value={tomato}
+              onChange={handleTomatoInput}
+              placeholder="할 일을 입력하세요"
+              aria-label="tomato"
+              type="range"
+              data-value={tomato}
+              data-focusmin={`${focusStep * Number(tomato)}min`}
+              max={10}
+              min={1}
+              step={1}
+              newVal={((Number(tomato) - 1) / (10 - 1)) * 100}
+            />
+          )}
         </TomatoContainer>
       </AddTodoWrapper>
       <FooterContainer>
@@ -197,6 +226,16 @@ const AddTodoWrapper = styled(EditWrapper)`
 
   & > div:first-of-type {
     margin-bottom: 1rem;
+  }
+
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    .todoTitle {
+      margin-bottom: 2rem;
+    }
+    .calendar {
+      margin: 2rem 0;
+    }
   }
 `;
 
