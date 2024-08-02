@@ -43,6 +43,7 @@ const CalendarInput = ({
           handleChange={() => {
             console.debug('click');
           }}
+          className="calendar"
         />
       </CalendarContainer>
       <DayPickerUI

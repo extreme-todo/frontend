@@ -180,6 +180,7 @@ const EditUI = ({
 };
 
 export default EditUI;
+export { TomatoSelector, TomatoOption, options };
 
 export const EditWrapper = styled.div`
   padding: 0.759rem;
