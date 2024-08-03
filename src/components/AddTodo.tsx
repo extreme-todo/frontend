@@ -44,8 +44,7 @@ const AddTodo = () => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    // mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
-    mutationFn: (todo: AddTodoDto) => ETIndexed.getInstance().addTodo(todo),
+    mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
