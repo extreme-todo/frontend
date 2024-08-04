@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,6 +13,9 @@ jobs:
         run: npm install
       - name: unit test
         run: npm test
+        env:
+          REACT_APP_API_SERVER_URL: ${{ secrets.REACT_APP_API_SERVER_URL }}
+          REACT_APP_API_CLIENT_URL: ${{ secrets.REACT_APP_API_CLIENT_URL }}
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Fly deploy
         run: flyctl deploy --remote-only
