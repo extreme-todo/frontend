@@ -24,10 +24,7 @@ const Setting = () => {
   const { isExtreme, setMode } = useExtremeMode();
 
   const [isOver, setIsOver] = useState<boolean>(false);
-  const [settings, setSettings] = useState<ISettings>({
-    colorMode: 'auto',
-    extremeMode: isExtreme,
-  });
+
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
 
   const popperRef = useRef<HTMLDivElement>(null);
@@ -74,11 +71,6 @@ const Setting = () => {
 
   const handleSwitch = (): void => {
     setMode(!isExtreme);
-    setSettings((prev) => {
-      const newSettings = { ...prev, extremeMode: !isExtreme };
-      settingsApi.setSettings(newSettings);
-      return newSettings;
-    });
   };
 
   const tooltipMouseOver = () => {
@@ -92,10 +84,6 @@ const Setting = () => {
     const settings = await settingsApi.getSettings();
     const { data }: AxiosResponse<ISettings, any> = settings;
     if (data) setMode(data.extremeMode);
-    setSettings({
-      colorMode: data.colorMode,
-      extremeMode: data.extremeMode,
-    });
   };
 
   useEffect(() => {
