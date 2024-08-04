@@ -151,7 +151,7 @@ function CurrentTodoCard({
             {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
             <button className="create-todo-button">
               <TagAtom
-                styleOption={{ bg: 'titleColor' }}
+                styleOption={{ bg: 'titleColor', bold: 'extraBold' }}
                 handler={openAddTodoModal}
               >
                 할 일 기록하기
@@ -219,12 +219,12 @@ const CurrentTodoWrapper = styled.div`
     .no-todo {
       padding: 2rem;
       box-sizing: border-box;
-      gap: 2rem;
+      gap: 1.12rem;
       justify-content: center;
       align-items: center;
       > span {
         font-size: 4rem;
-        text-align: left;
+        text-align: center;
       }
       .create-todo-button {
         span {
