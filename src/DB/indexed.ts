@@ -10,7 +10,7 @@ import { ETIndexedDBAction } from './indexedAction';
 import { ETIndexedDBCalc } from './indexedCalc';
 import type { TodoEntity } from './indexedAction';
 import { groupByDate } from '../shared/timeUtils';
-import type { TodoModuleType } from '../shared/TodoModule';
+// import type { TodoModuleType } from '../shared/TodoModule';
 
 /* 
 removeTodos <- Cron 사용한 메소드임 -> 로그인이 안됐다? useEffect() 안에서 ETIndexedDBAction 이용해서 지금 DB 안에 있는 거 중에.. 어제꺼 Todo 쓰윽 지워버리던지..
@@ -34,7 +34,8 @@ type UpdateTodoDto = Partial<
   Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'date'>
 >;
 
-class ETIndexed implements TodoModuleType {
+// class ETIndexed implements TodoModuleType {
+class ETIndexed {
   private static instance: ETIndexed;
 
   private constructor(
