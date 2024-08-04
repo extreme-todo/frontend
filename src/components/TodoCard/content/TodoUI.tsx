@@ -1,17 +1,16 @@
-import { IconAtom, TagAtom, TypoAtom } from '../../../atoms';
+import { TagAtom, TypoAtom } from '../../../atoms';
 
 import { ITodoCardProps } from '..';
 
 import styled from '@emotion/styled';
+
 interface ITodoUIProps extends ITodoCardProps {
   handleEditButton: () => void;
   handleDeleteButton: () => void;
-  editMode: boolean;
 }
 
 const TodoUI = ({
   todoData,
-  editMode,
   dragHandleProps,
   snapshot,
   handleEditButton,
@@ -21,56 +20,51 @@ const TodoUI = ({
 
   return (
     <TodoCardContainer>
-      <DraggableWrapper>
-        {editMode ? (
-          <IconAtom size={2}>
-            <img src={'icons/handle.svg'}></img>
-          </IconAtom>
-        ) : (
-          <IconAtom {...dragHandleProps} size={2}>
-            <img src={'icons/handle.svg'}></img>
-          </IconAtom>
-        )}
+      <DraggableWrapper {...dragHandleProps}>
         <TitleCategoryContainer>
           <TitleContainer>
-            <TypoAtom fontSize="body">{todo}</TypoAtom>
+            <TypoAtom className="todoTitle" fontSize="body">
+              {todo}
+            </TypoAtom>
           </TitleContainer>
-          <CategoryContainer>
-            {snapshot?.isDragging
-              ? null
-              : categories?.map((category) => {
-                  return (
-                    <TagAtom
-                      key={category}
-                      title={category}
-                      styleOption={{
-                        fontsize: 'sm',
-                        size: 'sm',
-                        bg: 'whiteWine',
-                        maxWidth: 10,
-                      }}
-                    >
-                      {category}
-                    </TagAtom>
-                  );
-                })}
-          </CategoryContainer>
+          {snapshot?.isDragging ? null : (
+            <CategoryContainer>
+              {categories?.map((category) => {
+                return (
+                  <TagAtom
+                    key={category}
+                    title={category}
+                    styleOption={{
+                      fontsize: 'sm',
+                      size: 'sm',
+                      bg: 'whiteWine',
+                      maxWidth: 10,
+                    }}
+                  >
+                    {category}
+                  </TagAtom>
+                );
+              })}
+            </CategoryContainer>
+          )}
         </TitleCategoryContainer>
       </DraggableWrapper>
-      <EditWrapper id="editWrapper">
-        <TagAtom
-          handler={handleEditButton}
-          styleOption={{ fontsize: 'sm', size: 'sm' }}
-        >
-          수정
-        </TagAtom>
-        <TagAtom
-          handler={handleDeleteButton}
-          styleOption={{ fontsize: 'sm', size: 'sm' }}
-        >
-          삭제
-        </TagAtom>
-      </EditWrapper>
+      {snapshot?.isDragging ? null : (
+        <EditWrapper id="editWrapper">
+          <TagAtom
+            handler={handleEditButton}
+            styleOption={{ fontsize: 'sm', size: 'sm' }}
+          >
+            수정
+          </TagAtom>
+          <TagAtom
+            handler={handleDeleteButton}
+            styleOption={{ fontsize: 'sm', size: 'sm' }}
+          >
+            삭제
+          </TagAtom>
+        </EditWrapper>
+      )}
     </TodoCardContainer>
   );
 };
@@ -80,9 +74,24 @@ export default TodoUI;
 const TodoCardContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  &:hover {
+  @media all and (min-width: 1080px),
+    ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.desktop} {
+    &:hover {
+      #editWrapper {
+        display: flex;
+      }
+    }
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    overflow-x: hidden;
     #editWrapper {
-      display: flex;
+      button {
+        span {
+          font-size: 2.1rem;
+        }
+      }
     }
   }
 `;
@@ -94,26 +103,37 @@ const DraggableWrapper = styled.div`
 
 const TitleCategoryContainer = styled.div`
   margin-left: 1rem;
-  width: 100%;
 `;
 
 const EditWrapper = styled.div`
-  width: 20%;
   display: none;
-  justify-content: flex-end;
   gap: 10px;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    display: flex;
+  }
 `;
 
 const TitleContainer = styled.div`
-  margin-bottom: 0.5rem;
   width: 100%;
+  margin-bottom: 0.5rem;
 
   & > span {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    display: block;
-    width: 90%;
+    white-space: wrap;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    .todoTitle {
+      font-size: x-large;
+      /* 지정된 줄 수로 제한해서 말 줄임 하기 */
+      -webkit-line-clamp: 3;
+    }
   }
 `;
 

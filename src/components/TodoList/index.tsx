@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 /* component */
 import { BtnAtom } from '../../atoms';
@@ -13,7 +13,11 @@ import { TodoEntity } from '../../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /* react DnD */
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import {
+  DragDropContext,
+  DropResult,
+  useMouseSensor,
+} from 'react-beautiful-dnd';
 
 /* hooks */
 import {
@@ -28,6 +32,7 @@ import styled from '@emotion/styled';
 import { setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
+import useTouchSensor from '../../hooks/useTouchSensor';
 
 const MemoDateCard = memo(DateCard);
 
@@ -150,7 +155,11 @@ const TodoList = () => {
           }
           focusStep={focusStep}
         />
-        <DragDropContext onDragEnd={handleDragEnd}>
+        <DragDropContext
+          onDragEnd={handleDragEnd}
+          enableDefaultSensors={false}
+          sensors={[useMouseSensor, useTouchSensor]}
+        >
           {!isLoading && todos ? (
             <EditContextProvider>{listRender}</EditContextProvider>
           ) : null}

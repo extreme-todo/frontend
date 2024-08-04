@@ -66,8 +66,8 @@ const Welcome = () => {
 export default Welcome;
 
 const WelcomeContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -93,18 +93,18 @@ const WelcomeContainer = styled.div`
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  .login-button {
+    width: 20rem;
+    height: 5rem;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     > span:first-of-type {
-      font-size: 12rem;
-    }
-    .login-button {
-      width: 36rem;
-      height: 8.7rem;
-      img {
-        width: 100%;
-        height: 100%;
-      }
+      font-size: 8rem;
     }
   }
 `;

@@ -28,45 +28,21 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
     }, 400); // 애니메이션 시간과 맞춤
   };
   useEffect(() => {
-    const preventDefault = (e: Event) => {
-      e.preventDefault();
-    };
-
-    const preventArrowKeys = (e: KeyboardEvent) => {
-      if (
-        [
-          'ArrowUp',
-          'ArrowDown',
-          'Space',
-          'PageDown',
-          'PageUp',
-          'End',
-          'Home',
-        ].includes(e.code)
-      ) {
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener('wheel', preventDefault, { passive: false });
-    window.addEventListener('keydown', preventArrowKeys, { passive: false });
+    const El = document.getElementById('main-container') as HTMLDivElement;
+    const HTML = document.getElementsByTagName('html')[0];
+    El.style.overflowY = 'hidden';
+    HTML.style.overscrollBehaviorY = 'none';
     return () => {
-      window.removeEventListener('wheel', preventDefault);
-      window.removeEventListener('keydown', preventArrowKeys);
+      El.style.overflowY = 'auto';
+      HTML.style.overscrollBehaviorY = '';
     };
-  });
+  }, []);
   useEffect(() => {
     const preventArrowKeys = (e: KeyboardEvent) => {
       if (
-        [
-          'ArrowUp',
-          'ArrowDown',
-          'Space',
-          'PageDown',
-          'PageUp',
-          'End',
-          'Home',
-        ].includes(e.code)
+        ['ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'End', 'Home'].includes(
+          e.code,
+        )
       ) {
         e.preventDefault();
       }
@@ -83,7 +59,11 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
       <ModalBackground isRender={isRender}>
         <ModalContainer isRender={isRender}>
           <HeaderContainer>
-            <TypoAtom fontSize={'h3'} fontColor={'titleColor'}>
+            <TypoAtom
+              fontSize={'h3'}
+              className="modalTitle"
+              fontColor={'titleColor'}
+            >
               {title}
             </TypoAtom>
 
@@ -106,8 +86,8 @@ export default Modal;
 export type { IModalProps };
 
 const ModalBackground = styled.div<{ isRender: boolean }>`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
@@ -141,12 +121,14 @@ const ModalBackground = styled.div<{ isRender: boolean }>`
 `;
 
 const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
+  overscroll-behavior: none;
+
   padding: 2.324375rem 3.2925rem;
   min-width: 120px;
 
   overflow: visible;
 
-  max-height: 90vh;
+  max-height: 90dvh;
 
   background: ${({ theme: { colors } }) =>
     `linear-gradient(
@@ -179,15 +161,16 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
   }
 
   /* 모바일 세로 (해상도 ~ 479px)*/
-  @media all and (max-width: 479px) {
-    max-height: 60vh;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    max-height: 90dvh;
     border-radius: 30px 30px 0px 0px;
-    width: 80vw;
+    width: 80dvw;
     position: fixed;
     /* 모바일 애니메이션 */
     @keyframes renderAnimation {
       0% {
-        bottom: -100vh;
+        bottom: -100dvh;
       }
       100% {
         bottom: 0;
@@ -199,7 +182,7 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
         bottom: 0;
       }
       100% {
-        bottom: -100vh;
+        bottom: -100dvh;
       }
     }
   }
@@ -211,4 +194,11 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4rem;
+
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    .modalTitle {
+      font-size: x-large;
+    }
+  }
 `;

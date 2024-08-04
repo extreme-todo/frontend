@@ -53,8 +53,8 @@ function App() {
 }
 
 const MainContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   & > div {
