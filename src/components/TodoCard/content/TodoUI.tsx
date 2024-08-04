@@ -149,7 +149,7 @@ const TitleContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     .todoTitle {
-      font-size: x-large;
+      font-size: ${({ theme }) => theme.fontSize.h2.size};
       /* 지정된 줄 수로 제한해서 말 줄임 하기 */
       -webkit-line-clamp: 3;
     }

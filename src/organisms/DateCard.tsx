@@ -77,7 +77,7 @@ const DateContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     .dateTitle {
-      font-size: large;
+      font-size: ${({ theme }) => theme.fontSize.h3.size};
     }
   }
 `;
