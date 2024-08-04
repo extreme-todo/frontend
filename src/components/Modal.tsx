@@ -3,23 +3,16 @@ import { IChildProps } from '../shared/interfaces';
 import { CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 import { useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 
 interface IModalProps extends IChildProps {
   title: string;
   handleClose: () => void;
 }
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
 const Modal = ({ title, children, handleClose }: IModalProps) => {
   const [isRender, setIsRender] = useState(true);
+  const queryClient = useQueryClient();
 
   const handleCloseModal = () => {
     setIsRender(false);
