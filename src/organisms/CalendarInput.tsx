@@ -81,7 +81,7 @@ export const CalendarContainer = styled.div`
   input {
     @media ${({ theme }) => theme.responsiveDevice.tablet_v},
       ${({ theme }) => theme.responsiveDevice.mobile} {
-      font-size: 16px;
+      font-size: ${({ theme }) => theme.fontSize.h3.size};
       padding: 10px 0;
     }
   }
