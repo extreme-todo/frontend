@@ -8,13 +8,24 @@ import { usersApi } from '../../shared/apis';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const mockWelcome = (func: jest.Mock<any, any>) => {
   mockLocalStorage(func);
   const { container } = render(
-    <ThemeProvider theme={designTheme}>
-      <Welcome />
-    </ThemeProvider>,
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={designTheme}>
+        <Welcome />
+      </ThemeProvider>
+    </QueryClientProvider>,
   );
   return container;
 };

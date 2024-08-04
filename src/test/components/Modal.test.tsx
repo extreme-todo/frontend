@@ -3,6 +3,15 @@ import { Modal, Setting } from '../../components';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 describe('Modal', () => {
   describe('title과 SettingModal을 넘겨주면', () => {
@@ -20,11 +29,13 @@ describe('Modal', () => {
         console.log('Close');
       };
       renderResult = render(
-        <ThemeProvider theme={designTheme}>
-          <Modal title="설정" handleClose={handleClose}>
-            <Setting />
-          </Modal>
-        </ThemeProvider>,
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={designTheme}>
+            <Modal title="설정" handleClose={handleClose}>
+              <Setting />
+            </Modal>
+          </ThemeProvider>
+        </QueryClientProvider>,
       );
     });
 

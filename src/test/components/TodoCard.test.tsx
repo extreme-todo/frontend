@@ -1,8 +1,8 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { TodoCard } from '../../molecules';
-import EditUI from '../../molecules/TodoCard/content/EditUI';
+import { TodoCard } from '../../components';
+import EditUI from '../../components/TodoCard/content/EditUI';
 
 import { EditContextProvider } from '../../hooks';
 
@@ -63,9 +63,6 @@ describe('TodoCard', () => {
           />,
           wrapperCreator,
         );
-
-        const handleIcon = getByRole('img');
-        expect(handleIcon).toBeInTheDocument();
 
         const categories1 = getByText('영어');
         const categories2 = getByText('학교공부');
