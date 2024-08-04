@@ -4,10 +4,6 @@
   padding: 0.3rem;
   box-shadow: 0 0 0.4rem #f4b537;
   --rdp-background-color: #2e86de;
-
-  @media screen and (max-width: 767px) {
-    width: 70dvw;
-  }
 }
 
 .rdp-day_selected:hover {
@@ -26,5 +22,34 @@
 .rdp-head_cell {
   @media screen and (max-width: 767px) {
     font-size: 1.6rem;
+  }
+}
+
+.daypickerFooterWrapper {
+  display: flex;
+  justify-content: flex-end;
+  height: 2rem;
+  align-items: center;
+  @media screen and (max-width: 767px) {
+    height: 4rem;
+    padding-right: 1rem;
+    padding-bottom: 0.3rem;
+    margin-top: 1rem;
+  }
+
+  .daypickerFooter {
+    background-color: #f4b537;
+    width: 3rem;
+    height: 2rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    @media screen and (max-width: 767px) {
+      font-size: 1.6rem;
+      width: 8rem;
+      height: 4rem;
+    }
+  }
+  .daypickerFooter:hover {
+    background-color: #ff6b6b;
   }
 }
