@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { InputAtom, TypoAtom } from '../atoms';
 import { DayPickerUI, type IDayPickerUIProps } from '../molecules';
 
@@ -39,7 +39,7 @@ const CalendarInput = ({
           value={getDateInFormat(selectedDay)}
           ariaLabel="calendar_input"
           placeholder={'달력 아이콘을 눌러주세요.'}
-          styleOption={{ width: '7rem' }}
+          styleOption={{ width: `${10}ch` }}
           handleChange={() => {
             console.debug('click');
           }}
@@ -59,7 +59,7 @@ const CalendarInput = ({
   );
 };
 
-export default CalendarInput;
+export default memo(CalendarInput);
 
 export const CalendarContainer = styled.div`
   padding: 0;
@@ -72,13 +72,20 @@ export const CalendarContainer = styled.div`
   div:first-of-type {
     width: 2rem;
     height: 2rem;
-    border-radius: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
+  input {
+    @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+      ${({ theme }) => theme.responsiveDevice.mobile} {
+      font-size: 16px;
+      padding: 10px 0;
+    }
+  }
+
   & > input:hover {
-    border-radius: 1rem;
     background-color: ${({ theme }) => theme.colors.bgColor};
     transition: background-color 0.2s ease-in-out;
   }

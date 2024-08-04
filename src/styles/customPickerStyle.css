@@ -4,6 +4,10 @@
   padding: 0.3rem;
   box-shadow: 0 0 0.4rem #f4b537;
   --rdp-background-color: #2e86de;
+
+  @media screen and (max-width: 767px) {
+    width: 70dvw;
+  }
 }
 
 .rdp-day_selected:hover {
@@ -16,4 +20,11 @@
 
 .dialog-sheet {
   z-index: 99;
+}
+
+.rdp-cell,
+.rdp-head_cell {
+  @media screen and (max-width: 767px) {
+    font-size: 1.6rem;
+  }
 }

@@ -1,5 +1,11 @@
 /* react */
-import { KeyboardEventHandler, ReactEventHandler, useState } from 'react';
+import {
+  KeyboardEventHandler,
+  ReactEventHandler,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 
 /* atomics */
 import { IconAtom, InputAtom, TypoAtom } from '../atoms';
@@ -54,68 +60,83 @@ const AddTodo = () => {
 
   /* React Day Picker State and Ref */
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const handleDaySelect: SelectSingleEventHandler = (date) => {
+  const handleDaySelect: SelectSingleEventHandler = useCallback((date) => {
     if (!date) return;
     setSelectedDate(date);
-  };
+  }, []);
 
   /* handler */
-  const handleTitleInput: ReactEventHandler<HTMLInputElement> = (event) =>
-    setTitle(event.currentTarget.value);
+  const handleTitleInput: ReactEventHandler<HTMLInputElement> = useCallback(
+    (event) => setTitle(event.currentTarget.value),
+    [],
+  );
 
-  const handleCategoryInput: ReactEventHandler<HTMLInputElement> = (event) =>
-    setCategory(event.currentTarget.value);
+  const handleCategoryInput: ReactEventHandler<HTMLInputElement> = useCallback(
+    (event) => setCategory(event.currentTarget.value),
+    [],
+  );
 
-  const handleSubmitCategory: KeyboardEventHandler<HTMLInputElement> = (
-    event,
-  ) => {
-    if (event.code === 'Enter') {
-      // 한글 중복 입력 처리
-      if (event.nativeEvent.isComposing) return;
+  const handleSubmitCategory: KeyboardEventHandler<HTMLInputElement> =
+    useCallback(
+      (event) => {
+        if (event.code === 'Enter') {
+          // 한글 중복 입력 처리
+          if (event.nativeEvent.isComposing) return;
 
-      const newCategory = (event.target as HTMLInputElement).value;
+          const newCategory = (event.target as HTMLInputElement).value;
 
-      const trimmed = categoryValidation(newCategory, categoryArray ?? []);
+          const trimmed = categoryValidation(newCategory, categoryArray ?? []);
 
-      if (!trimmed) return;
+          if (!trimmed) return;
 
-      if (categoryArray) {
-        const copy = categoryArray.slice();
-        copy.push(trimmed);
+          if (categoryArray) {
+            const copy = categoryArray.slice();
+            copy.push(trimmed);
 
-        setCategoryArray(copy);
-      } else {
-        setCategoryArray([trimmed]);
-      }
+            setCategoryArray(copy);
+          } else {
+            setCategoryArray([trimmed]);
+          }
 
-      setCategory('');
-    }
-  };
+          setCategory('');
+        }
+      },
+      [categoryArray],
+    );
 
-  const handleClickCategory = (category: string) => {
+  const handleClickCategory = useCallback((category: string) => {
     setCategoryArray((prev) => {
       const deleted = prev?.filter((tag) => tag !== category);
       return deleted;
     });
-  };
+  }, []);
 
-  const handleTomatoInput: ReactEventHandler<HTMLInputElement> = (event) => {
-    setTomato(event.currentTarget.value);
-  };
+  const handleTomatoInput: ReactEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      setTomato(event.currentTarget.value);
+    },
+    [],
+  );
 
-  const handleAddSubmit = (todo: AddTodoDto) => {
-    if (title.length <= 0) return alert('제목을 입력해주세요.');
-    const trimmed = titleValidation(addData.todo);
-    if (!trimmed) return;
-    mutate({ ...todo, todo: trimmed });
-  };
+  const addData: AddTodoDto = useMemo(
+    () => ({
+      date: setTimeInFormat(selectedDate).toISOString(),
+      todo: title,
+      duration: Number(`${tomato}`),
+      categories: categoryArray.length > 0 ? categoryArray : null,
+    }),
+    [selectedDate, title, tomato, categoryArray],
+  );
 
-  const addData: AddTodoDto = {
-    date: setTimeInFormat(selectedDate).toISOString(),
-    todo: title,
-    duration: Number(`${tomato}`),
-    categories: categoryArray.length > 0 ? categoryArray : null,
-  };
+  const handleAddSubmit = useCallback(
+    (todo: AddTodoDto) => {
+      if (title.length <= 0) return alert('제목을 입력해주세요.');
+      const trimmed = titleValidation(addData.todo);
+      if (!trimmed) return;
+      mutate({ ...todo, todo: trimmed });
+    },
+    [addData],
+  );
 
   return (
     <>
