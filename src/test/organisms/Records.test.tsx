@@ -7,16 +7,27 @@ import { ITotalFocusTime } from '../../shared/interfaces';
 import { AxiosResponse } from 'axios';
 import PomodoroProvider from '../../hooks/usePomodoro';
 import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 describe('Records', () => {
   function renderRecords(props: IRecordsProps) {
     return react.render(
       <ThemeProvider theme={designTheme}>
-        <PomodoroProvider>
-          <ExtremeModeProvider>
-        <Records {...props} />
-        </ExtremeModeProvider>
-        </PomodoroProvider>
+        <QueryClientProvider client={queryClient}>
+          <PomodoroProvider>
+            <ExtremeModeProvider>
+              <Records {...props} />
+            </ExtremeModeProvider>
+          </PomodoroProvider>
+        </QueryClientProvider>
       </ThemeProvider>,
     );
   }
@@ -62,7 +73,7 @@ describe('Records', () => {
 
     it('기록 데이터를 페치에 실패하고 알린다.', async () => {
       const fetchRecords = jest.fn(jest.fn().mockRejectedValue('failed'));
-      
+
       renderRecords({ fetchRecords, isLogin: true });
       await react.waitFor(() => {
         expect(fetchRecords).toBeCalled();
