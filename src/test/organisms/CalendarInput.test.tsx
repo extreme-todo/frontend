@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { CalendarInput } from '../../molecules';
+import { CalendarInput } from '../../organisms';
 import { IChildProps } from '../../shared/interfaces';
 import { designTheme } from '../../styles/theme';
 import { ThemeProvider } from '@emotion/react';

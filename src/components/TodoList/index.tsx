@@ -1,9 +1,9 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 
 /* component */
 import { BtnAtom } from '../../atoms';
 import { NowCard } from '../../molecules';
-import { DateCard } from '../../organisms';
+import { DateCard } from '../../organisms/DateCard';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../../DB/indexed';
