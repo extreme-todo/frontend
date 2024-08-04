@@ -54,7 +54,7 @@ const RecordCellContainer = styled.div`
     align-items: center;
     gap: 1.25rem;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     > div:first-child > span {
       font-size: 3rem;

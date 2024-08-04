@@ -174,7 +174,7 @@ const RankingContainer = styled.div`
     grid-row: auto;
     height: 100%;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     padding-bottom: 12rem;
     .ranking-title-wrapper {
@@ -199,7 +199,7 @@ const RankingLeftContainer = styled.div`
   > :nth-of-type(2) {
     height: 20vmin;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     flex: 1;
     gap: 2rem;
@@ -217,7 +217,7 @@ const RankingRightContainer = styled.div`
   height: auto;
   grid-column: 2 / 4;
   box-sizing: border-box;
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     flex: 1;
   }
