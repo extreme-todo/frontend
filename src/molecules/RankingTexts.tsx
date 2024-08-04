@@ -38,7 +38,7 @@ const RankingTextsContainer = styled.div`
   * {
     display: inline-block;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     gap: 2rem;
   }

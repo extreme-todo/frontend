@@ -16,7 +16,7 @@ const SideButtonsWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 1.38rem;
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     flex-direction: row;
     justify-content: center;

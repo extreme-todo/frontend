@@ -152,7 +152,7 @@ const MainTodoContentWrapper = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 4rem;
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
     height: 100%;
@@ -163,7 +163,7 @@ const MainTodoCenter = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 3.06rem;
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
     height: 100%;

@@ -11,6 +11,7 @@ import { usePomodoroValue } from './usePomodoro';
 import { rankingApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useIsOnline } from './useIsOnline';
+import useCurrentTodo from './useCurrentTodo';
 
 export interface IExtremeMode {
   isExtreme: boolean;
@@ -26,6 +27,7 @@ export const ExtremeModeContext = createContext<IExtremeMode>(
 
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { status, settings } = usePomodoroValue();
+  const { currentTodo } = useCurrentTodo();
   const [resetFlag, setResetFlag] = useState<boolean>(false); // true 면 reset 완료
   const prevStatus = useRef(status.isResting);
   const isOnline = useIsOnline();
@@ -55,10 +57,14 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
 
   useEffect(() => {
     const leftMs = getLeftTime();
+    if (currentTodo == null) {
+      setLeftTime('');
+    }
     if (
       extremeMode.isExtreme &&
       prevStatus.current === status.isResting &&
       resetFlag === false &&
+      currentTodo !== null &&
       Number(leftMs) < 0
     ) {
       setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');

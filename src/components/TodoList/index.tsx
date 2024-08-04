@@ -142,7 +142,7 @@ const TodoList = () => {
         }}
       > */}
       {/* <CardAtom> */}
-      <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} />
+      {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
       <TodoListContainer>
         <NowCard
           currentTodo={

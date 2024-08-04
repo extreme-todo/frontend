@@ -52,7 +52,7 @@ const ExtremeModeContainer = styled.div`
     width: 3.4375rem;
     height: 3.4375rem;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     margin-right: 8rem;
     img {
