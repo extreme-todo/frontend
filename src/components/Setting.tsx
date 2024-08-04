@@ -30,7 +30,7 @@ const Setting = () => {
   const popperRef = useRef<HTMLDivElement>(null);
 
   const handleReset = async () => {
-    // if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
+    if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
     await Promise.all([
       todosApi.resetTodos(),
       rankingApi.resetRanking(),
@@ -39,14 +39,14 @@ const Setting = () => {
   };
 
   const handleWithdrawal = async () => {
-    // if (!window.confirm('정말로 회원 탈퇴하시겠습니까?')) return;
+    if (!window.confirm('정말로 회원 탈퇴하시겠습니까?')) return;
     await usersApi.withdrawal();
   };
 
   const queryClient = useQueryClient();
   const { mutate: resetMutation } = useMutation(handleReset, {
     onSuccess() {
-      // window.alert('초기화 성공');
+      window.alert('초기화 성공');
       queryClient.invalidateQueries(['todos']);
     },
     onError(error) {
@@ -58,7 +58,7 @@ const Setting = () => {
   });
   const { mutate: withdrawMutation } = useMutation(handleWithdrawal, {
     onSuccess() {
-      // window.alert('회원 탈퇴 성공');
+      window.alert('회원 탈퇴 성공');
       queryClient.invalidateQueries(['todos']);
     },
     onError(error) {
