@@ -47,7 +47,7 @@ const RNRContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   gap: 1.225rem;
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
     height: 100%;

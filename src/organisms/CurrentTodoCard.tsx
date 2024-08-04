@@ -199,7 +199,7 @@ const CurrentTodoWrapper = styled.div`
       justify-content: center;
     }
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
     height: 100%;

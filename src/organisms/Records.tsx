@@ -82,7 +82,7 @@ const RecordsContainer = styled.div`
     top: 2.375rem;
     left: 2.75rem;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     display: flex;
     flex-direction: column;

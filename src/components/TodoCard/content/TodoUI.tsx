@@ -94,7 +94,7 @@ const TodoCardContainer = styled.div`
   display: flex;
   justify-content: space-between;
   @media all and (min-width: 1080px),
-    ${({ theme }) => theme.responsiveDevice.tablet_h},
+    ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.desktop} {
     &:hover {
       #editWrapper {

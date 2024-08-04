@@ -139,7 +139,7 @@ const CurrentTodoContainer = styled.div`
       background-size: contain;
     }
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     height: 100%;
     position: relative;
@@ -226,7 +226,7 @@ const TodoProgressBar = styled.div<{ progress: number }>`
     padding-right: 1.4rem;
     transition: all 0.2s ease-in-out;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_h},
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
     height: 100%;
