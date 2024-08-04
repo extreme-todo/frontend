@@ -62,7 +62,7 @@ const DateCard = ({ tododata, date }: IDateCardProps) => {
   );
 };
 
-export default DateCard;
+export { DateCard };
 
 const DroppableContainer = styled.div`
   width: 100%;
