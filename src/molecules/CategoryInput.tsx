@@ -74,7 +74,7 @@ const CategoryContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     input {
-      font-size: 1.8rem;
+      font-size: ${({ theme }) => theme.fontSize.h4.size};
     }
   }
 `;
