@@ -10,6 +10,7 @@ import CartegorySelector from '../molecules/CartegorySelector';
 
 import { useQuery } from '@tanstack/react-query';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { usersApi } from '../shared/apis';
 
 export interface IRankingProps extends IChildProps {
   fetchRanking: (category: string) => Promise<IRanking>;
@@ -144,7 +145,7 @@ function Ranking({
       {!isLogin && (
         <LogInToUnlock
           navigate={() => {
-            return;
+            usersApi.login();
           }}
         />
       )}

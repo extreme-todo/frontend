@@ -19,12 +19,16 @@ function LogInToUnlock({
   return (
     <UnlockContainer>
       <div className="labels">
-        <img src={icon ?? '/icons/icon-lock.svg'} />
+        <img className="lock-icon" src={icon ?? '/icons/icon-lock.svg'} />
         <div>
-          <LogInToUnlock.typo fontSize={'body_bold'} fontColor={'titleColor'}>
+          <LogInToUnlock.typo
+            fontSize={'body_bold'}
+            fontColor={'titleColor'}
+            className="login-typo"
+          >
             {label ?? '로그인이 필요한 기능입니다.'}
           </LogInToUnlock.typo>
-          <LogInToUnlock.typo fontSize={'h3'}>
+          <LogInToUnlock.typo fontSize={'h3'} className="login-typo">
             {subLabel ?? '로그인하고 기능을 확인해보세요!'}
           </LogInToUnlock.typo>
         </div>
@@ -59,7 +63,9 @@ const UnlockContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   .labels {
+    padding: 2rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -76,6 +82,27 @@ const UnlockContainer = styled.div`
       justify-content: center;
       align-items: flex-start;
       gap: 1.12rem;
+    }
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    .lock-icon {
+      width: 6rem;
+      height: 6rem;
+    }
+    .labels {
+      flex-direction: column;
+    }
+    .login-typo {
+      font-size: 4rem;
+      text-align: center;
+    }
+    > button {
+      > span {
+        font-size: 3rem;
+        border-radius: 6rem;
+        padding: 1rem 3rem;
+      }
     }
   }
 `;

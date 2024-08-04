@@ -6,6 +6,7 @@ import RecordCell from '../molecules/RecordCell';
 import { AxiosResponse } from 'axios';
 import { dummyRecords, initialRecords } from '../shared/constants';
 import styled from '@emotion/styled';
+import { usersApi } from '../shared/apis';
 
 export interface IRecordsProps extends IChildProps {
   isLogin: boolean;
@@ -31,32 +32,41 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
   }, [isLogin]);
 
   return (
-    <RecordsContainer>
-      <div className="records-title">
-        <Records.titleLabel fontSize="h3_bold" fontColor="titleColor">
-          나의 집중 기록
-        </Records.titleLabel>
-      </div>
-      <Records.CardAtom
-        bg="transparent"
-        w="83.87rem"
-        h="36.18rem"
-        margin="8.37rem 4.31rem 6.93rem 4.31rem"
-        className="records-card"
-      >
-        <RecordCell label="전일 대비" record={records.daily} />
-        <RecordCell label="전주 대비" record={records.weekly} />
-        <RecordCell label="전월 대비" record={records.monthly} />
-      </Records.CardAtom>
+    <>
+      <RecordsContainer>
+        <div className="records-title">
+          <Records.titleLabel fontSize="h3_bold" fontColor="titleColor">
+            나의 집중 기록
+          </Records.titleLabel>
+        </div>
+        <Records.CardAtom
+          bg="transparent"
+          w="83.87rem"
+          h="36.18rem"
+          margin="8.37rem 4.31rem 6.93rem 4.31rem"
+          className="records-card"
+        >
+          <RecordCell label="전일 대비" record={records.daily} />
+          <RecordCell label="전주 대비" record={records.weekly} />
+          <RecordCell label="전월 대비" record={records.monthly} />
+        </Records.CardAtom>
+        {!isLogin && (
+          <LogInToUnlock
+            navigate={() => {
+              return;
+            }}
+            subLabel="로그인하고 나의 집중 기록을 확인해보세요!"
+          />
+        )}
+      </RecordsContainer>
       {!isLogin && (
         <LogInToUnlock
           navigate={() => {
-            return;
+            usersApi.login();
           }}
-          subLabel="로그인하고 나의 집중 기록을 확인해보세요!"
         />
       )}
-    </RecordsContainer>
+    </>
   );
 }
 
