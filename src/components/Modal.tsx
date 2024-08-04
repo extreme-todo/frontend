@@ -198,7 +198,8 @@ const HeaderContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     .modalTitle {
-      font-size: x-large;
+      font-size: ${({ theme }) => theme.fontSize.h2.size};
+      font-weight: ${({ theme }) => theme.fontSize.h2.weight};
     }
   }
 `;
