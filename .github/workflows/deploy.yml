@@ -11,11 +11,15 @@ jobs:
         uses: actions/checkout@v2
       - name: npm install
         run: npm install
-      - name: unit test
-        run: npm test
+      - name: Generate Environment Variables File for Production
+        run: |
+          echo "REACT_APP_API_SERVER_URL=$REACT_APP_API_SERVER_URL" >> .env
+          echo "REACT_APP_API_CLIENT_URL=$REACT_APP_API_CLIENT_URL" >> .env
         env:
           REACT_APP_API_SERVER_URL: ${{ secrets.REACT_APP_API_SERVER_URL }}
           REACT_APP_API_CLIENT_URL: ${{ secrets.REACT_APP_API_CLIENT_URL }}
+      - name: unit test
+        run: npm test
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Fly deploy
         run: flyctl deploy --remote-only
