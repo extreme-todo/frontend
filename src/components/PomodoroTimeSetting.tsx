@@ -34,7 +34,7 @@ const TimeSetter = ({
       </TypoAtom>
       <FlipHandlerContainer>
         <IconAtom size={1} onClick={handlePlus} className="timeHandler">
-          <img alt="timeup" src={'icons/polygonUp.svg'} />
+          <img alt="timeup" src={'icons/btnUp.svg'} />
         </IconAtom>
         <FlipContainer>
           <FlipCounter>
@@ -56,7 +56,7 @@ const TimeSetter = ({
           </TypoAtom>
         </FlipContainer>
         <IconAtom size={1} onClick={handleMinus} className="timeHandler">
-          <img alt="timedown" src={'icons/polygonDown.svg'} />
+          <img alt="timedown" src={'icons/btnDown.svg'} />
         </IconAtom>
       </FlipHandlerContainer>
     </TimeSetterContainer>
