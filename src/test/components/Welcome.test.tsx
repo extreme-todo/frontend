@@ -8,6 +8,7 @@ import { usersApi } from '../../shared/apis';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { LoginProvider } from '../../hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
@@ -18,12 +19,18 @@ const queryClient = new QueryClient({
   },
 });
 
-const mockWelcome = (func: jest.Mock<any, any>) => {
-  mockLocalStorage(func);
+const mockWelcome = (
+  func1: jest.Mock<any, any>,
+  func2?: jest.Mock<any, any>,
+  func3?: jest.Mock<any, any>,
+) => {
+  mockLocalStorage(func1, func2, func3);
   const { container } = render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={designTheme}>
-        <Welcome />
+        <LoginProvider>
+          <Welcome />
+        </LoginProvider>
       </ThemeProvider>
     </QueryClientProvider>,
   );
@@ -68,10 +75,13 @@ describe('Welcome', () => {
 
   describe('유저가 로그인을 했을 경우', () => {
     let renderResult: HTMLElement;
+    const mockDeleteLocalStorage = jest.fn();
 
     beforeEach(() => {
       renderResult = mockWelcome(
         jest.fn((key: string) => 'extremeTokemSample'),
+        jest.fn(),
+        mockDeleteLocalStorage,
       );
     });
 
@@ -80,10 +90,9 @@ describe('Welcome', () => {
     });
 
     it('클릭하면 removeItem을 호출한다.', () => {
-      const spyOnLogout = jest.spyOn(usersApi, 'logout').mockImplementation();
       const logoutBtn = screen.getByText('SIGN OUT');
       fireEvent.click(logoutBtn);
-      expect(spyOnLogout).toBeCalled();
+      expect(mockDeleteLocalStorage).toBeCalled();
     });
 
     it('셋팅 버튼이 렌더링 되어야 하고,', () => {

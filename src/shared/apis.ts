@@ -17,8 +17,7 @@ interface AxiosCustomRequest extends AxiosRequestConfig {
 }
 
 const baseApi = axios.create({
-  // TODO : 배포 시 수정할 것
-  baseURL: 'https://' + SERVER_URL + '/api', // 로컬에서는 http로 해야 됨!
+  baseURL: SERVER_URL + '/api',
   headers: {
     'content-type': 'application/json;charset=UTF-8',
     accept: 'application/json',
@@ -62,15 +61,10 @@ baseApi.interceptors.response.use(
 export const usersApi = {
   login() {
     const data = window.open(
-      'http://' + SERVER_URL + '/api/users/callback/google/start',
+      SERVER_URL + '/api/users/callback/google/start',
       '_self',
     );
     return data;
-  },
-  logout(): void {
-    localStorage.removeItem('extremeEmail');
-    window.dispatchEvent(LOGINEVENT.getEvent());
-    localStorage.removeItem('extremeToken');
   },
   async withdrawal() {
     await baseApi.delete('users/revoke');

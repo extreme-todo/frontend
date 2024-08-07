@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CardAtom, TagAtom } from '../atoms';
-import { IChildProps } from '../shared/interfaces';
 import { Records, Ranking } from '../organisms';
 import { categoryApi, rankingApi, timerApi } from '../shared/apis';
 import styled from '@emotion/styled';
+import { LoginContext } from '../hooks';
 
-export interface IRankingAndRecordsProps extends IChildProps {
-  isLogin: boolean;
-}
-
-function RankingAndRecords({ children, isLogin }: IRankingAndRecordsProps) {
+function RankingAndRecords() {
+  const { isLogin } = useContext(LoginContext);
   //TODO: 테스트용 주석 삭제 필요
   const [isRanking, setIsRanking] = useState(true);
   // const [isRanking, setIsRanking] = useState(false);

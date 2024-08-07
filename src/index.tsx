@@ -4,6 +4,7 @@ import reportWebVitals from './reportWebVitals';
 import { ThemeProvider } from '@emotion/react';
 import GlobalStyle from './styles/Global';
 import { designTheme as Theme } from './styles/theme';
+import { LoginProvider } from './hooks';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -13,7 +14,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <ThemeProvider theme={Theme}>
     <GlobalStyle />
-    <App />
+    <LoginProvider>
+      <App />
+    </LoginProvider>
   </ThemeProvider>,
 );
 

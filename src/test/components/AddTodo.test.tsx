@@ -28,7 +28,7 @@ describe('AddTodo', () => {
     beforeEach(() => {
       spyAlert = jest.spyOn(window, 'alert').mockImplementation();
       renderUI = () =>
-        render(<AddTodo handleModalClose={jest.fn()} />, {
+        render(<AddTodo />, {
           wrapper: ({ children }: IChildProps) => (
             <QueryClientProvider client={queryClient}>
               <ThemeProvider theme={designTheme}>

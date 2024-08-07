@@ -58,7 +58,6 @@ const useCurrentTodo = () => {
     if (todos) {
       const todayTodos: TodoEntity[] = todos.values().next()
         .value as TodoEntity[];
-      console.log(todayTodos);
 
       if (
         todayTodos != null &&
