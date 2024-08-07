@@ -39,9 +39,9 @@ describe('RankingAndRecords', () => {
   }
 
   describe('처음 페이지가 렌더링 될 때', () => {
-    it('Ranking 출력', async () => {
-      await waitFor(() => {
-        const { getByTestId } = renderRankingAndRecords();
+    it('Ranking 출력', () => {
+      const { getByTestId } = renderRankingAndRecords();
+      act(() => {
         expect(getByTestId('ranking-component')).not.toBeNull();
       });
     });
