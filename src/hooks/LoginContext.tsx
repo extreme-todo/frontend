@@ -4,15 +4,11 @@ import { IChildProps } from '../shared/interfaces';
 
 export interface ILogin {
   isLogin: boolean;
-  setToken: (token: string, email: string) => void;
   deleteToken: () => void;
 }
 
 const DEFAULT_LOGIN_CONTEXT: ILogin = {
   isLogin: false,
-  setToken() {
-    console.debug();
-  },
   deleteToken() {
     console.debug();
   },
@@ -69,7 +65,7 @@ export const LoginProvider = ({ children }: IChildProps) => {
   }, []);
 
   return (
-    <LoginContext.Provider value={{ isLogin, setToken, deleteToken }}>
+    <LoginContext.Provider value={{ isLogin, deleteToken }}>
       {children}
     </LoginContext.Provider>
   );
