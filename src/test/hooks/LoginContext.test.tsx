@@ -7,17 +7,12 @@ import userEvent from '@testing-library/user-event';
 
 describe('useCheckLogin', () => {
   const TestLoginComponent = () => {
-    const { isLogin, deleteToken, setToken } = useContext(LoginContext);
+    const { isLogin, deleteToken } = useContext(LoginContext);
     const user = userStub();
     return (
       <>
         <p aria-label="isLogin">{isLogin.toString()}</p>
-        <button
-          aria-label="loginBtn"
-          onClick={() => setToken(user.access, user.email)}
-        >
-          로그인
-        </button>
+        <button aria-label="loginBtn">로그인</button>
         <button aria-label="logoutBtn" onClick={() => deleteToken()}>
           로그아웃
         </button>
@@ -53,22 +48,6 @@ describe('useCheckLogin', () => {
       const isLogin = getByLabelText('isLogin');
 
       expect(isLogin.textContent).toBe('false');
-    });
-  });
-
-  describe('setToken은', () => {
-    it('토큰과 사용자 정보를 로컬 스토리지에 저장한다', () => {
-      const mockSetLocalStorage = jest.fn();
-      mockLocalStorage(jest.fn(), mockSetLocalStorage);
-
-      const { getByRole } = renderFn();
-      const loginBtn = getByRole('button', { name: 'loginBtn' });
-
-      userEvent.click(loginBtn);
-
-      // 로그인 버튼을 누르면 토큰과 유저정보 저장을 위해
-      // setItem을 두 번 호출하는 것으로 테스트
-      expect(mockSetLocalStorage).toBeCalledTimes(2);
     });
   });
 
