@@ -61,7 +61,7 @@ baseApi.interceptors.response.use(
 export const usersApi = {
   login() {
     const data = window.open(
-      'http://' + SERVER_URL + '/api/users/callback/google/start',
+      SERVER_URL + '/api/users/callback/google/start',
       '_self',
     );
     return data;
