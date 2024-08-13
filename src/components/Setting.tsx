@@ -64,8 +64,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
     onSuccess() {
       window.alert('회원 탈퇴 성공');
       queryClient.invalidateQueries(['todos']);
-      localStorage.removeItem('extremeToken');
-      localStorage.removeItem('extremeEmail');
+      queryClient.invalidateQueries(['category']);
       handleClose();
       deleteToken();
     },
