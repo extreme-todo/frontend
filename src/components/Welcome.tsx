@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
@@ -6,13 +6,13 @@ import Modal from './Modal';
 import Setting from './Setting';
 
 import { usersApi } from '../shared/apis';
-import { useCheckLogin } from '../hooks';
+import { LoginContext } from '../hooks';
 
 import styled from '@emotion/styled';
 
 const Welcome = () => {
   const [isModal, setIsModal] = useState<boolean>(false);
-  const isLogin = useCheckLogin();
+  const { isLogin, deleteToken } = useContext(LoginContext);
   const welcomeRef = useRef<HTMLDivElement>(null);
 
   const handleLoginBtn = () => {
@@ -20,7 +20,7 @@ const Welcome = () => {
   };
 
   const handleLogoutBtn = (): void => {
-    return usersApi.logout();
+    return deleteToken();
   };
 
   const handleSetting = (): void => {
@@ -46,7 +46,7 @@ const Welcome = () => {
           {isModal &&
             createPortal(
               <Modal title="설정" handleClose={handleClose}>
-                <Setting />
+                <Setting handleClose={handleClose} />
               </Modal>,
               welcomeRef.current as HTMLDivElement,
             )}

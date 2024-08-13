@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import { PopperAtom, SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
@@ -12,7 +12,7 @@ import {
 } from '../shared/apis';
 
 import styled from '@emotion/styled';
-import { useExtremeMode } from '../hooks';
+import { useExtremeMode, LoginContext } from '../hooks';
 import { AxiosResponse } from 'axios';
 import { ISettings } from '../shared/interfaces';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -20,9 +20,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 // TODO : state를 상위 컴포넌트로 뽑아낼 수는 없을까?.. 그게 더 괜찮은 방법이지 않을까?..
 // TODO : 추가적으로 이런 모양의 선택지를 템플릿으로 뽑아낼 수는 없을까?
 // TODO : Compound 적용해보자
-const Setting = () => {
+interface ISettingModal {
+  handleClose: () => void;
+}
+const Setting = ({ handleClose }: ISettingModal) => {
   const { isExtreme, setMode } = useExtremeMode();
-
+  const { deleteToken } = useContext(LoginContext);
   const [isOver, setIsOver] = useState<boolean>(false);
 
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
@@ -40,6 +43,7 @@ const Setting = () => {
 
   const handleWithdrawal = async () => {
     if (!window.confirm('정말로 회원 탈퇴하시겠습니까?')) return;
+    console.debug('handleWithdrawal 작동');
     await usersApi.withdrawal();
   };
 
@@ -60,6 +64,9 @@ const Setting = () => {
     onSuccess() {
       window.alert('회원 탈퇴 성공');
       queryClient.invalidateQueries(['todos']);
+      queryClient.invalidateQueries(['category']);
+      handleClose();
+      deleteToken();
     },
     onError(error) {
       console.error(

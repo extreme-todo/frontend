@@ -7,6 +7,7 @@ import { rankingApi, timerApi, todosApi, usersApi } from '../../shared/apis';
 import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import PomodoroProvider from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { LoginProvider } from '../../hooks';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,11 +24,13 @@ describe('SettingModal', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={designTheme}>
-          <PomodoroProvider>
-            <ExtremeModeProvider>
-              <Setting />
-            </ExtremeModeProvider>
-          </PomodoroProvider>
+          <LoginProvider>
+            <PomodoroProvider>
+              <ExtremeModeProvider>
+                <Setting handleClose={jest.fn()} />
+              </ExtremeModeProvider>
+            </PomodoroProvider>
+          </LoginProvider>
         </ThemeProvider>
       </QueryClientProvider>,
     );

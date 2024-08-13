@@ -11,13 +11,9 @@ import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
 
-export interface IMainTodoProps extends IChildProps {
-  isLogin: boolean;
-}
-
 type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
-function MainTodo({ isLogin, children }: IMainTodoProps) {
+function MainTodo() {
   const [isModal, setIsModal] = useState<ModalType | null>(null);
 
   const { status: pomodoroStatus, settings: pomodoroSettings } =

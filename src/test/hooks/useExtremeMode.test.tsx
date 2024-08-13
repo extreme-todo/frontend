@@ -73,7 +73,7 @@ describe('useExtremeMode', () => {
 
     it('localStorage의 데이터를 렌더링한다', () => {
       const { findByText } = component;
-      screen.logTestingPlaygroundURL();
+      // screen.logTestingPlaygroundURL();
 
       expect(findByText(new RegExp('isExtreme:' + mockData))).toBeDefined();
     });
