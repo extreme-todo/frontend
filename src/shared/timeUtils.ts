@@ -3,6 +3,11 @@ import { TodoEntity } from '../DB/indexedAction';
 
 type FormatTimeType = `${number}:${number}:${number}`;
 
+export type ITimeMarkerKey = 'removeDidntDo';
+export type ITimeMarkerObject = Record<ITimeMarkerKey, number | undefined>;
+
+export const ET_TIME_MARKER = 'ETTimeMarker';
+
 /**
  * 분을 입력하면 일,시간,분으로 변환해주는 포매터
  * @param time min ex) 720
@@ -85,4 +90,32 @@ export const getPomodoroStepPercent = ({
   unit: number; // 뽀모도로 개수
 }) => {
   return ((curr / (step * unit * 60000)) * 100).toFixed(1);
+};
+
+/**
+ * 특정 함수를 호출한지 일정기간이 지났는지 판단하는 유틸 함수입니다.
+ * 일정기간이 지났는지에 대한 마킹은 localStorage에 저장된 ETTimeMarker이라는 키를 가지는 객체 데이터로 판단합니다.
+ * 객체의 프로퍼티 키는 함수명으로 하고, 프로퍼티 값은 기준 시일의 밀리세컨드로 합니다.
+ * 예를 들어 removeDidntDo에 대한 호출을 핸들링 하기 위해서는,
+ * 마지막으로 호출한 기준일 새벽 5시를 기준으로 한 밀리세컨트를 프로퍼티 값으로 설정해줍니다.
+ * ETTimeMarker = { removeDidntDo:밀리세컨드, }
+ * @param {string} key 함수명
+ * @param {number} conditionalMilliSec 함수를 호출한 기준 시일의 밀리세컨드
+ * @returns {boolean} 찾는 것이 없거나 시간을 초과해서 업데이트를 해야하면 true를 반환하고 찾는 것이 있고 시간 초과를 하지 않아서 업데이트를 할 필요가 없다면 false를 줍니다.
+ */
+export const checkTimeOverFromTimeMarker = (
+  key: ITimeMarkerKey,
+  conditionalMilliSec: number,
+): boolean => {
+  const timeMarker = localStorage.getItem(ET_TIME_MARKER);
+
+  if (!timeMarker) {
+    return true; // api 실행 및 setItem
+  } else {
+    const parsingMarker = (JSON.parse(timeMarker) as ITimeMarkerObject)[key];
+    if (!parsingMarker) return true; // api 실행 및 setItem
+    else if (new Date().getTime() - parsingMarker >= conditionalMilliSec)
+      return true; // api 실행 및 setItem
+    else return false; // api 실행 X
+  }
 };
