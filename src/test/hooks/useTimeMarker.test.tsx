@@ -36,6 +36,15 @@ describe('useTimeMarking', () => {
     .spyOn(todosApi, 'removeDidntDo')
     .mockImplementation();
 
+  const wrapMockLocalStorage = (getItem: jest.Mock) => {
+    return mockLocalStorage(
+      getItem,
+      jest.fn((key: string, value: number) => ({
+        [key]: value,
+      })),
+    );
+  };
+
   const renderComponent = () => {
     render(
       <QueryClientProvider client={queryClient}>
@@ -46,12 +55,7 @@ describe('useTimeMarking', () => {
 
   describe('localStorage에 ETTimeMarker 데이터가 없다면,', () => {
     beforeEach(() => {
-      mockLocalStorage(
-        jest.fn(),
-        jest.fn((key: string, value: number) => ({
-          [key]: value,
-        })),
-      );
+      wrapMockLocalStorage(jest.fn());
       renderComponent();
     });
     it('removeDidntDo를 호출하고,', () => {
@@ -67,12 +71,7 @@ describe('useTimeMarking', () => {
 
   describe('localStorage의 ETTimeMarker가 있고, removeDidntDo 프로퍼티가 없다면,', () => {
     beforeEach(() => {
-      mockLocalStorage(
-        jest.fn((key: string) => '{}'),
-        jest.fn((key: string, value: number) => ({
-          [key]: value,
-        })),
-      );
+      wrapMockLocalStorage(jest.fn((key: string) => '{}'));
       renderComponent();
     });
     it('removeDidntDo를 호출하고,', () => {
@@ -94,13 +93,7 @@ describe('useTimeMarking', () => {
           '05:00:00',
         ).getTime();
         const timeDiffStringify = JSON.stringify({ removeDidntDo: timeDiff });
-
-        mockLocalStorage(
-          jest.fn((key: string) => timeDiffStringify),
-          jest.fn((key: string, value: number) => ({
-            [key]: value,
-          })),
-        );
+        wrapMockLocalStorage(jest.fn((key: string) => timeDiffStringify));
         renderComponent();
       });
       it('removeDidntDo를 호출하고,', () => {
@@ -117,13 +110,7 @@ describe('useTimeMarking', () => {
       beforeEach(() => {
         const timeDiff = setTimeInFormat(new Date()).getTime() - 400000;
         const timeDiffStringify = JSON.stringify({ removeDidntDo: timeDiff });
-
-        mockLocalStorage(
-          jest.fn((key: string) => timeDiffStringify),
-          jest.fn((key: string, value: number) => ({
-            [key]: value,
-          })),
-        );
+        wrapMockLocalStorage(jest.fn((key: string) => timeDiffStringify));
         renderComponent();
       });
       it('removeDidntDo를 호출하지 않고,', () => {
