@@ -126,7 +126,7 @@ export const todosApi = {
   async deleteTodo(id: string) {
     await baseApi.delete(`/todos/${id}`);
   },
-  async removeTodosBeforeToday(currentDate: string) {
+  async removeDidntDo(currentDate: string) {
     return await baseApi.delete('/todos', { params: { currentDate } });
   },
 };
