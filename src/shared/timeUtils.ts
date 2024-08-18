@@ -119,3 +119,33 @@ export const checkTimeOverFromTimeMarker = (
     else return false; // api 실행 X
   }
 };
+
+/**
+ * localstorage에 ETTimeMarker키값으로 데이터를 설정하는 유틸 함수입니다.
+ * ETTimeMarker데이터가 아예 없거나,
+ * ETTimeMarker데이터는 있으나 key값으로 들어온 함수가 객체 프로퍼티에 없거나, 있을 경우를 고려해서 업데이트를 합니다.
+ * @param {ITimeMarkerKey} key 함수명
+ * @param {number} value 밀리세컨드
+ * @returns
+ */
+export const setTimeMarker = (key: ITimeMarkerKey, value: number) => {
+  const timeMarker = localStorage.getItem(ET_TIME_MARKER);
+  // ETTimeMarker 키에 대한 데이터 자체가 없으면 설정해줍니다.
+  if (!timeMarker)
+    return localStorage.setItem(
+      ET_TIME_MARKER,
+      JSON.stringify({ [key]: value }),
+    );
+  // 나머지 경우,
+  // 1. ETTimeMarker는 있는데 찾을려는 함수(key)가 없는 경우
+  // 2. 함수(key)도 있는 경우
+  // 위 두 경우 모두 해당 키 값에 새로운 값(value)을 포함해서 설정해줍니다.
+  else {
+    const parsingTimeMarker = JSON.parse(timeMarker) as ITimeMarkerObject;
+    parsingTimeMarker[key] = value;
+    return localStorage.setItem(
+      ET_TIME_MARKER,
+      JSON.stringify(parsingTimeMarker),
+    );
+  }
+};
