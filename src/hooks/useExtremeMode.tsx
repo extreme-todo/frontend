@@ -70,7 +70,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
       Promise.all(
         isOnline
-          ? [todosApi.resetTodos(), rankingApi.resetRanking(), timerApi.reset()]
+          ? [todosApi.resetTodos(), rankingApi.resetRanking()]
           : [ETIndexed.getInstance().resetTodos()],
       )
         .then(() => {

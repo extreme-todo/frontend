@@ -115,14 +115,12 @@ describe('SettingModal', () => {
       const spyOnRanking = jest
         .spyOn(rankingApi, 'resetRanking')
         .mockImplementation();
-      const spyOnTimer = jest.spyOn(timerApi, 'reset').mockImplementation();
       const resetBtn = screen.getByText('데이터 초기화');
       await act(async () => {
         fireEvent.click(resetBtn);
       });
       expect(spyOnReset).toBeCalled();
       expect(spyOnRanking).toBeCalled();
-      expect(spyOnTimer).toBeCalled();
     });
   });
 });

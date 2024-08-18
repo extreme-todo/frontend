@@ -132,26 +132,10 @@ export const todosApi = {
 };
 export const timerApi = {
   _route: 'timer',
-  addTotalFocusTime: async (addFocusTime: number) => {
-    return baseApi.patch(`${timerApi._route}/total_focus`, { addFocusTime });
-  },
-  getTotalFocusTime: async () => {
-    return baseApi.get(`${timerApi._route}/total_focus`);
-  },
-  addTotalRestTime: async (addRestTime: number) => {
-    return baseApi.patch(`${timerApi._route}/total_rest`, { addRestTime });
-  },
-  getTotalRestTime: async () => {
-    return baseApi.get(`${timerApi._route}/total_rest`);
-  },
-  reset: async () => {
-    return baseApi.delete(`${timerApi._route}/reset`);
-  },
-  getProgress: async () => {
-    return baseApi.get(`${timerApi._route}/progress`);
-  },
-  getRecords: async () => {
-    return baseApi.get('timer/progress');
+  getRecords: async (currentDate: string) => {
+    return baseApi.get('timer/progress', {
+      params: { currentDate },
+    });
   },
 };
 

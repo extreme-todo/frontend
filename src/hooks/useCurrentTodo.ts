@@ -50,7 +50,6 @@ const useCurrentTodo = () => {
     if (currentTodo)
       doTodoMutate({ id: currentTodo.id, focusTime: focusedOnTodo });
     getNextTodo();
-    timerApi.addTotalFocusTime(focusedOnTodo / 60000);
     setFocusedOnTodo(0);
   };
 
