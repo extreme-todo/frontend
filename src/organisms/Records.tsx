@@ -13,6 +13,7 @@ export interface IRecordsProps extends IChildProps {
   isLogin: boolean;
   fetchRecords: (
     currentDate: string,
+    offset: number,
   ) => Promise<AxiosResponse<ITotalFocusTime>>;
 }
 
@@ -23,6 +24,7 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
     try {
       const { data: newRecords } = await fetchRecords(
         setTimeInFormat(new Date()).toISOString(),
+        new Date().getTimezoneOffset(),
       );
       if (newRecords) {
         setRecords(newRecords);

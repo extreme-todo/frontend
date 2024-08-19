@@ -132,9 +132,9 @@ export const todosApi = {
 };
 export const timerApi = {
   _route: 'timer',
-  getRecords: async (currentDate: string) => {
+  getRecords: async (currentDate: string, offset: number) => {
     return baseApi.get('timer/progress', {
-      params: { currentDate },
+      params: { currentDate, offset },
     });
   },
 };
