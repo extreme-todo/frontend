@@ -209,17 +209,50 @@ class ETIndexed {
       staleTodos.map((todo) => this.action.removeOne(todo.id)),
     );
   }
+
+  /**
+   * date를 기준으로 현재 날짜 이전 todo 중 done이 false인 todo를 삭제하는 메소드 입니다.
+   * timeUtils에 있는 setTimeInFormat를 사용해서 해당 날짜 05:00:00를 기준으로 toISOString()메소드를 호출해야 합니다.
    * cf) removeTodosBeforeToday(setTimeInFormat(new Date(), '05:00:00').toISOString())
-   * @param {string} currentDate UTC형식의 시간입니다. toISOString 메소드를 사용한 결과
+   * @param {string} currentDate UTC형식의 시간입니다. toISOString 메소드를 사용한 결과 입니다.
    *
    * @returns
    */
-  async removeTodosBeforeToday(currentDate: string) {
+  async removeDidntDo(currentDate: string) {
     await this.action.waitForInit();
     const getTodos = await this.action.getAll();
     if (getTodos.length === 0) return;
-    const stailTodos = getTodos.filter((todo) => todo.date <= currentDate);
-    await Promise.all(stailTodos.map((todo) => this.action.removeOne(todo.id)));
+
+    const didntDoTodo = getTodos.filter((todo) => todo.done === false);
+    const orderedTodo = this.calc.orderedList(didntDoTodo);
+    const staleTodos = orderedTodo.filter(
+      (todo) =>
+        new Date(todo.date) < new Date(currentDate) && todo.done === false,
+    );
+    const updatePivot = orderedTodo.findIndex(
+      (todo) => new Date(todo.date) >= new Date(currentDate),
+    );
+
+    await Promise.all(staleTodos.map((todo) => this.action.removeOne(todo.id)));
+
+    if (updatePivot > 0) {
+      let needToUpdateTodos = orderedTodo.slice(updatePivot);
+      const lastStaleTodos = staleTodos.reduce((acc, todo) =>
+        typeof todo.order === 'number'
+          ? todo.order > (acc.order as number)
+            ? todo
+            : acc
+          : acc,
+      );
+      needToUpdateTodos = this.calc.minusOrder(
+        needToUpdateTodos,
+        lastStaleTodos.order as number,
+      );
+
+      await Promise.all(
+        needToUpdateTodos.map((todo) => this.action.updateOne(todo)),
+      );
+    }
   }
 }
 
