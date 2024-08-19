@@ -73,6 +73,14 @@ describe('ExtremeTodoIndexedDB', () => {
     });
   });
 
+  describe('getPast2Months', () => {
+    it('주어진 ISO string값을 기준으로 2달 전 1일의 날짜를 반환한다.', () => {
+      const specificDate = new Date('2024-08-10').toISOString();
+      const result = indexedCalc.getPast2Months(specificDate);
+      expect(result).toBe('2024-06-01');
+    });
+  });
+
   describe('minusOrder', () => {
     it('주어진 todolist 안에 있는 todo의 order를 -1씩 한다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
