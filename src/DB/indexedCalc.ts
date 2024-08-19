@@ -53,11 +53,11 @@ class ETIndexedDBCalc {
     return copyTodo;
   }
 
-  minusOrder(todos: TodoEntity[]) {
-    if (todos.length === 0) return;
+  minusOrder(todos: TodoEntity[], operand: number = 1) {
+    if (todos.length === 0) return [];
     return todos.map((todo) => {
       if (todo.order != null) {
-        todo.order -= 1;
+        todo.order -= operand;
         return todo;
       } else return todo;
     });

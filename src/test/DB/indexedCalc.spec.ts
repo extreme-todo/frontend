@@ -82,16 +82,22 @@ describe('ExtremeTodoIndexedDB', () => {
   });
 
   describe('minusOrder', () => {
-    it('주어진 todolist 안에 있는 todo의 order를 -1씩 한다.', () => {
+    it('주어진 todolist 안에 있는 todo의 order를 두 번째 인자만큼 감소시킨다.', () => {
+      const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
+      expect(targetTodo[0].order).toBe(2);
+      indexedCalc.minusOrder(targetTodo, 2);
+      expect(targetTodo[0].order).toBe(0);
+    });
+    it('두 번째 인자가 없으면 order를 1 감소시킨다.', () => {
       const targetTodo = mockTodoList.filter((todo) => todo.id !== null);
       expect(targetTodo[0].order).toBe(2);
       indexedCalc.minusOrder(targetTodo);
       expect(targetTodo[0].order).toBe(1);
     });
-    it('빈 배열이 주어지면 undefined를 반환한다.', () => {
+    it('빈 배열이 주어지면 빈 배열을 반환한다.', () => {
       const targetTodo = [];
       const result = indexedCalc.minusOrder(targetTodo);
-      expect(result).toBe(undefined);
+      expect(result).toEqual([]);
     });
   });
 
