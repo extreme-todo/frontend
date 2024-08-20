@@ -13,7 +13,7 @@ export interface TodoModuleType {
   getOneTodo(id: string): Promise<TodoEntity>;
   deleteTodo(id: string): any;
   doTodo(id: string, focusTime: string): any;
-  removeTodosBeforeToday(currentDate: string): any;
+  removeDidntDo(currentDate: string): any;
 }
 
 export class TodoModule implements TodoModuleType {
@@ -61,7 +61,7 @@ export class TodoModule implements TodoModuleType {
   doTodo(id: string, focusTime: string) {
     throw new Error('Method not implemented.');
   }
-  removeTodosBeforeToday() {
+  removeDidntDo() {
     throw new Error('Method not implemented.');
   }
 }

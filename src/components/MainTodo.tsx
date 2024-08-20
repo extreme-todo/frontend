@@ -6,7 +6,7 @@ import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
-import { usePomodoroActions, usePomodoroValue } from '../hooks';
+import { usePomodoroActions, usePomodoroValue, useTimeMarker } from '../hooks';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
@@ -22,6 +22,7 @@ function MainTodo() {
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const mainTodoRef = useRef<HTMLDivElement>(null);
+  useTimeMarker();
 
   useEffect(() => {
     // 최초 진입시에는 휴식 상태로 시작
