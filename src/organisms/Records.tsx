@@ -7,10 +7,14 @@ import { AxiosResponse } from 'axios';
 import { dummyRecords, initialRecords } from '../shared/constants';
 import styled from '@emotion/styled';
 import { usersApi } from '../shared/apis';
+import { setTimeInFormat } from '../shared/timeUtils';
 
 export interface IRecordsProps extends IChildProps {
   isLogin: boolean;
-  fetchRecords: () => Promise<AxiosResponse<ITotalFocusTime>>;
+  fetchRecords: (
+    currentDate: string,
+    offset: number,
+  ) => Promise<AxiosResponse<ITotalFocusTime>>;
 }
 
 function Records({ isLogin, fetchRecords }: IRecordsProps) {
@@ -18,7 +22,10 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
 
   const fetchData = async () => {
     try {
-      const { data: newRecords } = await fetchRecords();
+      const { data: newRecords } = await fetchRecords(
+        setTimeInFormat(new Date()).toISOString(),
+        new Date().getTimezoneOffset(),
+      );
       if (newRecords) {
         setRecords(newRecords);
       }

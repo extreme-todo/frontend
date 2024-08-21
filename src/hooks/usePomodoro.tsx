@@ -88,7 +88,6 @@ const PomodoroProvider = ({ children }: IChildProps) => {
       },
       startFocusing: () => {
         clearInterval(interval);
-        timerApi.addTotalRestTime(status.restedTime / 60000);
         setStatus({
           isResting: false,
           isFocusing: true,

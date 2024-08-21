@@ -34,11 +34,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
 
   const handleReset = async () => {
     if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
-    await Promise.all([
-      todosApi.resetTodos(),
-      rankingApi.resetRanking(),
-      timerApi.reset(),
-    ]);
+    await Promise.all([todosApi.resetTodos(), rankingApi.resetRanking()]);
   };
 
   const handleWithdrawal = async () => {
