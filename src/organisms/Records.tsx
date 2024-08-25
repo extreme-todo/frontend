@@ -48,9 +48,8 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
         </div>
         <Records.CardAtom
           bg="transparent"
-          w="83.87rem"
-          h="36.18rem"
-          margin="8.37rem 4.31rem 6.93rem 4.31rem"
+          w="100%"
+          h="100%"
           className="records-card"
         >
           <RecordCell label="전일 대비" record={records.daily} />
@@ -82,6 +81,11 @@ Records.RecordCell = RecordCell;
 Records.CardAtom = CardAtom;
 
 const RecordsContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 8.37rem 4.31rem 6.93rem 4.31rem;
+  box-sizing: border-box;
+
   .records-title {
     text-align: left;
     width: 100%;
