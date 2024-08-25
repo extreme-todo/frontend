@@ -46,6 +46,7 @@ interface IPomodoroData {
 }
 
 interface IPomodoroActions {
+  setEnableTimer: (enable: boolean) => void;
   setFocusStep: (step: focusStep) => void;
   setRestStep: (step: restStep) => void;
   startFocusing: () => void;
@@ -64,7 +65,7 @@ const PomodoroProvider = ({ children }: IChildProps) => {
   const [status, setStatus] = useState<IPomodoroStatus>(
     getPomodoroData<IPomodoroStatus>('status'),
   );
-
+  const enableRef = useRef<boolean>(true);
   const statusRef = useRef<IPomodoroStatus>(status);
   const settingsRef = useRef<IPomodoroSettings>(settings);
 
@@ -72,6 +73,9 @@ const PomodoroProvider = ({ children }: IChildProps) => {
 
   const actions = useMemo<IPomodoroActions>(
     () => ({
+      setEnableTimer: (enable: boolean) => {
+        enableRef.current = enable;
+      },
       setFocusStep: (step: focusStep) => {
         setSetting((prev) => {
           const newData = { ...prev, focusStep: step };
@@ -95,38 +99,42 @@ const PomodoroProvider = ({ children }: IChildProps) => {
           restedTime: 0,
         });
         interval = setInterval(() => {
-          setStatus((prev) => {
-            const prevFocusTime =
-              prev.isFocusing !== false ? prev.focusedTime : 0;
-            const newData: IPomodoroStatus = {
-              ...prev,
-              isResting: false,
-              isFocusing: true,
-              focusedTime: prevFocusTime + 1000,
-            };
-            statusRef.current = newData;
-            return newData;
-          });
+          if (enableRef.current)
+            setStatus((prev) => {
+              const prevFocusTime =
+                prev.isFocusing !== false ? prev.focusedTime : 0;
+              const newData: IPomodoroStatus = {
+                ...prev,
+                isResting: false,
+                isFocusing: true,
+                focusedTime: prevFocusTime + 1000,
+              };
+              statusRef.current = newData;
+              return newData;
+            });
         }, 1000);
       },
       startResting: () => {
-        clearInterval(interval);
-        interval = setInterval(() => {
-          setStatus((prev) => {
-            const prevRestTime = prev.isResting !== false ? prev.restedTime : 0;
-            const newData: IPomodoroStatus = {
-              ...prev,
-              isFocusing: false,
-              isResting: true,
-              restedTime: prevRestTime + 1000,
-            };
-            statusRef.current = newData;
-            return newData;
-          });
-        }, 1000);
+        if (enableRef.current) {
+          clearInterval(interval);
+          interval = setInterval(() => {
+            setStatus((prev) => {
+              const prevRestTime =
+                prev.isResting !== false ? prev.restedTime : 0;
+              const newData: IPomodoroStatus = {
+                ...prev,
+                isFocusing: false,
+                isResting: true,
+                restedTime: prevRestTime + 1000,
+              };
+              statusRef.current = newData;
+              return newData;
+            });
+          }, 1000);
+        }
       },
     }),
-    [],
+    [enableRef.current],
   );
 
   useEffect(() => {
