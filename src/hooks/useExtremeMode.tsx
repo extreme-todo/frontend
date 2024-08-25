@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { usePomodoroValue } from './usePomodoro';
-import { rankingApi, timerApi, todosApi } from '../shared/apis';
+import { rankingApi, settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useIsOnline } from './useIsOnline';
 import useCurrentTodo from './useCurrentTodo';
@@ -38,6 +38,10 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       setExtremeMode((prev: IExtremeMode) => {
         return { ...prev, isExtreme: newMode };
       });
+    settingsApi.setSettings({
+      extremeMode: newMode,
+      colorMode: 'auto',
+    });
   };
   const getLeftTime = () => {
     if (status.isResting) {
