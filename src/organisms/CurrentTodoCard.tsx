@@ -21,7 +21,9 @@ function CurrentTodoCard({
 
   useEffect(() => {
     if (currentTodo.currentTodo == null) {
-      actions.startResting();
+      actions.setEnableTimer(false);
+    } else {
+      actions.setEnableTimer(true);
     }
   }, [currentTodo]);
 
