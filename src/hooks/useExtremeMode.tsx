@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
-import { usePomodoroValue } from './usePomodoro';
+import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
 import { rankingApi, settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useIsOnline } from './useIsOnline';
@@ -27,6 +27,7 @@ export const ExtremeModeContext = createContext<IExtremeMode>(
 
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { status, settings } = usePomodoroValue();
+  const pomodoroActions = usePomodoroActions();
   const { currentTodo } = useCurrentTodo();
   const [resetFlag, setResetFlag] = useState<boolean>(false); // true 면 reset 완료
   const prevStatus = useRef(status.isResting);
@@ -79,6 +80,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       )
         .then(() => {
           setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
+          pomodoroActions.setEnableTimer(false);
         })
         .catch(() => {
           setLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');

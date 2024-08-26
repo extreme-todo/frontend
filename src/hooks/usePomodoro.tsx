@@ -75,6 +75,10 @@ const PomodoroProvider = ({ children }: IChildProps) => {
     () => ({
       setEnableTimer: (enable: boolean) => {
         enableRef.current = enable;
+        if (enable === false)
+          setStatus((prev) => {
+            return { ...prev, focusedTime: 0, restedTime: 0 };
+          });
       },
       setFocusStep: (step: focusStep) => {
         setSetting((prev) => {
