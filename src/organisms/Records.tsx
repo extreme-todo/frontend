@@ -93,6 +93,12 @@ const RecordsContainer = styled.div`
     top: 2.375rem;
     left: 2.75rem;
   }
+  .records-card {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     display: flex;
