@@ -65,7 +65,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       setLeftTime('');
     }
     if (
-      extremeMode.isExtreme &&
+      extremeMode.isExtreme === true &&
       prevStatus.current === status.isResting &&
       resetFlag === false &&
       currentTodo !== null &&

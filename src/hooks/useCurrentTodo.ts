@@ -4,6 +4,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { timerApi, todosApi } from '../shared/apis';
 import { getDateInFormat } from '../shared/timeUtils';
 
+interface ITodoFocusedTime {
+  id: TodoEntity['id'];
+  focusTime: number;
+}
+const TODO_FOCUS_TIME_KEY = 'ExtremeTodoFocusTime';
 type TodoResponseDto = TodoEntity;
 
 const useCurrentTodo = () => {
@@ -34,16 +39,38 @@ const useCurrentTodo = () => {
 
   useEffect(() => {
     const nextTodo = getNextTodo();
-    if (nextTodo) {
-      setCurrentTodo(nextTodo);
-    } else {
-      setCurrentTodo(undefined);
-    }
+    setCurrentTodo(() => {
+      return nextTodo;
+    });
     // TODO : 추후 오프라인일 경우 indexed db에서 현재 투두를 가져와야 할 듯
   }, [todos]);
 
+  const checkLocalStorageAndGetFocusTime = (todo: TodoEntity) => {
+    const storageFocusTime = localStorage.getItem(TODO_FOCUS_TIME_KEY);
+    if (storageFocusTime) {
+      const originalTime: ITodoFocusedTime = JSON.parse(
+        storageFocusTime,
+      ) as unknown as ITodoFocusedTime;
+      if (originalTime.id == todo.id) {
+        return originalTime.focusTime;
+      }
+    }
+    return 0;
+  };
+
   const updateFocus = (focusedTime: number) => {
-    setFocusedOnTodo((prev) => prev + focusedTime);
+    if (currentTodo != null)
+      setFocusedOnTodo((prev) => {
+        const newtime = prev + focusedTime;
+        localStorage.setItem(
+          TODO_FOCUS_TIME_KEY,
+          JSON.stringify({
+            id: currentTodo?.id,
+            focusTime: newtime,
+          }),
+        );
+        return newtime;
+      });
   };
 
   const doTodo = () => {
@@ -63,7 +90,7 @@ const useCurrentTodo = () => {
         getDateInFormat(new Date(todayTodos[0].date)) ===
           getDateInFormat(new Date())
       ) {
-        setCurrentTodo(todayTodos[0]);
+        setFocusedOnTodo(checkLocalStorageAndGetFocusTime(todayTodos[0]));
         return todayTodos[0];
       } else {
         setCurrentTodo(undefined);
@@ -80,6 +107,7 @@ const useCurrentTodo = () => {
     updateFocus,
     currentTodo,
     focusedOnTodo,
+    checkLocalStorageAndGetFocusTime,
   };
 };
 export default useCurrentTodo;

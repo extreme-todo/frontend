@@ -99,7 +99,7 @@ const PomodoroProvider = ({ children }: IChildProps) => {
           restedTime: 0,
         });
         interval = setInterval(() => {
-          if (enableRef.current)
+          if (enableRef.current) {
             setStatus((prev) => {
               const prevFocusTime =
                 prev.isFocusing !== false ? prev.focusedTime : 0;
@@ -112,12 +112,13 @@ const PomodoroProvider = ({ children }: IChildProps) => {
               statusRef.current = newData;
               return newData;
             });
+          }
         }, 1000);
       },
       startResting: () => {
-        if (enableRef.current) {
-          clearInterval(interval);
-          interval = setInterval(() => {
+        clearInterval(interval);
+        interval = setInterval(() => {
+          if (enableRef.current) {
             setStatus((prev) => {
               const prevRestTime =
                 prev.isResting !== false ? prev.restedTime : 0;
@@ -130,8 +131,8 @@ const PomodoroProvider = ({ children }: IChildProps) => {
               statusRef.current = newData;
               return newData;
             });
-          }, 1000);
-        }
+          }
+        }, 1000);
       },
     }),
     [enableRef.current],
@@ -142,8 +143,6 @@ const PomodoroProvider = ({ children }: IChildProps) => {
       status: IPomodoroStatus,
       settings: IPomodoroSettings,
     ) {
-      console.log(status, settings);
-
       updatePomodoroData<IPomodoroStatus>(status, 'status');
       updatePomodoroData<IPomodoroSettings>(settings, 'settings');
     }
