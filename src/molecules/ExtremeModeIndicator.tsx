@@ -3,6 +3,7 @@ import { LoginContext, useExtremeMode, usePomodoroValue } from '../hooks';
 import styled from '@emotion/styled';
 import { TypoAtom } from '../atoms';
 import { formatTime } from '../shared/timeUtils';
+import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
 
 function ExtremeModeIndicator() {
@@ -34,7 +35,7 @@ function ExtremeModeIndicator() {
     <ExtremeModeContainer>
       {isExtreme && (
         <TypoAtom fontSize="h5" className="extreme-status">
-          {status.isResting && leftTime}
+          {status === PomodoroStatus.RESTING && leftTime}
         </TypoAtom>
       )}
       {isExtreme ? (
