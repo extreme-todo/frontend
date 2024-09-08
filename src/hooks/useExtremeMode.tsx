@@ -87,6 +87,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
           setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
           pomodoroActions.stopTimer();
           queryClient.invalidateQueries(['todos']);
+          queryClient.invalidateQueries(['category']);
         })
         .catch(() => {
           setLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
