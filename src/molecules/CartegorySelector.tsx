@@ -37,7 +37,13 @@ function CartegorySelector({
             }}
           >
             {categories.map((category) => {
-              return <option value={category.id} label={category.name} />;
+              return (
+                <option
+                  value={category.id}
+                  key={category.id}
+                  label={category.name}
+                />
+              );
             })}
           </select>
         </TagAtom>
