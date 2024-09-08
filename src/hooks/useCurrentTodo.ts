@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TodoEntity } from '../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { timerApi, todosApi } from '../shared/apis';
@@ -102,13 +102,24 @@ const useCurrentTodo = () => {
     }
   };
 
-  return {
-    doTodo,
-    updateFocus,
-    currentTodo,
-    focusedOnTodo,
-    checkLocalStorageAndGetFocusTime,
-  };
+  const useCurrentTodoResult = useMemo(
+    () => ({
+      doTodo,
+      updateFocus,
+      currentTodo,
+      focusedOnTodo,
+      checkLocalStorageAndGetFocusTime,
+    }),
+    [
+      doTodo,
+      updateFocus,
+      currentTodo,
+      focusedOnTodo,
+      checkLocalStorageAndGetFocusTime,
+    ],
+  );
+
+  return useCurrentTodoResult;
 };
 export default useCurrentTodo;
 export { type TodoResponseDto };

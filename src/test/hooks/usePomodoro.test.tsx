@@ -3,6 +3,7 @@ import { usePomodoroValue, usePomodoroActions } from '../../hooks';
 import PomodoroProvider, { initialPomodoroData } from '../../hooks/usePomodoro';
 import React from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
+import { PomodoroStatus } from '../../services/PomodoroService';
 
 jest.useFakeTimers();
 describe('usePomodoro', () => {
@@ -11,15 +12,15 @@ describe('usePomodoro', () => {
     <PomodoroProvider>{children}</PomodoroProvider>
   );
   const TestPomodoro = (expectedFocusStep, expectedRestStep) => {
-    const { settings, status } = usePomodoroValue();
+    const { settings, status, time } = usePomodoroValue();
     const { startFocusing, startResting, setFocusStep, setRestStep } =
       usePomodoroActions();
     return (
       <>
         focusStep:{settings.focusStep} <br />
         restStep:{settings.restStep} <br />
-        isFocusing:{status.isFocusing ? status.focusedTime : 'false'} <br />
-        isResting:{status.isResting ? status.restedTime : 'false'} <br />
+        isFocusing:{status === PomodoroStatus.FOCUSING ? time : 'false'} <br />
+        isResting:{status === PomodoroStatus.RESTING ? time : 'false'} <br />
         <button data-testid="startFocusButton" onClick={startFocusing}></button>
         <button data-testid="startRestButton" onClick={startResting}></button>
         <button
@@ -62,11 +63,6 @@ describe('usePomodoro', () => {
         ),
       ).toBeDefined();
       expect(getByText(new RegExp('isFocusing:false'))).toBeDefined();
-      expect(
-        getByText(
-          new RegExp('isResting:' + initialPomodoroData.status.restedTime),
-        ),
-      ).toBeDefined();
     });
   });
 
@@ -76,12 +72,6 @@ describe('usePomodoro', () => {
         focusStep: 345,
         restStep: 987,
       },
-      status: {
-        isFocusing: false,
-        isResting: true,
-        restedTime: 2000,
-        focusedTime: 0,
-      },
     };
 
     beforeEach(() => {
@@ -89,8 +79,6 @@ describe('usePomodoro', () => {
         jest.fn((key: string) => {
           if (key === 'pomodoro-settings')
             return JSON.stringify(mockData.settings);
-          else if (key === 'pomodoro-status')
-            return JSON.stringify(mockData.status);
           else return null;
         }),
       );
@@ -99,6 +87,11 @@ describe('usePomodoro', () => {
           <TestPomodoro />
         </WrapperComponent>,
       );
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
     });
 
     it('localStorage의 데이터를 렌더링한다', () => {
@@ -110,9 +103,6 @@ describe('usePomodoro', () => {
         getByText(new RegExp('restStep:' + mockData.settings.restStep)),
       ).toBeDefined();
       expect(getByText(new RegExp('isFocusing:false'))).toBeDefined();
-      expect(
-        getByText(new RegExp('isResting:' + mockData.status.restedTime)),
-      ).toBeDefined();
     });
   });
 
@@ -127,7 +117,12 @@ describe('usePomodoro', () => {
           <TestPomodoro />
         </WrapperComponent>,
       );
+      jest.useFakeTimers();
       fireEvent.click(component.getByTestId('startFocusButton'));
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
     });
 
     it('isResting이 false가 된다.', () => {
@@ -155,7 +150,12 @@ describe('usePomodoro', () => {
           <TestPomodoro />
         </WrapperComponent>,
       );
+      jest.useFakeTimers();
       fireEvent.click(component.getByTestId('startRestButton'));
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
     });
 
     it('isFocusing false가 된다.', () => {

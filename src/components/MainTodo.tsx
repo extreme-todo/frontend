@@ -10,30 +10,29 @@ import { usePomodoroActions, usePomodoroValue, useTimeMarker } from '../hooks';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
+import { PomodoroStatus } from '../services/PomodoroService';
 
 type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
 function MainTodo() {
   const [isModal, setIsModal] = useState<ModalType | null>(null);
 
-  const { status: pomodoroStatus, settings: pomodoroSettings } =
-    usePomodoroValue();
-  const { startResting } = usePomodoroActions();
+  const {
+    status: pomodoroStatus,
+    settings: pomodoroSettings,
+    time: pomodoroTime,
+  } = usePomodoroValue();
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const mainTodoRef = useRef<HTMLDivElement>(null);
   useTimeMarker();
 
   useEffect(() => {
-    // 최초 진입시에는 휴식 상태로 시작
-    startResting();
-  }, []);
-
-  useEffect(() => {
     setFocusedPercent(
       Number(
         getPomodoroStepPercent({
-          curr: pomodoroStatus.focusedTime,
+          curr:
+            pomodoroStatus === PomodoroStatus.FOCUSING ? pomodoroTime ?? 0 : 0,
           unit: 1,
           step: pomodoroSettings.focusStep,
         }),
@@ -42,13 +41,14 @@ function MainTodo() {
     setRestedPercent(
       Number(
         getPomodoroStepPercent({
-          curr: pomodoroStatus.restedTime,
+          curr:
+            pomodoroStatus === PomodoroStatus.RESTING ? pomodoroTime ?? 0 : 0,
           unit: 1,
           step: pomodoroSettings.restStep,
         }),
       ),
     );
-  }, [pomodoroStatus]);
+  }, [pomodoroTime]);
 
   return (
     <MainTodoContainer ref={mainTodoRef}>

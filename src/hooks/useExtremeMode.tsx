@@ -12,6 +12,8 @@ import { rankingApi, settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useIsOnline } from './useIsOnline';
 import useCurrentTodo from './useCurrentTodo';
+import { PomodoroStatus } from '../services/PomodoroService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface IExtremeMode {
   isExtreme: boolean;
@@ -26,14 +28,16 @@ export const ExtremeModeContext = createContext<IExtremeMode>(
 );
 
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
-  const { status, settings } = usePomodoroValue();
+  const { status, settings, time } = usePomodoroValue();
   const pomodoroActions = usePomodoroActions();
   const { currentTodo } = useCurrentTodo();
   const [resetFlag, setResetFlag] = useState<boolean>(false); // true 면 reset 완료
-  const prevStatus = useRef(status.isResting);
+  const prevStatus = useRef(status);
   const isOnline = useIsOnline();
+  const queryClient = useQueryClient();
+
   const setMode = (newMode: boolean) => {
-    if (status.isFocusing === true) {
+    if (status === PomodoroStatus.FOCUSING) {
       window.alert('집중 시간에는 모드 변경이 불가능합니다.');
     } else
       setExtremeMode((prev: IExtremeMode) => {
@@ -44,9 +48,10 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       colorMode: 'auto',
     });
   };
+
   const getLeftTime = () => {
-    if (status.isResting) {
-      const leftMs = settings.restStep * 60000 - status.restedTime;
+    if (status === PomodoroStatus.RESTING) {
+      const leftMs = settings.restStep * 60000 - (time ?? 0);
       const minutes = (leftMs % 3600000) / 60000;
       if (leftMs >= 0) {
         setLeftTime(
@@ -67,7 +72,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
     }
     if (
       extremeMode.isExtreme === true &&
-      prevStatus.current === status.isResting &&
+      prevStatus.current === status &&
       resetFlag === false &&
       currentTodo !== null &&
       Number(leftMs) < 0
@@ -80,18 +85,20 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       )
         .then(() => {
           setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
-          pomodoroActions.setEnableTimer(false);
+          pomodoroActions.stopTimer();
+          queryClient.invalidateQueries(['todos']);
+          queryClient.invalidateQueries(['category']);
         })
         .catch(() => {
           setLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
         });
       setResetFlag(true);
     }
-    if (prevStatus.current != status.isResting) {
+    if (prevStatus.current != status) {
       setResetFlag(false);
-      prevStatus.current = status.isResting;
+      prevStatus.current = status;
     }
-  }, [status]);
+  }, [time]);
 
   const [extremeMode, setExtremeMode] = useState<IExtremeMode>({
     isExtreme: DEFAULT_IS_EXTREME,
