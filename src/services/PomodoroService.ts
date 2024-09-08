@@ -22,7 +22,6 @@ export const PomodoroService = {
       .pipe(
         tap(() => {
           PomodoroTimeSubject.next(PomodoroTimeSubject.value + 1000);
-          console.log('im timer but..');
         }),
       )
       .subscribe();

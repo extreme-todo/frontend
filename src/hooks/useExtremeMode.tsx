@@ -51,8 +51,6 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
 
   const getLeftTime = () => {
     if (status === PomodoroStatus.RESTING) {
-      console.log(time);
-
       const leftMs = settings.restStep * 60000 - (time ?? 0);
       const minutes = (leftMs % 3600000) / 60000;
       if (leftMs >= 0) {
