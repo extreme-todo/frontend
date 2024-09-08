@@ -5,7 +5,7 @@ import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import { ITotalFocusTime } from '../../shared/interfaces';
 import { AxiosResponse } from 'axios';
-import PomodoroProvider from '../../hooks/usePomodoro';
+import PomodoroProvider, { pomodoroUnit } from '../../hooks/usePomodoro';
 import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -55,9 +55,9 @@ describe('Records', () => {
       const fetchRecords = jest.fn(
         jest.fn().mockResolvedValue({
           data: {
-            daily: 207,
-            weekly: 3098,
-            monthly: -20325,
+            daily: 207 * pomodoroUnit,
+            weekly: 3098 * pomodoroUnit,
+            monthly: -20325 * pomodoroUnit,
           } as ITotalFocusTime,
         } as AxiosResponse<ITotalFocusTime>),
       );
