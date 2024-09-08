@@ -38,7 +38,7 @@ class ETIndexedDBCalc {
       calcTodos = this.plusOrder(todoList) as TodoEntity[];
       idx = calcTodos.findIndex((todo) => todo.order === prevOrder + 1);
     } else {
-      calcTodos = this.minusOrder(todoList) as TodoEntity[];
+      calcTodos = this.minusOrder(todoList);
       idx = calcTodos.findIndex((todo) => todo.order === prevOrder - 1);
     }
 
@@ -53,7 +53,7 @@ class ETIndexedDBCalc {
     return copyTodo;
   }
 
-  minusOrder(todos: TodoEntity[], operand: number = 1) {
+  minusOrder(todos: TodoEntity[], operand = 1) {
     if (todos.length === 0) return [];
     return todos.map((todo) => {
       if (todo.order != null) {

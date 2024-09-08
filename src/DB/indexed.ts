@@ -148,7 +148,7 @@ class ETIndexed {
     const orderedList = this.calc.orderedList(getTodoList);
     const expectedMinusPart = orderedList.slice(order);
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
+    const doneMinus = this.calc.minusOrder(expectedMinusPart);
 
     await this.action.removeOne(id);
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
@@ -175,7 +175,7 @@ class ETIndexed {
 
     Object.assign(getTodo, { done: true, order: null, focusTime: focusTime });
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
+    const doneMinus = this.calc.minusOrder(expectedMinusPart);
 
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
     await this.action.updateOne(getTodo);
