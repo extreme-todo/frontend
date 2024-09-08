@@ -15,6 +15,7 @@ import {
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
+import { usersApi } from '../shared/apis';
 
 type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
@@ -65,7 +66,13 @@ function MainTodo() {
             <SideButtons.ProgressButton
               progress={focusedPercent}
               onClick={() => {
-                setIsModal('timeModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('timeModal');
+                }
               }}
             >
               {focusedPercent}%
@@ -73,7 +80,13 @@ function MainTodo() {
             <SideButtons.ProgressButton
               progress={restedPercent}
               onClick={() => {
-                setIsModal('timeModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('timeModal');
+                }
               }}
             >
               {restedPercent}%
@@ -81,19 +94,37 @@ function MainTodo() {
           </SideButtons>
           <CurrentTodoCard
             openAddTodoModal={() => {
-              setIsModal('addTodoModal');
+              if (!isLogin) {
+                if (window.confirm('로그인을 하시겠습니까?')) {
+                  return usersApi.login();
+                }
+              } else {
+                setIsModal('addTodoModal');
+              }
             }}
           ></CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                setIsModal('todolistModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('todolistModal');
+                }
               }}
               imageSrc="icons/hamburger.svg"
             />
             <SideButtons.IconButton
               onClick={() => {
-                setIsModal('addTodoModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('addTodoModal');
+                }
               }}
               imageSrc="icons/add.svg"
             />
