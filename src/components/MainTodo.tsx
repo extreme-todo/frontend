@@ -1,12 +1,17 @@
 import styled from '@emotion/styled';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { Clock, SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
-import { usePomodoroActions, usePomodoroValue, useTimeMarker } from '../hooks';
+import {
+  LoginContext,
+  usePomodoroActions,
+  usePomodoroValue,
+  useTimeMarker,
+} from '../hooks';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
@@ -19,6 +24,7 @@ function MainTodo() {
   const { status: pomodoroStatus, settings: pomodoroSettings } =
     usePomodoroValue();
   const { startResting } = usePomodoroActions();
+  const { isLogin } = useContext(LoginContext);
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const mainTodoRef = useRef<HTMLDivElement>(null);
