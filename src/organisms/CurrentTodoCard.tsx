@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
-import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
+import {
+  LoginContext,
+  useCurrentTodo,
+  usePomodoroActions,
+  usePomodoroValue,
+} from '../hooks';
 import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 import { PomodoroStatus } from '../services/PomodoroService';
+import { usersApi } from '../shared/apis';
 
 interface ICurrentTodoCardProps extends IChildProps {
   openAddTodoModal: () => void;
@@ -19,6 +25,7 @@ function CurrentTodoCard({
   const [shouldFocus, setShouldFocus] = useState(false);
   const actions = usePomodoroActions();
   const currentTodo = useCurrentTodo();
+  const { isLogin } = useContext(LoginContext);
 
   useEffect(() => {
     if (status !== PomodoroStatus.NONE && currentTodo.currentTodo == null) {
@@ -109,7 +116,15 @@ function CurrentTodoCard({
                   {shouldFocus ? '휴식 종료' : '휴식'}
                 </TypoAtom>
                 <button
-                  onClick={() => actions.startFocusing()}
+                  onClick={() => {
+                    if (!isLogin) {
+                      if (window.confirm('로그인을 하시겠습니까?')) {
+                        return usersApi.login();
+                      }
+                    } else {
+                      actions.startFocusing();
+                    }
+                  }}
                   className="end-rest-button"
                 >
                   <TagAtom
@@ -129,9 +144,15 @@ function CurrentTodoCard({
                 {canRest && (
                   <button
                     onClick={() => {
-                      currentTodo.doTodo();
-                      actions.startFocusing();
-                      setCanRest(false);
+                      if (!isLogin) {
+                        if (window.confirm('로그인을 하시겠습니까?')) {
+                          return usersApi.login();
+                        }
+                      } else {
+                        currentTodo.doTodo();
+                        actions.startFocusing();
+                        setCanRest(false);
+                      }
                     }}
                     className="end-rest-button"
                   >
