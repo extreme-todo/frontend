@@ -8,6 +8,7 @@ import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import PomodoroProvider from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LoginProvider } from '../../hooks';
+import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +20,14 @@ const queryClient = new QueryClient({
 
 describe('SettingModal', () => {
   beforeEach(() => {
+    mockLocalStorage(
+      jest.fn((key: string) => {
+        if (key === 'extremeToken' || key === 'extremeEmail')
+          return 'whydiditwork';
+      }),
+      jest.fn((key: string, data: string) => null),
+      jest.fn((key: string) => null),
+    );
     jest.spyOn(window, 'alert').mockImplementation();
     jest.spyOn(window, 'confirm').mockImplementation(() => true);
     render(
@@ -35,6 +44,7 @@ describe('SettingModal', () => {
       </QueryClientProvider>,
     );
   });
+  afterEach(() => jest.clearAllMocks());
 
   describe('익스트림 모드에는', () => {
     it('`익스트림 모드` 리스트 타이틀이 있다.', () => {

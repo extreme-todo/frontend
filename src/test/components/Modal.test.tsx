@@ -4,6 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +19,14 @@ describe('Modal', () => {
     let renderResult: ReturnType<typeof render>;
 
     beforeEach(() => {
+      mockLocalStorage(
+        jest.fn((key: string) => {
+          if (key === 'extremeToken' || key === 'extremeEmail')
+            return 'whydiditwork';
+        }),
+        jest.fn((key: string, data: string) => null),
+        jest.fn((key: string) => null),
+      );
       const mockElement = document.createElement('div');
       mockElement.setAttribute('id', 'main-container');
       document.body.appendChild(mockElement);
@@ -32,7 +41,7 @@ describe('Modal', () => {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider theme={designTheme}>
             <Modal title="설정" handleClose={handleClose}>
-              <Setting />
+              <Setting handleClose={handleClose} />
             </Modal>
           </ThemeProvider>
         </QueryClientProvider>,

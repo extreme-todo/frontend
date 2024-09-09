@@ -84,9 +84,13 @@ const Setting = ({ handleClose }: ISettingModal) => {
   };
 
   const fetchSettings = async () => {
-    const settings = await settingsApi.getSettings();
-    const { data }: AxiosResponse<ISettings, any> = settings;
-    if (data) setMode(data.extremeMode);
+    try {
+      const settings = await settingsApi.getSettings();
+      const { data }: AxiosResponse<ISettings, any> = settings;
+      if (data) setMode(data.extremeMode);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
