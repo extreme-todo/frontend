@@ -1,42 +1,45 @@
 import styled from '@emotion/styled';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { Clock, SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
-import { usePomodoroActions, usePomodoroValue } from '../hooks';
+import {
+  LoginContext,
+  usePomodoroActions,
+  usePomodoroValue,
+  useTimeMarker,
+} from '../hooks';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
-
-export interface IMainTodoProps extends IChildProps {
-  isLogin: boolean;
-}
+import { PomodoroStatus } from '../services/PomodoroService';
+import { usersApi } from '../shared/apis';
 
 type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
-function MainTodo({ isLogin, children }: IMainTodoProps) {
+function MainTodo() {
   const [isModal, setIsModal] = useState<ModalType | null>(null);
 
-  const { status: pomodoroStatus, settings: pomodoroSettings } =
-    usePomodoroValue();
-  const { startResting } = usePomodoroActions();
+  const {
+    status: pomodoroStatus,
+    settings: pomodoroSettings,
+    time: pomodoroTime,
+  } = usePomodoroValue();
+  const { isLogin } = useContext(LoginContext);
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const mainTodoRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // 최초 진입시에는 휴식 상태로 시작
-    startResting();
-  }, []);
+  useTimeMarker();
 
   useEffect(() => {
     setFocusedPercent(
       Number(
         getPomodoroStepPercent({
-          curr: pomodoroStatus.focusedTime,
+          curr:
+            pomodoroStatus === PomodoroStatus.FOCUSING ? pomodoroTime ?? 0 : 0,
           unit: 1,
           step: pomodoroSettings.focusStep,
         }),
@@ -45,13 +48,14 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
     setRestedPercent(
       Number(
         getPomodoroStepPercent({
-          curr: pomodoroStatus.restedTime,
+          curr:
+            pomodoroStatus === PomodoroStatus.RESTING ? pomodoroTime ?? 0 : 0,
           unit: 1,
           step: pomodoroSettings.restStep,
         }),
       ),
     );
-  }, [pomodoroStatus]);
+  }, [pomodoroTime]);
 
   return (
     <MainTodoContainer ref={mainTodoRef}>
@@ -62,7 +66,13 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
             <SideButtons.ProgressButton
               progress={focusedPercent}
               onClick={() => {
-                setIsModal('timeModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('timeModal');
+                }
               }}
             >
               {focusedPercent}%
@@ -70,7 +80,13 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
             <SideButtons.ProgressButton
               progress={restedPercent}
               onClick={() => {
-                setIsModal('timeModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('timeModal');
+                }
               }}
             >
               {restedPercent}%
@@ -78,19 +94,37 @@ function MainTodo({ isLogin, children }: IMainTodoProps) {
           </SideButtons>
           <CurrentTodoCard
             openAddTodoModal={() => {
-              setIsModal('addTodoModal');
+              if (!isLogin) {
+                if (window.confirm('로그인을 하시겠습니까?')) {
+                  return usersApi.login();
+                }
+              } else {
+                setIsModal('addTodoModal');
+              }
             }}
           ></CurrentTodoCard>
           <SideButtons>
             <SideButtons.IconButton
               onClick={() => {
-                setIsModal('todolistModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('todolistModal');
+                }
               }}
               imageSrc="icons/hamburger.svg"
             />
             <SideButtons.IconButton
               onClick={() => {
-                setIsModal('addTodoModal');
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('addTodoModal');
+                }
               }}
               imageSrc="icons/add.svg"
             />

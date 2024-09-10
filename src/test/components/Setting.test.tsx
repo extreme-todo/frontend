@@ -7,6 +7,8 @@ import { rankingApi, timerApi, todosApi, usersApi } from '../../shared/apis';
 import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import PomodoroProvider from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { LoginProvider } from '../../hooks';
+import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,20 +20,31 @@ const queryClient = new QueryClient({
 
 describe('SettingModal', () => {
   beforeEach(() => {
+    mockLocalStorage(
+      jest.fn((key: string) => {
+        if (key === 'extremeToken' || key === 'extremeEmail')
+          return 'whydiditwork';
+      }),
+      jest.fn((key: string, data: string) => null),
+      jest.fn((key: string) => null),
+    );
     jest.spyOn(window, 'alert').mockImplementation();
     jest.spyOn(window, 'confirm').mockImplementation(() => true);
     render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={designTheme}>
-          <PomodoroProvider>
-            <ExtremeModeProvider>
-              <Setting />
-            </ExtremeModeProvider>
-          </PomodoroProvider>
+          <LoginProvider>
+            <PomodoroProvider>
+              <ExtremeModeProvider>
+                <Setting handleClose={jest.fn()} />
+              </ExtremeModeProvider>
+            </PomodoroProvider>
+          </LoginProvider>
         </ThemeProvider>
       </QueryClientProvider>,
     );
   });
+  afterEach(() => jest.clearAllMocks());
 
   describe('익스트림 모드에는', () => {
     it('`익스트림 모드` 리스트 타이틀이 있다.', () => {
@@ -112,14 +125,12 @@ describe('SettingModal', () => {
       const spyOnRanking = jest
         .spyOn(rankingApi, 'resetRanking')
         .mockImplementation();
-      const spyOnTimer = jest.spyOn(timerApi, 'reset').mockImplementation();
       const resetBtn = screen.getByText('데이터 초기화');
       await act(async () => {
         fireEvent.click(resetBtn);
       });
       expect(spyOnReset).toBeCalled();
       expect(spyOnRanking).toBeCalled();
-      expect(spyOnTimer).toBeCalled();
     });
   });
 });

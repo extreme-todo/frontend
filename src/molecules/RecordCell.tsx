@@ -26,10 +26,12 @@ function RecordCell({ children, label, record }: IRankingProps) {
           rainbow={record > 0}
           className="record-time-number"
         >
-          {record > 0 ? '+' + record.toLocaleString() : record.toLocaleString()}
+          {Math.floor(record / 60000) > 0
+            ? '+' + Math.floor(record / 60000).toLocaleString()
+            : Math.floor(record / 60000).toLocaleString()}
         </RecordCell.RecordTypo>
         <RecordCell.bodyTypo fontSize={'h3'} className="record-time-formatted">
-          분 ({formatTime(record)})
+          분 ({formatTime(Math.floor(record / 60000))})
         </RecordCell.bodyTypo>
       </div>
     </RecordCellContainer>
@@ -53,6 +55,16 @@ const RecordCellContainer = styled.div`
     justify-content: center;
     align-items: center;
     gap: 1.25rem;
+    flex-wrap: wrap;
+    > :first-child {
+      flex-shrink: 0;
+    }
+    > :nth-child(2) {
+      flex: 1;
+    }
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_h} {
+    gap: 2rem;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {

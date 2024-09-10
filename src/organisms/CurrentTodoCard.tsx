@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
-import { useCurrentTodo, usePomodoroActions, usePomodoroValue } from '../hooks';
+import {
+  LoginContext,
+  useCurrentTodo,
+  usePomodoroActions,
+  usePomodoroValue,
+} from '../hooks';
 import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
+import { PomodoroStatus } from '../services/PomodoroService';
+import { usersApi } from '../shared/apis';
 
 interface ICurrentTodoCardProps extends IChildProps {
   openAddTodoModal: () => void;
@@ -13,30 +20,32 @@ function CurrentTodoCard({
   children,
   openAddTodoModal,
 }: ICurrentTodoCardProps) {
-  const { settings: pomodoroSettings, status } = usePomodoroValue();
+  const { settings: pomodoroSettings, status, time } = usePomodoroValue();
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
   const actions = usePomodoroActions();
   const currentTodo = useCurrentTodo();
+  const { isLogin } = useContext(LoginContext);
 
   useEffect(() => {
-    if (currentTodo.currentTodo == null) {
+    if (status !== PomodoroStatus.NONE && currentTodo.currentTodo == null) {
+      actions.stopTimer();
+    } else if (
+      status === PomodoroStatus.NONE &&
+      currentTodo.currentTodo != null
+    ) {
       actions.startResting();
     }
-  }, [currentTodo]);
+  }, [currentTodo.currentTodo]);
 
   useEffect(() => {
     checkIfCanRest();
-    const ifShouldRest = checkIfShouldRest();
-    setTimeout(() => {
-      // 휴식에 대한 비동기 처리가 모두 끝나고 실행되도록 의도함
-      status.isFocusing && !ifShouldRest && currentTodo.updateFocus(1000);
-    }, 0);
-  }, [status.focusedTime]);
-
-  useEffect(() => {
     checkIfShouldFocus();
-  }, [status.restedTime]);
+    const ifShouldRest = checkIfShouldRest();
+    status === PomodoroStatus.FOCUSING &&
+      !ifShouldRest &&
+      currentTodo.updateFocus(time === 0 ? 0 : 1000);
+  }, [time]);
 
   /**
    * 쉴 수 있는 상황인지(투두에 기록된 duration을 초과했을 때)
@@ -65,7 +74,10 @@ function CurrentTodoCard({
    * @returns boolean
    */
   const checkIfShouldRest = () => {
-    if (status.focusedTime === pomodoroSettings.focusStep * pomodoroUnit) {
+    if (
+      status === PomodoroStatus.FOCUSING &&
+      time === pomodoroSettings.focusStep * pomodoroUnit
+    ) {
       actions.startResting();
       return true;
     }
@@ -74,8 +86,8 @@ function CurrentTodoCard({
 
   const checkIfShouldFocus = () => {
     if (
-      status.isResting &&
-      status.restedTime >= pomodoroSettings.restStep * pomodoroUnit
+      status === PomodoroStatus.RESTING &&
+      (time ?? 0) >= pomodoroSettings.restStep * pomodoroUnit
     ) {
       setShouldFocus(true);
     } else {
@@ -98,13 +110,21 @@ function CurrentTodoCard({
               focusedOnTodo={currentTodo.focusedOnTodo}
               startResting={actions.startResting}
             ></CurrentTodo>
-            {status.isResting && (
+            {status === PomodoroStatus.RESTING && (
               <Overlay className="resting overlay">
                 <TypoAtom fontSize="h1" fontColor="titleColor">
                   {shouldFocus ? '휴식 종료' : '휴식'}
                 </TypoAtom>
                 <button
-                  onClick={() => actions.startFocusing()}
+                  onClick={() => {
+                    if (!isLogin) {
+                      if (window.confirm('로그인을 하시겠습니까?')) {
+                        return usersApi.login();
+                      }
+                    } else {
+                      actions.startFocusing();
+                    }
+                  }}
                   className="end-rest-button"
                 >
                   <TagAtom
@@ -124,9 +144,15 @@ function CurrentTodoCard({
                 {canRest && (
                   <button
                     onClick={() => {
-                      currentTodo.doTodo();
-                      actions.startFocusing();
-                      setCanRest(false);
+                      if (!isLogin) {
+                        if (window.confirm('로그인을 하시겠습니까?')) {
+                          return usersApi.login();
+                        }
+                      } else {
+                        currentTodo.doTodo();
+                        actions.startFocusing();
+                        setCanRest(false);
+                      }
                     }}
                     className="end-rest-button"
                   >

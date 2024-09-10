@@ -7,10 +7,14 @@ import { AxiosResponse } from 'axios';
 import { dummyRecords, initialRecords } from '../shared/constants';
 import styled from '@emotion/styled';
 import { usersApi } from '../shared/apis';
+import { setTimeInFormat } from '../shared/timeUtils';
 
 export interface IRecordsProps extends IChildProps {
   isLogin: boolean;
-  fetchRecords: () => Promise<AxiosResponse<ITotalFocusTime>>;
+  fetchRecords: (
+    currentDate: string,
+    offset: number,
+  ) => Promise<AxiosResponse<ITotalFocusTime>>;
 }
 
 function Records({ isLogin, fetchRecords }: IRecordsProps) {
@@ -18,7 +22,10 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
 
   const fetchData = async () => {
     try {
-      const { data: newRecords } = await fetchRecords();
+      const { data: newRecords } = await fetchRecords(
+        setTimeInFormat(new Date()).toISOString(),
+        new Date().getTimezoneOffset(),
+      );
       if (newRecords) {
         setRecords(newRecords);
       }
@@ -41,9 +48,8 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
         </div>
         <Records.CardAtom
           bg="transparent"
-          w="83.87rem"
-          h="36.18rem"
-          margin="8.37rem 4.31rem 6.93rem 4.31rem"
+          w="100%"
+          h="100%"
           className="records-card"
         >
           <RecordCell label="전일 대비" record={records.daily} />
@@ -75,12 +81,23 @@ Records.RecordCell = RecordCell;
 Records.CardAtom = CardAtom;
 
 const RecordsContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 8.37rem 4.31rem 6.93rem 4.31rem;
+  box-sizing: border-box;
+
   .records-title {
     text-align: left;
     width: 100%;
     position: absolute;
     top: 2.375rem;
     left: 2.75rem;
+  }
+  .records-card {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {

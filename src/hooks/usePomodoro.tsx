@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
-import { timerApi } from '../shared/apis';
+import { PomodoroService, PomodoroStatus } from '../services/PomodoroService';
 
 export const pomodoroUnit = 60000;
 // TODO : 테스트용 1 제거 필요
@@ -20,20 +20,7 @@ export const initialPomodoroData: IPomodoroData = {
     focusStep: 1,
     restStep: 1,
   },
-  status: {
-    isFocusing: false,
-    isResting: true,
-    focusedTime: 0,
-    restedTime: 0,
-  },
 };
-
-interface IPomodoroStatus {
-  isFocusing: boolean;
-  isResting: boolean;
-  focusedTime: number;
-  restedTime: number;
-}
 
 interface IPomodoroSettings {
   focusStep: focusStep;
@@ -42,7 +29,8 @@ interface IPomodoroSettings {
 
 interface IPomodoroData {
   settings: IPomodoroSettings;
-  status: IPomodoroStatus;
+  status?: PomodoroStatus;
+  time?: number;
 }
 
 interface IPomodoroActions {
@@ -50,6 +38,7 @@ interface IPomodoroActions {
   setRestStep: (step: restStep) => void;
   startFocusing: () => void;
   startResting: () => void;
+  stopTimer: () => void;
 }
 
 const PomodoroValueContext = createContext<IPomodoroData>({} as IPomodoroData);
@@ -61,14 +50,23 @@ const PomodoroProvider = ({ children }: IChildProps) => {
   const [settings, setSetting] = useState<IPomodoroSettings>(
     getPomodoroData<IPomodoroSettings>('settings'),
   );
-  const [status, setStatus] = useState<IPomodoroStatus>(
-    getPomodoroData<IPomodoroStatus>('status'),
-  );
+  const [time, setTime] = useState<number>();
+  const [status, setStatus] = useState<PomodoroStatus>();
 
-  const statusRef = useRef<IPomodoroStatus>(status);
   const settingsRef = useRef<IPomodoroSettings>(settings);
 
-  let interval: NodeJS.Timer;
+  useEffect(() => {
+    PomodoroService.startTimer();
+  }, []);
+
+  useEffect(() => {
+    PomodoroService.pomodoroStatus$.subscribe((res) => {
+      setStatus(res);
+    });
+    PomodoroService.pomodoroTime$.subscribe((res) => {
+      setTime(res);
+    });
+  }, []);
 
   const actions = useMemo<IPomodoroActions>(
     () => ({
@@ -87,72 +85,35 @@ const PomodoroProvider = ({ children }: IChildProps) => {
         });
       },
       startFocusing: () => {
-        clearInterval(interval);
-        timerApi.addTotalRestTime(status.restedTime / 60000);
-        setStatus({
-          isResting: false,
-          isFocusing: true,
-          focusedTime: 0,
-          restedTime: 0,
-        });
-        interval = setInterval(() => {
-          setStatus((prev) => {
-            const prevFocusTime =
-              prev.isFocusing !== false ? prev.focusedTime : 0;
-            const newData: IPomodoroStatus = {
-              ...prev,
-              isResting: false,
-              isFocusing: true,
-              focusedTime: prevFocusTime + 1000,
-            };
-            statusRef.current = newData;
-            return newData;
-          });
-        }, 1000);
+        PomodoroService.setStatus(PomodoroStatus.FOCUSING);
       },
       startResting: () => {
-        clearInterval(interval);
-        interval = setInterval(() => {
-          setStatus((prev) => {
-            const prevRestTime = prev.isResting !== false ? prev.restedTime : 0;
-            const newData: IPomodoroStatus = {
-              ...prev,
-              isFocusing: false,
-              isResting: true,
-              restedTime: prevRestTime + 1000,
-            };
-            statusRef.current = newData;
-            return newData;
-          });
-        }, 1000);
+        PomodoroService.setStatus(PomodoroStatus.RESTING);
+      },
+      stopTimer: () => {
+        PomodoroService.setStatus(PomodoroStatus.NONE);
       },
     }),
     [],
   );
 
   useEffect(() => {
-    function updatePomodorBeforeUnload(
-      status: IPomodoroStatus,
-      settings: IPomodoroSettings,
-    ) {
-      console.log(status, settings);
-
-      updatePomodoroData<IPomodoroStatus>(status, 'status');
+    function updatePomodorBeforeUnload(settings: IPomodoroSettings) {
       updatePomodoroData<IPomodoroSettings>(settings, 'settings');
     }
     window.addEventListener('beforeunload', () =>
-      updatePomodorBeforeUnload(statusRef.current, settingsRef.current),
+      updatePomodorBeforeUnload(settingsRef.current),
     );
     return () => {
       window.removeEventListener('beforeunload', () =>
-        updatePomodorBeforeUnload(statusRef.current, settingsRef.current),
+        updatePomodorBeforeUnload(settingsRef.current),
       );
     };
   }, []);
 
   return (
     <PomodoroActionsContext.Provider value={actions}>
-      <PomodoroValueContext.Provider value={{ settings, status }}>
+      <PomodoroValueContext.Provider value={{ settings, time, status }}>
         {children}
       </PomodoroValueContext.Provider>
     </PomodoroActionsContext.Provider>
@@ -169,7 +130,7 @@ function usePomodoroActions() {
   return value;
 }
 
-function getPomodoroData<T>(type: 'settings' | 'status') {
+function getPomodoroData<T>(type: 'settings') {
   const localKey = 'pomodoro-' + type;
   const existingData = localStorage.getItem(localKey);
 
@@ -180,9 +141,6 @@ function getPomodoroData<T>(type: 'settings' | 'status') {
     switch (type) {
       case 'settings':
         initData = initialPomodoroData.settings as T;
-        break;
-      case 'status':
-        initData = initialPomodoroData.status as T;
         break;
     }
 

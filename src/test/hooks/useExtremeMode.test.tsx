@@ -44,8 +44,12 @@ describe('useExtremeMode', () => {
   describe('처음 렌더링 되었을 때', () => {
     beforeEach(() => {
       mockLocalStorage(
-        jest.fn((key: string) => null),
+        jest.fn((key: string) => {
+          if (key === 'extremeToken' || key === 'extremeEmail')
+            return 'whydiditwork';
+        }),
         jest.fn((key: string, data: string) => null),
+        jest.fn((key: string) => null),
       );
       component = render(<TestExtremeMode />, { wrapper: WrapperComponent });
     });
@@ -63,7 +67,10 @@ describe('useExtremeMode', () => {
 
     beforeEach(() => {
       mockLocalStorage(
-        jest.fn((key: string) => null),
+        jest.fn((key: string) => {
+          if (key === 'extremeToken' || key === 'extremeEmail')
+            return 'whydiditwork';
+        }),
         jest.fn((key: string) => {
           return JSON.stringify(mockData);
         }),
@@ -73,7 +80,7 @@ describe('useExtremeMode', () => {
 
     it('localStorage의 데이터를 렌더링한다', () => {
       const { findByText } = component;
-      screen.logTestingPlaygroundURL();
+      // screen.logTestingPlaygroundURL();
 
       expect(findByText(new RegExp('isExtreme:' + mockData))).toBeDefined();
     });
@@ -82,8 +89,12 @@ describe('useExtremeMode', () => {
   describe('버튼을 클릭하면', () => {
     beforeEach(() => {
       mockLocalStorage(
-        jest.fn((key: string) => null),
+        jest.fn((key: string) => {
+          if (key === 'extremeToken' || key === 'extremeEmail')
+            return 'whydiditwork';
+        }),
         jest.fn((key: string, data: string) => null),
+        jest.fn((key: string) => null),
       );
       component = render(<TestExtremeMode></TestExtremeMode>, {
         wrapper: WrapperComponent,

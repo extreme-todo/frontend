@@ -5,9 +5,10 @@ import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import { ITotalFocusTime } from '../../shared/interfaces';
 import { AxiosResponse } from 'axios';
-import PomodoroProvider from '../../hooks/usePomodoro';
+import PomodoroProvider, { pomodoroUnit } from '../../hooks/usePomodoro';
 import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,19 +19,33 @@ const queryClient = new QueryClient({
 });
 
 describe('Records', () => {
-  function renderRecords(props: IRecordsProps) {
-    return react.render(
-      <ThemeProvider theme={designTheme}>
-        <QueryClientProvider client={queryClient}>
-          <PomodoroProvider>
-            <ExtremeModeProvider>
-              <Records {...props} />
-            </ExtremeModeProvider>
-          </PomodoroProvider>
-        </QueryClientProvider>
-      </ThemeProvider>,
+  let renderRecords: (
+    props: IRecordsProps,
+  ) => react.RenderResult<typeof react.queries, HTMLElement, HTMLElement>;
+  beforeEach(() => {
+    mockLocalStorage(
+      jest.fn((key: string) => {
+        if (key === 'extremeToken' || key === 'extremeEmail')
+          return 'whydiditwork';
+      }),
+      jest.fn((key: string, data: string) => null),
+      jest.fn((key: string) => null),
     );
-  }
+
+    renderRecords = (props: IRecordsProps) => {
+      return react.render(
+        <ThemeProvider theme={designTheme}>
+          <QueryClientProvider client={queryClient}>
+            <PomodoroProvider>
+              <ExtremeModeProvider>
+                <Records {...props} />
+              </ExtremeModeProvider>
+            </PomodoroProvider>
+          </QueryClientProvider>
+        </ThemeProvider>,
+      );
+    };
+  });
 
   describe('모든 경우에', () => {
     it('타이틀 텍스트를 렌더한다', () => {
@@ -55,9 +70,9 @@ describe('Records', () => {
       const fetchRecords = jest.fn(
         jest.fn().mockResolvedValue({
           data: {
-            daily: 207,
-            weekly: 3098,
-            monthly: -20325,
+            daily: 207 * pomodoroUnit,
+            weekly: 3098 * pomodoroUnit,
+            monthly: -20325 * pomodoroUnit,
           } as ITotalFocusTime,
         } as AxiosResponse<ITotalFocusTime>),
       );

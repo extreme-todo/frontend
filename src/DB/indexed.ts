@@ -9,7 +9,7 @@
 import { ETIndexedDBAction } from './indexedAction';
 import { ETIndexedDBCalc } from './indexedCalc';
 import type { TodoEntity } from './indexedAction';
-import { groupByDate } from '../shared/timeUtils';
+import { groupByDate, setTimeInFormat } from '../shared/timeUtils';
 // import type { TodoModuleType } from '../shared/TodoModule';
 
 /* 
@@ -148,7 +148,7 @@ class ETIndexed {
     const orderedList = this.calc.orderedList(getTodoList);
     const expectedMinusPart = orderedList.slice(order);
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
+    const doneMinus = this.calc.minusOrder(expectedMinusPart);
 
     await this.action.removeOne(id);
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
@@ -175,7 +175,7 @@ class ETIndexed {
 
     Object.assign(getTodo, { done: true, order: null, focusTime: focusTime });
 
-    const doneMinus = this.calc.minusOrder(expectedMinusPart) as TodoEntity[];
+    const doneMinus = this.calc.minusOrder(expectedMinusPart);
 
     await Promise.all(doneMinus.map((todo) => this.action.updateOne(todo)));
     await this.action.updateOne(getTodo);
@@ -190,19 +190,69 @@ class ETIndexed {
     return groupByDate(orderedTodo);
   }
 
+  // QUESTION : 프론트에서 Cron을 적용할 수 있을까?
   /**
-   * timeUtils에 있는 setTimeInFormat를 사용해서 해당 날짜 05:00:00를 기준으로 toISOString()메소드를 호출해야 한다.
+   * 2달이 지난 Todo를 제거하는 메소드
+   * 매달 1일에 실행해줘야 한다.
+   * execute every 1st day of the month 5am
+   * @returns
+   */
+  async removeTodosBeforeOver2Months() {
+    const past2MonthDate = this.calc.getPast2Months(
+      setTimeInFormat(new Date()).toISOString(),
+    );
+    const todoList = await this.action.getAll();
+    const staleTodos = todoList.filter(
+      (todo) => new Date(todo.date) < setTimeInFormat(new Date(past2MonthDate)),
+    );
+    return await Promise.all(
+      staleTodos.map((todo) => this.action.removeOne(todo.id)),
+    );
+  }
+
+  /**
+   * date를 기준으로 현재 날짜 이전 todo 중 done이 false인 todo를 삭제하는 메소드 입니다.
+   * timeUtils에 있는 setTimeInFormat를 사용해서 해당 날짜 05:00:00를 기준으로 toISOString()메소드를 호출해야 합니다.
    * cf) removeTodosBeforeToday(setTimeInFormat(new Date(), '05:00:00').toISOString())
-   * @param {string} currentDate UTC형식의 시간입니다. toISOString 메소드를 사용한 결과
+   * @param {string} currentDate UTC형식의 시간입니다. toISOString 메소드를 사용한 결과 입니다.
    *
    * @returns
    */
-  async removeTodosBeforeToday(currentDate: string) {
+  async removeDidntDo(currentDate: string) {
     await this.action.waitForInit();
     const getTodos = await this.action.getAll();
     if (getTodos.length === 0) return;
-    const stailTodos = getTodos.filter((todo) => todo.date <= currentDate);
-    await Promise.all(stailTodos.map((todo) => this.action.removeOne(todo.id)));
+
+    const didntDoTodo = getTodos.filter((todo) => todo.done === false);
+    const orderedTodo = this.calc.orderedList(didntDoTodo);
+    const staleTodos = orderedTodo.filter(
+      (todo) =>
+        new Date(todo.date) < new Date(currentDate) && todo.done === false,
+    );
+    const updatePivot = orderedTodo.findIndex(
+      (todo) => new Date(todo.date) >= new Date(currentDate),
+    );
+
+    await Promise.all(staleTodos.map((todo) => this.action.removeOne(todo.id)));
+
+    if (updatePivot > 0) {
+      let needToUpdateTodos = orderedTodo.slice(updatePivot);
+      const lastStaleTodos = staleTodos.reduce((acc, todo) =>
+        typeof todo.order === 'number'
+          ? todo.order > (acc.order as number)
+            ? todo
+            : acc
+          : acc,
+      );
+      needToUpdateTodos = this.calc.minusOrder(
+        needToUpdateTodos,
+        lastStaleTodos.order as number,
+      );
+
+      await Promise.all(
+        needToUpdateTodos.map((todo) => this.action.updateOne(todo)),
+      );
+    }
   }
 }
 

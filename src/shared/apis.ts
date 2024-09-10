@@ -1,4 +1,9 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse,
+  Cancel,
+} from 'axios';
 import LoginEvent from './LoginEvent';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
@@ -8,6 +13,7 @@ import { groupByDate } from './timeUtils';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
+const DIDNT_LOGIN_USER = '로그인이 필요합니다.';
 const EXTREME_TOKEN = 'extreme-token';
 const EXTREME_EMAIL = 'extreme-email';
 const LOGINEVENT = LoginEvent.getInstance();
@@ -17,8 +23,7 @@ interface AxiosCustomRequest extends AxiosRequestConfig {
 }
 
 const baseApi = axios.create({
-  // TODO : 배포 시 수정할 것
-  baseURL: 'https://' + SERVER_URL + '/api', // 로컬에서는 http로 해야 됨!
+  baseURL: SERVER_URL + '/api',
   headers: {
     'content-type': 'application/json;charset=UTF-8',
     accept: 'application/json',
@@ -30,6 +35,13 @@ baseApi.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem('extremeToken');
   const email = localStorage.getItem('extremeEmail');
 
+  if (
+    config.url !== '/api/users/callback/google/start' &&
+    !email &&
+    !accessToken
+  ) {
+    throw new axios.Cancel(DIDNT_LOGIN_USER);
+  }
   if (config.headers) {
     config.headers[EXTREME_TOKEN] = accessToken
       ? accessToken
@@ -47,6 +59,7 @@ baseApi.interceptors.response.use(
     return config;
   },
   (err: AxiosError) => {
+    if (err.message === DIDNT_LOGIN_USER) return Promise.reject(err);
     const config = err.config as AxiosCustomRequest;
     config.retryCount = config.retryCount ?? 0;
 
@@ -62,15 +75,10 @@ baseApi.interceptors.response.use(
 export const usersApi = {
   login() {
     const data = window.open(
-      'http://' + SERVER_URL + '/api/users/callback/google/start',
+      SERVER_URL + '/api/users/callback/google/start',
       '_self',
     );
     return data;
-  },
-  logout(): void {
-    localStorage.removeItem('extremeEmail');
-    window.dispatchEvent(LOGINEVENT.getEvent());
-    localStorage.removeItem('extremeToken');
   },
   async withdrawal() {
     await baseApi.delete('users/revoke');
@@ -132,32 +140,16 @@ export const todosApi = {
   async deleteTodo(id: string) {
     await baseApi.delete(`/todos/${id}`);
   },
-  async removeTodosBeforeToday(currentDate: string) {
+  async removeDidntDo(currentDate: string) {
     return await baseApi.delete('/todos', { params: { currentDate } });
   },
 };
 export const timerApi = {
   _route: 'timer',
-  addTotalFocusTime: async (addFocusTime: number) => {
-    return baseApi.patch(`${timerApi._route}/total_focus`, { addFocusTime });
-  },
-  getTotalFocusTime: async () => {
-    return baseApi.get(`${timerApi._route}/total_focus`);
-  },
-  addTotalRestTime: async (addRestTime: number) => {
-    return baseApi.patch(`${timerApi._route}/total_rest`, { addRestTime });
-  },
-  getTotalRestTime: async () => {
-    return baseApi.get(`${timerApi._route}/total_rest`);
-  },
-  reset: async () => {
-    return baseApi.delete(`${timerApi._route}/reset`);
-  },
-  getProgress: async () => {
-    return baseApi.get(`${timerApi._route}/progress`);
-  },
-  getRecords: async () => {
-    return baseApi.get('timer/progress');
+  getRecords: async (currentDate: string, offset: number) => {
+    return baseApi.get('timer/progress', {
+      params: { currentDate, offset },
+    });
   },
 };
 
