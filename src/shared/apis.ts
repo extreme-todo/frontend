@@ -1,4 +1,9 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse,
+  Cancel,
+} from 'axios';
 import LoginEvent from './LoginEvent';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
@@ -8,6 +13,7 @@ import { groupByDate } from './timeUtils';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
+const DIDNT_LOGIN_USER = '로그인이 필요합니다.';
 const EXTREME_TOKEN = 'extreme-token';
 const EXTREME_EMAIL = 'extreme-email';
 const LOGINEVENT = LoginEvent.getInstance();
@@ -29,6 +35,13 @@ baseApi.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem('extremeToken');
   const email = localStorage.getItem('extremeEmail');
 
+  if (
+    config.url !== '/api/users/callback/google/start' &&
+    !email &&
+    !accessToken
+  ) {
+    throw new axios.Cancel(DIDNT_LOGIN_USER);
+  }
   if (config.headers) {
     config.headers[EXTREME_TOKEN] = accessToken
       ? accessToken
@@ -46,6 +59,7 @@ baseApi.interceptors.response.use(
     return config;
   },
   (err: AxiosError) => {
+    if (err.message === DIDNT_LOGIN_USER) return Promise.reject(err);
     const config = err.config as AxiosCustomRequest;
     config.retryCount = config.retryCount ?? 0;
 
