@@ -26,7 +26,7 @@ function ExtremeModeIndicator() {
           `정말로 익스트림 모드를 ${isExtreme ? '끄시' : '켜시'}겠습니까?`,
         )
       ) {
-        setMode(!isExtreme);
+        setMode && setMode(!isExtreme);
       }
     }
   };

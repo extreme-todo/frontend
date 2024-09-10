@@ -73,7 +73,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
   });
 
   const handleSwitch = (): void => {
-    setMode(!isExtreme);
+    setMode && setMode(!isExtreme);
   };
 
   const tooltipMouseOver = () => {
@@ -87,7 +87,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
     try {
       const settings = await settingsApi.getSettings();
       const { data }: AxiosResponse<ISettings, any> = settings;
-      if (data) setMode(data.extremeMode);
+      if (data) setMode && setMode(data.extremeMode);
     } catch (error) {
       console.log(error);
     }

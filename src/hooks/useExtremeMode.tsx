@@ -17,8 +17,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export interface IExtremeMode {
   isExtreme: boolean;
-  setMode: (extremeMode: boolean) => void;
   leftTime: string;
+  setMode?: (mode: any) => void;
 }
 
 export const DEFAULT_IS_EXTREME = true;
@@ -102,7 +102,6 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
 
   const [extremeMode, setExtremeMode] = useState<IExtremeMode>({
     isExtreme: DEFAULT_IS_EXTREME,
-    setMode,
     leftTime: '',
   });
 
@@ -123,7 +122,6 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       } else {
         setExtremeMode({
           isExtreme: DEFAULT_IS_EXTREME,
-          setMode,
           leftTime: '',
         });
         updateExtreme(DEFAULT_IS_EXTREME);
@@ -141,7 +139,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   }, [status]);
 
   return (
-    <ExtremeModeContext.Provider value={extremeMode}>
+    <ExtremeModeContext.Provider value={{ ...extremeMode, setMode }}>
       {children}
     </ExtremeModeContext.Provider>
   );
