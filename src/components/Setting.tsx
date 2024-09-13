@@ -1,20 +1,12 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 
 import { PopperAtom, SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
-import {
-  rankingApi,
-  settingsApi,
-  timerApi,
-  todosApi,
-  usersApi,
-} from '../shared/apis';
+import { rankingApi, todosApi, usersApi } from '../shared/apis';
 
 import styled from '@emotion/styled';
 import { useExtremeMode, LoginContext } from '../hooks';
-import { AxiosResponse } from 'axios';
-import { ISettings } from '../shared/interfaces';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 // TODO : state를 상위 컴포넌트로 뽑아낼 수는 없을까?.. 그게 더 괜찮은 방법이지 않을까?..
@@ -24,9 +16,10 @@ interface ISettingModal {
   handleClose: () => void;
 }
 const Setting = ({ handleClose }: ISettingModal) => {
-  const { isExtreme, setMode } = useExtremeMode();
+  const { isExtreme, handleExtremeMode } = useExtremeMode();
   const { deleteToken } = useContext(LoginContext);
   const [isOver, setIsOver] = useState<boolean>(false);
+  console.log(isExtreme);
 
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
 
@@ -72,30 +65,12 @@ const Setting = ({ handleClose }: ISettingModal) => {
     },
   });
 
-  const handleSwitch = (): void => {
-    setMode && setMode(!isExtreme);
-  };
-
   const tooltipMouseOver = () => {
     setIsOver(true);
   };
   const tooltipMouseLeave = () => {
     setIsOver(false);
   };
-
-  const fetchSettings = async () => {
-    try {
-      const settings = await settingsApi.getSettings();
-      const { data }: AxiosResponse<ISettings, any> = settings;
-      if (data) setMode && setMode(data.extremeMode);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchSettings();
-  }, []);
 
   return (
     <>
@@ -128,7 +103,10 @@ const Setting = ({ handleClose }: ISettingModal) => {
             <img alt="tooltip" src="icons/tooltip.svg"></img>
           </IconAtom>
           {/* TODO : 전역 객체로 처리해주자. 익스트림 모드는 할 일이 끝났을 때만 변경 가능하다 */}
-          <SwitchAtom setValue={handleSwitch} value={isExtreme} />
+          <SwitchAtom
+            setValue={() => handleExtremeMode(!isExtreme)}
+            value={isExtreme}
+          />
         </ExtremeContainer>
         <TagAtom
           handler={resetMutation}
@@ -161,7 +139,7 @@ const ExtremeContainer = styled.div`
   display: flex;
   align-items: center;
 
-  & > :first-child {
+  & > :first-of-type {
     margin-right: 0.3125rem;
   }
 
