@@ -19,7 +19,6 @@ const Setting = ({ handleClose }: ISettingModal) => {
   const { isExtreme, handleExtremeMode } = useExtremeMode();
   const { deleteToken } = useContext(LoginContext);
   const [isOver, setIsOver] = useState<boolean>(false);
-  console.log(isExtreme);
 
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
 

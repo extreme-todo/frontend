@@ -79,7 +79,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       ? true
       : extremeModeData?.data.extremeMode
     : true;
-  console.log('본진 :: ', isExtreme);
+
   // handlers
   const handleExtremeMode = useCallback(
     (newMode: boolean) => {
