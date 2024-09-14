@@ -9,13 +9,7 @@ import {
 } from '@testing-library/react';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import {
-  rankingApi,
-  settingsApi,
-  timerApi,
-  todosApi,
-  usersApi,
-} from '../../shared/apis';
+import { rankingApi, settingsApi, todosApi, usersApi } from '../../shared/apis';
 import { EXTREME_MODE, ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import PomodoroProvider from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -50,18 +44,20 @@ describe('SettingModal', () => {
     jest.spyOn(window, 'confirm').mockImplementation(() => true);
 
     // api mocking
-    settingsApi.setSettings = jest.fn().mockResolvedValue(
-      (() => {
-        mockExtremeTodo = !mockExtremeTodo;
-        return {
-          data: {
-            id: 5,
-            colorMode: 'auto',
-            extremeMode: mockExtremeTodo,
-          },
-        };
-      })(),
-    );
+    settingsApi.setSettings = jest.fn(({ colorMode, extremeMode }) => {
+      mockExtremeTodo = extremeMode;
+      return Promise.resolve({
+        status: 200,
+        statusText: '',
+        headers: {},
+        config: {},
+        data: {
+          id: 5,
+          colorMode: colorMode,
+          extremeMode: mockExtremeTodo,
+        },
+      });
+    });
     settingsApi.getSettings = jest.fn().mockResolvedValue({
       data: {
         id: 5,
@@ -110,7 +106,7 @@ describe('SettingModal', () => {
       expect(screen.getByAltText('tooltip')).toBeInTheDocument();
     });
 
-    it('switch버튼이 ON 값을 가지고 있다.', () => {
+    it('switch버튼이 초기값으로 ON 값을 가지고 있다.', () => {
       const switchBtn = screen.getByText('ON');
 
       expect(switchBtn).toBeInTheDocument();
@@ -136,18 +132,16 @@ describe('SettingModal', () => {
     });
   });
 
-  describe('switch버튼은', () => {
-    it('ON이 초기값이고 누르면 OFF로 바뀐다.', async () => {
+  describe('switch버튼을 누르면', () => {
+    it('SettingsApi.setSettings를 호출해서 Extreme Mode를 반대로 설정한다.', async () => {
+      const currExtremeTodo = mockExtremeTodo;
       const switchBtn = screen.getByText('ON');
-      screen.logTestingPlaygroundURL();
-      fireEvent.click(switchBtn);
-      // expect(await screen.findByText(/OFF/i)).toBeInTheDocument();
-      // console.log('1');
-      // await waitFor(() => fireEvent.click(switchBtn));
-      // console.log('2');
-      await waitFor(async () => {
-        expect(await screen.findByText(/OFF/i)).toBeInTheDocument();
+      await waitFor(() => fireEvent.click(switchBtn));
+      expect(settingsApi.setSettings).toBeCalledWith({
+        colorMode: 'auto',
+        extremeMode: !currExtremeTodo,
       });
+      expect(mockExtremeTodo).toBe(!currExtremeTodo);
     });
   });
 
