@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useEffect,
   useState,
@@ -8,45 +8,94 @@ import React, {
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
-import { rankingApi, settingsApi, timerApi, todosApi } from '../shared/apis';
+import { rankingApi, settingsApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useIsOnline } from './useIsOnline';
 import useCurrentTodo from './useCurrentTodo';
 import { PomodoroStatus } from '../services/PomodoroService';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
-export interface IExtremeMode {
+interface ExtremeModeContextType {
+  handleExtremeMode: (extremeMode: boolean) => void;
   isExtreme: boolean;
-  setMode: (extremeMode: boolean) => void;
   leftTime: string;
 }
 
-export const DEFAULT_IS_EXTREME = true;
+export const EXTREME_MODE = 'extremeMode';
 
-export const ExtremeModeContext = createContext<IExtremeMode>(
-  {} as IExtremeMode,
-);
+export const ExtremeModeContext = createContext<ExtremeModeContextType>({
+  isExtreme: true,
+  leftTime: '',
+  handleExtremeMode: (extremeMode: boolean) => {
+    console.debug();
+  },
+});
 
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
+  // state
+  const [resetFlag, setResetFlag] = useState<boolean>(false); // true 면 reset 완료
+  const [leftTime, setLeftTime] = useState('');
+
+  // hooks
   const { status, settings, time } = usePomodoroValue();
   const pomodoroActions = usePomodoroActions();
   const { currentTodo } = useCurrentTodo();
-  const [resetFlag, setResetFlag] = useState<boolean>(false); // true 면 reset 완료
-  const prevStatus = useRef(status);
   const isOnline = useIsOnline();
   const queryClient = useQueryClient();
 
-  const setMode = (newMode: boolean) => {
-    if (status === PomodoroStatus.FOCUSING) {
-      window.alert('집중 시간에는 모드 변경이 불가능합니다.');
-    } else
-      setExtremeMode((prev: IExtremeMode) => {
-        return { ...prev, isExtreme: newMode };
-      });
-    settingsApi.setSettings({
-      extremeMode: newMode,
-      colorMode: 'auto',
-    });
+  // apis
+  const { data: extremeModeData, isLoading } = useQuery({
+    queryFn: settingsApi.getSettings,
+    queryKey: ['settings'],
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const { mutate: handleExtremeMutation } = useMutation(
+    settingsApi.setSettings,
+    {
+      onSuccess(data) {
+        console.debug(
+          '\n\n\n ✅ data in useExtremeMode‘s useMutation ✅ \n\n',
+          data,
+        );
+        queryClient.invalidateQueries({ queryKey: ['settings'] });
+      },
+      onError(error: AxiosError) {
+        console.debug(
+          '\n\n\n 🚨 error in useExtremeMode‘s useMutation 🚨 \n\n',
+          error,
+        );
+        const errorString = '에러 발생 ' + error.code + ' ' + error.message;
+        console.error(errorString);
+      },
+    },
+  );
+
+  // ref and const
+  const prevStatus = useRef(status);
+  const isExtreme = extremeModeData
+    ? extremeModeData?.data.extremeMode === undefined
+      ? true
+      : extremeModeData?.data.extremeMode
+    : true;
+
+  // handlers
+  const handleExtremeMode = useCallback(
+    (newMode: boolean) => {
+      if (status === PomodoroStatus.FOCUSING) {
+        window.alert('집중 시간에는 모드 변경이 불가능합니다.');
+      } else
+        handleExtremeMutation({
+          extremeMode: newMode,
+          colorMode: 'auto',
+        });
+    },
+    [status],
+  );
+
+  const handleLeftTime = (value: string) => {
+    setLeftTime(value);
   };
 
   const getLeftTime = () => {
@@ -54,7 +103,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       const leftMs = settings.restStep * 60000 - (time ?? 0);
       const minutes = (leftMs % 3600000) / 60000;
       if (leftMs >= 0) {
-        setLeftTime(
+        handleLeftTime(
           Math.floor(minutes) +
             '분 ' +
             Math.floor((leftMs % 60000) / 1000) +
@@ -65,32 +114,33 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
     }
   };
 
+  // useEffects
   useEffect(() => {
     const leftMs = getLeftTime();
     if (currentTodo == null) {
-      setLeftTime('');
+      handleLeftTime('');
     }
     if (
-      extremeMode.isExtreme === true &&
+      isExtreme === true &&
       prevStatus.current === status &&
       resetFlag === false &&
       currentTodo !== null &&
       Number(leftMs) < 0
     ) {
-      setLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
+      handleLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
       Promise.all(
         isOnline
           ? [todosApi.resetTodos(), rankingApi.resetRanking()]
           : [ETIndexed.getInstance().resetTodos()],
       )
         .then(() => {
-          setLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
+          handleLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
           pomodoroActions.stopTimer();
           queryClient.invalidateQueries(['todos']);
           queryClient.invalidateQueries(['category']);
         })
         .catch(() => {
-          setLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
+          handleLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
         });
       setResetFlag(true);
     }
@@ -100,57 +150,29 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
     }
   }, [time]);
 
-  const [extremeMode, setExtremeMode] = useState<IExtremeMode>({
-    isExtreme: DEFAULT_IS_EXTREME,
-    setMode,
-    leftTime: '',
-  });
-
-  const setLeftTime = (value: string) => {
-    setExtremeMode((prev) => ({ ...prev, leftTime: value }));
-  };
-
-  const localKey = 'extremeMode';
-
   useEffect(() => {
-    const checkLocalStorage = () => {
-      const localExtreme = localStorage.getItem(localKey);
-      if (localExtreme != null) {
-        setExtremeMode((prev) => ({
-          ...prev,
-          isExtreme: JSON.parse(localExtreme) as boolean,
-        }));
-      } else {
-        setExtremeMode({
-          isExtreme: DEFAULT_IS_EXTREME,
-          setMode,
-          leftTime: '',
-        });
-        updateExtreme(DEFAULT_IS_EXTREME);
-      }
-    };
-    checkLocalStorage();
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(localKey, JSON.stringify(extremeMode.isExtreme));
-  }, [extremeMode]);
-
-  useEffect(() => {
-    setExtremeMode((prev) => ({ ...prev, setMode }));
-  }, [status]);
+    const localExtreme: string | null | boolean =
+      localStorage.getItem(EXTREME_MODE);
+    if (!isLoading) {
+      if (localExtreme && JSON.parse(localExtreme) !== isExtreme)
+        localStorage.setItem(EXTREME_MODE, JSON.stringify(isExtreme));
+      else if (!localExtreme)
+        localStorage.setItem(EXTREME_MODE, JSON.stringify(isExtreme));
+    }
+  }, [isExtreme, isLoading]);
 
   return (
-    <ExtremeModeContext.Provider value={extremeMode}>
+    <ExtremeModeContext.Provider
+      value={{
+        isExtreme,
+        leftTime: leftTime,
+        handleExtremeMode,
+      }}
+    >
       {children}
     </ExtremeModeContext.Provider>
   );
 };
-
-function updateExtreme(isExtreme: boolean) {
-  const localKey = 'extremeMode';
-  localStorage.setItem(localKey, JSON.stringify(isExtreme));
-}
 
 export default function useExtremeMode() {
   const value = useContext(ExtremeModeContext);

@@ -1,19 +1,14 @@
-import React, { useEffect, useMemo, useContext } from 'react';
+import { useContext } from 'react';
 import { LoginContext, useExtremeMode, usePomodoroValue } from '../hooks';
 import styled from '@emotion/styled';
 import { TypoAtom } from '../atoms';
-import { formatTime } from '../shared/timeUtils';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
 
 function ExtremeModeIndicator() {
   const { isLogin } = useContext(LoginContext);
-  const { status, settings } = usePomodoroValue();
-  const { isExtreme, leftTime, setMode } = useExtremeMode();
-
-  useEffect(() => {
-    return;
-  }, [leftTime]);
+  const { status } = usePomodoroValue();
+  const { isExtreme, leftTime, handleExtremeMode } = useExtremeMode();
 
   const toggleExtremeMode = () => {
     if (!isLogin) {
@@ -26,7 +21,7 @@ function ExtremeModeIndicator() {
           `정말로 익스트림 모드를 ${isExtreme ? '끄시' : '켜시'}겠습니까?`,
         )
       ) {
-        setMode(!isExtreme);
+        handleExtremeMode(!isExtreme);
       }
     }
   };
