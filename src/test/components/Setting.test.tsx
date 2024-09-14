@@ -1,14 +1,21 @@
 import React from 'react';
 import { Setting } from '../../components';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import { rankingApi, timerApi, todosApi, usersApi } from '../../shared/apis';
-import { ExtremeModeProvider } from '../../hooks/useExtremeMode';
+import { rankingApi, settingsApi, todosApi, usersApi } from '../../shared/apis';
+import { EXTREME_MODE, ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import PomodoroProvider from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LoginProvider } from '../../hooks';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
+import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,17 +26,61 @@ const queryClient = new QueryClient({
 });
 
 describe('SettingModal', () => {
+  let mockExtremeTodo = true;
   beforeEach(() => {
     mockLocalStorage(
       jest.fn((key: string) => {
         if (key === 'extremeToken' || key === 'extremeEmail')
           return 'whydiditwork';
+        else if (key === EXTREME_MODE) return mockExtremeTodo;
+        else if (key === 'pomodoro-settings')
+          return `{ "focusStep": 30, "restStep": 15 }`;
       }),
-      jest.fn((key: string, data: string) => null),
-      jest.fn((key: string) => null),
+      jest.fn((key: string) => JSON.stringify('true')),
+      jest.fn(),
     );
+
     jest.spyOn(window, 'alert').mockImplementation();
     jest.spyOn(window, 'confirm').mockImplementation(() => true);
+
+    // api mocking
+    settingsApi.setSettings = jest.fn(({ colorMode, extremeMode }) => {
+      mockExtremeTodo = extremeMode;
+      return Promise.resolve({
+        status: 200,
+        statusText: '',
+        headers: {},
+        config: {},
+        data: {
+          id: 5,
+          colorMode: colorMode,
+          extremeMode: mockExtremeTodo,
+        },
+      });
+    });
+    settingsApi.getSettings = jest.fn().mockResolvedValue({
+      data: {
+        id: 5,
+        colorMode: 'auto',
+        extremeMode: mockExtremeTodo,
+      },
+    });
+    todosApi.getList = jest.fn().mockResolvedValue(
+      groupByDate([
+        {
+          id: '1719637016087-a58bpkm1230',
+          date: getDateInFormat(new Date()),
+          todo: 'Go to grocery store',
+          createdAt: new Date('Dec 26, 2022 18:00:30'),
+          duration: 10,
+          done: false,
+          categories: ['영어', '학교공부'],
+          focusTime: 0,
+          order: 2,
+        },
+      ]),
+    );
+
     render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={designTheme}>
@@ -55,7 +106,7 @@ describe('SettingModal', () => {
       expect(screen.getByAltText('tooltip')).toBeInTheDocument();
     });
 
-    it('switch버튼이 ON 값을 가지고 있다.', () => {
+    it('switch버튼이 초기값으로 ON 값을 가지고 있다.', () => {
       const switchBtn = screen.getByText('ON');
 
       expect(switchBtn).toBeInTheDocument();
@@ -81,12 +132,16 @@ describe('SettingModal', () => {
     });
   });
 
-  describe('switch버튼은', () => {
-    it('ON이 초기값이고 누르면 OFF로 바뀐다.', () => {
+  describe('switch버튼을 누르면', () => {
+    it('SettingsApi.setSettings를 호출해서 Extreme Mode를 반대로 설정한다.', async () => {
+      const currExtremeTodo = mockExtremeTodo;
       const switchBtn = screen.getByText('ON');
-
-      fireEvent.click(switchBtn);
-      expect(screen.queryByText('OFF')).toBeInTheDocument();
+      await waitFor(() => fireEvent.click(switchBtn));
+      expect(settingsApi.setSettings).toBeCalledWith({
+        colorMode: 'auto',
+        extremeMode: !currExtremeTodo,
+      });
+      expect(mockExtremeTodo).toBe(!currExtremeTodo);
     });
   });
 
