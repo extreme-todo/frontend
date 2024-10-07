@@ -72,6 +72,11 @@ baseApi.interceptors.response.use(
       config.retryCount += 1;
       return axios(config);
     }
+    if (err.response?.status === 401) {
+      localStorage.removeItem(EXTREME_EMAIL_STORAGE);
+      localStorage.removeItem(EXTREME_TOKEN_STORAGE);
+      window.alert('다시 로그인 해주세요');
+    }
     return Promise.reject(err);
   },
 );
