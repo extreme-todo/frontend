@@ -7,6 +7,7 @@ import { LoginProvider } from '../../hooks';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import { userStub } from '../../../stubs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { EXTREME_EMAIL_STORAGE } from '../../shared/apis';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +21,7 @@ describe('RankingAndRecords', () => {
   mockLocalStorage(
     jest.fn((key: string) => {
       if (key === 'extremeToken') return userStub().access;
-      else if (key === 'extremeEmail') return userStub().email;
+      else if (key === EXTREME_EMAIL_STORAGE) return userStub().email;
       else return null;
     }),
     jest.fn(),

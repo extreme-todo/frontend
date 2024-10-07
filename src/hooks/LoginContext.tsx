@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, createContext } from 'react';
 import LoginEvent from '../shared/LoginEvent';
 import { IChildProps } from '../shared/interfaces';
+import { EXTREME_EMAIL_STORAGE, EXTREME_TOKEN_STORAGE } from '../shared/apis';
 
 export interface ILogin {
   isLogin: boolean;
@@ -22,20 +23,20 @@ export const LoginProvider = ({ children }: IChildProps) => {
   const [isLogin, setIsLogin] = useState(false);
 
   const checkLogin = useCallback((): void => {
-    const token = localStorage.getItem('extremeToken');
-    const email = localStorage.getItem('extremeEmail');
+    const token = localStorage.getItem(EXTREME_TOKEN_STORAGE);
+    const email = localStorage.getItem(EXTREME_EMAIL_STORAGE);
     setIsLogin(token && email ? true : false);
   }, []);
 
   const setToken = useCallback((token: string, email: string) => {
-    localStorage.setItem('extremeToken', token);
-    localStorage.setItem('extremeEmail', email);
+    localStorage.setItem(EXTREME_TOKEN_STORAGE, token);
+    localStorage.setItem(EXTREME_EMAIL_STORAGE, email);
     window.dispatchEvent(LOGINEVENT.getEvent());
   }, []);
 
   const deleteToken = useCallback(() => {
-    localStorage.removeItem('extremeToken');
-    localStorage.removeItem('extremeEmail');
+    localStorage.removeItem(EXTREME_TOKEN_STORAGE);
+    localStorage.removeItem(EXTREME_EMAIL_STORAGE);
     window.dispatchEvent(LOGINEVENT.getEvent());
   }, []);
 

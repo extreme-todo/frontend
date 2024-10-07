@@ -5,7 +5,13 @@ import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import { EXTREME_MODE, ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import PomodoroProvider, { usePomodoroActions } from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { todosApi, settingsApi, rankingApi } from '../../shared/apis';
+import {
+  todosApi,
+  settingsApi,
+  rankingApi,
+  EXTREME_EMAIL_STORAGE,
+  EXTREME_TOKEN_STORAGE,
+} from '../../shared/apis';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
 
@@ -62,7 +68,7 @@ describe('useExtremeMode', () => {
     wrapMockLocalStorage = (extremeMode: boolean) =>
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === 'extremeToken' || key === 'extremeEmail')
+          if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
             return 'whydiditwork';
           else if (key === EXTREME_MODE) return extremeMode;
           else if (key === 'pomodoro-settings')
@@ -176,7 +182,7 @@ describe('useExtremeMode', () => {
     it('시간이 초과되면 초기화 진행 안내가 렌더링 된다.', async () => {
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === 'extremeToken' || key === 'extremeEmail')
+          if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
             return 'whydiditwork';
           else if (key === EXTREME_MODE) return mockExtremeTodo;
           else if (key === 'pomodoro-settings')

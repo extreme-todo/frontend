@@ -4,6 +4,10 @@ import { userStub } from '../../../stubs';
 import { LoginContext, LoginProvider } from '../../hooks';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import userEvent from '@testing-library/user-event';
+import {
+  EXTREME_EMAIL_STORAGE,
+  EXTREME_TOKEN_STORAGE,
+} from '../../shared/apis';
 
 describe('useCheckLogin', () => {
   const TestLoginComponent = () => {
@@ -30,8 +34,8 @@ describe('useCheckLogin', () => {
     it('localstorage에 토큰과 유저 정보가 있을 때 true이다.', () => {
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === 'extremeToken') return userStub().access;
-          else if (key === 'extremeEmail') return userStub().email;
+          if (key === EXTREME_TOKEN_STORAGE) return userStub().access;
+          else if (key === EXTREME_EMAIL_STORAGE) return userStub().email;
           else return null;
         }),
       );
