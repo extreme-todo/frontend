@@ -14,8 +14,10 @@ import { groupByDate } from './timeUtils';
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
 const DIDNT_LOGIN_USER = '로그인이 필요합니다.';
-const EXTREME_TOKEN = 'extreme-token';
-const EXTREME_EMAIL = 'extreme-email';
+const EXTREME_TOKEN_HEADER = 'extreme-token';
+const EXTREME_EMAIL_HEADER = 'extreme-email';
+export const EXTREME_TOKEN_STORAGE = 'extremeToken';
+export const EXTREME_EMAIL_STORAGE = 'extremeEmail';
 const LOGINEVENT = LoginEvent.getInstance();
 
 interface AxiosCustomRequest extends AxiosRequestConfig {
@@ -32,9 +34,8 @@ const baseApi = axios.create({
 });
 
 baseApi.interceptors.request.use((config) => {
-  const accessToken = localStorage.getItem('extremeToken');
-  const email = localStorage.getItem('extremeEmail');
-
+  const accessToken = localStorage.getItem(EXTREME_TOKEN_STORAGE);
+  const email = localStorage.getItem(EXTREME_EMAIL_STORAGE);
   if (
     config.url !== '/api/users/callback/google/start' &&
     !email &&
@@ -43,18 +44,21 @@ baseApi.interceptors.request.use((config) => {
     throw new axios.Cancel(DIDNT_LOGIN_USER);
   }
   if (config.headers) {
-    config.headers[EXTREME_TOKEN] = accessToken
+    config.headers[EXTREME_TOKEN_HEADER] = accessToken
       ? accessToken
       : (false as boolean);
-    config.headers[EXTREME_EMAIL] = email ? email : (false as boolean);
+    config.headers[EXTREME_EMAIL_HEADER] = email ? email : (false as boolean);
   }
   return config;
 });
 
 baseApi.interceptors.response.use(
   (config) => {
-    if (EXTREME_TOKEN in config.headers)
-      localStorage.setItem('extremeToken', config.headers[EXTREME_TOKEN]);
+    if (EXTREME_TOKEN_HEADER in config.headers)
+      localStorage.setItem(
+        EXTREME_TOKEN_STORAGE,
+        config.headers[EXTREME_TOKEN_HEADER],
+      );
 
     return config;
   },

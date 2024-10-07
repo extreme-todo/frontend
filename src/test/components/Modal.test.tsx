@@ -5,6 +5,10 @@ import { designTheme } from '../../styles/theme';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
+import {
+  EXTREME_EMAIL_STORAGE,
+  EXTREME_TOKEN_STORAGE,
+} from '../../shared/apis';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,7 +25,7 @@ describe('Modal', () => {
     beforeEach(() => {
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === 'extremeToken' || key === 'extremeEmail')
+          if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
             return 'whydiditwork';
         }),
         jest.fn((key: string, data: string) => null),
