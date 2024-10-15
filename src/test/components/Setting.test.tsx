@@ -9,7 +9,14 @@ import {
 } from '@testing-library/react';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import { rankingApi, settingsApi, todosApi, usersApi } from '../../shared/apis';
+import {
+  EXTREME_EMAIL_STORAGE,
+  EXTREME_TOKEN_STORAGE,
+  rankingApi,
+  settingsApi,
+  todosApi,
+  usersApi,
+} from '../../shared/apis';
 import { EXTREME_MODE, ExtremeModeProvider } from '../../hooks/useExtremeMode';
 import PomodoroProvider from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -30,7 +37,7 @@ describe('SettingModal', () => {
   beforeEach(() => {
     mockLocalStorage(
       jest.fn((key: string) => {
-        if (key === 'extremeToken' || key === 'extremeEmail')
+        if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
           return 'whydiditwork';
         else if (key === EXTREME_MODE) return mockExtremeTodo;
         else if (key === 'pomodoro-settings')
