@@ -10,7 +10,7 @@ export interface ITagAtomProps extends IChildProps {
 }
 
 interface ITagSpanProps {
-  bg?: keyof typeof designTheme.colors;
+  bg?: keyof typeof designTheme.color;
   fontsize?: 'sm' | 'md1' | 'md2' | 'b1' | 'b2';
   size?: 'sm' | 'md' | 'big' | 'big2';
   bold?: 'bold' | 'extraBold';

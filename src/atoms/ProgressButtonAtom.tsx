@@ -6,11 +6,11 @@ import { designTheme } from '../styles/theme';
  * ProgressButtonAtom
  * 파이차트 모양의 Progress를 표시하는 버튼
  * @param {number} progress (1~100)% 값
- * @param {keyof typeof designTheme.colors} bgColor progress 색 지정
+ * @param {keyof typeof designTheme.color} bgColor progress 색 지정
  */
 const ProgressButtonAtom = styled.button<{
   progress: number;
-  bgColor?: keyof typeof designTheme.colors;
+  bgColor?: keyof typeof designTheme.color;
 }>`
   width: 4.455rem;
   height: 4.455rem;

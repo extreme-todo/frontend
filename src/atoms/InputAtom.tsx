@@ -18,7 +18,7 @@ interface IInputAtomProps
     borderRadius?: TypeLength;
     padding?: TypePadding;
     margin?: TypePadding;
-    backgroundColor?: keyof typeof designTheme.colors;
+    backgroundColor?: keyof typeof designTheme.color;
     outlineWidth?: TypeLength;
     fontWeight?: keyof typeof designTheme.fontSize;
   };

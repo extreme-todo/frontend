@@ -9,7 +9,7 @@ interface IIconAtomProps
   > {
   children: ReactElement<HTMLImageElement>;
   size?: number;
-  backgroundColor?: keyof typeof designTheme.colors | 'transparent';
+  backgroundColor?: keyof typeof designTheme.color | 'transparent';
   className?: string;
 }
 
