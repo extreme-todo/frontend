@@ -13,16 +13,16 @@ type FontSize = Record<FontName, FontAttribute>;
 
 type ColorAttribute = `#${string}`;
 // 8 colors tuple
-type TagColor = [
-  ColorAttribute,
-  ColorAttribute,
-  ColorAttribute,
-  ColorAttribute,
-  ColorAttribute,
-  ColorAttribute,
-  ColorAttribute,
-  ColorAttribute,
-];
+type TagColorName =
+  | 'green'
+  | 'purple'
+  | 'mint'
+  | 'orange'
+  | 'pink'
+  | 'gray'
+  | 'cyan'
+  | 'brown';
+type TagColor = Record<TagColorName, ColorAttribute>;
 type ColorName =
   | 'primary1'
   | 'primary2'
