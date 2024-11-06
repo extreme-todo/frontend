@@ -5,7 +5,7 @@ import { rainbowStyle } from '../styles/Global';
 
 interface ITypoProps extends IChildProps {
   fontSize?: keyof typeof designTheme.fontSize;
-  fontColor?: keyof typeof designTheme.color;
+  fontColor?: keyof Pick<typeof designTheme.color, 'primary1' | 'primary2'>;
   rainbow?: boolean;
   className?: string;
   padding?: `${number}rem ${number}rem`;
@@ -36,7 +36,7 @@ export default TypoAtom;
 
 const Typo = styled.span<ITypoProps>`
   color: ${({ fontColor }) =>
-    fontColor ? designTheme.color[fontColor] : designTheme.color.subFontColor};
+    fontColor ? designTheme.color[fontColor] : designTheme.color.primary1};
   font-size: ${({ fontSize }) =>
     fontSize
       ? designTheme.fontSize[fontSize].size

@@ -29,7 +29,7 @@ const TimeSetter = ({
 }: ITimeCounterProps) => {
   return (
     <TimeSetterContainer>
-      <TypoAtom fontSize={'tag'} className="timeSetterTypo">
+      <TypoAtom fontSize={'body'} className="timeSetterTypo">
         {title}
       </TypoAtom>
       <FlipHandlerContainer>
@@ -51,7 +51,7 @@ const TimeSetter = ({
               />
             ))}
           </FlipCounter>
-          <TypoAtom fontSize="tag" className="timeSetterTypo">
+          <TypoAtom fontSize="body" className="timeSetterTypo">
             분
           </TypoAtom>
         </FlipContainer>

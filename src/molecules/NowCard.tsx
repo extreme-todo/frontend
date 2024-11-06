@@ -32,7 +32,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
 
   return (
     <NowCardWrapper>
-      <TypoAtom fontColor="whiteWine" fontSize="body_bold">
+      <TypoAtom fontColor="primary1" fontSize="h2">
         NOW
       </TypoAtom>
       <NowCardContainer>

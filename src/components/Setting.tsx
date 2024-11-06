@@ -75,7 +75,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
     <>
       <SettingContainer>
         <ExtremeContainer>
-          <TypoAtom fontSize={'h4'}>익스트림 모드</TypoAtom>
+          <TypoAtom fontSize={'body'}>익스트림 모드</TypoAtom>
           {isOver ? (
             <PopperAtom
               popperElement={popperEl}
@@ -85,7 +85,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
               offset={[0, 15]}
             >
               <Tooltip>
-                <TypoAtom fontSize={'tooltip'}>
+                <TypoAtom fontSize={'body'}>
                   쉬는 시간을 초과할 시 작성했던 todo와 일간, 주간, 월간 기록이
                   모두 삭제됩니다!
                 </TypoAtom>

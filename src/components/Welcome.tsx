@@ -37,11 +37,11 @@ const Welcome = () => {
       {isLogin ? (
         <BtnContainer>
           <BtnAtom handleOnClick={handleLogoutBtn}>
-            <TypoAtom fontSize="h5">SIGN OUT</TypoAtom>
+            <TypoAtom fontSize="b1">SIGN OUT</TypoAtom>
           </BtnAtom>
           <div></div>
           <BtnAtom handleOnClick={handleSetting}>
-            <TypoAtom fontSize="h5">SETTING</TypoAtom>
+            <TypoAtom fontSize="b1">SETTING</TypoAtom>
           </BtnAtom>
           {isModal &&
             createPortal(
@@ -117,7 +117,7 @@ const BtnContainer = styled.div`
 
   > div {
     line-height: 30px;
-    color: ${({ theme: { colors } }) => colors.subFontColor};
+    color: ${({ theme: { color } }) => color.primary1};
     margin: auto;
   }
   > div:nth-of-type(2) {

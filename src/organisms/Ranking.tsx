@@ -55,8 +55,8 @@ function Ranking({
       <RankingContainer data-testid={'ranking-component'}>
         <div className="ranking-title-wrapper">
           <Ranking.titleLabel
-            fontSize="h3_bold"
-            fontColor="titleColor"
+            fontSize="h3"
+            fontColor="primary1"
             className="ranking-title"
           >
             카테고리 별 랭킹
@@ -89,7 +89,7 @@ function Ranking({
                       <RankingTexts.Typo
                         fontSize={(() => {
                           if (idx % 2 !== 0) {
-                            return 'h3_bold';
+                            return 'h3';
                           }
                           if (text.length > 3) {
                             return 'h3';
@@ -133,7 +133,7 @@ function Ranking({
               />
             ) : (
               <NoData>
-                <TypoAtom fontSize="h2" fontColor="titleColor">
+                <TypoAtom fontSize="h2" fontColor="primary1">
                   랭킹 데이터가 없어요.
                 </TypoAtom>
                 <TypoAtom>할 일을 완료하고 확인해보세요!</TypoAtom>

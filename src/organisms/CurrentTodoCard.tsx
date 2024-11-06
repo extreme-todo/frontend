@@ -112,7 +112,7 @@ function CurrentTodoCard({
             ></CurrentTodo>
             {status === PomodoroStatus.RESTING && (
               <Overlay className="resting overlay">
-                <TypoAtom fontSize="h1" fontColor="titleColor">
+                <TypoAtom fontSize="h1" fontColor="primary1">
                   {shouldFocus ? '휴식 종료' : '휴식'}
                 </TypoAtom>
                 <button

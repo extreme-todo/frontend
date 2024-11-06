@@ -10,7 +10,7 @@ function SwitchAtom({ value, setValue }: ISwitchAtomProps) {
   return (
     <SwitchContainter value={value} onClick={setValue}>
       <Switch value={value}>
-        <TypoAtom fontColor={'titleColor'} fontSize={'tag'}>
+        <TypoAtom fontColor={'primary1'} fontSize={'body'}>
           {/* TODO : string을 외부에서 주입받을 수 있도록 하기 -> 확장성이 더 개선되고 아톰이라는 말에 더 어울림 */}
           {value ? `ON` : `OFF`}
         </TypoAtom>
@@ -29,7 +29,7 @@ const Switch = styled.div<{ value: boolean }>`
   display: flex;
   justify-content: ${({ value }) => (value ? 'flex-start' : 'flex-end')};
   align-items: center;
-  background-color: ${({ theme: { colors } }) => colors.white};
+  background-color: ${({ theme: { color } }) => color.primary2};
 
   & > span {
     width: 100%;
@@ -38,7 +38,7 @@ const Switch = styled.div<{ value: boolean }>`
 `;
 
 const SwitchContainter = styled.div<Partial<ISwitchAtomProps>>`
-  background-color: ${({ theme: { colors } }) => colors.whiteWine};
+  background-color: ${({ theme: { color } }) => color.primary1};
   width: 5.5rem;
   min-width: 4.5rem;
   height: 2.5rem;

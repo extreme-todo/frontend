@@ -55,7 +55,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
             <TypoAtom
               fontSize={'h3'}
               className="modalTitle"
-              fontColor={'titleColor'}
+              fontColor={'primary1'}
             >
               {title}
             </TypoAtom>
