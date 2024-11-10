@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
-import { ProgressButtonAtom } from '../atoms';
+import { BtnAtom, ProgressButtonAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
 export type ISideButtonsProps = IChildProps;
@@ -12,10 +12,9 @@ function SideButtonsMain({ children }: ISideButtonsProps) {
 
 const SideButtonsWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
-  gap: 1.38rem;
+  gap: 1rem;
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     flex-direction: row;
@@ -36,29 +35,17 @@ const SideButtonsWrapper = styled.div`
 `;
 
 const SideButton = ({
-  imageSrc,
   onClick,
+  children,
 }: {
-  imageSrc: string;
   onClick: () => void;
+  children?: ReactNode;
 }) => {
-  return (
-    <button>
-      <IconAtom
-        onClick={onClick}
-        size={4.455}
-        backgroundColor={'whiteWine'}
-        className="icon"
-      >
-        <img src={imageSrc} />
-      </IconAtom>
-    </button>
-  );
+  return <BtnAtom handleOnClick={onClick}>{children}</BtnAtom>;
 };
 
 const SideButtons = Object.assign(SideButtonsMain, {
-  ProgressButton: ProgressButtonAtom,
-  IconButton: SideButton,
+  SideButton,
 });
 
 export default SideButtons;

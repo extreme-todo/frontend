@@ -17,6 +17,7 @@ import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
+import { TagAtom, TypoAtom } from '../atoms';
 
 type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
@@ -62,8 +63,7 @@ function MainTodo() {
       <MainTodoContentWrapper>
         <MainTodoCenter>
           <SideButtons>
-            <SideButtons.ProgressButton
-              progress={focusedPercent}
+            <SideButtons.SideButton
               onClick={() => {
                 if (!isLogin) {
                   if (window.confirm('로그인을 하시겠습니까?')) {
@@ -74,22 +74,41 @@ function MainTodo() {
                 }
               }}
             >
-              {focusedPercent}%
-            </SideButtons.ProgressButton>
-            <SideButtons.ProgressButton
-              progress={restedPercent}
+              <img src="icons/clock.svg" />
+              <TypoAtom fontSize="body">
+                {pomodoroSettings.focusStep}분 집중 |{' '}
+                {pomodoroSettings.restStep}분 휴식
+              </TypoAtom>
+              <div className="tag-button">Edit</div>
+            </SideButtons.SideButton>
+
+            <SideButtons.SideButton
               onClick={() => {
                 if (!isLogin) {
                   if (window.confirm('로그인을 하시겠습니까?')) {
                     return usersApi.login();
                   }
                 } else {
-                  setIsModal('timeModal');
+                  setIsModal('todolistModal');
                 }
               }}
             >
-              {restedPercent}%
-            </SideButtons.ProgressButton>
+              <img src="icons/list.svg" />
+              <TypoAtom fontSize="body">오늘의 할일</TypoAtom>
+            </SideButtons.SideButton>
+            <SideButtons.SideButton
+              onClick={() => {
+                if (!isLogin) {
+                  if (window.confirm('로그인을 하시겠습니까?')) {
+                    return usersApi.login();
+                  }
+                } else {
+                  setIsModal('addTodoModal');
+                }
+              }}
+            >
+              <div className="tag-button">Todo +</div>
+            </SideButtons.SideButton>
           </SideButtons>
           <CurrentTodoCard
             openAddTodoModal={() => {
@@ -102,32 +121,6 @@ function MainTodo() {
               }
             }}
           ></CurrentTodoCard>
-          <SideButtons>
-            <SideButtons.IconButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('todolistModal');
-                }
-              }}
-              imageSrc="icons/hamburger.svg"
-            />
-            <SideButtons.IconButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('addTodoModal');
-                }
-              }}
-              imageSrc="icons/add.svg"
-            />
-          </SideButtons>
         </MainTodoCenter>
         {isModal === 'todolistModal' &&
           createPortal(
@@ -194,8 +187,19 @@ const MainTodoContentWrapper = styled.div`
 
 const MainTodoCenter = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 3.06rem;
+  gap: 0.75rem;
+  .tag-button {
+    border: 1px solid #523ea1;
+    border-radius: 1.25rem;
+    height: 1.25rem;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #523ea1;
+  }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;

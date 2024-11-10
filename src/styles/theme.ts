@@ -27,7 +27,7 @@ export const designTheme: Theme = {
     h3_bold: { size: '2.324375rem', weight: 700 },
     h4: { size: '1.936875rem', weight: 400 },
     h5: { size: '1.549375rem', weight: 800 },
-    body: { size: '1.743125rem', weight: 400 },
+    body: { size: '1rem', weight: 400 },
     body_bold: { size: '1.743125rem', weight: 700 },
     sub: { size: '1.549375rem', weight: 400 },
     tag: { size: '1.161875rem', weight: 400 },
