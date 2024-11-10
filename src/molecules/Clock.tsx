@@ -1,32 +1,23 @@
 import styled from '@emotion/styled';
 import React, { useEffect, useState } from 'react';
 import { TypoAtom } from '../atoms';
+import { formatDuration, intervalToDuration } from 'date-fns';
 
-function Clock() {
-  const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  let interval: NodeJS.Timer;
+export interface IClockProps {
+  ms: number;
+}
 
-  useEffect(() => {
-    interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
+function Clock({ ms }: IClockProps) {
   return (
     <ClockContainer>
-      <TypoAtom fontSize="sub" rainbow={true} className="clock-date">
-        {currentTime.toLocaleDateString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
-      </TypoAtom>
-      <TypoAtom fontSize="h1" rainbow={true} className="clock-time">
-        {currentTime.getHours().toString().padStart(2, '0')}:
-        {currentTime.getMinutes().toString().padStart(2, '0')}
+      <TypoAtom fontSize="h1" className="clock-time">
+        {(intervalToDuration({ start: 0, end: ms })
+          .hours?.toString()
+          .padStart(2, '0') ?? '00') +
+          ' : ' +
+          (intervalToDuration({ start: 0, end: ms })
+            .minutes?.toString()
+            .padStart(2, '0') ?? '00')}
       </TypoAtom>
     </ClockContainer>
   );
@@ -34,9 +25,23 @@ function Clock() {
 
 const ClockContainer = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  // TODO: 아톰 수정되면 지워야됨
+  .clock-time {
+    /* 12 : 34 */
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 8.75rem;
+    line-height: 8rem;
+    /* identical to box height, or 100% */
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.02em;
+    vertical-align: middle;
+    color: #523ea1;
+  }
   @media ${({ theme }) => theme.responsiveDevice.mobile},
     ${({ theme }) => theme.responsiveDevice.tablet_v} {
     position: fixed;

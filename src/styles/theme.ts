@@ -23,7 +23,7 @@ export const designTheme: Theme = {
   fontSize: {
     h1: { size: '6.198125rem', weight: 800 },
     h2: { size: '3.099375rem', weight: 600 },
-    h3: { size: '2.324375rem', weight: 400 },
+    h3: { size: '1.25rem', weight: 400 },
     h3_bold: { size: '2.324375rem', weight: 700 },
     h4: { size: '1.936875rem', weight: 400 },
     h5: { size: '1.549375rem', weight: 800 },

@@ -4,6 +4,8 @@ import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
 import { TagAtom, TypoAtom } from '../atoms';
 import { formatTime, getPomodoroStepPercent } from '../shared/timeUtils';
+import Clock from './Clock';
+import { usePomodoroValue } from '../hooks';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
@@ -37,48 +39,65 @@ function CurrentTodo({
     doTodo(focusedOnTodo);
   };
 
+  const getLeftMs = () => {
+    return todo.duration * focusStep * 60000 - focusedOnTodo;
+  };
+
   return (
     <CurrentTodoContainer>
-      <TypoAtom fontSize={'h4'} fontColor={'titleColor'} className="title">
-        지금 할 일
+      <TypoAtom fontSize={'h1'} fontColor={'titleColor'} className="title">
+        더 집중하셔야 합니다!
       </TypoAtom>
-      <div className="todo-title">
-        <TypoAtom fontSize={'h2'} fontColor={'titleColor'}>
-          {todo.todo}
-        </TypoAtom>
+      <TypoAtom
+        fontSize={'body'}
+        fontColor={'titleColor'}
+        className="left-time"
+      >
+        남은 시간
+      </TypoAtom>
+      <div className="center-container">
+        <Clock ms={getLeftMs()}></Clock>
+        <div className="todo-title">
+          <div className="categories">
+            {todo.categories &&
+              todo.categories?.map((category, idx) => {
+                return (
+                  <div className="category" key={idx}>
+                    {category}
+                  </div>
+                );
+              })}
+          </div>
+          <TypoAtom fontSize={'h2'}>{todo.todo}</TypoAtom>
+        </div>
       </div>
-      <div className="categories">
-        {todo.categories &&
-          todo.categories?.map((category, idx) => {
-            return (
-              <TagAtom
-                styleOption={{ bg: 'whiteWine', size: 'big', fontsize: 'md2' }}
-                key={idx}
-              >
-                {category}
-              </TagAtom>
-            );
-          })}
+      <div className="indicator-container">
+        <div className="todo-duration">
+          <TypoAtom fontSize={'h3'}>{todo.duration + ' Round'}</TypoAtom>
+          <TypoAtom fontSize="h3">
+            {todo.duration < 20
+              ? `🍅 `.repeat(todo.duration)
+              : `🍅 ` + todo.duration}
+          </TypoAtom>
+        </div>
+        <div className="button-container">
+          <button className="rest" onClick={() => startResting()}>
+            <img src="icons/pause.svg" />
+          </button>
+          <button
+            className="do-todo"
+            aria-label="do todo"
+            onClick={() => doAndRest()}
+          >
+            끝내기
+          </button>
+        </div>
       </div>
-      <div className="todo-duration">
-        <TypoAtom fontSize={'h4'}>
-          {todo.duration < 20
-            ? `🍅 `.repeat(todo.duration)
-            : `🍅 ` + todo.duration}
-        </TypoAtom>
-        <TagAtom styleOption={{ bg: 'white', size: 'sm', fontsize: 'sm' }}>
-          {formatTime(todo.duration * focusStep)}
-        </TagAtom>
-      </div>
-      <div className="progress-and-button">
+
+      <div className="progress-container">
         <TodoProgressBar progress={Math.min(todoProgress, 100)}>
-          <div className="progress">{todoProgress}%</div>
+          <div className="progress"></div>
         </TodoProgressBar>
-        <button
-          className="do-todo"
-          aria-label="do todo"
-          onClick={() => doAndRest()}
-        ></button>
       </div>
     </CurrentTodoContainer>
   );
@@ -95,11 +114,40 @@ const CurrentTodoContainer = styled.div`
   height: 100%;
   /* overflow: auto; */
   /* background-color: aliceblue; */
+  // TODO : Atom 수정되면 지우기
+  .title {
+    /* 더 집중하셔야 합니다! */
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    /* identical to box height, or 111% */
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.002em;
+    color: #523ea1;
+  }
+  // TODO : Atom 수정되면 지우기
+  .left-time {
+    margin-top: 0.25rem;
+    /* 남은 시간 */
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    /* identical to box height, or 125% */
+    display: flex;
+    align-items: center;
+    color: #523ea1;
+  }
+  // TODO : Atom 수정되면 지우기
   .todo-title {
-    margin-top: 6rem;
-    width: 100%;
-    overflow: hidden;
     white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
     span {
       width: 100%;
       overflow: hidden;
@@ -107,37 +155,92 @@ const CurrentTodoContainer = styled.div`
       text-overflow: ellipsis;
       word-break: break-all;
       display: block;
+      /* RxJS 공부하기 */
+      font-family: 'Pretendard';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 1.875rem;
+      line-height: 2rem;
+      /* identical to box height, or 107% */
+      display: flex;
+      align-items: center;
+      letter-spacing: -0.002em;
+
+      color: #523ea1;
     }
+  }
+  .center-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .indicator-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .button-container {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .rest {
+    width: 2.25rem;
+    height: 2.25rem;
+    background: rgba(82, 62, 161, 0.21);
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .categories {
     width: 100%;
     display: flex;
+    justify-content: flex-end;
     gap: 0.99rem;
-    margin: 0.9rem 0 0.9rem 0;
     flex-wrap: nowrap;
     overflow: auto;
   }
-  .todo-duration {
-    margin-bottom: 1rem;
+  .category {
+    /* Auto layout */
     display: flex;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
-    gap: 0.34rem;
+    padding: 4px 16px;
+    gap: 10px;
+    background: #00bd08;
+    border-radius: 13px;
+    color: white;
   }
-  .progress-and-button {
+  .todo-duration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    span {
+      color: #523ea1;
+    }
+  }
+  .do-todo {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 1.0625rem;
+    gap: 0.625rem;
+    background: rgba(82, 62, 161, 0.21);
+    border-radius: 3.125rem;
+  }
+  .progress-container {
     width: 100%;
     height: 4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 0.75rem;
-    .do-todo {
-      background-image: url('icons/check-dark.svg');
-      width: 6.973rem;
-      height: 6.973rem;
-      flex-shrink: 0;
-      background-size: contain;
-    }
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
@@ -182,7 +285,7 @@ const CurrentTodoContainer = styled.div`
         padding: 0.5rem 3rem 0.5rem 3rem;
       }
     }
-    .progress-and-button {
+    .progress-container {
       position: absolute;
       height: calc(100% - 12rem);
       width: 6rem;
@@ -200,30 +303,19 @@ const CurrentTodoContainer = styled.div`
 `;
 
 const TodoProgressBar = styled.div<{ progress: number }>`
-  background-color: ${({ theme }) => theme.colors.whiteWine};
-  height: 4rem;
+  background-color: #523ea1;
+  height: 0.75rem;
   width: 100%;
-  border-radius: 3.125rem;
-  padding: 0 0.63rem 0 0.63rem;
+  border-radius: 1.75rem;
   display: flex;
   align-items: center;
   position: relative;
   box-sizing: border-box;
+  overflow: hidden;
   .progress {
     width: ${({ progress }) => `${progress}%`};
-    height: 2.875rem;
-    line-height: 2.875rem;
-    border-radius: 3.125rem;
-    background: ${({ theme }) => theme.colors.titleColor};
-    /* 3d_shadow */
-    box-shadow: 0px 10px 30px 0px rgba(255, 255, 255, 0.44) inset,
-      0px -10px 20px 0px rgba(41, 32, 95, 0.33) inset;
-
-    color: ${({ theme }) => theme.colors.white};
-    text-align: right;
-    font-size: 1.16219rem;
-    font-weight: 700;
-    padding-right: 1.4rem;
+    height: 100%;
+    background: #ff7e55;
     transition: all 0.2s ease-in-out;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},

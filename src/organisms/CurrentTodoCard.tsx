@@ -97,7 +97,7 @@ function CurrentTodoCard({
 
   return (
     <CurrentTodoWrapper>
-      <CardAtom w="58.875rem" h="33.11456rem" className="card">
+      <CardAtom w="53.75rem" h="20rem" className="card">
         <ExtremeModeIndicator />
         {currentTodo.currentTodo?.todo != null ? (
           <>
@@ -186,27 +186,14 @@ function CurrentTodoCard({
           </Overlay>
         )}
       </CardAtom>
-      <CardAtom w="57.3125rem" h="32.25rem" className="card"></CardAtom>
-      <CardAtom w="55.875rem" h="31.4375rem" className="card"></CardAtom>
     </CurrentTodoWrapper>
   );
 }
 
 const CurrentTodoWrapper = styled.div`
   position: relative;
-  .card:nth-child(2) {
-    position: absolute;
-    top: 1.82rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: -1;
-  }
-  .card:nth-child(3) {
-    position: absolute;
-    top: 3.32rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: -2;
+  .card {
+    background-color: #dbfe77 !important;
   }
   .overlay {
     display: flex;

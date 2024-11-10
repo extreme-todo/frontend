@@ -60,7 +60,6 @@ function MainTodo() {
   return (
     <MainTodoContainer ref={mainTodoRef}>
       <MainTodoContentWrapper>
-        <Clock></Clock>
         <MainTodoCenter>
           <SideButtons>
             <SideButtons.ProgressButton
