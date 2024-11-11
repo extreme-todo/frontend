@@ -1,13 +1,6 @@
 import { Theme } from '@emotion/react';
 import { responsiveBreakpoints } from '../shared/constants';
 
-const PADDING = {
-  BUTTON: {
-    NORMAL: { HORIZONTAL: 0, VERTICAL: 0 },
-    TEXT: { HORIZONTAL: 0, VERTICAL: 0 },
-  },
-};
-
 export const designTheme: Theme = {
   color: {
     primary: { primary1: '#523EA1', primary2: '#DBFE77' },
@@ -77,8 +70,7 @@ export const designTheme: Theme = {
   },
   button: {
     lightBtn: {
-      paddingHorizontal: PADDING.BUTTON.NORMAL.HORIZONTAL,
-      paddingVertical: PADDING.BUTTON.NORMAL.VERTICAL,
+      height: '2.25rem',
       fontSize: {
         size: '1.25rem',
         weight: 600,
@@ -97,8 +89,7 @@ export const designTheme: Theme = {
       },
     },
     darkBtn: {
-      paddingHorizontal: PADDING.BUTTON.NORMAL.HORIZONTAL,
-      paddingVertical: PADDING.BUTTON.NORMAL.VERTICAL,
+      height: '2.25rem',
       fontSize: {
         size: '1.25rem',
         weight: 600,
@@ -117,8 +108,7 @@ export const designTheme: Theme = {
       },
     },
     textBtn: {
-      paddingHorizontal: PADDING.BUTTON.TEXT.HORIZONTAL,
-      paddingVertical: PADDING.BUTTON.TEXT.VERTICAL,
+      height: '1.25rem',
       fontSize: { size: '0.875rem', weight: 400 },
       default: {
         backgroundColor: 'transparent',

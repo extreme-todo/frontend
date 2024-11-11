@@ -3,11 +3,12 @@ import '@emotion/react';
 /* font */
 // 16px
 // 140, 36, 30, 20, 16, 14
+type RemType<T extends number> = `${T}rem`;
 type FontRemSize = 8.75 | 2.25 | 1.875 | 1.25 | 1 | 0.875;
 // bold | semibold | regular
 type FontWeight = 700 | 600 | 400;
 interface FontAttribute {
-  size: `${FontRemSize}rem`;
+  size: RemType<FontRemSize>;
   weight: FontWeight;
 }
 type FontName = 'clock' | 'h1' | 'h2' | 'h3' | 'body' | 'b1' | 'b2';
@@ -65,9 +66,10 @@ interface ButtonColor {
   backgroundColor: ColorAttribute | 'transparent';
   color: ColorAttribute;
 }
+// 36, 20
+type ButtonHeight = 2.25 | 1.25;
 interface ButtonCommonStyle {
-  paddingHorizontal: number;
-  paddingVertical: number;
+  height: RemType<ButtonHeight>;
   fontSize: FontAttribute;
 }
 type ButtonAction = 'default' | 'hover' | 'click';
