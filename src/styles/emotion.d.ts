@@ -46,9 +46,9 @@ type Color = Omit<
   'tag' | 'primary' | 'font_color' | 'background_color'
 > & {
   tag: TagColor;
-  font_color: FontColor;
+  fontColor: FontColor;
   primary: PrimaryColor;
-  background_color: BackgroundColor;
+  backgroundColor: BackgroundColor;
 };
 
 type ShadowName = 'container';
