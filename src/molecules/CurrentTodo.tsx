@@ -52,7 +52,7 @@ function CurrentTodo({
           todo.categories?.map((category, idx) => {
             return (
               <TagAtom
-                styleOption={{ bg: 'whiteWine', size: 'big', fontsize: 'md2' }}
+                styleOption={{ bg: 'brown', size: 'big', fontsize: 'md2' }}
                 key={idx}
               >
                 {category}
@@ -66,7 +66,7 @@ function CurrentTodo({
             ? `🍅 `.repeat(todo.duration)
             : `🍅 ` + todo.duration}
         </TypoAtom>
-        <TagAtom styleOption={{ bg: 'white', size: 'sm', fontsize: 'sm' }}>
+        <TagAtom styleOption={{ bg: 'pink', size: 'sm', fontsize: 'sm' }}>
           {formatTime(todo.duration * focusStep)}
         </TagAtom>
       </div>
@@ -200,7 +200,7 @@ const CurrentTodoContainer = styled.div`
 `;
 
 const TodoProgressBar = styled.div<{ progress: number }>`
-  background-color: ${({ theme }) => theme.color.primary2};
+  background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
   height: 4rem;
   width: 100%;
   border-radius: 3.125rem;
@@ -214,12 +214,12 @@ const TodoProgressBar = styled.div<{ progress: number }>`
     height: 2.875rem;
     line-height: 2.875rem;
     border-radius: 3.125rem;
-    background: ${({ theme }) => theme.color.progress_bar};
+    background: ${({ theme }) => theme.color.backgroundColor.extreme_orange};
     /* 3d_shadow */
     box-shadow: 0px 10px 30px 0px rgba(255, 255, 255, 0.44) inset,
       0px -10px 20px 0px rgba(41, 32, 95, 0.33) inset;
 
-    color: ${({ theme }) => theme.color.primary1};
+    color: ${({ theme }) => theme.color.fontColor.primary1};
     text-align: right;
     font-size: 1.16219rem;
     font-weight: 700;

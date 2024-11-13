@@ -22,8 +22,8 @@ function LogInToUnlock({
         <img className="lock-icon" src={icon ?? '/icons/icon-lock.svg'} />
         <div>
           <LogInToUnlock.typo
-            fontSize={'body_bold'}
-            fontColor={'titleColor'}
+            fontSize={'h2'}
+            fontColor={'primary1'}
             className="login-typo"
           >
             {label ?? '로그인이 필요한 기능입니다.'}
@@ -38,7 +38,7 @@ function LogInToUnlock({
           size: 'big2',
           fontsize: 'md1',
           bold: 'extraBold',
-          bg: 'titleColor',
+          bg: 'pink',
           shadow: 'button_shadow',
         }}
         handler={navigate}

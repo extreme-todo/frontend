@@ -29,7 +29,7 @@ const Switch = styled.div<{ value: boolean }>`
   display: flex;
   justify-content: ${({ value }) => (value ? 'flex-start' : 'flex-end')};
   align-items: center;
-  background-color: ${({ theme: { color } }) => color.primary2};
+  background-color: ${({ theme: { color } }) => color.primary.primary2};
 
   & > span {
     width: 100%;
@@ -38,7 +38,7 @@ const Switch = styled.div<{ value: boolean }>`
 `;
 
 const SwitchContainter = styled.div<Partial<ISwitchAtomProps>>`
-  background-color: ${({ theme: { color } }) => color.primary1};
+  background-color: ${({ theme: { color } }) => color.primary.primary1};
   width: 5.5rem;
   min-width: 4.5rem;
   height: 2.5rem;

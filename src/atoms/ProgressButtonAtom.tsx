@@ -15,7 +15,7 @@ const ProgressButtonAtom = styled.button<{
   width: 4.455rem;
   height: 4.455rem;
   border-radius: 50%;
-  color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.color.fontColor.primary1};
   text-align: center;
   font-family: Pretendard;
   font-size: 1.4rem;
@@ -24,11 +24,11 @@ const ProgressButtonAtom = styled.button<{
   background: conic-gradient(
     ${({ theme, progress, bgColor }) =>
       bgColor ??
-      theme.colors.titleColor +
+      theme.color.backgroundColor.extreme_orange +
         ' ' +
         progress +
         '%, 0, ' +
-        theme.colors.whiteWine +
+        theme.color.backgroundColor.extreme_orange +
         ' ' +
         (100 - progress) +
         '%'}

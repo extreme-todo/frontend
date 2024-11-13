@@ -26,13 +26,13 @@ const CategoryInput = ({
         ? {
             fontsize: 'md2',
             size: 'md',
-            bg: 'whiteWine',
+            bg: 'purple',
             maxWidth: 10,
           }
         : {
             fontsize: 'sm',
             size: 'sm',
-            bg: 'whiteWine',
+            bg: 'green',
             maxWidth: 10,
           },
     [isMobile],
@@ -74,7 +74,7 @@ const CategoryContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     input {
-      font-size: ${({ theme }) => theme.fontSize.h4.size};
+      font-size: ${({ theme }) => theme.fontSize.body.size};
     }
   }
 `;

@@ -39,7 +39,6 @@ const Welcome = () => {
           <BtnAtom handleOnClick={handleLogoutBtn}>
             <TypoAtom fontSize="b1">SIGN OUT</TypoAtom>
           </BtnAtom>
-          <div></div>
           <BtnAtom handleOnClick={handleSetting}>
             <TypoAtom fontSize="b1">SETTING</TypoAtom>
           </BtnAtom>
@@ -117,7 +116,7 @@ const BtnContainer = styled.div`
 
   > div {
     line-height: 30px;
-    color: ${({ theme: { color } }) => color.primary1};
+    color: ${({ theme: { color } }) => color.fontColor.primary1};
     margin: auto;
   }
   > div:nth-of-type(2) {

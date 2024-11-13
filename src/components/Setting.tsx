@@ -96,7 +96,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
             ref={popperRef}
             onMouseOver={tooltipMouseOver}
             onMouseLeave={tooltipMouseLeave}
-            backgroundColor={'whiteWine'}
+            backgroundColor={'primary2'}
             size={1.5625}
           >
             <img alt="tooltip" src="icons/tooltip.svg"></img>

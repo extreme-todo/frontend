@@ -26,13 +26,13 @@ const TodoUI = ({
         ? {
             fontsize: 'md2',
             size: 'md',
-            bg: 'whiteWine',
+            bg: 'cyan',
             maxWidth: 10,
           }
         : {
             fontsize: 'sm',
             size: 'sm',
-            bg: 'whiteWine',
+            bg: 'cyan',
             maxWidth: 10,
           },
     [isMobile],

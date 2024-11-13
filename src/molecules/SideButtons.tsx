@@ -47,7 +47,7 @@ const SideButton = ({
       <IconAtom
         onClick={onClick}
         size={4.455}
-        backgroundColor={'whiteWine'}
+        backgroundColor={'primary1'}
         className="icon"
       >
         <img src={imageSrc} />

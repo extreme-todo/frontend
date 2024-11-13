@@ -70,7 +70,7 @@ function Ranking({
               <RankingTexts.Tag
                 styleOption={{
                   size: 'big',
-                  bg: 'white',
+                  bg: 'mint',
                   fontsize: 'b2',
                   shadow: 'button_shadow',
                 }}

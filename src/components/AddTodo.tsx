@@ -207,7 +207,7 @@ const AddTodo = () => {
       <FooterContainer>
         <IconAtom
           size={3.6}
-          backgroundColor={'subFontColor'}
+          backgroundColor={'transparent'}
           onClick={() => handleAddSubmit.call(this, addData)}
         >
           <img alt="submit_edit" src={'icons/ok.svg'} />
@@ -269,11 +269,11 @@ const TomatoInput = styled.input<{
       ${({ value, min, max }) =>
         `${((Number(value) - min) / (max - min)) * 100}%`},
 
-    ${({ theme }) => theme.colors.whiteWine}
+    ${({ theme }) => theme.color.backgroundColor.white}
       ${({ value, min, max }) =>
         `${((Number(value) - min) / (max - min)) * 100}%`},
 
-    ${({ theme }) => theme.colors.whiteWine} 100%
+    ${({ theme }) => theme.color.backgroundColor.extreme_orange} 100%
   );
   outline: none;
 
@@ -302,12 +302,13 @@ const TomatoInput = styled.input<{
     width: 2.8rem;
     height: 1rem;
 
-    background-color: ${({ theme }) => theme.colors.accentColor};
+    background-color: ${({ theme }) =>
+      theme.color.backgroundColor.extreme_orange};
     border-radius: 23.24rem;
 
     cursor: grab;
 
-    box-shadow: ${({ theme }) => theme.shadows.button_shadow};
+    box-shadow: ${({ theme }) => theme.shadow.container};
   }
 
   &:after {

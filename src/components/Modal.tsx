@@ -63,7 +63,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
             <IconAtom
               onClick={handleCloseModal}
               size={3.6}
-              backgroundColor={'whiteWine'}
+              backgroundColor={'primary1'}
             >
               <img alt="close" src={'icons/close.svg'}></img>
             </IconAtom>
@@ -123,12 +123,16 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
 
   max-height: 90dvh;
 
-  background: ${({ theme: { colors } }) =>
+  background: ${({
+    theme: {
+      color: { backgroundColor },
+    },
+  }) =>
     `linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.85) 0%,
       rgba(255, 255, 255, 0) 55.21%
-    ), ${colors.bgYellow}`};
+    ), ${backgroundColor}`};
 
   animation: ${({ isRender }) =>
     isRender

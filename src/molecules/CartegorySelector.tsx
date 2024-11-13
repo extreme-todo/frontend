@@ -21,7 +21,7 @@ function CartegorySelector({
       {isMobile && categories && selected && (
         <TagAtom
           styleOption={{
-            bg: 'whiteWine',
+            bg: 'mint',
           }}
         >
           <select
@@ -56,7 +56,7 @@ function CartegorySelector({
             <div key={category.id + category.name}>
               <TagAtom
                 styleOption={{
-                  bg: category.id !== selected.id ? 'whiteWine' : 'titleColor',
+                  bg: category.id !== selected.id ? 'green' : 'purple',
                 }}
                 handler={() => {
                   selectHandler(category);
@@ -92,10 +92,10 @@ const CSContainer = styled.div<{ isMobile: boolean }>`
     display: initial;
     width: 0.8rem;
     border-radius: 0.4rem;
-    background-color: ${({ theme }) => theme.colors.whiteWine};
+    background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
   }
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.colors.white};
+    background-color: ${({ theme }) => theme.color.backgroundColor.primary1};
     border-radius: 0.4rem;
   }
   -ms-overflow-style: auto; /* IE and Edge */

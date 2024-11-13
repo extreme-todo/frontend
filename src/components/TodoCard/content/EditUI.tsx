@@ -157,14 +157,14 @@ const EditUI = ({
         <ButtonContainer>
           <IconAtom
             size={2.624375}
-            backgroundColor={'whiteWine'}
+            backgroundColor={'primary1'}
             onClick={handleEditCancel}
           >
             <img alt="cancel_edit" src={'icons/close.svg'} />
           </IconAtom>
           <IconAtom
             size={2.624375}
-            backgroundColor={'subFontColor'}
+            backgroundColor={'primary2'}
             onClick={() => {
               const trimmed = titleValidation(editData.todo);
               if (!trimmed) return;
@@ -221,7 +221,8 @@ const TomatoContainer = styled.div`
 const TomatoSelector = styled.select`
   border-radius: 0.3rem;
   padding: 0.4rem;
-  background-color: ${({ theme }) => theme.colors.whiteWine};
+  background-color: ${({ theme }) =>
+    theme.color.backgroundColor.extreme_orange};
   text-align: center;
   width: fit-content;
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},

@@ -136,7 +136,7 @@ const PomodoroTimeSetting = () => {
       <FooterContainer>
         <IconAtom
           size={4.455}
-          backgroundColor="subFontColor"
+          backgroundColor="primary1"
           onClick={handleSubmit}
         >
           <img alt="timesubmit" src={'icons/ok.svg'} />

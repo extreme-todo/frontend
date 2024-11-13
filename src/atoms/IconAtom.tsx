@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { designTheme } from '../styles/theme';
 import { forwardRef, ReactElement } from 'react';
+import { BackgroundColor } from '../styles/emotion';
 
 interface IIconAtomProps
   extends Pick<
@@ -9,7 +10,7 @@ interface IIconAtomProps
   > {
   children: ReactElement<HTMLImageElement>;
   size?: number;
-  backgroundColor?: keyof typeof designTheme.color | 'transparent';
+  backgroundColor?: keyof BackgroundColor | 'transparent';
   className?: string;
 }
 
@@ -46,7 +47,7 @@ const IconContainer = styled.div<
     backgroundColor === 'transparent'
       ? backgroundColor
       : backgroundColor
-      ? theme.colors[backgroundColor]
+      ? theme.color.backgroundColor[backgroundColor]
       : null};
   cursor: pointer;
 `;

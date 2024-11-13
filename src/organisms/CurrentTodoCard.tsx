@@ -129,7 +129,7 @@ function CurrentTodoCard({
                 >
                   <TagAtom
                     styleOption={{
-                      bg: 'subFontColor',
+                      bg: 'purple',
                       size: 'big',
                       fontsize: 'md2',
                     }}
@@ -158,7 +158,7 @@ function CurrentTodoCard({
                   >
                     <TagAtom
                       styleOption={{
-                        bg: 'subFontColor',
+                        bg: 'brown',
                         size: 'big',
                         fontsize: 'md2',
                       }}
@@ -177,7 +177,7 @@ function CurrentTodoCard({
             {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
             <button className="create-todo-button">
               <TagAtom
-                styleOption={{ bg: 'titleColor', bold: 'extraBold' }}
+                styleOption={{ bg: 'cyan', bold: 'extraBold' }}
                 handler={openAddTodoModal}
               >
                 할 일 기록하기
