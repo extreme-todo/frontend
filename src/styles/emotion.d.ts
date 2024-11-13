@@ -1,11 +1,11 @@
 import '@emotion/react';
 
+type RemType<T extends number = number> = `${T}rem`;
 /* font */
 // 16px
 // 140, 36, 30, 20, 16, 14
-type RemType<T extends number> = `${T}rem`;
 type FontRemSize = 8.75 | 2.25 | 1.875 | 1.25 | 1 | 0.875;
-// bold | semibold | regular
+// bold, semibold, regular
 type FontWeight = 700 | 600 | 400;
 interface FontAttribute {
   size: RemType<FontRemSize>;

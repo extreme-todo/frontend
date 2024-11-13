@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { RemType, type ButtonName } from '../styles/emotion';
+import { RemType, ButtonName } from '../styles/emotion';
 
-type PaddingType = RemType<number> | 'auto';
+type PaddingType = RemType | 'auto';
 interface IBtnAtomProps extends IChildProps {
   handleOnClick: () => void;
   btnType?: ButtonName;
@@ -48,12 +48,15 @@ const ButtonWrapper = styled.button<{
   paddingVertical: PaddingType;
   paddingHorizontal: PaddingType;
 }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: 'pointer';
   border-radius: 50px;
   padding-top: ${({ paddingVertical }) => paddingVertical};
   padding-bottom: ${({ paddingVertical }) => paddingVertical};
   padding-left: ${({ paddingHorizontal }) => paddingHorizontal};
-  padding-left: ${({ paddingHorizontal }) => paddingHorizontal};
+  padding-right: ${({ paddingHorizontal }) => paddingHorizontal};
   height: ${({ theme, btnType }) => theme.button[btnType].height};
   font-size: ${({ theme, btnType }) => theme.button[btnType].fontSize.size};
   font-weight: ${({ theme, btnType }) => theme.button[btnType].fontSize.weight};
@@ -65,7 +68,7 @@ const ButtonWrapper = styled.button<{
       theme.button[btnType].hover.backgroundColor};
     color: ${({ theme, btnType }) => theme.button[btnType].hover.color};
   }
-  &:click {
+  &:active {
     background-color: ${({ theme, btnType }) =>
       theme.button[btnType].click.backgroundColor};
     color: ${({ theme, btnType }) => theme.button[btnType].click.color};
