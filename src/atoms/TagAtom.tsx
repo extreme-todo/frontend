@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { designTheme } from '../styles/theme';
 import { TagColorName } from '../styles/emotion';
 
 export interface ITagAtomProps extends IChildProps {
   title?: string;
-  handler?: () => void;
   styleOption?: ITagSpanProps;
   ariaLabel?: string;
+  className?: string;
 }
 
 interface ITagSpanProps {
@@ -25,27 +24,21 @@ interface ITagSpanProps {
  */
 function TagAtom({
   children,
-  handler,
   styleOption,
   title,
   ariaLabel,
+  className,
 }: ITagAtomProps) {
-  if (handler)
-    return (
-      <button onClick={handler} aria-label={ariaLabel}>
-        <TagSpan {...styleOption} isHandler={!!handler}>
-          {children}
-        </TagSpan>
-      </button>
-    );
-  else
-    return (
-      <div>
-        <TagSpan title={title} {...styleOption}>
-          {children}
-        </TagSpan>
-      </div>
-    );
+  return (
+    <TagSpan
+      title={title}
+      {...styleOption}
+      className={className}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </TagSpan>
+  );
 }
 
 const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`

@@ -1,13 +1,8 @@
 import styled from '@emotion/styled';
-import { designTheme } from '../styles/theme';
 import { forwardRef, ReactElement } from 'react';
 import { BackgroundColor } from '../styles/emotion';
 
-interface IIconAtomProps
-  extends Pick<
-    React.DOMAttributes<HTMLDivElement>,
-    'onClick' | 'onMouseOver' | 'onMouseLeave'
-  > {
+interface IIconAtomProps {
   children: ReactElement<HTMLImageElement>;
   size?: number;
   backgroundColor?: keyof BackgroundColor | 'transparent';
