@@ -39,17 +39,14 @@ type FontColor = ColorRecord<FontColorName> & PrimaryColor;
 type BackgroundColorName = 'gray' | 'extreme_dark' | 'white' | 'extreme_orange';
 type BackgroundColor = ColorRecord<BackgroundColorName> & PrimaryColor;
 
-type ColorName = 'primary' | 'background_color' | 'tag' | 'font_color';
+type ColorName = 'primary' | 'backgroundColor' | 'tag' | 'fontColor';
 
-type Color = Omit<
-  Record<ColorName, ColorAttribute>,
-  'tag' | 'primary' | 'font_color' | 'background_color'
-> & {
+interface Color {
   tag: TagColor;
   fontColor: FontColor;
   primary: PrimaryColor;
   backgroundColor: BackgroundColor;
-};
+}
 
 type ShadowName = 'container';
 type ShadowAttribute =
