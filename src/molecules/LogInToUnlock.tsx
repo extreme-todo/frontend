@@ -1,6 +1,6 @@
 import { Children, isValidElement, ReactNode } from 'react';
 import { IChildProps } from '../shared/interfaces';
-import { TagAtom, TypoAtom } from '../atoms';
+import { BtnAtom, TagAtom, TypoAtom } from '../atoms';
 import styled from '@emotion/styled';
 
 export interface ILogInToUnlockProps extends IChildProps {
@@ -33,18 +33,19 @@ function LogInToUnlock({
           </LogInToUnlock.typo>
         </div>
       </div>
-      <LogInToUnlock.loginButton
-        styleOption={{
-          size: 'big2',
-          fontsize: 'md1',
-          bold: 'extraBold',
-          bg: 'pink',
-          shadow: 'button_shadow',
-        }}
-        handler={navigate}
-      >
-        로그인하기
-      </LogInToUnlock.loginButton>
+      <BtnAtom handleOnClick={navigate}>
+        <LogInToUnlock.loginButton
+          styleOption={{
+            size: 'big2',
+            fontsize: 'md1',
+            bold: 'extraBold',
+            bg: 'pink',
+            shadow: 'button_shadow',
+          }}
+        >
+          로그인하기
+        </LogInToUnlock.loginButton>
+      </BtnAtom>
     </UnlockContainer>
   );
 }

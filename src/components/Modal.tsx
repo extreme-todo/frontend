@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 import { useEffect, useState } from 'react';
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
@@ -59,14 +59,11 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
             >
               {title}
             </TypoAtom>
-
-            <IconAtom
-              onClick={handleCloseModal}
-              size={3.6}
-              backgroundColor={'primary1'}
-            >
-              <img alt="close" src={'icons/close.svg'}></img>
-            </IconAtom>
+            <BtnAtom handleOnClick={handleCloseModal}>
+              <IconAtom size={3.6} backgroundColor={'primary1'}>
+                <img alt="close" src={'icons/close.svg'}></img>
+              </IconAtom>
+            </BtnAtom>
           </HeaderContainer>
           {children}
         </ModalContainer>

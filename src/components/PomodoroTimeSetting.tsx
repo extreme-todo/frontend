@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { IconAtom, TypoAtom } from '../atoms';
+import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
 import { FlipCounter } from '../molecules';
 import {
   focusStepList,
@@ -33,9 +33,11 @@ const TimeSetter = ({
         {title}
       </TypoAtom>
       <FlipHandlerContainer>
-        <IconAtom size={1} onClick={handlePlus} className="timeHandler">
-          <img alt="timeup" src={'icons/btnUp.svg'} />
-        </IconAtom>
+        <BtnAtom handleOnClick={handlePlus}>
+          <IconAtom size={1} className="timeHandler">
+            <img alt="timeup" src={'icons/btnUp.svg'} />
+          </IconAtom>
+        </BtnAtom>
         <FlipContainer>
           <FlipCounter>
             {flipData.map((data) => (
@@ -55,9 +57,11 @@ const TimeSetter = ({
             분
           </TypoAtom>
         </FlipContainer>
-        <IconAtom size={1} onClick={handleMinus} className="timeHandler">
-          <img alt="timedown" src={'icons/btnDown.svg'} />
-        </IconAtom>
+        <BtnAtom handleOnClick={handleMinus}>
+          <IconAtom size={1} className="timeHandler">
+            <img alt="timedown" src={'icons/btnDown.svg'} />
+          </IconAtom>
+        </BtnAtom>
       </FlipHandlerContainer>
     </TimeSetterContainer>
   );
@@ -134,13 +138,11 @@ const PomodoroTimeSetting = () => {
         />
       </PomodoroTimeSettingContainer>
       <FooterContainer>
-        <IconAtom
-          size={4.455}
-          backgroundColor="primary1"
-          onClick={handleSubmit}
-        >
-          <img alt="timesubmit" src={'icons/ok.svg'} />
-        </IconAtom>
+        <BtnAtom handleOnClick={handleSubmit}>
+          <IconAtom size={4.455} backgroundColor="primary1">
+            <img alt="timesubmit" src={'icons/ok.svg'} />
+          </IconAtom>
+        </BtnAtom>
       </FooterContainer>
     </>
   );

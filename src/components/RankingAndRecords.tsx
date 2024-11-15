@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { CardAtom, TagAtom } from '../atoms';
+import { BtnAtom, CardAtom, TagAtom } from '../atoms';
 import { Records, Ranking } from '../organisms';
 import { categoryApi, rankingApi, timerApi } from '../shared/apis';
 import styled from '@emotion/styled';
@@ -12,13 +12,11 @@ function RankingAndRecords() {
   // const [isRanking, setIsRanking] = useState(false);
   return (
     <RNRContainer data-testid={'records-component'}>
-      <TagAtom
-        handler={() => setIsRanking((prev) => !prev)}
-        styleOption={{ shadow: 'button_shadow', bg: 'cyan' }}
-      >
-        {!isRanking ? '카테고리 별 랭킹' : '나의 집중 기록'}
-      </TagAtom>
-
+      <BtnAtom handleOnClick={() => setIsRanking((prev) => !prev)}>
+        <TagAtom styleOption={{ shadow: 'button_shadow', bg: 'cyan' }}>
+          {!isRanking ? '카테고리 별 랭킹' : '나의 집중 기록'}
+        </TagAtom>
+      </BtnAtom>
       <CardAtom padding="0rem" w="100%" h="100%">
         {isRanking ? (
           <Ranking

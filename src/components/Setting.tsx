@@ -1,6 +1,6 @@
 import { useContext, useRef, useState } from 'react';
 
-import { PopperAtom, SwitchAtom, TagAtom, TypoAtom } from '../atoms';
+import { BtnAtom, PopperAtom, SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
 import { rankingApi, todosApi, usersApi } from '../shared/apis';
@@ -92,14 +92,13 @@ const Setting = ({ handleClose }: ISettingModal) => {
               </Tooltip>
             </PopperAtom>
           ) : null}
-          <IconAtom
-            ref={popperRef}
-            onMouseOver={tooltipMouseOver}
-            onMouseLeave={tooltipMouseLeave}
-            backgroundColor={'primary2'}
-            size={1.5625}
-          >
-            <img alt="tooltip" src="icons/tooltip.svg"></img>
+          <IconAtom ref={popperRef} backgroundColor={'primary2'} size={1.5625}>
+            <img
+              onMouseOver={tooltipMouseOver}
+              onMouseLeave={tooltipMouseLeave}
+              alt="tooltip"
+              src="icons/tooltip.svg"
+            ></img>
           </IconAtom>
           {/* TODO : 전역 객체로 처리해주자. 익스트림 모드는 할 일이 끝났을 때만 변경 가능하다 */}
           <SwitchAtom
@@ -107,18 +106,16 @@ const Setting = ({ handleClose }: ISettingModal) => {
             value={isExtreme}
           />
         </ExtremeContainer>
-        <TagAtom
-          handler={resetMutation}
-          styleOption={{ size: 'sm', fontsize: 'sm' }}
-        >
-          데이터 초기화
-        </TagAtom>
-        <TagAtom
-          handler={withdrawMutation}
-          styleOption={{ size: 'sm', fontsize: 'sm' }}
-        >
-          회원탈퇴
-        </TagAtom>
+        <BtnAtom handleOnClick={resetMutation}>
+          <TagAtom styleOption={{ size: 'sm', fontsize: 'sm' }}>
+            데이터 초기화
+          </TagAtom>
+        </BtnAtom>
+        <BtnAtom handleOnClick={withdrawMutation}>
+          <TagAtom styleOption={{ size: 'sm', fontsize: 'sm' }}>
+            회원탈퇴
+          </TagAtom>
+        </BtnAtom>
       </SettingContainer>
     </>
   );

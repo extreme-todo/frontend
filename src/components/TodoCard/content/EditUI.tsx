@@ -1,6 +1,6 @@
 import { ReactEventHandler, useCallback, useMemo, useState } from 'react';
 
-import { IconAtom, InputAtom, TypoAtom } from '../../../atoms';
+import { BtnAtom, IconAtom, InputAtom, TypoAtom } from '../../../atoms';
 import { CategoryInput } from '../../../molecules';
 import { CalendarInput } from '../../../organisms';
 
@@ -155,24 +155,22 @@ const EditUI = ({
           </TomatoSelector>
         </TomatoContainer>
         <ButtonContainer>
-          <IconAtom
-            size={2.624375}
-            backgroundColor={'primary1'}
-            onClick={handleEditCancel}
-          >
-            <img alt="cancel_edit" src={'icons/close.svg'} />
-          </IconAtom>
-          <IconAtom
-            size={2.624375}
-            backgroundColor={'primary2'}
-            onClick={() => {
+          <BtnAtom handleOnClick={handleEditCancel}>
+            <IconAtom size={2.624375} backgroundColor={'primary1'}>
+              <img alt="cancel_edit" src={'icons/close.svg'} />
+            </IconAtom>
+          </BtnAtom>
+          <BtnAtom
+            handleOnClick={() => {
               const trimmed = titleValidation(editData.todo);
               if (!trimmed) return;
               handleEditSubmit.call(this, { ...editData, todo: trimmed });
             }}
           >
-            <img alt="submit_edit" src={'icons/ok.svg'} />
-          </IconAtom>
+            <IconAtom size={2.624375} backgroundColor={'primary2'}>
+              <img alt="submit_edit" src={'icons/ok.svg'} />
+            </IconAtom>
+          </BtnAtom>
         </ButtonContainer>
       </AdditionalDataContainer>
     </EditWrapper>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
 import {
@@ -175,14 +175,14 @@ function CurrentTodoCard({
             <TypoAtom>아직 작성된 할 일이 없어요.</TypoAtom>
             <TypoAtom>오늘 하루를 계획해 볼까요?</TypoAtom>
             {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
-            <button className="create-todo-button">
-              <TagAtom
-                styleOption={{ bg: 'cyan', bold: 'extraBold' }}
-                handler={openAddTodoModal}
-              >
+            <BtnAtom
+              handleOnClick={openAddTodoModal}
+              className="create-todo-button"
+            >
+              <TagAtom styleOption={{ bg: 'cyan', bold: 'extraBold' }}>
                 할 일 기록하기
               </TagAtom>
-            </button>
+            </BtnAtom>
           </Overlay>
         )}
       </CardAtom>

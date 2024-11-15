@@ -1,4 +1,4 @@
-import { InputAtom, ITagSpanProps, TagAtom } from '../atoms';
+import { BtnAtom, InputAtom, ITagSpanProps, TagAtom } from '../atoms';
 import styled from '@emotion/styled';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -37,17 +37,17 @@ const CategoryInput = ({
           },
     [isMobile],
   );
+
   return (
     <CategoryContainer>
       {categories?.map((category) => (
-        <TagAtom
-          key={category}
-          handler={() => handleClick.call(this, category)}
+        <BtnAtom
+          handleOnClick={() => handleClick.call(this, category)}
           ariaLabel="category_tag"
-          styleOption={tagSize}
+          key={category}
         >
-          {category}
-        </TagAtom>
+          <TagAtom styleOption={tagSize}>{category}</TagAtom>
+        </BtnAtom>
       ))}
       {categories && categories.length >= MAX_CATEGORY_ARRAY_LENGTH ? null : (
         <InputAtom.Underline

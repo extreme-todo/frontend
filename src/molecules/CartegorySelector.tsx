@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { TagAtom } from '../atoms';
+import { BtnAtom, TagAtom } from '../atoms';
 import { ICategory } from '../shared/interfaces';
 
 interface ICategorySelectorProps {
@@ -53,18 +53,20 @@ function CartegorySelector({
         selected &&
         categories.map((category) => {
           return (
-            <div key={category.id + category.name}>
+            <BtnAtom
+              handleOnClick={() => {
+                selectHandler(category);
+              }}
+              key={category.id + category.name}
+            >
               <TagAtom
                 styleOption={{
                   bg: category.id !== selected.id ? 'green' : 'purple',
                 }}
-                handler={() => {
-                  selectHandler(category);
-                }}
               >
                 {category.name}
               </TagAtom>
-            </div>
+            </BtnAtom>
           );
         })}
     </CSContainer>

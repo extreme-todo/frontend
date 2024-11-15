@@ -8,7 +8,7 @@ import {
 } from 'react';
 
 /* atomics */
-import { IconAtom, InputAtom, TypoAtom } from '../atoms';
+import { BtnAtom, IconAtom, InputAtom, TypoAtom } from '../atoms';
 import { CategoryInput } from '../molecules';
 import { CalendarInput } from '../organisms';
 import {
@@ -99,7 +99,6 @@ const AddTodo = () => {
           if (categoryArray) {
             const copy = categoryArray.slice();
             copy.push(trimmed);
-
             setCategoryArray(copy);
           } else {
             setCategoryArray([trimmed]);
@@ -205,13 +204,11 @@ const AddTodo = () => {
         </TomatoContainer>
       </AddTodoWrapper>
       <FooterContainer>
-        <IconAtom
-          size={3.6}
-          backgroundColor={'transparent'}
-          onClick={() => handleAddSubmit.call(this, addData)}
-        >
-          <img alt="submit_edit" src={'icons/ok.svg'} />
-        </IconAtom>
+        <BtnAtom handleOnClick={() => handleAddSubmit.call(this, addData)}>
+          <IconAtom size={3.6} backgroundColor={'transparent'}>
+            <img alt="submit_edit" src={'icons/ok.svg'} />
+          </IconAtom>
+        </BtnAtom>
       </FooterContainer>
     </>
   );
