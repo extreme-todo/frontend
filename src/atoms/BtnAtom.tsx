@@ -9,6 +9,7 @@ interface IBtnAtomProps extends IChildProps {
   paddingHorizontal?: PaddingType;
   paddingVertical?: PaddingType;
   className?: string;
+  ariaLabel?: string;
 }
 
 function BtnAtom({
@@ -18,16 +19,18 @@ function BtnAtom({
   paddingHorizontal = 'auto',
   paddingVertical = 'auto',
   className,
+  ariaLabel,
 }: IBtnAtomProps) {
   if (btnType === undefined) {
     return (
-      <div
+      <button
         onClick={handleOnClick}
         style={{ cursor: 'pointer' }}
         className={className}
+        aria-label={ariaLabel}
       >
         {children}
-      </div>
+      </button>
     );
   }
   return (
@@ -37,6 +40,7 @@ function BtnAtom({
       paddingHorizontal={paddingHorizontal}
       paddingVertical={paddingVertical}
       className={className}
+      aria-label={ariaLabel}
     >
       {children}
     </ButtonWrapper>
