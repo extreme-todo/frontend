@@ -31,11 +31,7 @@ const DateCard = ({ tododata, date }: IDateCardProps) => {
           ref={provided.innerRef}
         >
           <DateContainer>
-            <TypoAtom
-              className="dateTitle"
-              fontSize="sub"
-              fontColor="whiteWine"
-            >
+            <TypoAtom className="dateTitle" fontSize="h3" fontColor="primary2">
               {isSameDay(new Date(date), new Date()) ? '오늘' : date}
             </TypoAtom>
           </DateContainer>

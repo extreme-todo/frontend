@@ -29,7 +29,7 @@ function ExtremeModeIndicator() {
   return (
     <ExtremeModeContainer>
       {isExtreme && (
-        <TypoAtom fontSize="h5" className="extreme-status">
+        <TypoAtom fontSize="body" className="extreme-status">
           {status === PomodoroStatus.RESTING && leftTime}
         </TypoAtom>
       )}

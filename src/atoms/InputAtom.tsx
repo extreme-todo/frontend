@@ -18,7 +18,7 @@ interface IInputAtomProps
     borderRadius?: TypeLength;
     padding?: TypePadding;
     margin?: TypePadding;
-    backgroundColor?: keyof typeof designTheme.colors;
+    backgroundColor?: keyof typeof designTheme.color;
     outlineWidth?: TypeLength;
     fontWeight?: keyof typeof designTheme.fontSize;
   };
@@ -55,7 +55,8 @@ const UsualInput = withTheme(
     ({ styleOption, theme }) => ({
       width: styleOption?.width ?? '100%',
       height: styleOption?.height ?? '3.898rem',
-      backgroundColor: styleOption?.backgroundColor ?? theme.colors.whiteWine,
+      backgroundColor:
+        styleOption?.backgroundColor ?? theme.color.backgroundColor.white,
       fontSize: styleOption?.backgroundColor ?? theme.fontSize.h3.size,
       fontWeight: styleOption?.fontWeight
         ? theme.fontSize[styleOption.fontWeight].weight
@@ -77,15 +78,15 @@ const UnderlineInput = withTheme(
         : placeholder.length + 5 + 'ch',
       height: styleOption?.height ?? '1.863rem',
       backgroundColor: styleOption?.backgroundColor ?? `rgba(255, 255, 255, 0)`,
-      fontSize: styleOption?.backgroundColor ?? theme.fontSize.tag.size,
+      fontSize: styleOption?.backgroundColor ?? theme.fontSize.b2.size,
       fontWeight: styleOption?.fontWeight
         ? theme.fontSize[styleOption.fontWeight].weight
-        : theme.fontSize.tag.weight,
+        : theme.fontSize.b2.weight,
 
       outlineWidth: 0,
       boxSizing: 'border-box',
       border: 'none',
-      borderBottom: `1px solid ${theme.colors.whiteWine}`,
+      borderBottom: `1px solid ${theme.color.fontColor.primary1}`,
       textAlign: 'center',
       borderRadius: '0px',
     }),

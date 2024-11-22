@@ -1,4 +1,4 @@
-import { ITagSpanProps, TagAtom, TypoAtom } from '../../../atoms';
+import { BtnAtom, ITagSpanProps, TagAtom, TypoAtom } from '../../../atoms';
 
 import { ITodoCardProps } from '..';
 
@@ -26,13 +26,13 @@ const TodoUI = ({
         ? {
             fontsize: 'md2',
             size: 'md',
-            bg: 'whiteWine',
+            bg: 'cyan',
             maxWidth: 10,
           }
         : {
             fontsize: 'sm',
             size: 'sm',
-            bg: 'whiteWine',
+            bg: 'cyan',
             maxWidth: 10,
           },
     [isMobile],
@@ -70,18 +70,12 @@ const TodoUI = ({
       </DraggableWrapper>
       {snapshot?.isDragging ? null : (
         <EditWrapper id="editWrapper">
-          <TagAtom
-            handler={handleEditButton}
-            styleOption={{ fontsize: 'sm', size: 'sm' }}
-          >
-            수정
-          </TagAtom>
-          <TagAtom
-            handler={handleDeleteButton}
-            styleOption={{ fontsize: 'sm', size: 'sm' }}
-          >
-            삭제
-          </TagAtom>
+          <BtnAtom handleOnClick={handleEditButton}>
+            <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>수정</TagAtom>
+          </BtnAtom>
+          <BtnAtom handleOnClick={handleDeleteButton}>
+            <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>삭제</TagAtom>
+          </BtnAtom>
         </EditWrapper>
       )}
     </TodoCardContainer>

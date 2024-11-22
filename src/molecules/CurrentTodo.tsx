@@ -45,14 +45,10 @@ function CurrentTodo({
 
   return (
     <CurrentTodoContainer>
-      <TypoAtom fontSize={'h1'} fontColor={'titleColor'} className="title">
+      <TypoAtom fontSize={'h1'} fontColor={'gray'} className="title">
         더 집중하셔야 합니다!
       </TypoAtom>
-      <TypoAtom
-        fontSize={'body'}
-        fontColor={'titleColor'}
-        className="left-time"
-      >
+      <TypoAtom fontSize={'body'} fontColor={'gray'} className="left-time">
         남은 시간
       </TypoAtom>
       <div className="center-container">
@@ -303,7 +299,7 @@ const CurrentTodoContainer = styled.div`
 `;
 
 const TodoProgressBar = styled.div<{ progress: number }>`
-  background-color: #523ea1;
+  background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
   height: 0.75rem;
   width: 100%;
   border-radius: 1.75rem;
@@ -314,8 +310,19 @@ const TodoProgressBar = styled.div<{ progress: number }>`
   overflow: hidden;
   .progress {
     width: ${({ progress }) => `${progress}%`};
-    height: 100%;
-    background: #ff7e55;
+    height: 2.875rem;
+    line-height: 2.875rem;
+    border-radius: 3.125rem;
+    background: ${({ theme }) => theme.color.backgroundColor.extreme_orange};
+    /* 3d_shadow */
+    box-shadow: 0px 10px 30px 0px rgba(255, 255, 255, 0.44) inset,
+      0px -10px 20px 0px rgba(41, 32, 95, 0.33) inset;
+
+    color: ${({ theme }) => theme.color.fontColor.primary1};
+    text-align: right;
+    font-size: 1.16219rem;
+    font-weight: 700;
+    padding-right: 1.4rem;
     transition: all 0.2s ease-in-out;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},

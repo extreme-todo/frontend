@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 import { useEffect, useState } from 'react';
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
@@ -55,18 +55,15 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
             <TypoAtom
               fontSize={'h3'}
               className="modalTitle"
-              fontColor={'titleColor'}
+              fontColor={'primary1'}
             >
               {title}
             </TypoAtom>
-
-            <IconAtom
-              onClick={handleCloseModal}
-              size={3.6}
-              backgroundColor={'whiteWine'}
-            >
-              <img alt="close" src={'icons/close.svg'}></img>
-            </IconAtom>
+            <BtnAtom handleOnClick={handleCloseModal}>
+              <IconAtom size={3.6} backgroundColor={'primary1'}>
+                <img alt="close" src={'icons/close.svg'}></img>
+              </IconAtom>
+            </BtnAtom>
           </HeaderContainer>
           {children}
         </ModalContainer>
@@ -123,12 +120,18 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
 
   max-height: 90dvh;
 
-  background: ${({ theme: { colors } }) =>
+  background: ${({
+    theme: {
+      color: {
+        primary: { primary1 },
+      },
+    },
+  }) =>
     `linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.85) 0%,
       rgba(255, 255, 255, 0) 55.21%
-    ), ${colors.bgYellow}`};
+    ), ${primary1}`};
 
   animation: ${({ isRender }) =>
     isRender

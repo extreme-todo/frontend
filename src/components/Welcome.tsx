@@ -37,11 +37,10 @@ const Welcome = () => {
       {isLogin ? (
         <BtnContainer>
           <BtnAtom handleOnClick={handleLogoutBtn}>
-            <TypoAtom fontSize="h5">SIGN OUT</TypoAtom>
+            <TypoAtom fontSize="b1">SIGN OUT</TypoAtom>
           </BtnAtom>
-          <div></div>
           <BtnAtom handleOnClick={handleSetting}>
-            <TypoAtom fontSize="h5">SETTING</TypoAtom>
+            <TypoAtom fontSize="b1">SETTING</TypoAtom>
           </BtnAtom>
           {isModal &&
             createPortal(
@@ -52,12 +51,14 @@ const Welcome = () => {
             )}
         </BtnContainer>
       ) : (
-        <IconAtom className="login-button" onClick={handleLoginBtn}>
-          <img
-            src="btn_google_signin_dark_pressed_web@2x.png"
-            alt="google login button"
-          />
-        </IconAtom>
+        <BtnAtom handleOnClick={handleLoginBtn}>
+          <IconAtom className="login-button">
+            <img
+              src="btn_google_signin_dark_pressed_web@2x.png"
+              alt="google login button"
+            />
+          </IconAtom>
+        </BtnAtom>
       )}
     </WelcomeContainer>
   );
@@ -117,7 +118,7 @@ const BtnContainer = styled.div`
 
   > div {
     line-height: 30px;
-    color: ${({ theme: { colors } }) => colors.subFontColor};
+    color: ${({ theme: { color } }) => color.fontColor.primary1};
     margin: auto;
   }
   > div:nth-of-type(2) {

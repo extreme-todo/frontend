@@ -1,16 +1,16 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { designTheme } from '../styles/theme';
+import { TagColorName } from '../styles/emotion';
 
 export interface ITagAtomProps extends IChildProps {
   title?: string;
-  handler?: () => void;
   styleOption?: ITagSpanProps;
   ariaLabel?: string;
+  className?: string;
 }
 
 interface ITagSpanProps {
-  bg?: keyof typeof designTheme.colors;
+  bg?: TagColorName;
   fontsize?: 'sm' | 'md1' | 'md2' | 'b1' | 'b2';
   size?: 'sm' | 'md' | 'big' | 'big2';
   bold?: 'bold' | 'extraBold';
@@ -24,27 +24,21 @@ interface ITagSpanProps {
  */
 function TagAtom({
   children,
-  handler,
   styleOption,
   title,
   ariaLabel,
+  className,
 }: ITagAtomProps) {
-  if (handler)
-    return (
-      <button onClick={handler} aria-label={ariaLabel}>
-        <TagSpan {...styleOption} isHandler={!!handler}>
-          {children}
-        </TagSpan>
-      </button>
-    );
-  else
-    return (
-      <div>
-        <TagSpan title={title} {...styleOption}>
-          {children}
-        </TagSpan>
-      </div>
-    );
+  return (
+    <TagSpan
+      title={title}
+      {...styleOption}
+      className={className}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </TagSpan>
+  );
 }
 
 const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
@@ -68,11 +62,11 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
   }};
 
   background: ${({ bg, theme }) =>
-    bg ? theme.colors[bg] : theme.colors.white};
+    bg ? theme.color.tag[bg] : theme.color.tag['orange']};
   color: ${({ bg, theme }) =>
-    bg === 'titleColor' || bg === 'subFontColor'
-      ? theme.colors.white
-      : theme.colors.subFontColor};
+    bg === 'mint' || bg === 'orange' || bg === 'pink'
+      ? theme.color.fontColor.primary1
+      : theme.color.fontColor.white};
 
   border-radius: ${({ size }) => {
     switch (size) {
@@ -87,7 +81,7 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
     }
   }};
   box-shadow: ${({ theme, shadow }) =>
-    shadow ? theme.shadows[shadow] : 'none'};
+    shadow ? theme.shadow.container : 'none'};
 
   font-size: ${({ fontsize }) => {
     switch (fontsize) {
@@ -122,12 +116,12 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
   white-space: nowrap;
   display: block;
 
-  ${({ isHandler, theme }) =>
+  ${({ isHandler }) =>
     isHandler &&
     `
     :hover {
-      background-color: ${theme.colors.bgColor};
-      transition: background-color 0.2s ease-in-out;
+      opacity: 0.7;
+      transition: opacity 0.2s ease-in-out;
     }
   `}
 `;

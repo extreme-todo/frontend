@@ -42,7 +42,7 @@ function Records({ isLogin, fetchRecords }: IRecordsProps) {
     <>
       <RecordsContainer>
         <div className="records-title">
-          <Records.titleLabel fontSize="h3_bold" fontColor="titleColor">
+          <Records.titleLabel fontSize="h2" fontColor="gray">
             나의 집중 기록
           </Records.titleLabel>
         </div>

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 export interface IChildProps {
-  children?: ReactNode | string;
+  children?: ReactNode;
 }
 
 export interface ITotalFocusTime {
