@@ -75,9 +75,9 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   // ref and const
   const prevStatus = useRef(status);
   const isExtreme = extremeModeData
-    ? extremeModeData?.data.extremeMode === undefined
+    ? extremeModeData.data.extremeMode === undefined
       ? true
-      : extremeModeData?.data.extremeMode
+      : extremeModeData.data.extremeMode
     : true;
 
   // handlers

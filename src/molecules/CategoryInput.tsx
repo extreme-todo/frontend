@@ -1,4 +1,4 @@
-import { InputAtom, ITagSpanProps, TagAtom } from '../atoms';
+import { BtnAtom, InputAtom, ITagSpanProps, TagAtom } from '../atoms';
 import styled from '@emotion/styled';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -26,28 +26,28 @@ const CategoryInput = ({
         ? {
             fontsize: 'md2',
             size: 'md',
-            bg: 'whiteWine',
+            bg: 'purple',
             maxWidth: 10,
           }
         : {
             fontsize: 'sm',
             size: 'sm',
-            bg: 'whiteWine',
+            bg: 'green',
             maxWidth: 10,
           },
     [isMobile],
   );
+
   return (
     <CategoryContainer>
       {categories?.map((category) => (
-        <TagAtom
-          key={category}
-          handler={() => handleClick.call(this, category)}
+        <BtnAtom
+          handleOnClick={() => handleClick.call(this, category)}
           ariaLabel="category_tag"
-          styleOption={tagSize}
+          key={category}
         >
-          {category}
-        </TagAtom>
+          <TagAtom styleOption={tagSize}>{category}</TagAtom>
+        </BtnAtom>
       ))}
       {categories && categories.length >= MAX_CATEGORY_ARRAY_LENGTH ? null : (
         <InputAtom.Underline
@@ -74,7 +74,7 @@ const CategoryContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     input {
-      font-size: ${({ theme }) => theme.fontSize.h4.size};
+      font-size: ${({ theme }) => theme.fontSize.body.size};
     }
   }
 `;

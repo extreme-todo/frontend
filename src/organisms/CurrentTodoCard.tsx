@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
 import {
@@ -112,7 +112,7 @@ function CurrentTodoCard({
             ></CurrentTodo>
             {status === PomodoroStatus.RESTING && (
               <Overlay className="resting overlay">
-                <TypoAtom fontSize="h1" fontColor="titleColor">
+                <TypoAtom fontSize="h1" fontColor="primary1">
                   {shouldFocus ? '휴식 종료' : '휴식'}
                 </TypoAtom>
                 <button
@@ -129,7 +129,7 @@ function CurrentTodoCard({
                 >
                   <TagAtom
                     styleOption={{
-                      bg: 'subFontColor',
+                      bg: 'purple',
                       size: 'big',
                       fontsize: 'md2',
                     }}
@@ -158,7 +158,7 @@ function CurrentTodoCard({
                   >
                     <TagAtom
                       styleOption={{
-                        bg: 'subFontColor',
+                        bg: 'brown',
                         size: 'big',
                         fontsize: 'md2',
                       }}
@@ -175,14 +175,14 @@ function CurrentTodoCard({
             <TypoAtom>아직 작성된 할 일이 없어요.</TypoAtom>
             <TypoAtom>오늘 하루를 계획해 볼까요?</TypoAtom>
             {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
-            <button className="create-todo-button">
-              <TagAtom
-                styleOption={{ bg: 'titleColor', bold: 'extraBold' }}
-                handler={openAddTodoModal}
-              >
+            <BtnAtom
+              handleOnClick={openAddTodoModal}
+              className="create-todo-button"
+            >
+              <TagAtom styleOption={{ bg: 'cyan', bold: 'extraBold' }}>
                 할 일 기록하기
               </TagAtom>
-            </button>
+            </BtnAtom>
           </Overlay>
         )}
       </CardAtom>

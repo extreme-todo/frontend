@@ -1,38 +1,65 @@
 import { Theme } from '@emotion/react';
 import { responsiveBreakpoints } from '../shared/constants';
+import { Color, FontColor, FontSize, PrimaryColor } from './emotion';
+
+const primary: PrimaryColor = { primary1: '#523EA1', primary2: '#DBFE77' };
+const fontColor: FontColor = { white: '#FFFFFF', gray: '#DFDDDD', ...primary };
+const color: Color = {
+  primary,
+  fontColor: fontColor,
+  backgroundColor: {
+    extreme_dark: '#1C1C1D',
+    extreme_orange: '#E44623',
+    ...fontColor,
+  },
+  tag: {
+    green: '#00BD08',
+    purple: '#C324FA',
+    mint: '#2DF1F1',
+    orange: '#FCAE2F',
+    pink: '#FF7CCB',
+    gray: '#9A98AF',
+    cyan: '#00AAD0',
+    brown: '#CC9667',
+  },
+};
+
+const fontSize: FontSize = {
+  clock: {
+    size: '8.75rem',
+    weight: 700,
+  },
+  h1: {
+    size: '2.25rem',
+    weight: 700,
+  },
+  h2: {
+    size: '1.875rem',
+    weight: 400,
+  },
+  h3: {
+    size: '1.25rem',
+    weight: 400,
+  },
+  body: {
+    size: '1rem',
+    weight: 400,
+  },
+  b1: {
+    size: '1.25rem',
+    weight: 600,
+  },
+  b2: {
+    size: '0.875rem',
+    weight: 400,
+  },
+};
 
 export const designTheme: Theme = {
-  colors: {
-    bgColor: '#fad390',
-    titleColor: '#4B86FA',
-    subFontColor: '#222F3E',
-    accentColor: '#ee5253',
-    whiteWine: 'rgba(108, 35, 35, 0.14)',
-    white: '#FCFCFC',
-    lightGrey: '#DFE8F1',
-    bgYellow: '#E8EAA8',
-    lightGrey_2: '#ECECEC',
-    transparent: 'rgba(0,0,0,0)',
-  },
-  shadows: {
-    basic_shadow: '0px 4px 62px rgba(0, 0, 0, 0.05)',
-    button_shadow: '0px 9px 23px rgba(0, 0, 0, 0.1)',
-    emboss_shadow:
-      'inset 0px -10px 20px rgba(41, 32, 95, 0.33), inset 0px 10px 30px rgba(255, 255, 255, 0.44)',
-  },
-  fontSize: {
-    h1: { size: '6.198125rem', weight: 800 },
-    h2: { size: '3.099375rem', weight: 600 },
-    h3: { size: '2.324375rem', weight: 400 },
-    h3_bold: { size: '2.324375rem', weight: 700 },
-    h4: { size: '1.936875rem', weight: 400 },
-    h5: { size: '1.549375rem', weight: 800 },
-    body: { size: '1.743125rem', weight: 400 },
-    body_bold: { size: '1.743125rem', weight: 700 },
-    sub: { size: '1.549375rem', weight: 400 },
-    tag: { size: '1.161875rem', weight: 400 },
-    tooltip: { size: '1.25rem', weight: 300 },
-    switch: { size: '1.161875rem', weight: 700 },
+  color,
+  fontSize,
+  shadow: {
+    container: '0px 4px 4px rgba(0,0,0,0.25)',
   },
   responsiveDevice: {
     desktop: `all and (min-width: ${responsiveBreakpoints.desktop.min}px) and (max-width: ${responsiveBreakpoints.desktop.max}px)`,
@@ -40,6 +67,54 @@ export const designTheme: Theme = {
     tablet_v: `all and (min-width: ${responsiveBreakpoints.tablet_v.min}px) and (max-width: ${responsiveBreakpoints.tablet_v.max}px)`,
     mobile: `all and (max-width: ${responsiveBreakpoints.mobile.max}px)`,
   },
+  button: {
+    lightBtn: {
+      height: '2.25rem',
+      fontSize: fontSize.b1,
+      default: {
+        backgroundColor: '#523EA1CC',
+        color: color.fontColor.primary1,
+      },
+      hover: {
+        backgroundColor: '#523EA1B3',
+        color: color.fontColor.primary1,
+      },
+      click: {
+        backgroundColor: color.backgroundColor.primary1,
+        color: color.fontColor.primary2,
+      },
+    },
+    darkBtn: {
+      height: '2.25rem',
+      fontSize: fontSize.b1,
+      default: {
+        backgroundColor: '#DBFE77CC',
+        color: color.fontColor.primary2,
+      },
+      hover: {
+        backgroundColor: '#DBFE77B3',
+        color: color.fontColor.primary2,
+      },
+      click: {
+        backgroundColor: color.backgroundColor.primary2,
+        color: color.fontColor.primary1,
+      },
+    },
+    textBtn: {
+      height: '1.25rem',
+      fontSize: fontSize.b2,
+      default: {
+        backgroundColor: 'transparent',
+        color: color.fontColor.primary1,
+      },
+      hover: {
+        backgroundColor: color.backgroundColor.gray,
+        color: color.fontColor.primary1,
+      },
+      click: {
+        backgroundColor: color.backgroundColor.primary1,
+        color: color.fontColor.gray,
+      },
+    },
+  },
 } as const;
-
-// #e55039

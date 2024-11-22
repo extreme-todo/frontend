@@ -11,7 +11,12 @@ const CardAtom = styled.div<{
 }>`
   position: relative;
   font-size: 1rem;
-  background: ${({ theme: { colors }, bg }) => {
+  background: ${({
+    theme: {
+      color: { primary },
+    },
+    bg,
+  }) => {
     switch (bg) {
       case 'transparent':
         return `linear-gradient(180deg, rgba(255, 255, 255, 0.71) 0%, rgba(255, 255, 255, 0) 100%);`;
@@ -20,7 +25,7 @@ const CardAtom = styled.div<{
       180deg,
       rgba(255, 255, 255, 0.85) 0%,
       rgba(255, 255, 255, 0) 55.21%
-    ), ${colors.bgYellow}`;
+    ), ${primary.primary1}`;
     }
   }};
   box-shadow: 0px 4px 62px rgba(0, 0, 0, 0.05);

@@ -87,7 +87,8 @@ export const CalendarContainer = styled.div`
   }
 
   & > input:hover {
-    background-color: ${({ theme }) => theme.colors.bgColor};
+    background-color: ${({ theme }) =>
+      theme.button.darkBtn.hover.backgroundColor};
     transition: background-color 0.2s ease-in-out;
   }
 

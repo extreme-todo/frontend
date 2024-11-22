@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { CardAtom, TagAtom } from '../atoms';
+import { BtnAtom, CardAtom, TagAtom } from '../atoms';
 import { Records, Ranking } from '../organisms';
 import { categoryApi, rankingApi, timerApi } from '../shared/apis';
 import styled from '@emotion/styled';
@@ -12,13 +12,11 @@ function RankingAndRecords() {
   // const [isRanking, setIsRanking] = useState(false);
   return (
     <RNRContainer data-testid={'records-component'}>
-      <TagAtom
-        handler={() => setIsRanking((prev) => !prev)}
-        styleOption={{ shadow: 'button_shadow', bg: 'lightGrey_2' }}
-      >
-        {!isRanking ? '카테고리 별 랭킹' : '나의 집중 기록'}
-      </TagAtom>
-
+      <BtnAtom handleOnClick={() => setIsRanking((prev) => !prev)}>
+        <TagAtom styleOption={{ shadow: 'button_shadow', bg: 'cyan' }}>
+          {!isRanking ? '카테고리 별 랭킹' : '나의 집중 기록'}
+        </TagAtom>
+      </BtnAtom>
       <CardAtom padding="0rem" w="100%" h="100%">
         {isRanking ? (
           <Ranking
@@ -62,7 +60,7 @@ const RNRContainer = styled.div`
         padding: 1rem 3rem;
         border-radius: 4rem;
         background: ${({ theme }) =>
-          `linear-gradient(180deg,rgba(255, 255, 255, 0.85) 0%,rgba(255, 255, 255, 0) 55.21%), ${theme.colors.bgYellow}`};
+          `linear-gradient(180deg,rgba(255, 255, 255, 0.85) 0%,rgba(255, 255, 255, 0) 55.21%), ${theme.color.backgroundColor.primary2}`};
       }
     }
   }

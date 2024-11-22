@@ -1,7 +1,7 @@
 import React from 'react';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
-import { ProgressButtonAtom } from '../atoms';
+import { BtnAtom, ProgressButtonAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
 export type ISideButtonsProps = IChildProps;
@@ -43,16 +43,11 @@ const SideButton = ({
   onClick: () => void;
 }) => {
   return (
-    <button>
-      <IconAtom
-        onClick={onClick}
-        size={4.455}
-        backgroundColor={'whiteWine'}
-        className="icon"
-      >
+    <BtnAtom handleOnClick={onClick}>
+      <IconAtom size={4.455} backgroundColor={'primary1'} className="icon">
         <img src={imageSrc} />
       </IconAtom>
-    </button>
+    </BtnAtom>
   );
 };
 

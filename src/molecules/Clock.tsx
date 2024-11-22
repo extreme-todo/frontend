@@ -17,7 +17,7 @@ function Clock() {
 
   return (
     <ClockContainer>
-      <TypoAtom fontSize="sub" rainbow={true} className="clock-date">
+      <TypoAtom fontSize="clock" rainbow={true} className="clock-date">
         {currentTime.toLocaleDateString('ko-KR', {
           year: 'numeric',
           month: 'long',

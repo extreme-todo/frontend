@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { TagAtom } from '../atoms';
+import { BtnAtom, TagAtom } from '../atoms';
 import { ICategory } from '../shared/interfaces';
 
 interface ICategorySelectorProps {
@@ -21,7 +21,7 @@ function CartegorySelector({
       {isMobile && categories && selected && (
         <TagAtom
           styleOption={{
-            bg: 'whiteWine',
+            bg: 'mint',
           }}
         >
           <select
@@ -53,18 +53,20 @@ function CartegorySelector({
         selected &&
         categories.map((category) => {
           return (
-            <div key={category.id + category.name}>
+            <BtnAtom
+              handleOnClick={() => {
+                selectHandler(category);
+              }}
+              key={category.id + category.name}
+            >
               <TagAtom
                 styleOption={{
-                  bg: category.id !== selected.id ? 'whiteWine' : 'titleColor',
-                }}
-                handler={() => {
-                  selectHandler(category);
+                  bg: category.id !== selected.id ? 'green' : 'purple',
                 }}
               >
                 {category.name}
               </TagAtom>
-            </div>
+            </BtnAtom>
           );
         })}
     </CSContainer>
@@ -92,10 +94,10 @@ const CSContainer = styled.div<{ isMobile: boolean }>`
     display: initial;
     width: 0.8rem;
     border-radius: 0.4rem;
-    background-color: ${({ theme }) => theme.colors.whiteWine};
+    background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
   }
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.colors.white};
+    background-color: ${({ theme }) => theme.color.backgroundColor.primary1};
     border-radius: 0.4rem;
   }
   -ms-overflow-style: auto; /* IE and Edge */

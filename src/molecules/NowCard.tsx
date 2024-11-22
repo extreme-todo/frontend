@@ -32,7 +32,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
 
   return (
     <NowCardWrapper>
-      <TypoAtom fontColor="whiteWine" fontSize="body_bold">
+      <TypoAtom fontColor="primary1" fontSize="h2">
         NOW
       </TypoAtom>
       <NowCardContainer>
@@ -42,7 +42,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
             styleOption={{
               fontsize: 'sm',
               size: 'sm',
-              bg: 'transparent',
+              bg: 'mint',
             }}
           >
             <TypoAtom>{'⏱️ ' + time}</TypoAtom>
@@ -54,7 +54,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
               styleOption={{
                 fontsize: 'sm',
                 size: 'sm',
-                bg: 'whiteWine',
+                bg: 'gray',
                 maxWidth: 10,
               }}
             >
