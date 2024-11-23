@@ -15,6 +15,9 @@ const SideButtonsWrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 1rem;
+  button {
+    gap: 0.25rem;
+  }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     flex-direction: row;
@@ -41,7 +44,11 @@ const SideButton = ({
   onClick: () => void;
   children?: ReactNode;
 }) => {
-  return <BtnAtom handleOnClick={onClick}>{children}</BtnAtom>;
+  return (
+    <BtnAtom btnType="textBtn" handleOnClick={onClick}>
+      {children}
+    </BtnAtom>
+  );
 };
 
 const SideButtons = Object.assign(SideButtonsMain, {

@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import React from 'react';
+import { Color, PrimaryColor } from '../styles/emotion';
 
 // TODO: 나중에 일정한 사이즈를 가지게 되면 수정;
 const CardAtom = styled.div<{
   padding?: string;
   margin?: string;
-  bg?: 'default' | 'transparent';
+  bg?: 'default' | 'transparent' | PrimaryColor[keyof PrimaryColor];
   w?: string;
   h?: string;
 }>`
@@ -19,13 +20,11 @@ const CardAtom = styled.div<{
   }) => {
     switch (bg) {
       case 'transparent':
-        return `linear-gradient(180deg, rgba(255, 255, 255, 0.71) 0%, rgba(255, 255, 255, 0) 100%);`;
+        return `transparent`;
+      case 'default':
+        return `${primary.primary2}`;
       default:
-        return `linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.85) 0%,
-      rgba(255, 255, 255, 0) 55.21%
-    ), ${primary.primary1}`;
+        return `${bg ? bg : primary.primary2}`;
     }
   }};
   box-shadow: 0px 4px 62px rgba(0, 0, 0, 0.05);

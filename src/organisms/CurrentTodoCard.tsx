@@ -12,6 +12,7 @@ import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
+import { designTheme } from '../styles/theme';
 
 interface ICurrentTodoCardProps extends IChildProps {
   openAddTodoModal: () => void;
@@ -97,7 +98,7 @@ function CurrentTodoCard({
 
   return (
     <CurrentTodoWrapper>
-      <CardAtom w="53.75rem" h="20rem" className="card">
+      <CardAtom w="53.75rem" h="20rem" padding="2rem 2.5rem" className="card">
         <ExtremeModeIndicator />
         {currentTodo.currentTodo?.todo != null ? (
           <>
@@ -192,9 +193,6 @@ function CurrentTodoCard({
 
 const CurrentTodoWrapper = styled.div`
   position: relative;
-  .card {
-    background-color: #dbfe77 !important;
-  }
   .overlay {
     display: flex;
     flex-direction: column;

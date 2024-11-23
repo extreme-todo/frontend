@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
-import { TagAtom, TypoAtom } from '../atoms';
+import { BtnAtom, TagAtom, TypoAtom } from '../atoms';
 import { formatTime, getPomodoroStepPercent } from '../shared/timeUtils';
 import Clock from './Clock';
 import { usePomodoroValue } from '../hooks';
@@ -45,10 +45,10 @@ function CurrentTodo({
 
   return (
     <CurrentTodoContainer>
-      <TypoAtom fontSize={'h1'} fontColor={'gray'} className="title">
+      <TypoAtom fontSize={'h1'} fontColor={'primary1'} className="title">
         더 집중하셔야 합니다!
       </TypoAtom>
-      <TypoAtom fontSize={'body'} fontColor={'gray'} className="left-time">
+      <TypoAtom fontSize={'body'} fontColor={'primary1'} className="left-time">
         남은 시간
       </TypoAtom>
       <div className="center-container">
@@ -80,13 +80,14 @@ function CurrentTodo({
           <button className="rest" onClick={() => startResting()}>
             <img src="icons/pause.svg" />
           </button>
-          <button
+          <BtnAtom
             className="do-todo"
             aria-label="do todo"
-            onClick={() => doAndRest()}
+            btnType="lightBtn"
+            handleOnClick={() => doAndRest()}
           >
             끝내기
-          </button>
+          </BtnAtom>
         </div>
       </div>
 
@@ -108,35 +109,9 @@ const CurrentTodoContainer = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  /* overflow: auto; */
-  /* background-color: aliceblue; */
-  // TODO : Atom 수정되면 지우기
-  .title {
-    /* 더 집중하셔야 합니다! */
-    font-family: 'Pretendard';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 2.25rem;
-    line-height: 2.5rem;
-    /* identical to box height, or 111% */
-    display: flex;
-    align-items: center;
-    letter-spacing: -0.002em;
-    color: #523ea1;
-  }
-  // TODO : Atom 수정되면 지우기
   .left-time {
     margin-top: 0.25rem;
-    /* 남은 시간 */
-    font-family: 'Pretendard';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 20px;
-    /* identical to box height, or 125% */
-    display: flex;
-    align-items: center;
-    color: #523ea1;
+    margin-bottom: 0.5rem;
   }
   // TODO : Atom 수정되면 지우기
   .todo-title {
@@ -198,6 +173,7 @@ const CurrentTodoContainer = styled.div`
     flex-wrap: nowrap;
     overflow: auto;
   }
+  // TODO : TagAtom 적용
   .category {
     /* Auto layout */
     display: flex;
@@ -216,7 +192,7 @@ const CurrentTodoContainer = styled.div`
     align-items: center;
     gap: 0.5rem;
     span {
-      color: #523ea1;
+      color: ${({ theme }) => theme.color.primary.primary1};
     }
   }
   .do-todo {
@@ -299,7 +275,7 @@ const CurrentTodoContainer = styled.div`
 `;
 
 const TodoProgressBar = styled.div<{ progress: number }>`
-  background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
+  background-color: ${({ theme }) => theme.color.backgroundColor.primary1};
   height: 0.75rem;
   width: 100%;
   border-radius: 1.75rem;
@@ -310,19 +286,10 @@ const TodoProgressBar = styled.div<{ progress: number }>`
   overflow: hidden;
   .progress {
     width: ${({ progress }) => `${progress}%`};
-    height: 2.875rem;
+    height: 100%;
     line-height: 2.875rem;
     border-radius: 3.125rem;
     background: ${({ theme }) => theme.color.backgroundColor.extreme_orange};
-    /* 3d_shadow */
-    box-shadow: 0px 10px 30px 0px rgba(255, 255, 255, 0.44) inset,
-      0px -10px 20px 0px rgba(41, 32, 95, 0.33) inset;
-
-    color: ${({ theme }) => theme.color.fontColor.primary1};
-    text-align: right;
-    font-size: 1.16219rem;
-    font-weight: 700;
-    padding-right: 1.4rem;
     transition: all 0.2s ease-in-out;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
