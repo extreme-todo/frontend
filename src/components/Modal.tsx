@@ -122,14 +122,16 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
 
   background: ${({
     theme: {
-      color: { backgroundColor },
+      color: {
+        primary: { primary1 },
+      },
     },
   }) =>
     `linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.85) 0%,
       rgba(255, 255, 255, 0) 55.21%
-    ), ${backgroundColor}`};
+    ), ${primary1}`};
 
   animation: ${({ isRender }) =>
     isRender

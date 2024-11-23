@@ -145,7 +145,7 @@ const style = css`
   }
 
   body {
-    background: linear-gradient(328deg, #b8a2e4, #edbff1, #8ef0e8);
+    background: #dfdfdd;
     background-size: 600% 600%;
 
     -webkit-animation: AnimationName 59s ease infinite;
