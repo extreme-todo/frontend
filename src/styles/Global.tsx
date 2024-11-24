@@ -88,7 +88,6 @@ const style = css`
     border: 0;
     font-size: 100%;
     font: inherit;
-    font-family: pretendard;
     vertical-align: baseline;
   }
   /* HTML5 display-role reset for older browsers */
@@ -156,7 +155,9 @@ const style = css`
     width: 100dvw;
     overscroll-behavior: none;
   }
-
+  * {
+    font-family: pretendard;
+  }
   @-webkit-keyframes AnimationName {
     0% {
       background-position: 0% 77%;

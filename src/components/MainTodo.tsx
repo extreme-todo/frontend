@@ -1,23 +1,17 @@
 import styled from '@emotion/styled';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { IChildProps } from '../shared/interfaces';
-import { Clock, SideButtons } from '../molecules';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
-import {
-  LoginContext,
-  usePomodoroActions,
-  usePomodoroValue,
-  useTimeMarker,
-} from '../hooks';
+import { LoginContext, usePomodoroValue, useTimeMarker } from '../hooks';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
-import { TagAtom, TypoAtom } from '../atoms';
+import { TypoAtom } from '../atoms';
 
 type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
@@ -191,14 +185,14 @@ const MainTodoCenter = styled.div`
   justify-content: space-between;
   gap: 0.75rem;
   .tag-button {
-    border: 1px solid #523ea1;
+    border: 1px solid ${({ theme }) => theme.color.primary.primary1};
     border-radius: 1.25rem;
     height: 1.25rem;
     padding: 0 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #523ea1;
+    color: ${({ theme }) => theme.color.primary.primary1};
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {

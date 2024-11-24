@@ -1,20 +1,20 @@
 import styled from '@emotion/styled';
-import React from 'react';
-import { Color, PrimaryColor } from '../styles/emotion';
+import { BackgroundColorName } from '../styles/emotion';
 
 // TODO: 나중에 일정한 사이즈를 가지게 되면 수정;
 const CardAtom = styled.div<{
   padding?: string;
   margin?: string;
-  bg?: 'default' | 'transparent' | PrimaryColor[keyof PrimaryColor];
+  bg?: 'default' | 'transparent' | BackgroundColorName;
   w?: string;
   h?: string;
 }>`
   position: relative;
-  font-size: 1rem;
+  font-size: ${({ theme: { fontSize } }) => fontSize.body.size};
+  font-weight: ${({ theme: { fontSize } }) => fontSize.body.weight};
   background: ${({
     theme: {
-      color: { primary },
+      color: { backgroundColor },
     },
     bg,
   }) => {
@@ -22,12 +22,12 @@ const CardAtom = styled.div<{
       case 'transparent':
         return `transparent`;
       case 'default':
-        return `${primary.primary2}`;
+        return `${backgroundColor.primary2}`;
       default:
-        return `${bg ? bg : primary.primary2}`;
+        return `${bg ? bg : backgroundColor.primary2}`;
     }
   }};
-  box-shadow: 0px 4px 62px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme: { shadow } }) => shadow};
   border-radius: 30px;
   padding: ${({ padding }) => padding ?? '3rem'};
   margin: ${({ margin }) => margin ?? '0rem'};
