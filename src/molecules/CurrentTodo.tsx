@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
-import { BtnAtom, TagAtom, TypoAtom } from '../atoms';
-import { formatTime, getPomodoroStepPercent } from '../shared/timeUtils';
+import { BtnAtom, TypoAtom } from '../atoms';
+import { getPomodoroStepPercent } from '../shared/timeUtils';
 import Clock from './Clock';
-import { usePomodoroValue } from '../hooks';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
@@ -127,17 +126,20 @@ const CurrentTodoContainer = styled.div`
       word-break: break-all;
       display: block;
       /* RxJS 공부하기 */
-      font-family: 'Pretendard';
       font-style: normal;
-      font-weight: 400;
-      font-size: 1.875rem;
+      font-weight: ${({ theme: { fontSize } }) => fontSize.h2.weight};
+      font-size: ${({ theme: { fontSize } }) => fontSize.h2.size};
       line-height: 2rem;
       /* identical to box height, or 107% */
       display: flex;
       align-items: center;
       letter-spacing: -0.002em;
 
-      color: #523ea1;
+      color: ${({
+        theme: {
+          color: { fontColor },
+        },
+      }) => fontColor.primary1};
     }
   }
   .center-container {
@@ -159,7 +161,11 @@ const CurrentTodoContainer = styled.div`
   .rest {
     width: 2.25rem;
     height: 2.25rem;
-    background: rgba(82, 62, 161, 0.21);
+    background: ${({
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => backgroundColor.gray};
     border-radius: 50px;
     display: flex;
     justify-content: center;
@@ -182,7 +188,11 @@ const CurrentTodoContainer = styled.div`
     align-items: center;
     padding: 4px 16px;
     gap: 10px;
-    background: #00bd08;
+    background: ${({
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => backgroundColor.primary2};
     border-radius: 13px;
     color: white;
   }
@@ -203,7 +213,11 @@ const CurrentTodoContainer = styled.div`
     align-items: center;
     padding: 0.5rem 1.0625rem;
     gap: 0.625rem;
-    background: rgba(82, 62, 161, 0.21);
+    background: ${({
+      theme: {
+        color: { fontColor },
+      },
+    }) => fontColor.gray};
     border-radius: 3.125rem;
   }
   .progress-container {
@@ -219,8 +233,8 @@ const CurrentTodoContainer = styled.div`
     height: 100%;
     position: relative;
     .title {
-      font-size: 6rem;
-      font-weight: 600;
+      font-size: ${({ theme: { fontSize } }) => fontSize.b1.size};
+      font-weight: ${({ theme: { fontSize } }) => fontSize.b1.weight};
     }
     .todo-title {
       overflow: auto;
@@ -229,7 +243,7 @@ const CurrentTodoContainer = styled.div`
       max-height: 50%;
       span {
         vertical-align: middle;
-        font-size: 8rem;
+        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
         white-space: normal;
         overflow: initial;
       }
@@ -237,7 +251,7 @@ const CurrentTodoContainer = styled.div`
     .categories {
       margin: 4rem 0 4rem 0;
       span {
-        font-size: 4rem;
+        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
         border-radius: 6rem;
         padding: 1rem 3rem 1rem 3rem;
       }
@@ -249,10 +263,10 @@ const CurrentTodoContainer = styled.div`
       align-items: flex-start;
       gap: 2rem;
       span {
-        font-size: 4rem;
+        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
       }
       div > span {
-        font-size: 3rem;
+        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
         border-radius: 6rem;
         padding: 0.5rem 3rem 0.5rem 3rem;
       }
