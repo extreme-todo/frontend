@@ -1,8 +1,7 @@
 import React, { ReactNode } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
-import { BtnAtom, ProgressButtonAtom } from '../atoms';
-import IconAtom from '../atoms/IconAtom';
+import { BtnAtom } from '../atoms';
 
 export type ISideButtonsProps = IChildProps;
 
