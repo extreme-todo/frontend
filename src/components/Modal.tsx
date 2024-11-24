@@ -123,7 +123,7 @@ const ModalContainer = styled(CardAtom)<{ isRender: boolean }>`
   background: ${({
     theme: {
       color: {
-        primary: { primary1 },
+        backgroundColor: { primary1 },
       },
     },
   }) =>

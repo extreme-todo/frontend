@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import React, { useEffect, useState } from 'react';
 import { TypoAtom } from '../atoms';
-import { formatDuration, intervalToDuration } from 'date-fns';
+import { intervalToDuration } from 'date-fns';
 
 export interface IClockProps {
   ms: number;
@@ -30,27 +29,30 @@ const ClockContainer = styled.div`
   // TODO: 아톰 수정되면 지워야됨
   .clock-time {
     /* 12 : 34 */
-    font-family: 'Pretendard';
     font-style: normal;
-    font-weight: 700;
-    font-size: 8.75rem;
+    font-weight: ${({ theme: { fontSize } }) => fontSize.clock.weight};
+    font-size: ${({ theme: { fontSize } }) => fontSize.clock.size};
     line-height: 8rem;
     /* identical to box height, or 100% */
     display: flex;
     align-items: center;
     letter-spacing: -0.02em;
     vertical-align: middle;
-    color: #523ea1;
+    color: ${({
+      theme: {
+        color: { fontColor },
+      },
+    }) => fontColor.primary1};
   }
   @media ${({ theme }) => theme.responsiveDevice.mobile},
     ${({ theme }) => theme.responsiveDevice.tablet_v} {
     position: fixed;
     top: 4rem;
     .clock-date {
-      font-size: 4rem;
+      font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
     }
     .clock-time {
-      font-size: 12rem;
+      font-size: ${({ theme: { fontSize } }) => fontSize.clock.size};
     }
   }
 `;
