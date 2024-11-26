@@ -1,24 +1,29 @@
-import styled from '@emotion/styled';
-import { designTheme } from '../styles/theme';
-import { withTheme } from '@emotion/react';
-import { memo } from 'react';
+import { memo, ReactEventHandler } from 'react';
 
+import { withTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import {
+  BackgroundColorName,
+  FontName,
+  LengthType,
+  PaddingType,
+} from '../styles/emotion';
 
 interface IInputAtomProps
   extends Pick<HTMLInputElement, 'placeholder' | 'value'> {
-  handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange?: ReactEventHandler<HTMLInputElement>;
   handleKeyDown?: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
   ariaLabel?: string;
   styleOption?: {
-    width?: TypeLength;
-    height?: TypeLength;
-    borderRadius?: TypeLength;
-    padding?: TypePadding;
-    margin?: TypePadding;
-    backgroundColor?: keyof typeof designTheme.color;
-    outlineWidth?: TypeLength;
-    fontWeight?: keyof typeof designTheme.fontSize;
+    width?: LengthType;
+    height?: LengthType;
+    borderRadius?: LengthType;
+    padding?: PaddingType;
+    margin?: PaddingType;
+    backgroundColor?: BackgroundColorName;
+    borderWidth?: LengthType;
+    font?: FontName;
   };
 }
 
