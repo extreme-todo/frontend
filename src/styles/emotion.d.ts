@@ -1,6 +1,10 @@
 import '@emotion/react';
 
 type RemType<T extends number = number> = `${T}rem`;
+type SinglePadding = RemType | 0;
+type PaddingType =
+  `${SinglePadding} ${SinglePadding} ${SinglePadding} ${SinglePadding}`;
+type LengthType = `${number}rem` | `${number}%` | `${number}px` | `${number}ch`;
 /* font */
 // 16px
 // 140, 36, 30, 20, 16, 14

@@ -3,8 +3,6 @@ import { designTheme } from '../styles/theme';
 import { withTheme } from '@emotion/react';
 import { memo } from 'react';
 
-type TypePadding = `${number} ${number} ${number} ${number}`;
-type TypeLength = `${number}rem` | `${number}%` | `${number}px` | `${number}ch`;
 
 interface IInputAtomProps
   extends Pick<HTMLInputElement, 'placeholder' | 'value'> {
