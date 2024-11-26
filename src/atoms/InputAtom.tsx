@@ -67,33 +67,33 @@ const CommonInput = withTheme(
         : theme.fontSize.body.weight,
       margin: styleOption?.margin,
       outline: 0,
+      color: theme.color.fontColor.primary1,
       '::placeholder': {
         opacity: 0.4,
       },
     }),
   ),
 );
-const UnderlineInput = withTheme(
-  styled.input<Pick<IInputAtomProps, 'styleOption' | 'value' | 'placeholder'>>(
-    ({ styleOption, value, placeholder, theme }) => ({
-      width: styleOption?.width
-        ? styleOption?.width
-        : value.length > 10
-        ? value.length + 10 + 'ch'
-        : placeholder.length + 5 + 'ch',
-      height: styleOption?.height ?? '1.863rem',
-      backgroundColor: styleOption?.backgroundColor ?? `rgba(255, 255, 255, 0)`,
-      fontSize: styleOption?.backgroundColor ?? theme.fontSize.b2.size,
-      fontWeight: styleOption?.fontWeight
-        ? theme.fontSize[styleOption.fontWeight].weight
-        : theme.fontSize.b2.weight,
 
-      outlineWidth: 0,
-      boxSizing: 'border-box',
-      border: 'none',
-      borderBottom: `1px solid ${theme.color.fontColor.primary1}`,
-      textAlign: 'center',
-      borderRadius: '0px',
     }),
   ),
+);
+const UnderlineInput = withTheme(
+  styled(CommonInput)<
+    Pick<IInputAtomProps, 'styleOption' | 'value' | 'placeholder'>
+  >(({ styleOption, value, placeholder, theme }) => ({
+    width: styleOption?.width
+      ? styleOption.width
+      : value.length > 10
+      ? value.length + 10 + 'ch'
+      : placeholder.length + 5 + 'ch',
+    height: styleOption?.height ?? '1.863rem',
+    border: 'none',
+    borderBottom: `${styleOption?.borderWidth ?? '1px'} solid ${
+      theme.color.primary.primary1
+    }`,
+    textAlign: styleOption?.width ? 'inherit' : 'center',
+    borderRadius: '0px',
+    padding: styleOption?.padding,
+  })),
 );
