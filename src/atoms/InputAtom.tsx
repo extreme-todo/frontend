@@ -23,6 +23,8 @@ interface IInputAtomProps
     margin?: PaddingType;
     backgroundColor?: BackgroundColorName;
     borderWidth?: LengthType;
+    borderStyle?: 'dashed' | 'dotted' | 'none';
+    textAlign?: 'center';
     font?: FontName;
   };
 }
@@ -54,8 +56,14 @@ const InputAtom = {
 export default InputAtom;
 
 const CommonInput = withTheme(
-  styled.input<Pick<IInputAtomProps, 'styleOption'>>(
-    ({ styleOption, theme }) => ({
+  styled.input<Pick<IInputAtomProps, 'styleOption' | 'value' | 'placeholder'>>(
+    ({ styleOption, theme, value, placeholder }) => ({
+      height: styleOption?.height ?? '1.863rem',
+      width: styleOption?.width
+        ? styleOption.width
+        : value.length > 10
+        ? value.length + 10 + 'ch'
+        : placeholder.length + 5 + 'ch',
       backgroundColor: styleOption?.backgroundColor
         ? theme.color.backgroundColor[styleOption.backgroundColor]
         : 'transparent',
@@ -68,6 +76,7 @@ const CommonInput = withTheme(
       margin: styleOption?.margin,
       outline: 0,
       color: theme.color.fontColor.primary1,
+      textAlign: styleOption?.textAlign ?? 'inherit',
       '::placeholder': {
         opacity: 0.4,
       },
@@ -75,24 +84,24 @@ const CommonInput = withTheme(
   ),
 );
 
+const UsualInput = withTheme(
+  styled(CommonInput)<Pick<IInputAtomProps, 'styleOption'>>(
+    ({ styleOption }) => ({
+      borderRadius: styleOption?.borderRadius ?? undefined,
+      borderWidth: styleOption?.borderWidth ?? 1,
+      padding: styleOption?.padding ?? '0 1rem 0 1rem',
+      borderStyle: styleOption?.borderStyle ?? 'solid',
     }),
   ),
 );
 const UnderlineInput = withTheme(
   styled(CommonInput)<
     Pick<IInputAtomProps, 'styleOption' | 'value' | 'placeholder'>
-  >(({ styleOption, value, placeholder, theme }) => ({
-    width: styleOption?.width
-      ? styleOption.width
-      : value.length > 10
-      ? value.length + 10 + 'ch'
-      : placeholder.length + 5 + 'ch',
-    height: styleOption?.height ?? '1.863rem',
+  >(({ styleOption, theme }) => ({
     border: 'none',
     borderBottom: `${styleOption?.borderWidth ?? '1px'} solid ${
       theme.color.primary.primary1
     }`,
-    textAlign: styleOption?.width ? 'inherit' : 'center',
     borderRadius: '0px',
     padding: styleOption?.padding,
   })),
