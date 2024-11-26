@@ -53,21 +53,23 @@ const InputAtom = {
 
 export default InputAtom;
 
-const UsualInput = withTheme(
+const CommonInput = withTheme(
   styled.input<Pick<IInputAtomProps, 'styleOption'>>(
     ({ styleOption, theme }) => ({
-      width: styleOption?.width ?? '100%',
-      height: styleOption?.height ?? '3.898rem',
-      backgroundColor:
-        styleOption?.backgroundColor ?? theme.color.backgroundColor.white,
-      fontSize: styleOption?.backgroundColor ?? theme.fontSize.h3.size,
-      fontWeight: styleOption?.fontWeight
-        ? theme.fontSize[styleOption.fontWeight].weight
-        : theme.fontSize.h3.weight,
-      borderRadius: styleOption?.borderRadius ?? '1.453rem',
-      outlineWidth: 0,
-      boxSizing: 'border-box',
-      padding: '0 1rem 0 1rem',
+      backgroundColor: styleOption?.backgroundColor
+        ? theme.color.backgroundColor[styleOption.backgroundColor]
+        : 'transparent',
+      fontSize: styleOption?.font
+        ? theme.fontSize[styleOption.font].size
+        : theme.fontSize.body.size,
+      fontWeight: styleOption?.font
+        ? theme.fontSize[styleOption.font].weight
+        : theme.fontSize.body.weight,
+      margin: styleOption?.margin,
+      outline: 0,
+      '::placeholder': {
+        opacity: 0.4,
+      },
     }),
   ),
 );
