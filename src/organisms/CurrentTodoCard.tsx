@@ -130,8 +130,8 @@ function CurrentTodoCard({
                   <TagAtom
                     styleOption={{
                       bg: 'purple',
-                      size: 'big',
-                      fontsize: 'md2',
+                      size: 'normal',
+                      fontsize: 'body',
                     }}
                   >
                     {canRest
@@ -159,8 +159,8 @@ function CurrentTodoCard({
                     <TagAtom
                       styleOption={{
                         bg: 'brown',
-                        size: 'big',
-                        fontsize: 'md2',
+                        size: 'normal',
+                        fontsize: 'body',
                       }}
                     >
                       다음 할 일 하기
@@ -179,9 +179,7 @@ function CurrentTodoCard({
               handleOnClick={openAddTodoModal}
               className="create-todo-button"
             >
-              <TagAtom styleOption={{ bg: 'cyan', bold: 'extraBold' }}>
-                할 일 기록하기
-              </TagAtom>
+              <TagAtom styleOption={{ bg: 'cyan' }}>할 일 기록하기</TagAtom>
             </BtnAtom>
           </Overlay>
         )}

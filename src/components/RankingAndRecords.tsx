@@ -13,7 +13,7 @@ function RankingAndRecords() {
   return (
     <RNRContainer data-testid={'records-component'}>
       <BtnAtom handleOnClick={() => setIsRanking((prev) => !prev)}>
-        <TagAtom styleOption={{ shadow: 'button_shadow', bg: 'cyan' }}>
+        <TagAtom styleOption={{ bg: 'cyan' }}>
           {!isRanking ? '카테고리 별 랭킹' : '나의 집중 기록'}
         </TagAtom>
       </BtnAtom>

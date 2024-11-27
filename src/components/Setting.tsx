@@ -107,14 +107,10 @@ const Setting = ({ handleClose }: ISettingModal) => {
           />
         </ExtremeContainer>
         <BtnAtom handleOnClick={resetMutation}>
-          <TagAtom styleOption={{ size: 'sm', fontsize: 'sm' }}>
-            데이터 초기화
-          </TagAtom>
+          <TagAtom styleOption={{ size: 'normal' }}>데이터 초기화</TagAtom>
         </BtnAtom>
         <BtnAtom handleOnClick={withdrawMutation}>
-          <TagAtom styleOption={{ size: 'sm', fontsize: 'sm' }}>
-            회원탈퇴
-          </TagAtom>
+          <TagAtom styleOption={{ size: 'normal' }}>회원탈퇴</TagAtom>
         </BtnAtom>
       </SettingContainer>
     </>
