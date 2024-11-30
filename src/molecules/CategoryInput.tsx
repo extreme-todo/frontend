@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { memo, useMemo } from 'react';
+import { designTheme } from '../styles/theme';
 
 interface ICategoryInputProps {
   categories: string[] | null;
@@ -24,16 +25,14 @@ const CategoryInput = ({
     () =>
       isMobile
         ? {
-            fontsize: 'md2',
-            size: 'md',
+            fontsize: 'b2',
+            size: 'normal',
             bg: 'purple',
-            maxWidth: 10,
           }
         : {
-            fontsize: 'sm',
-            size: 'sm',
-            bg: 'green',
-            maxWidth: 10,
+            fontsize: 'b2',
+            size: 'normal',
+            bg: 'purple',
           },
     [isMobile],
   );
@@ -50,12 +49,22 @@ const CategoryInput = ({
         </BtnAtom>
       ))}
       {categories && categories.length >= MAX_CATEGORY_ARRAY_LENGTH ? null : (
-        <InputAtom.Underline
+        <InputAtom.Usual
           value={category}
           handleChange={handleChangeCategory}
           handleKeyDown={handleSubmit}
-          placeholder="카테고리를 입력하세요"
+          placeholder="태그 추가하기"
           ariaLabel="category_input"
+          styleOption={{
+            borderStyle: 'dashed',
+            borderRadius: '50px',
+            borderWidth: '1px',
+            textAlign: 'center',
+            font: 'b2',
+            placeholderOpacity: 1,
+            width: '6.875rem',
+            height: '1.25rem',
+          }}
         />
       )}
     </CategoryContainer>
