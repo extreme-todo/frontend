@@ -3,6 +3,7 @@ import { BtnAtom, InputAtom, ITagSpanProps, TagAtom } from '../atoms';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 import { useIsMobile } from '../hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { TagColorName } from '../styles/emotion';
 
 interface ICategoryInputProps {
   categories: string[] | null;
@@ -10,6 +11,7 @@ interface ICategoryInputProps {
   handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   handleClick: (category: string) => void;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  tagColorList: Record<string, TagColorName>;
 }
 
 const CategoryInput = ({
@@ -18,6 +20,7 @@ const CategoryInput = ({
   handleClick,
   category,
   handleChangeCategory,
+  tagColorList,
 }: ICategoryInputProps) => {
   const isMobile = useIsMobile();
   const tagSize: ITagSpanProps = useMemo(
@@ -26,12 +29,10 @@ const CategoryInput = ({
         ? {
             fontsize: 'b2',
             size: 'normal',
-            bg: 'purple',
           }
         : {
             fontsize: 'b2',
             size: 'normal',
-            bg: 'purple',
           },
     [isMobile],
   );
@@ -44,7 +45,9 @@ const CategoryInput = ({
           ariaLabel="category_tag"
           key={category}
         >
-          <TagAtom styleOption={tagSize}>{category}</TagAtom>
+          <TagAtom styleOption={{ ...tagSize, bg: tagColorList[category] }}>
+            {category}
+          </TagAtom>
         </BtnAtom>
       ))}
       {categories && categories.length >= MAX_CATEGORY_ARRAY_LENGTH ? null : (
