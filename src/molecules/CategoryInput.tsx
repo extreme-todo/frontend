@@ -1,9 +1,8 @@
+import { memo, useMemo } from 'react';
 import { BtnAtom, InputAtom, ITagSpanProps, TagAtom } from '../atoms';
-import styled from '@emotion/styled';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 import { useIsMobile } from '../hooks/useIsMobile';
-import { memo, useMemo } from 'react';
-import { designTheme } from '../styles/theme';
+import styled from '@emotion/styled';
 
 interface ICategoryInputProps {
   categories: string[] | null;
@@ -77,9 +76,7 @@ const CategoryContainer = styled.div`
   flex-wrap: wrap;
   display: flex;
   align-items: center;
-  row-gap: 1.3125rem;
-  column-gap: 0.625rem;
-  margin-top: 0.61rem;
+  gap: 0.5rem;
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     input {
