@@ -10,6 +10,7 @@ import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 import { ICategory, IRanking, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
+import { RandomTagColorList } from './RandomTagColorList';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
@@ -95,6 +96,7 @@ export const usersApi = {
 };
 // export const todosApi: TodoModuleType = {
 export const todosApi = {
+  _ramdomTagColorList: RandomTagColorList.getInstance(),
   async resetTodos() {
     await baseApi.delete('todos/reset');
   },
@@ -130,7 +132,10 @@ export const todosApi = {
     const modifiedCategories = data.map((todo) => {
       if (todo.categories && typeof todo.categories[0] !== 'string') {
         const stringified = (todo.categories as CategoryType[]).map(
-          (category) => category.name,
+          (category) => {
+            this._ramdomTagColorList.setColor = category.name;
+            return category.name;
+          },
         );
         return {
           ...todo,
