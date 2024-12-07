@@ -34,9 +34,12 @@ const TimeSetter = ({
       </TypoAtom>
       <FlipHandlerContainer>
         <BtnAtom handleOnClick={handlePlus}>
-          <IconAtom size={1} className="timeHandler">
-            <img alt="timeup" src={'icons/btnUp.svg'} />
-          </IconAtom>
+          <IconAtom
+            size={1}
+            className="timeHandler"
+            alt="timeup"
+            src={'icons/btnUp.svg'}
+          />
         </BtnAtom>
         <FlipContainer>
           <FlipCounter>
@@ -58,9 +61,12 @@ const TimeSetter = ({
           </TypoAtom>
         </FlipContainer>
         <BtnAtom handleOnClick={handleMinus}>
-          <IconAtom size={1} className="timeHandler">
-            <img alt="timedown" src={'icons/btnDown.svg'} />
-          </IconAtom>
+          <IconAtom
+            size={1}
+            className="timeHandler"
+            alt="timedown"
+            src={'icons/btnDown.svg'}
+          />
         </BtnAtom>
       </FlipHandlerContainer>
     </TimeSetterContainer>
@@ -139,9 +145,12 @@ const PomodoroTimeSetting = () => {
       </PomodoroTimeSettingContainer>
       <FooterContainer>
         <BtnAtom handleOnClick={handleSubmit}>
-          <IconAtom size={4.455} backgroundColor="primary1">
-            <img alt="timesubmit" src={'icons/ok.svg'} />
-          </IconAtom>
+          <IconAtom
+            size={4.455}
+            backgroundColor="primary1"
+            alt="timesubmit"
+            src={'icons/ok.svg'}
+          />
         </BtnAtom>
       </FooterContainer>
     </>

@@ -203,11 +203,19 @@ const AddTodo = () => {
           )}
         </TomatoContainer>
       </AddTodoWrapper>
+        <IconAtom size={2} src="icon/close.svg" />
+          <IconAtom size={1.25} src="icon/combobox.svg" />
       <FooterContainer>
         <BtnAtom handleOnClick={() => handleAddSubmit.call(this, addData)}>
           <IconAtom size={3.6} backgroundColor={'transparent'}>
             <img alt="submit_edit" src={'icons/ok.svg'} />
           </IconAtom>
+          <IconAtom
+            size={3.6}
+            backgroundColor={'transparent'}
+            alt="submit_edit"
+            src={'icons/ok.svg'}
+          />
         </BtnAtom>
       </FooterContainer>
     </>

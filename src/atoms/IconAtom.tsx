@@ -1,35 +1,31 @@
 import styled from '@emotion/styled';
-import { forwardRef, ReactElement } from 'react';
+import { forwardRef } from 'react';
 import { BackgroundColor } from '../styles/emotion';
 
 interface IIconAtomProps {
-  children: ReactElement<HTMLImageElement>;
+  src: string;
+  alt?: string;
   size?: number;
   backgroundColor?: keyof BackgroundColor | 'transparent';
   className?: string;
 }
 
-const IconAtom = forwardRef<HTMLDivElement, IIconAtomProps>(
-  (
-    { size = 4.455, children, backgroundColor = 'transparent', ...props },
-    ref,
-  ) => {
+const IconAtom = forwardRef<HTMLImageElement, IIconAtomProps>(
+  ({ size = 4.455, backgroundColor = 'transparent', ...props }, ref) => {
     return (
       <IconContainer
         backgroundColor={backgroundColor}
         size={size}
-        {...props}
         ref={ref}
-      >
-        {children}
-      </IconContainer>
+        {...props}
+      />
     );
   },
 );
 
 export default IconAtom;
 
-const IconContainer = styled.div<
+const IconContainer = styled.img<
   Pick<IIconAtomProps, 'size' | 'backgroundColor'>
 >`
   height: ${({ size }) => (size ? `${size}rem` : `4.455rem`)};

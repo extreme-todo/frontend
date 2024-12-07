@@ -52,12 +52,11 @@ const Welcome = () => {
         </BtnContainer>
       ) : (
         <BtnAtom handleOnClick={handleLoginBtn}>
-          <IconAtom className="login-button">
-            <img
-              src="btn_google_signin_dark_pressed_web@2x.png"
-              alt="google login button"
-            />
-          </IconAtom>
+          <IconAtom
+            className="login-button"
+            src="btn_google_signin_dark_pressed_web@2x.png"
+            alt="google login button"
+          />
         </BtnAtom>
       )}
     </WelcomeContainer>

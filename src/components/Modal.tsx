@@ -60,9 +60,12 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
               {title}
             </TypoAtom>
             <BtnAtom handleOnClick={handleCloseModal}>
-              <IconAtom size={3.6} backgroundColor={'primary1'}>
-                <img alt="close" src={'icons/close.svg'}></img>
-              </IconAtom>
+              <IconAtom
+                size={1}
+                backgroundColor={'transparent'}
+                alt="close"
+                src={'icon/close.svg'}
+              />
             </BtnAtom>
           </HeaderContainer>
           {children}

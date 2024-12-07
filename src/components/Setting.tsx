@@ -22,7 +22,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
 
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
 
-  const popperRef = useRef<HTMLDivElement>(null);
+  const popperRef = useRef<HTMLImageElement>(null);
 
   const handleReset = async () => {
     if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
@@ -92,14 +92,16 @@ const Setting = ({ handleClose }: ISettingModal) => {
               </Tooltip>
             </PopperAtom>
           ) : null}
-          <IconAtom ref={popperRef} backgroundColor={'primary2'} size={1.5625}>
-            <img
-              onMouseOver={tooltipMouseOver}
-              onMouseLeave={tooltipMouseLeave}
+          <div onMouseOver={tooltipMouseOver} onMouseLeave={tooltipMouseLeave}>
+            <IconAtom
+              ref={popperRef}
+              backgroundColor={'primary2'}
+              size={1.5625}
               alt="tooltip"
               src="icons/tooltip.svg"
-            ></img>
-          </IconAtom>
+            />
+          </div>
+
           {/* TODO : 전역 객체로 처리해주자. 익스트림 모드는 할 일이 끝났을 때만 변경 가능하다 */}
           <SwitchAtom
             setValue={() => handleExtremeMode(!isExtreme)}
