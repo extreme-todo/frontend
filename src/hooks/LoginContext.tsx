@@ -31,13 +31,13 @@ export const LoginProvider = ({ children }: IChildProps) => {
   const setToken = useCallback((token: string, email: string) => {
     localStorage.setItem(EXTREME_TOKEN_STORAGE, token);
     localStorage.setItem(EXTREME_EMAIL_STORAGE, email);
-    window.dispatchEvent(LOGINEVENT.getEvent());
+    window.dispatchEvent(LOGINEVENT.getEvent);
   }, []);
 
   const deleteToken = useCallback(() => {
     localStorage.removeItem(EXTREME_TOKEN_STORAGE);
     localStorage.removeItem(EXTREME_EMAIL_STORAGE);
-    window.dispatchEvent(LOGINEVENT.getEvent());
+    window.dispatchEvent(LOGINEVENT.getEvent);
   }, []);
 
   useEffect(() => {
