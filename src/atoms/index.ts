@@ -8,3 +8,4 @@ export { default as IconAtom } from './IconAtom';
 export { default as Overlay } from './Overlay';
 export { default as InputAtom } from './InputAtom';
 export { default as PopperAtom } from './PopperAtom';
+export { default as TomatoInput } from './TomatoInput';
