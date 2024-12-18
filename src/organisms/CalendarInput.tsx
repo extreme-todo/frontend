@@ -1,5 +1,5 @@
 import { memo, useRef, useState } from 'react';
-import { InputAtom, TypoAtom } from '../atoms';
+import { IconAtom, InputAtom, TypoAtom } from '../atoms';
 import { DayPickerUI, type IDayPickerUIProps } from '../molecules';
 
 import { getDateInFormat } from '../shared/timeUtils';
@@ -34,17 +34,19 @@ const CalendarInput = ({
         title="달력 아이콘을 클릭해 주세요."
         onClick={handleOpenPopper}
       >
-        <TypoAtom>🗓️</TypoAtom>
-        <InputAtom.Underline
+        <InputAtom.Usual
           value={getDateInFormat(selectedDay)}
           ariaLabel="calendar_input"
           placeholder={'달력 아이콘을 눌러주세요.'}
-          styleOption={{ width: `${10}ch` }}
-          handleChange={() => {
-            console.debug('click');
+          styleOption={{
+            width: `${9}ch`,
+            borderWidth: '0px',
+            padding: '0 0 0 0',
+            font: 'b1',
           }}
           className="calendar"
         />
+        <IconAtom size={1.25} src="icon/combobox.svg" />
       </CalendarContainer>
       <DayPickerUI
         showPopper={showPopper}
@@ -86,9 +88,7 @@ export const CalendarContainer = styled.div`
   }
 
   & > input:hover {
-    background-color: ${({ theme }) =>
-      theme.button.darkBtn.hover.backgroundColor};
-    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
   }
 
   & > span {
