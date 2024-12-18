@@ -1,21 +1,21 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import FocusTrap from 'focus-trap-react';
-import { Button, DayPicker, SelectSingleEventHandler } from 'react-day-picker';
+import { DayPicker, SelectSingleEventHandler } from 'react-day-picker';
 import { PopperAtom } from '../atoms';
 
 interface IDayPickerUIProps {
   showPopper: boolean;
   popperRef: React.RefObject<HTMLDivElement>;
   selected: Date;
-  handleClosePopper: () => void;
   handleDaySelect: SelectSingleEventHandler;
+  footerUI?: ReactNode;
 }
 
 const DayPickerUI = ({
   showPopper,
   popperRef,
   selected,
-  handleClosePopper,
+  footerUI,
   handleDaySelect,
 }: IDayPickerUIProps) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
@@ -50,17 +50,8 @@ const DayPickerUI = ({
               defaultMonth={new Date()}
               fromMonth={new Date()}
               disabled={{ before: new Date() }}
+              footer={footerUI}
               required
-              footer={
-                <div className="daypickerFooterWrapper">
-                  <button
-                    className="daypickerFooter"
-                    onClick={handleClosePopper}
-                  >
-                    닫기
-                  </button>
-                </div>
-              }
             />
           </PopperAtom>
         </FocusTrap>
