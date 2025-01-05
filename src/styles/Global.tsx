@@ -155,9 +155,7 @@ const style = css`
     width: 100dvw;
     overscroll-behavior: none;
   }
-  * {
-    font-family: pretendard;
-  }
+
   @-webkit-keyframes AnimationName {
     0% {
       background-position: 0% 77%;
@@ -209,9 +207,14 @@ const style = css`
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+ */
   }
+  * {
+    font-family: Pretendard;
+  }
   html,
   *,
   body {
+    font-family: Pretendard;
+
     /* Hide scrollbar for Chrome, Safari and Opera */
     ::-webkit-scrollbar {
       display: none;
@@ -223,7 +226,7 @@ const style = css`
     /* basic 16px 1280+ */
     /* 노트북 & 테블릿 가로 (해상도 1024px ~ 1279px)*/
     @media all and (min-width: 1024px) and (max-width: 1279px) {
-      font-size: 14px;
+      font-size: 16px;
     }
 
     /* 테블릿 가로 (해상도 768px ~ 1023px)*/

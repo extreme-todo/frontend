@@ -27,7 +27,7 @@ const CardAtom = styled.div<{
         return `${bg ? bg : backgroundColor.primary2}`;
     }
   }};
-  box-shadow: ${({ theme: { shadow } }) => shadow};
+  box-shadow: ${({ theme: { shadow } }) => shadow.container};
   border-radius: 30px;
   padding: ${({ padding }) => padding ?? '3rem'};
   margin: ${({ margin }) => margin ?? '0rem'};

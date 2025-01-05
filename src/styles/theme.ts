@@ -59,7 +59,7 @@ export const designTheme: Theme = {
   color,
   fontSize,
   shadow: {
-    container: '0px 4px 4px rgba(0,0,0,0.25)',
+    container: '16px 16px 40px rgba(0,0,0,0.25)',
   },
   responsiveDevice: {
     desktop: `all and (min-width: ${responsiveBreakpoints.desktop.min}px) and (max-width: ${responsiveBreakpoints.desktop.max}px)`,
