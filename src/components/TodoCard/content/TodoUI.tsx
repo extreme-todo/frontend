@@ -20,23 +20,23 @@ const TodoUI = ({
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
   const isMobile = useIsMobile();
-  const tagSize: ITagSpanProps = useMemo(
-    () =>
-      isMobile
-        ? {
-            fontsize: 'md2',
-            size: 'md',
-            bg: 'cyan',
-            maxWidth: 10,
-          }
-        : {
-            fontsize: 'sm',
-            size: 'sm',
-            bg: 'cyan',
-            maxWidth: 10,
-          },
-    [isMobile],
-  );
+  // const tagSize: ITagSpanProps = useMemo(
+  //   () =>
+  //     isMobile
+  //       ? {
+  //           fontsize: 'md2',
+  //           size: 'md',
+  //           bg: 'cyan',
+  //           maxWidth: 10,
+  //         }
+  //       : {
+  //           fontsize: 'sm',
+  //           size: 'sm',
+  //           bg: 'cyan',
+  //           maxWidth: 10,
+  //         },
+  //   [isMobile],
+  // );
 
   return (
     <TodoCardContainer>
@@ -58,7 +58,7 @@ const TodoUI = ({
                   <TagAtom
                     key={category}
                     title={category}
-                    styleOption={tagSize}
+                    // styleOption={tagSize}
                   >
                     {category}
                   </TagAtom>
@@ -71,10 +71,10 @@ const TodoUI = ({
       {snapshot?.isDragging ? null : (
         <EditWrapper id="editWrapper">
           <BtnAtom handleOnClick={handleEditButton}>
-            <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>수정</TagAtom>
+            <TagAtom styleOption={{ size: 'normal' }}>수정</TagAtom>
           </BtnAtom>
           <BtnAtom handleOnClick={handleDeleteButton}>
-            <TagAtom styleOption={{ fontsize: 'sm', size: 'sm' }}>삭제</TagAtom>
+            <TagAtom styleOption={{ size: 'normal' }}>삭제</TagAtom>
           </BtnAtom>
         </EditWrapper>
       )}

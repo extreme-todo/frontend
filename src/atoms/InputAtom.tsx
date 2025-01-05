@@ -37,6 +37,7 @@ interface IInputAtomProps
 const Usual = memo(
   ({
     handleChange,
+    handleKeyDown,
     ariaLabel,
     styleOption,
     ...props
@@ -46,6 +47,7 @@ const Usual = memo(
     return (
       <UsualInput
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
         aria-label={ariaLabel}
         styleOption={styleOption}
         {...props}

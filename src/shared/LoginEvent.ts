@@ -13,7 +13,7 @@ export default class LoginEvent {
     return LoginEvent.instance;
   }
 
-  public getEvent(): Event {
+  get getEvent(): Event {
     return this.event;
   }
 }

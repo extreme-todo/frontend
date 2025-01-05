@@ -1,8 +1,9 @@
+import { memo, useMemo } from 'react';
 import { BtnAtom, InputAtom, ITagSpanProps, TagAtom } from '../atoms';
-import styled from '@emotion/styled';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 import { useIsMobile } from '../hooks/useIsMobile';
-import { memo, useMemo } from 'react';
+import styled from '@emotion/styled';
+import { TagColorName } from '../styles/emotion';
 
 interface ICategoryInputProps {
   categories: string[] | null;
@@ -10,6 +11,7 @@ interface ICategoryInputProps {
   handleSubmit: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   handleClick: (category: string) => void;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  tagColorList: Record<string, TagColorName>;
 }
 
 const CategoryInput = ({
@@ -18,22 +20,19 @@ const CategoryInput = ({
   handleClick,
   category,
   handleChangeCategory,
+  tagColorList,
 }: ICategoryInputProps) => {
   const isMobile = useIsMobile();
   const tagSize: ITagSpanProps = useMemo(
     () =>
       isMobile
         ? {
-            fontsize: 'md2',
-            size: 'md',
-            bg: 'purple',
-            maxWidth: 10,
+            fontsize: 'b2',
+            size: 'normal',
           }
         : {
-            fontsize: 'sm',
-            size: 'sm',
-            bg: 'green',
-            maxWidth: 10,
+            fontsize: 'b2',
+            size: 'normal',
           },
     [isMobile],
   );
@@ -46,16 +45,28 @@ const CategoryInput = ({
           ariaLabel="category_tag"
           key={category}
         >
-          <TagAtom styleOption={tagSize}>{category}</TagAtom>
+          <TagAtom styleOption={{ ...tagSize, bg: tagColorList[category] }}>
+            {category}
+          </TagAtom>
         </BtnAtom>
       ))}
       {categories && categories.length >= MAX_CATEGORY_ARRAY_LENGTH ? null : (
-        <InputAtom.Underline
+        <InputAtom.Usual
           value={category}
           handleChange={handleChangeCategory}
           handleKeyDown={handleSubmit}
-          placeholder="카테고리를 입력하세요"
+          placeholder="태그 추가하기"
           ariaLabel="category_input"
+          styleOption={{
+            borderStyle: 'dashed',
+            borderRadius: '50px',
+            borderWidth: '1px',
+            textAlign: 'center',
+            font: 'b2',
+            placeholderOpacity: 1,
+            width: '6.875rem',
+            height: '1.25rem',
+          }}
         />
       )}
     </CategoryContainer>
@@ -68,9 +79,7 @@ const CategoryContainer = styled.div`
   flex-wrap: wrap;
   display: flex;
   align-items: center;
-  row-gap: 1.3125rem;
-  column-gap: 0.625rem;
-  margin-top: 0.61rem;
+  gap: 0.5rem;
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     input {

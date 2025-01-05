@@ -40,8 +40,7 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
         <CurrentTodoInfoContainer>
           <TagAtom
             styleOption={{
-              fontsize: 'sm',
-              size: 'sm',
+              size: 'normal',
               bg: 'mint',
             }}
           >
@@ -52,10 +51,8 @@ const NowCard = ({ currentTodo, focusStep }: INowCardProps) => {
               key={category}
               title={category}
               styleOption={{
-                fontsize: 'sm',
-                size: 'sm',
+                size: 'normal',
                 bg: 'gray',
-                maxWidth: 10,
               }}
             >
               {category}

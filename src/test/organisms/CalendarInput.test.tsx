@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { getByRole, render } from '@testing-library/react';
 import { CalendarInput } from '../../organisms';
 import { IChildProps } from '../../shared/interfaces';
 import { designTheme } from '../../styles/theme';
@@ -25,9 +25,9 @@ describe('CalendarInput', () => {
       );
   });
   describe('CalendarInput는 ', () => {
-    it('달력 아이콘이 있다.', () => {
-      const { getByText } = renderUI();
-      const getIcon = getByText('🗓️');
+    it('콤보박스 아이콘이 있다.', () => {
+      const { getByRole } = renderUI();
+      const getIcon = getByRole('img');
 
       expect(getIcon).toBeInTheDocument();
     });

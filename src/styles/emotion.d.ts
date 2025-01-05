@@ -37,11 +37,16 @@ type TagColor = ColorRecord<TagColorName>;
 type PrimaryColorName = 'primary1' | 'primary2';
 type PrimaryColor = ColorRecord<PrimaryColorName>;
 
-type FontColorName = 'white' | 'gray';
-type FontColor = ColorRecord<FontColorName> & PrimaryColor;
+type FontColorName = 'white' | 'gray' | PrimaryColorName;
+type FontColor = ColorRecord<FontColorName>;
 
-type BackgroundColorName = 'gray' | 'extreme_dark' | 'white' | 'extreme_orange';
-type BackgroundColor = ColorRecord<BackgroundColorName> & PrimaryColor;
+type BackgroundColorName =
+  | 'gray'
+  | 'extreme_dark'
+  | 'white'
+  | 'extreme_orange'
+  | PrimaryColorName;
+type BackgroundColor = ColorRecord<BackgroundColorName>;
 
 type ColorName = 'primary' | 'backgroundColor' | 'tag' | 'fontColor';
 

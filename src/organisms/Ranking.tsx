@@ -69,10 +69,9 @@ function Ranking({
             <div className="one_line">
               <RankingTexts.Tag
                 styleOption={{
-                  size: 'big',
+                  size: 'normal',
                   bg: 'mint',
                   fontsize: 'b2',
-                  shadow: 'button_shadow',
                 }}
               >
                 {selectedCategory?.name ?? '카테고리'}

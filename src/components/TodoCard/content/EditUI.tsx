@@ -15,6 +15,7 @@ import {
 
 import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
+import { RandomTagColorList } from '../../../shared/RandomTagColorList';
 
 interface IEditUIProps {
   todoData: TodoEntity;
@@ -23,6 +24,7 @@ interface IEditUIProps {
 }
 
 const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const tagColorList = RandomTagColorList.getInstance().getColorList;
 
 const EditUI = ({
   todoData,
@@ -126,6 +128,7 @@ const EditUI = ({
         handleClick={handleDeleteCategory}
         category={categoryValue}
         handleChangeCategory={handleChangeCategory}
+        tagColorList={tagColorList}
       />
       <AdditionalDataContainer>
         <CalendarInput
@@ -156,9 +159,12 @@ const EditUI = ({
         </TomatoContainer>
         <ButtonContainer>
           <BtnAtom handleOnClick={handleEditCancel}>
-            <IconAtom size={2.624375} backgroundColor={'primary1'}>
-              <img alt="cancel_edit" src={'icons/close.svg'} />
-            </IconAtom>
+            <IconAtom
+              size={2.624375}
+              backgroundColor={'primary1'}
+              alt="cancel_edit"
+              src={'icons/close.svg'}
+            />
           </BtnAtom>
           <BtnAtom
             handleOnClick={() => {
@@ -167,9 +173,12 @@ const EditUI = ({
               handleEditSubmit.call(this, { ...editData, todo: trimmed });
             }}
           >
-            <IconAtom size={2.624375} backgroundColor={'primary2'}>
-              <img alt="submit_edit" src={'icons/ok.svg'} />
-            </IconAtom>
+            <IconAtom
+              size={2.624375}
+              backgroundColor={'primary2'}
+              alt="submit_edit"
+              src={'icons/ok.svg'}
+            />
           </BtnAtom>
         </ButtonContainer>
       </AdditionalDataContainer>

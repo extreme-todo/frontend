@@ -36,11 +36,9 @@ function LogInToUnlock({
       <BtnAtom handleOnClick={navigate}>
         <LogInToUnlock.loginButton
           styleOption={{
-            size: 'big2',
-            fontsize: 'md1',
-            bold: 'extraBold',
+            size: 'normal',
+            fontsize: 'h2',
             bg: 'pink',
-            shadow: 'button_shadow',
           }}
         >
           로그인하기
