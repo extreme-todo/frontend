@@ -15,6 +15,7 @@ import {
 
 import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
+import { RandomTagColorList } from '../../../shared/RandomTagColorList';
 
 interface IEditUIProps {
   todoData: TodoEntity;
@@ -23,6 +24,7 @@ interface IEditUIProps {
 }
 
 const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const tagColorList = RandomTagColorList.getInstance().getColorList;
 
 const EditUI = ({
   todoData,
@@ -126,6 +128,7 @@ const EditUI = ({
         handleClick={handleDeleteCategory}
         category={categoryValue}
         handleChangeCategory={handleChangeCategory}
+        tagColorList={tagColorList}
       />
       <AdditionalDataContainer>
         <CalendarInput
