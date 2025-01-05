@@ -30,7 +30,6 @@ const IconContainer = styled.img<
 >`
   height: ${({ size }) => (size ? `${size}rem` : `4.455rem`)};
   width: ${({ size }) => (size ? `${size}rem` : `4.455rem`)};
-  border-radius: ${({ size }) => (size ? `${size * 0.5}rem` : null)};
   display: flex;
   justify-content: center;
   align-items: center;

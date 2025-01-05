@@ -72,11 +72,11 @@ export const designTheme: Theme = {
       height: '2.25rem',
       fontSize: fontSize.b1,
       default: {
-        backgroundColor: '#523EA1CC',
+        backgroundColor: '#523EA133',
         color: color.fontColor.primary1,
       },
       hover: {
-        backgroundColor: '#523EA1B3',
+        backgroundColor: '#523EA14D',
         color: color.fontColor.primary1,
       },
       click: {
@@ -88,11 +88,11 @@ export const designTheme: Theme = {
       height: '2.25rem',
       fontSize: fontSize.b1,
       default: {
-        backgroundColor: '#DBFE77CC',
+        backgroundColor: '#DBFE7733',
         color: color.fontColor.primary2,
       },
       hover: {
-        backgroundColor: '#DBFE77B3',
+        backgroundColor: '#DBFE774D',
         color: color.fontColor.primary2,
       },
       click: {

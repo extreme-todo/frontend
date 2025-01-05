@@ -24,7 +24,7 @@ const CardAtom = styled.div<{
       case 'default':
         return `${backgroundColor.primary2}`;
       default:
-        return `${bg ? bg : backgroundColor.primary2}`;
+        return `${bg ? backgroundColor[bg] : backgroundColor.primary2}`;
     }
   }};
   box-shadow: ${({ theme: { shadow } }) => shadow.container};
