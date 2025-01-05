@@ -34,9 +34,9 @@ function ExtremeModeIndicator() {
         </TypoAtom>
       )}
       {isExtreme ? (
-        <img src="/icons/extreme-pink.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icons/bolt-red.svg" onClick={toggleExtremeMode}></img>
       ) : (
-        <img src="/icons/extreme-gray.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icons/bolt.svg" onClick={toggleExtremeMode}></img>
       )}
     </ExtremeModeContainer>
   );
@@ -50,11 +50,11 @@ const ExtremeModeContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  top: 2.75rem;
+  top: 2rem;
   right: 2.0625rem;
   img {
-    width: 3.4375rem;
-    height: 3.4375rem;
+    width: 1.5625rem;
+    height: 2.5rem;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {

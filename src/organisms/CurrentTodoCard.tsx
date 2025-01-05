@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import {
   LoginContext,
   useCurrentTodo,
+  useExtremeMode,
   usePomodoroActions,
   usePomodoroValue,
 } from '../hooks';
@@ -21,6 +22,7 @@ function CurrentTodoCard({
   openAddTodoModal,
 }: ICurrentTodoCardProps) {
   const { settings: pomodoroSettings, status, time } = usePomodoroValue();
+  const { isExtreme } = useExtremeMode();
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
   const actions = usePomodoroActions();
@@ -102,7 +104,7 @@ function CurrentTodoCard({
         h="20rem"
         padding="2rem 2.75rem"
         className="card"
-        bg="primary1"
+        bg={isExtreme ? 'extreme_dark' : 'primary1'}
       >
         <ExtremeModeIndicator />
         {currentTodo.currentTodo?.todo != null ? (
