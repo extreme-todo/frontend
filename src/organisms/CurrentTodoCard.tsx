@@ -97,7 +97,13 @@ function CurrentTodoCard({
 
   return (
     <CurrentTodoWrapper>
-      <CardAtom w="53.75rem" h="20rem" padding="2rem 2.5rem" className="card">
+      <CardAtom
+        w="53.75rem"
+        h="20rem"
+        padding="2rem 2.75rem"
+        className="card"
+        bg="primary1"
+      >
         <ExtremeModeIndicator />
         {currentTodo.currentTodo?.todo != null ? (
           <>
@@ -112,7 +118,7 @@ function CurrentTodoCard({
             ></CurrentTodo>
             {status === PomodoroStatus.RESTING && (
               <Overlay className="resting overlay">
-                <TypoAtom fontSize="h1" fontColor="primary1">
+                <TypoAtom fontSize="h1" fontColor="primary2">
                   {shouldFocus ? '휴식 종료' : '휴식'}
                 </TypoAtom>
                 <button
