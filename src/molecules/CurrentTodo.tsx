@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import Clock from './Clock';
+import CategoryList from './CategoryList';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
@@ -54,14 +55,7 @@ function CurrentTodo({
         <Clock ms={getLeftMs()} fontColor={'primary2'}></Clock>
         <div className="todo-title">
           <div className="categories">
-            {todo.categories &&
-              todo.categories?.map((category, idx) => {
-                return (
-                  <div className="category" key={idx}>
-                    {category}
-                  </div>
-                );
-              })}
+            <CategoryList categories={todo.categories}></CategoryList>
           </div>
           <TypoAtom fontSize={'h2'} fontColor="primary2">
             {todo.todo}
@@ -157,23 +151,6 @@ const CurrentTodoContainer = styled.div`
     gap: 0.99rem;
     flex-wrap: nowrap;
     overflow: auto;
-  }
-  // TODO : TagAtom 적용
-  .category {
-    /* Auto layout */
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 4px 16px;
-    gap: 10px;
-    background: ${({
-      theme: {
-        color: { backgroundColor },
-      },
-    }) => backgroundColor.primary2};
-    border-radius: 13px;
-    color: white;
   }
   .todo-duration {
     display: flex;
