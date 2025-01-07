@@ -8,7 +8,14 @@ import {
 } from 'react';
 
 /* atomics */
-import { BtnAtom, IconAtom, InputAtom, TypoAtom } from '../atoms';
+import {
+  BtnAtom,
+  CardAtom,
+  IconAtom,
+  InputAtom,
+  TomatoInput,
+  TypoAtom,
+} from '../atoms';
 import { CategoryInput } from '../molecules';
 import { CalendarInput } from '../organisms';
 import {
@@ -26,14 +33,13 @@ import { todosApi } from '../shared/apis';
 import { categoryValidation, titleValidation } from '../shared/inputValidation';
 import { setTimeInFormat } from '../shared/timeUtils';
 import { AddTodoDto, ETIndexed } from '../DB/indexed';
+import { RandomTagColorList } from '../shared/RandomTagColorList';
 
 /* packages */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
 import { AxiosError } from 'axios';
-import { useIsMobile } from '../hooks/useIsMobile';
-import { RandomTagColorList } from '../shared/RandomTagColorList';
 
 const tagColorList = RandomTagColorList.getInstance().getColorList;
 
@@ -42,7 +48,7 @@ const AddTodo = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
-  const [tomato, setTomato] = useState('1');
+  const [tomato, setTomato] = useState(1);
 
   const queryClient = useQueryClient();
 
@@ -55,7 +61,7 @@ const AddTodo = () => {
       setTitle('');
       setCategory('');
       setCategoryArray([]);
-      setTomato('1');
+      setTomato(1);
     },
     onError(error: AxiosError) {
       console.debug('\n\n\n 🚨 error in TodoCard‘s useMutation 🚨 \n\n', error);
@@ -91,22 +97,22 @@ const AddTodo = () => {
       (event) => {
         if (event.code === 'Enter') {
           // 한글 중복 입력 처리
+          event.preventDefault();
           if (event.nativeEvent.isComposing) return;
 
           const newCategory = (event.target as HTMLInputElement).value;
 
           const trimmed = categoryValidation(newCategory, categoryArray ?? []);
-
           if (!trimmed) return;
 
-          if (categoryArray) {
+          if (categoryArray.length > 0) {
             const copy = categoryArray.slice();
             copy.push(trimmed);
             setCategoryArray(copy);
           } else {
             setCategoryArray([trimmed]);
           }
-
+          ramdomTagColorList.setColor = trimmed;
           setCategory('');
         }
       },
@@ -120,11 +126,7 @@ const AddTodo = () => {
     });
   }, []);
 
-  const handleTomatoInput: ReactEventHandler<
-    HTMLInputElement | HTMLSelectElement
-  > = useCallback((event) => {
-    setTomato(event.currentTarget.value);
-  }, []);
+  const handleTomato = (count: number) => setTomato(count);
 
   const addData: AddTodoDto = useMemo(
     () => ({
@@ -147,68 +149,60 @@ const AddTodo = () => {
   );
 
   return (
-    <>
-      <AddTodoWrapper>
-        <InputAtom.Usual
+    <AddTodoWrapper
+      w="53.75rem"
+      h="20rem"
+      padding="2rem 2.75rem"
+      className="card"
+      as={'form'}
+    >
+      <TitleWrapper>
+        <InputAtom.Underline
           value={title}
           handleChange={handleTitleInput}
-          placeholder="할 일을 입력하세요"
+          placeholder="새로운 TODO를 작성해주세요"
           ariaLabel="title"
           className="todoTitle"
+          styleOption={{
+            borderWidth: '1px',
+            width: '100%',
+            height: '3rem',
+            font: 'h1',
+          }}
         />
-        <CategoryInput
-          categories={categoryArray}
-          category={category}
-          handleSubmit={handleSubmitCategory}
-          handleClick={handleClickCategory}
-          handleChangeCategory={handleCategoryInput}
-          tagColorList={tagColorList}
+        <BtnAtom handleOnClick={handleClose}>
+          <IconAtom size={2} src="icon/close.svg" />
+        </BtnAtom>
+      </TitleWrapper>
+      <AdditionalInput>
+        <CalendarWrapper>
+          <TypoAtom fontSize="h3">TODO 시작시간</TypoAtom>
+          <TypoAtom fontSize="h3">:</TypoAtom>
+          <CalendarInput
+            handleDaySelect={handleDaySelect}
+            selectedDay={selectedDate}
+          />
+        </CalendarWrapper>
+        <CategoryWrapper>
+          <CategoryInput
+            categories={categoryArray}
+            category={category}
+            handleSubmit={handleSubmitCategory}
+            handleClick={handleClickCategory}
+            handleChangeCategory={handleCategoryInput}
+            tagColorList={ramdomTagColorList.getColorList}
+          />
+        </CategoryWrapper>
+      </AdditionalInput>
+      <TomatoContainer>
+        <TomatoInput
+          max={10}
+          min={0}
+          period={focusStep}
+          handleTomato={handleTomato}
+          tomato={tomato}
         />
-        <CalendarInput
-          handleDaySelect={handleDaySelect}
-          selectedDay={selectedDate}
-        />
-        <TomatoContainer>
-          <TypoAtom>🍅</TypoAtom>
-          {isMobile ? (
-            <TomatoSelector
-              aria-label="tomato_select"
-              value={tomato}
-              onChange={handleTomatoInput}
-            >
-              <TomatoOption aria-label="tomato_option" value={undefined}>
-                뽀모도로 횟수
-              </TomatoOption>
-              {options.map((option) => (
-                <TomatoOption
-                  aria-label="tomato_option"
-                  data-testid="tomato_option"
-                  value={option}
-                  key={option}
-                >
-                  {option}
-                </TomatoOption>
-              ))}
-            </TomatoSelector>
-          ) : (
-            <TomatoInput
-              value={tomato}
-              onChange={handleTomatoInput}
-              placeholder="할 일을 입력하세요"
-              aria-label="tomato"
-              type="range"
-              data-value={tomato}
-              data-focusmin={`${focusStep * Number(tomato)}min`}
-              max={10}
-              min={1}
-              step={1}
-              newVal={((Number(tomato) - 1) / (10 - 1)) * 100}
-            />
-          )}
-        </TomatoContainer>
-      </AddTodoWrapper>
-      <IconAtom size={2} src="icon/close.svg" />
-      <IconAtom size={1.25} src="icon/combobox.svg" />
+      </TomatoContainer>
       <FooterContainer>
         <BtnAtom handleOnClick={() => handleAddSubmit.call(this, addData)}>
           <IconAtom
@@ -219,15 +213,39 @@ const AddTodo = () => {
           />
         </BtnAtom>
       </FooterContainer>
-    </>
+    </AddTodoWrapper>
   );
 };
 
 export default AddTodo;
 
-const AddTodoWrapper = styled(EditWrapper)`
-  background-color: transparent;
-  width: 42.3125rem;
+// const AddTodoWrapper = styled(EditWrapper)`
+//   background-color: transparent;
+//   width: 42.3125rem;
+
+//   & > div:first-of-type {
+//     margin-bottom: 1rem;
+//   }
+
+//   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+//     ${({ theme }) => theme.responsiveDevice.mobile} {
+//     .todoTitle {
+//       margin-bottom: 2rem;
+//     }
+//     .calendar {
+//       margin: 2rem 0;
+//     }
+//   }
+// `;
+
+const AddTodoWrapper = styled(CardAtom)`
+  overflow: visible;
+  background-color: ${({
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => backgroundColor.primary2};
+  justify-content: flex-start;
 
   & > div:first-of-type {
     margin-bottom: 1rem;
@@ -244,95 +262,126 @@ const AddTodoWrapper = styled(EditWrapper)`
   }
 `;
 
+const TitleWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  column-gap: 3rem;
+`;
+
+const AdditionalInput = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+
+  column-gap: 1rem;
+`;
+
+const CalendarWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 0.25rem;
+  width: 16.75rem;
+  height: 1.75rem;
+`;
+
+const CategoryWrapper = styled.div`
+  width: 33rem;
+  display: flex;
+  align-items: center;
+`;
+
 const TomatoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 1rem;
-
-  & > span {
-    margin-right: 1.9rem;
-  }
+  width: 100%;
 `;
 
-const TomatoInput = styled.input<{
-  value: string;
-  max: number;
-  min: number;
-  newVal: number;
-}>`
-  display: flex;
-  align-items: center;
-  width: 24rem;
-  height: 0.5rem;
+// const TomatoContainer = styled.div`
+//   display: flex;
+//   align-items: center;
+//   margin-top: 1rem;
 
-  /* 초기화 */
-  appearance: none;
-  background: linear-gradient(
-    to right,
-    tomato 0%,
+//   & > span {
+//     margin-right: 1.9rem;
+//   }
+// `;
+// const TomatoInput = styled.input<{
+//   value: string;
+//   max: number;
+//   min: number;
+//   newVal: number;
+// }>`
+//   display: flex;
+//   align-items: center;
+//   width: 24rem;
+//   height: 0.5rem;
 
-    tomato
-      ${({ value, min, max }) =>
-        `${((Number(value) - min) / (max - min)) * 100}%`},
+//   /* 초기화 */
+//   appearance: none;
+//   background: linear-gradient(
+//     to right,
+//     tomato 0%,
 
-    ${({ theme }) => theme.color.backgroundColor.white}
-      ${({ value, min, max }) =>
-        `${((Number(value) - min) / (max - min)) * 100}%`},
+//     tomato
+//       ${({ value, min, max }) =>
+//         `${((Number(value) - min) / (max - min)) * 100}%`},
 
-    ${({ theme }) => theme.color.backgroundColor.extreme_orange} 100%
-  );
-  outline: none;
+//     ${({ theme }) => theme.color.backgroundColor.white}
+//       ${({ value, min, max }) =>
+//         `${((Number(value) - min) / (max - min)) * 100}%`},
 
-  /* 슬라이더 바 속성  */
-  cursor: pointer;
-  border-radius: 10px;
+//     ${({ theme }) => theme.color.backgroundColor.extreme_orange} 100%
+//   );
+//   outline: none;
 
-  position: relative;
+//   /* 슬라이더 바 속성  */
+//   cursor: pointer;
+//   border-radius: 10px;
 
-  &:before,
-  :after {
-    position: absolute;
-    left: ${({ newVal }) => `calc(${newVal}% + (${10 - newVal * 0.15}px))`};
+//   position: relative;
 
-    margin-left: -1.4rem;
+//   &:before,
+//   :after {
+//     position: absolute;
+//     left: ${({ newVal }) => `calc(${newVal}% + (${10 - newVal * 0.15}px))`};
 
-    text-align: center;
-  }
+//     margin-left: -1.4rem;
 
-  &:before {
-    content: attr(data-value);
+//     text-align: center;
+//   }
 
-    padding-top: 6.2px;
-    padding-bottom: 6.2px;
+//   &:before {
+//     content: attr(data-value);
 
-    width: 2.8rem;
-    height: 1rem;
+//     padding-top: 6.2px;
+//     padding-bottom: 6.2px;
 
-    background-color: ${({ theme }) =>
-      theme.color.backgroundColor.extreme_orange};
-    border-radius: 23.24rem;
+//     width: 2.8rem;
+//     height: 1rem;
 
-    cursor: grab;
+//     background-color: ${({ theme }) =>
+//       theme.color.backgroundColor.extreme_orange};
+//     border-radius: 23.24rem;
 
-    box-shadow: ${({ theme }) => theme.shadow.container};
-  }
+//     cursor: grab;
 
-  &:after {
-    content: attr(data-focusmin);
+//     box-shadow: ${({ theme }) => theme.shadow.container};
+//   }
 
-    top: 1.5rem;
-    width: 2.8rem;
-  }
+//   &:after {
+//     content: attr(data-focusmin);
 
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 1px;
-  }
+//     top: 1.5rem;
+//     width: 2.8rem;
+//   }
 
-  &:active::-webkit-slider-thumb {
-    cursor: grabbing;
-  }
-`;
+//   &::-webkit-slider-thumb {
+//     appearance: none;
+//     width: 1px;
+//   }
+
+//   &:active::-webkit-slider-thumb {
+//     cursor: grabbing;
+//   }
+// `;
 
 const FooterContainer = styled.div`
   display: flex;
