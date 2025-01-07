@@ -41,10 +41,13 @@ import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
 import { AxiosError } from 'axios';
 
-const tagColorList = RandomTagColorList.getInstance().getColorList;
+interface IAddTodoProps {
+  handleClose: () => void;
+}
 
-const AddTodo = () => {
-  const isMobile = useIsMobile();
+const ramdomTagColorList = RandomTagColorList.getInstance();
+
+const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);

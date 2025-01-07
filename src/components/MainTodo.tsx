@@ -47,7 +47,7 @@ function MainTodo() {
   const CurrentMainCard = useCallback(() => {
     switch (isModal) {
       case 'addTodoModal':
-        return <AddTodo />;
+        return <AddTodo handleClose={handleClose} />;
       case 'timeModal':
         return <PomodoroTimeSetting />;
       case 'todolistModal':
