@@ -100,14 +100,15 @@ const TomatoInput = ({
         onTouchMove={handleDrag}
         onMouseUp={handleDrapEnd}
         onTouchEnd={handleDrapEnd}
+        aria-label="slider"
       >
-        <Thumb ref={thumbRef} data-value={`${tomato}round`}>
+        <Thumb ref={thumbRef} data-value={`${tomato}round`} aria-label="tomato">
           🍅
         </Thumb>
         <AssistantLine />
         <InputTickWrapper>
           {Array.from({ length: tickCount }).map((_, index) => (
-            <TickWrapper key={index} ref={tickRef}>
+            <TickWrapper key={index} ref={tickRef} aria-label="tick">
               <InputTick />
             </TickWrapper>
           ))}
@@ -115,7 +116,7 @@ const TomatoInput = ({
       </RangeInputWrapper>
       <LabelWrapper>
         {Array.from({ length: tickCount }).map((_, index) => (
-          <TickWrapper key={index}>
+          <TickWrapper key={index} aria-label="label">
             {formatTime((index + 1) * period)}
           </TickWrapper>
         ))}

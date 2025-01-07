@@ -168,8 +168,8 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
               font: 'h1',
             }}
           />
-          <BtnAtom handleOnClick={handleClose}>
-            <IconAtom size={2} src="icon/close.svg" />
+          <BtnAtom handleOnClick={handleClose} ariaLabel="close">
+            <IconAtom size={2} alt="close" src="icon/close.svg" />
           </BtnAtom>
         </TitleWrapper>
         <CalendarAndCategoryWrapper>
@@ -208,6 +208,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
           paddingHorizontal="2.0625rem"
           paddingVertical="0.375rem"
           btnType="lightBtn"
+          ariaLabel="submit"
         >
           <div style={{ width: 'max-content' }}>추가</div>
         </BtnAtom>

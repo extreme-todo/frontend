@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { act } from 'react';
 
 import { AddTodo } from '../../components';
 
-import { act, fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { IChildProps } from '../../shared/interfaces';
 
@@ -28,7 +28,7 @@ describe('AddTodo', () => {
     beforeEach(() => {
       spyAlert = jest.spyOn(window, 'alert').mockImplementation();
       renderUI = () =>
-        render(<AddTodo />, {
+        render(<AddTodo handleClose={jest.fn} />, {
           wrapper: ({ children }: IChildProps) => (
             <QueryClientProvider client={queryClient}>
               <ThemeProvider theme={designTheme}>
@@ -183,7 +183,7 @@ describe('AddTodo', () => {
       });
 
       expect(nextCategories.length).toBe(prevCategories.length);
-      expect(spyAlert).toBeCalledTimes(1);
+      expect(spyAlert).toHaveBeenCalledTimes(1);
     });
 
     it('카테고리 input은 한 칸 이상의 띄워쓴 곳은 한 칸 띄어쓰기로 교체하고 가장 앞뒤쪽의 띄어쓰기는 삭제해서 추가한다.', () => {
@@ -223,33 +223,35 @@ describe('AddTodo', () => {
       expect(secondCheckPointCategories.length).toBe(0);
     });
 
-    // tomato input이 존재한다.
-    it('토마토 아이콘이 있다.', () => {
-      const { getByText } = renderUI();
-      const tomato = getByText('🍅');
-
-      expect(tomato).toBeInTheDocument();
-    });
-
     it('토마토 input이 존재한다.', () => {
-      const { getByRole } = renderUI();
-      const tomato = getByRole('slider', { name: 'tomato' });
-
+      const { getByLabelText } = renderUI();
+      const tomato = getByLabelText('slider');
       expect(tomato).toBeInTheDocument();
     });
 
-    // tomato input 조절가능함
-    it('tomato input에 토마토를 설정할 수 있다.', () => {
+    it('닫기 버튼이 있다.', () => {
       const { getByRole } = renderUI();
-      const tomato = getByRole('slider', {
-        name: 'tomato',
-      }) as HTMLInputElement;
-
-      act(() => fireEvent.change(tomato, { target: { value: 3 } }));
-
-      expect(tomato.value).toBe('3');
+      const closeBtn = getByRole('button', {
+        name: 'close',
+      });
+      expect(closeBtn).toBeInTheDocument();
     });
 
-    // 제출할 때 title이 비어있으면 에러 띄우기
+    it('제출 버튼이 있다.', () => {
+      const { getByRole } = renderUI();
+      const submitBtn = getByRole('button', {
+        name: 'submit',
+      });
+      expect(submitBtn).toBeInTheDocument();
+    });
+
+    it('title이 비어있으면 제출 버튼을 누를 때 alert창을 띄워준다.', () => {
+      const { getByRole } = renderUI();
+      const submitBtn = getByRole('button', {
+        name: 'submit',
+      });
+      act(() => userEvent.click(submitBtn));
+      expect(spyAlert).toHaveBeenCalledTimes(1);
+    });
   });
 });
