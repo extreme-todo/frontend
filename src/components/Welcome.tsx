@@ -33,7 +33,7 @@ const Welcome = () => {
 
   return (
     <WelcomeContainer ref={welcomeRef}>
-      <TypoAtom fontSize={'h1'}>EXTREME TODO</TypoAtom>
+      <img className="logo" src="logo.svg" />
       {isLogin ? (
         <BtnContainer>
           <BtnAtom handleOnClick={handleLogoutBtn}>
@@ -73,6 +73,11 @@ const WelcomeContainer = styled.div`
   justify-content: center;
   align-items: center;
   row-gap: 1.5rem;
+
+  .logo {
+    width: 33.75rem;
+    height: 11.25rem;
+  }
 
   > span:first-of-type {
     font-style: normal;

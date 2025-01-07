@@ -1,15 +1,17 @@
 import styled from '@emotion/styled';
 import { TypoAtom } from '../atoms';
 import { intervalToDuration } from 'date-fns';
+import { FontColorName } from '../styles/emotion';
 
 export interface IClockProps {
   ms: number;
+  fontColor: FontColorName;
 }
 
-function Clock({ ms }: IClockProps) {
+function Clock({ ms, fontColor }: IClockProps) {
   return (
-    <ClockContainer>
-      <TypoAtom fontSize="h1" className="clock-time">
+    <ClockContainer {...{ ms, fontColor }}>
+      <TypoAtom fontSize="clock" className="clock-time">
         {(intervalToDuration({ start: 0, end: ms })
           .hours?.toString()
           .padStart(2, '0') ?? '00') +
@@ -22,27 +24,19 @@ function Clock({ ms }: IClockProps) {
   );
 }
 
-const ClockContainer = styled.div`
+const ClockContainer = styled.div<IClockProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   // TODO: 아톰 수정되면 지워야됨
   .clock-time {
-    /* 12 : 34 */
-    font-style: normal;
-    font-weight: ${({ theme: { fontSize } }) => fontSize.clock.weight};
-    font-size: ${({ theme: { fontSize } }) => fontSize.clock.size};
-    line-height: 8rem;
-    /* identical to box height, or 100% */
     display: flex;
     align-items: center;
     letter-spacing: -0.02em;
     vertical-align: middle;
-    color: ${({
-      theme: {
-        color: { fontColor },
-      },
-    }) => fontColor.primary1};
+    line-height: 6.25rem;
+    color: ${({ theme: { color }, fontColor }) =>
+      fontColor ? color.fontColor[fontColor] : color.fontColor.primary2};
   }
   @media ${({ theme }) => theme.responsiveDevice.mobile},
     ${({ theme }) => theme.responsiveDevice.tablet_v} {

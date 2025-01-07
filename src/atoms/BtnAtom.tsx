@@ -77,6 +77,7 @@ const ButtonWrapper = styled.button<{
       theme.button[btnType].click.backgroundColor};
     color: ${({ theme, btnType }) => theme.button[btnType].click.color};
   }
+  transition: all 0.2s ease-in-out;
 `;
 
 export default BtnAtom;

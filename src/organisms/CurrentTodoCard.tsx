@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import {
   LoginContext,
   useCurrentTodo,
+  useExtremeMode,
   usePomodoroActions,
   usePomodoroValue,
 } from '../hooks';
@@ -21,6 +22,7 @@ function CurrentTodoCard({
   openAddTodoModal,
 }: ICurrentTodoCardProps) {
   const { settings: pomodoroSettings, status, time } = usePomodoroValue();
+  const { isExtreme } = useExtremeMode();
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
   const actions = usePomodoroActions();
@@ -97,7 +99,13 @@ function CurrentTodoCard({
 
   return (
     <CurrentTodoWrapper>
-      <CardAtom w="53.75rem" h="20rem" padding="2rem 2.5rem" className="card">
+      <CardAtom
+        w="53.75rem"
+        h="20rem"
+        padding="2rem 2.75rem"
+        className="card"
+        bg={isExtreme ? 'extreme_dark' : 'primary1'}
+      >
         <ExtremeModeIndicator />
         {currentTodo.currentTodo?.todo != null ? (
           <>
@@ -112,7 +120,7 @@ function CurrentTodoCard({
             ></CurrentTodo>
             {status === PomodoroStatus.RESTING && (
               <Overlay className="resting overlay">
-                <TypoAtom fontSize="h1" fontColor="primary1">
+                <TypoAtom fontSize="h1" fontColor="primary2">
                   {shouldFocus ? '휴식 종료' : '휴식'}
                 </TypoAtom>
                 <button

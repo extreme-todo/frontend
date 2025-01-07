@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
-import { BtnAtom, TypoAtom } from '../atoms';
+import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import Clock from './Clock';
+import CategoryList from './CategoryList';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
@@ -44,26 +45,21 @@ function CurrentTodo({
 
   return (
     <CurrentTodoContainer>
-      <TypoAtom fontSize={'h1'} fontColor={'primary1'} className="title">
-        더 집중하셔야 합니다!
+      <TypoAtom fontSize={'h1'} fontColor={'primary2'} className="title">
+        힘 내세요!
       </TypoAtom>
-      <TypoAtom fontSize={'body'} fontColor={'primary1'} className="left-time">
+      <TypoAtom fontSize={'body'} fontColor={'primary2'} className="left-time">
         남은 시간
       </TypoAtom>
       <div className="center-container">
-        <Clock ms={getLeftMs()}></Clock>
+        <Clock ms={getLeftMs()} fontColor={'primary2'}></Clock>
         <div className="todo-title">
           <div className="categories">
-            {todo.categories &&
-              todo.categories?.map((category, idx) => {
-                return (
-                  <div className="category" key={idx}>
-                    {category}
-                  </div>
-                );
-              })}
+            <CategoryList categories={todo.categories}></CategoryList>
           </div>
-          <TypoAtom fontSize={'h2'}>{todo.todo}</TypoAtom>
+          <TypoAtom fontSize={'h2'} fontColor="primary2">
+            {todo.todo}
+          </TypoAtom>
         </div>
       </div>
       <div className="indicator-container">
@@ -76,13 +72,17 @@ function CurrentTodo({
           </TypoAtom>
         </div>
         <div className="button-container">
-          <button className="rest" onClick={() => startResting()}>
-            <img src="icons/pause.svg" />
-          </button>
+          <BtnAtom
+            className="rest"
+            btnType="darkBtn"
+            handleOnClick={() => startResting()}
+          >
+            <IconAtom src="icons/pause-dark.svg" size={1} />
+          </BtnAtom>
           <BtnAtom
             className="do-todo"
             aria-label="do todo"
-            btnType="lightBtn"
+            btnType="darkBtn"
             handleOnClick={() => doAndRest()}
           >
             끝내기
@@ -108,51 +108,26 @@ const CurrentTodoContainer = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  .left-time {
-    margin-top: 0.25rem;
-    margin-bottom: 0.5rem;
-  }
-  // TODO : Atom 수정되면 지우기
   .todo-title {
     white-space: nowrap;
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
-    span {
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      word-break: break-all;
-      display: block;
-      /* RxJS 공부하기 */
-      font-style: normal;
-      font-weight: ${({ theme: { fontSize } }) => fontSize.h2.weight};
-      font-size: ${({ theme: { fontSize } }) => fontSize.h2.size};
-      line-height: 2rem;
-      /* identical to box height, or 107% */
-      display: flex;
-      align-items: center;
-      letter-spacing: -0.002em;
-
-      color: ${({
-        theme: {
-          color: { fontColor },
-        },
-      }) => fontColor.primary1};
-    }
   }
   .center-container {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: center;
+    margin-top: 0.5rem;
   }
   .indicator-container {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
   }
   .button-container {
     display: flex;
@@ -161,15 +136,13 @@ const CurrentTodoContainer = styled.div`
   .rest {
     width: 2.25rem;
     height: 2.25rem;
-    background: ${({
-      theme: {
-        color: { backgroundColor },
-      },
-    }) => backgroundColor.gray};
-    border-radius: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
+    img {
+      width: 1rem;
+      height: 1rem;
+    }
   }
   .categories {
     width: 100%;
@@ -179,30 +152,13 @@ const CurrentTodoContainer = styled.div`
     flex-wrap: nowrap;
     overflow: auto;
   }
-  // TODO : TagAtom 적용
-  .category {
-    /* Auto layout */
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 4px 16px;
-    gap: 10px;
-    background: ${({
-      theme: {
-        color: { backgroundColor },
-      },
-    }) => backgroundColor.primary2};
-    border-radius: 13px;
-    color: white;
-  }
   .todo-duration {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
     span {
-      color: ${({ theme }) => theme.color.primary.primary1};
+      color: ${({ theme }) => theme.color.primary.primary2};
     }
   }
   .do-todo {
@@ -213,12 +169,7 @@ const CurrentTodoContainer = styled.div`
     align-items: center;
     padding: 0.5rem 1.0625rem;
     gap: 0.625rem;
-    background: ${({
-      theme: {
-        color: { fontColor },
-      },
-    }) => fontColor.gray};
-    border-radius: 3.125rem;
+    width: 6.25rem;
   }
   .progress-container {
     width: 100%;
@@ -227,6 +178,10 @@ const CurrentTodoContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     gap: 0.75rem;
+  }
+  .title {
+    line-height: 2.5rem;
+    margin-bottom: 0.25rem;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
@@ -289,7 +244,7 @@ const CurrentTodoContainer = styled.div`
 `;
 
 const TodoProgressBar = styled.div<{ progress: number }>`
-  background-color: ${({ theme }) => theme.color.backgroundColor.primary1};
+  background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
   height: 0.75rem;
   width: 100%;
   border-radius: 1.75rem;

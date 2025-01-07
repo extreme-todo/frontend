@@ -59,7 +59,7 @@ export const designTheme: Theme = {
   color,
   fontSize,
   shadow: {
-    container: '0px 4px 4px rgba(0,0,0,0.25)',
+    container: '16px 16px 40px rgba(0,0,0,0.25)',
   },
   responsiveDevice: {
     desktop: `all and (min-width: ${responsiveBreakpoints.desktop.min}px) and (max-width: ${responsiveBreakpoints.desktop.max}px)`,
@@ -72,11 +72,11 @@ export const designTheme: Theme = {
       height: '2.25rem',
       fontSize: fontSize.b1,
       default: {
-        backgroundColor: '#523EA1CC',
+        backgroundColor: '#523EA133',
         color: color.fontColor.primary1,
       },
       hover: {
-        backgroundColor: '#523EA1B3',
+        backgroundColor: '#523EA14D',
         color: color.fontColor.primary1,
       },
       click: {
@@ -88,11 +88,11 @@ export const designTheme: Theme = {
       height: '2.25rem',
       fontSize: fontSize.b1,
       default: {
-        backgroundColor: '#DBFE77CC',
+        backgroundColor: '#DBFE7733',
         color: color.fontColor.primary2,
       },
       hover: {
-        backgroundColor: '#DBFE77B3',
+        backgroundColor: '#DBFE774D',
         color: color.fontColor.primary2,
       },
       click: {
