@@ -52,21 +52,26 @@ function MainTodo() {
     );
   }, [pomodoroTime]);
 
+  const handleClickSideButton = (type: ModalType) => {
+    if (!isLogin) {
+      if (window.confirm('로그인을 하시겠습니까?')) {
+        return usersApi.login();
+      }
+    } else {
+      setIsModal(type);
+    }
+  };
+
+  const handleClose = () => {
+    setIsModal(null);
+  };
   return (
     <MainTodoContainer ref={mainTodoRef}>
       <MainTodoContentWrapper>
         <MainTodoCenter>
           <SideButtons>
             <SideButtons.SideButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('timeModal');
-                }
-              }}
+              onClick={() => handleClickSideButton('timeModal')}
             >
               <img src="icons/clock.svg" />
               <TypoAtom fontSize="body">
@@ -77,70 +82,36 @@ function MainTodo() {
             </SideButtons.SideButton>
 
             <SideButtons.SideButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('todolistModal');
-                }
-              }}
+              onClick={() => handleClickSideButton('todolistModal')}
             >
               <img src="icons/list.svg" />
               <TypoAtom fontSize="body">오늘의 할일</TypoAtom>
             </SideButtons.SideButton>
             <SideButtons.SideButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('addTodoModal');
-                }
-              }}
+              onClick={() => handleClickSideButton('addTodoModal')}
             >
               <div className="tag-button">Todo +</div>
             </SideButtons.SideButton>
           </SideButtons>
           <CurrentTodoCard
-            openAddTodoModal={() => {
-              if (!isLogin) {
-                if (window.confirm('로그인을 하시겠습니까?')) {
-                  return usersApi.login();
-                }
-              } else {
-                setIsModal('addTodoModal');
-              }
-            }}
-          ></CurrentTodoCard>
+            openAddTodoModal={() => handleClickSideButton('addTodoModal')}
+          />
         </MainTodoCenter>
         {isModal === 'todolistModal' &&
           createPortal(
-            <Modal
-              title="할 일 목록"
-              handleClose={() => {
-                setIsModal(null);
-              }}
-            >
+            <Modal title="할 일 목록" handleClose={handleClose}>
               <TodoList />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
           )}
         {isModal === 'timeModal' &&
           createPortal(
-            <Modal
-              title="집중시간 / 휴식시간 설정"
-              handleClose={() => {
-                setIsModal(null);
-              }}
-            >
+            <Modal title="집중시간 / 휴식시간 설정" handleClose={handleClose}>
               <PomodoroTimeSetting />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
           )}
-        {isModal === 'addTodoModal' &&
+        {/* {isModal === 'addTodoModal' &&
           createPortal(
             <Modal
               title="새 할 일 추가하기"
@@ -151,7 +122,7 @@ function MainTodo() {
               <AddTodo />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
-          )}
+          )} */}
       </MainTodoContentWrapper>
     </MainTodoContainer>
   );
