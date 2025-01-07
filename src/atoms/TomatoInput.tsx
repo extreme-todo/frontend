@@ -131,12 +131,6 @@ const RangeInputWrapper = styled.div`
   width: 100%;
   cursor: pointer;
   height: 20px;
-
-  *,
-  *::after,
-  *::before {
-    outline: 1px solid lime;
-  }
 `;
 const AssistantLine = styled.div`
   background-color: ${({
@@ -165,6 +159,8 @@ const TickWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   flex: 1;
+  font-size: ${({ theme: { fontSize } }) => fontSize.b2.size};
+  font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
 `;
 
 const InputTick = styled.div`
@@ -237,5 +233,5 @@ const Thumb = styled.div`
 
 const LabelWrapper = styled.div`
   display: flex;
-  margin-top: 0.5625rem;
+  margin-top: 0.375rem;
 `;

@@ -18,12 +18,6 @@ import {
 } from '../atoms';
 import { CategoryInput } from '../molecules';
 import { CalendarInput } from '../organisms';
-import {
-  EditWrapper,
-  options,
-  TomatoOption,
-  TomatoSelector,
-} from './TodoCard/content/EditUI';
 
 /* custom hooks */
 import { usePomodoroValue } from '../hooks';
@@ -155,91 +149,74 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     <AddTodoWrapper
       w="53.75rem"
       h="20rem"
-      padding="2rem 2.75rem"
+      padding="2rem 1.5rem"
       className="card"
       as={'form'}
     >
-      <TitleWrapper>
-        <InputAtom.Underline
-          value={title}
-          handleChange={handleTitleInput}
-          placeholder="새로운 TODO를 작성해주세요"
-          ariaLabel="title"
-          className="todoTitle"
-          styleOption={{
-            borderWidth: '1px',
-            width: '100%',
-            height: '3rem',
-            font: 'h1',
-          }}
-        />
-        <BtnAtom handleOnClick={handleClose}>
-          <IconAtom size={2} src="icon/close.svg" />
+      <MainWrapper>
+        <TitleWrapper>
+          <InputAtom.Underline
+            value={title}
+            handleChange={handleTitleInput}
+            placeholder="새로운 TODO를 작성해주세요"
+            ariaLabel="title"
+            className="todoTitle"
+            styleOption={{
+              borderWidth: '1px',
+              width: '100%',
+              height: '3rem',
+              font: 'h1',
+            }}
+          />
+          <BtnAtom handleOnClick={handleClose}>
+            <IconAtom size={2} src="icon/close.svg" />
+          </BtnAtom>
+        </TitleWrapper>
+        <CalendarAndCategoryWrapper>
+          <CalendarWrapper>
+            <TypoAtom fontSize="h3">TODO 시작시간</TypoAtom>
+            <TypoAtom fontSize="h3">:</TypoAtom>
+            <CalendarInput
+              handleDaySelect={handleDaySelect}
+              selectedDay={selectedDate}
+            />
+          </CalendarWrapper>
+          <CategoryWrapper>
+            <CategoryInput
+              categories={categoryArray}
+              category={category}
+              handleSubmit={handleSubmitCategory}
+              handleClick={handleClickCategory}
+              handleChangeCategory={handleCategoryInput}
+              tagColorList={ramdomTagColorList.getColorList}
+            />
+          </CategoryWrapper>
+        </CalendarAndCategoryWrapper>
+      </MainWrapper>
+      <FooterWrapper>
+        <TomatoContainer>
+          <TomatoInput
+            max={10}
+            min={0}
+            period={focusStep}
+            handleTomato={handleTomato}
+            tomato={tomato}
+          />
+        </TomatoContainer>
+        <BtnAtom
+          handleOnClick={() => handleAddSubmit.call(this, addData)}
+          paddingHorizontal="2.0625rem"
+          paddingVertical="0.375rem"
+          btnType="lightBtn"
+        >
+          <div style={{ width: 'max-content' }}>추가</div>
         </BtnAtom>
-      </TitleWrapper>
-      <AdditionalInput>
-        <CalendarWrapper>
-          <TypoAtom fontSize="h3">TODO 시작시간</TypoAtom>
-          <TypoAtom fontSize="h3">:</TypoAtom>
-          <CalendarInput
-            handleDaySelect={handleDaySelect}
-            selectedDay={selectedDate}
-          />
-        </CalendarWrapper>
-        <CategoryWrapper>
-          <CategoryInput
-            categories={categoryArray}
-            category={category}
-            handleSubmit={handleSubmitCategory}
-            handleClick={handleClickCategory}
-            handleChangeCategory={handleCategoryInput}
-            tagColorList={ramdomTagColorList.getColorList}
-          />
-        </CategoryWrapper>
-      </AdditionalInput>
-      <TomatoContainer>
-        <TomatoInput
-          max={10}
-          min={0}
-          period={focusStep}
-          handleTomato={handleTomato}
-          tomato={tomato}
-        />
-      </TomatoContainer>
-      <FooterContainer>
-        <BtnAtom handleOnClick={() => handleAddSubmit.call(this, addData)}>
-          <IconAtom
-            size={3.6}
-            backgroundColor={'transparent'}
-            alt="submit_edit"
-            src={'icons/ok.svg'}
-          />
-        </BtnAtom>
-      </FooterContainer>
+      </FooterWrapper>
     </AddTodoWrapper>
   );
 };
 
 export default AddTodo;
-
-// const AddTodoWrapper = styled(EditWrapper)`
-//   background-color: transparent;
-//   width: 42.3125rem;
-
-//   & > div:first-of-type {
-//     margin-bottom: 1rem;
-//   }
-
-//   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-//     ${({ theme }) => theme.responsiveDevice.mobile} {
-//     .todoTitle {
-//       margin-bottom: 2rem;
-//     }
-//     .calendar {
-//       margin: 2rem 0;
-//     }
-//   }
-// `;
 
 const AddTodoWrapper = styled(CardAtom)`
   overflow: visible;
@@ -248,11 +225,7 @@ const AddTodoWrapper = styled(CardAtom)`
       color: { backgroundColor },
     },
   }) => backgroundColor.primary2};
-  justify-content: flex-start;
-
-  & > div:first-of-type {
-    margin-bottom: 1rem;
-  }
+  justify-content: space-between;
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
@@ -265,17 +238,23 @@ const AddTodoWrapper = styled(CardAtom)`
   }
 `;
 
+const MainWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  width: 100%;
+`;
+
 const TitleWrapper = styled.div`
   display: flex;
   width: 100%;
   column-gap: 3rem;
 `;
 
-const AdditionalInput = styled.div`
+const CalendarAndCategoryWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-start;
-
   column-gap: 1rem;
 `;
 
@@ -283,12 +262,12 @@ const CalendarWrapper = styled.div`
   display: flex;
   align-items: center;
   column-gap: 0.25rem;
-  width: 16.75rem;
+  width: 60%;
   height: 1.75rem;
 `;
 
 const CategoryWrapper = styled.div`
-  width: 33rem;
+  width: 100%;
   display: flex;
   align-items: center;
 `;
@@ -297,98 +276,8 @@ const TomatoContainer = styled.div`
   width: 100%;
 `;
 
-// const TomatoContainer = styled.div`
-//   display: flex;
-//   align-items: center;
-//   margin-top: 1rem;
-
-//   & > span {
-//     margin-right: 1.9rem;
-//   }
-// `;
-// const TomatoInput = styled.input<{
-//   value: string;
-//   max: number;
-//   min: number;
-//   newVal: number;
-// }>`
-//   display: flex;
-//   align-items: center;
-//   width: 24rem;
-//   height: 0.5rem;
-
-//   /* 초기화 */
-//   appearance: none;
-//   background: linear-gradient(
-//     to right,
-//     tomato 0%,
-
-//     tomato
-//       ${({ value, min, max }) =>
-//         `${((Number(value) - min) / (max - min)) * 100}%`},
-
-//     ${({ theme }) => theme.color.backgroundColor.white}
-//       ${({ value, min, max }) =>
-//         `${((Number(value) - min) / (max - min)) * 100}%`},
-
-//     ${({ theme }) => theme.color.backgroundColor.extreme_orange} 100%
-//   );
-//   outline: none;
-
-//   /* 슬라이더 바 속성  */
-//   cursor: pointer;
-//   border-radius: 10px;
-
-//   position: relative;
-
-//   &:before,
-//   :after {
-//     position: absolute;
-//     left: ${({ newVal }) => `calc(${newVal}% + (${10 - newVal * 0.15}px))`};
-
-//     margin-left: -1.4rem;
-
-//     text-align: center;
-//   }
-
-//   &:before {
-//     content: attr(data-value);
-
-//     padding-top: 6.2px;
-//     padding-bottom: 6.2px;
-
-//     width: 2.8rem;
-//     height: 1rem;
-
-//     background-color: ${({ theme }) =>
-//       theme.color.backgroundColor.extreme_orange};
-//     border-radius: 23.24rem;
-
-//     cursor: grab;
-
-//     box-shadow: ${({ theme }) => theme.shadow.container};
-//   }
-
-//   &:after {
-//     content: attr(data-focusmin);
-
-//     top: 1.5rem;
-//     width: 2.8rem;
-//   }
-
-//   &::-webkit-slider-thumb {
-//     appearance: none;
-//     width: 1px;
-//   }
-
-//   &:active::-webkit-slider-thumb {
-//     cursor: grabbing;
-//   }
-// `;
-
-const FooterContainer = styled.div`
+const FooterWrapper = styled.div`
   display: flex;
-  justify-content: flex-end;
   width: 100%;
-  margin-top: 1rem;
+  column-gap: 1.5625rem;
 `;
