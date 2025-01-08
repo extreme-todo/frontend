@@ -94,7 +94,6 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
       (event) => {
         if (event.code === 'Enter') {
           // 한글 중복 입력 처리
-          event.preventDefault();
           if (event.nativeEvent.isComposing) return;
 
           const newCategory = (event.target as HTMLInputElement).value;

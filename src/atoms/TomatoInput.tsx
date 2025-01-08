@@ -5,7 +5,6 @@ import {
   type MouseEvent,
   useEffect,
   memo,
-  ReactEventHandler,
   useCallback,
 } from 'react';
 import { formatTime } from '../shared/timeUtils';
@@ -103,7 +102,7 @@ const TomatoInput = ({
     return () => {
       window.removeEventListener('resize', handleInitTomato);
     };
-  }, []);
+  }, [handleInitTomato]);
 
   return (
     <>
