@@ -4,6 +4,7 @@ import {
   type TouchEvent,
   type MouseEvent,
   useEffect,
+  memo,
   ReactEventHandler,
   useCallback,
 } from 'react';
@@ -138,7 +139,7 @@ const TomatoInput = ({
   );
 };
 
-export default TomatoInput;
+export default memo(TomatoInput);
 
 const RangeInputWrapper = styled.div`
   position: relative;

@@ -123,7 +123,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     });
   }, []);
 
-  const handleTomato = (count: number) => setTomato(count);
+  const handleTomato = useCallback((count: number) => setTomato(count), []);
 
   const addData: AddTodoDto = useMemo(
     () => ({
@@ -204,7 +204,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
           />
         </TomatoContainer>
         <BtnAtom
-          handleOnClick={() => handleAddSubmit.call(this, addData)}
+          handleOnClick={() => handleAddSubmit(addData)}
           paddingHorizontal="2.0625rem"
           paddingVertical="0.375rem"
           btnType="lightBtn"
