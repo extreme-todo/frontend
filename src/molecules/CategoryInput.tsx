@@ -64,7 +64,7 @@ const CategoryInput = ({
             textAlign: 'center',
             font: 'b2',
             placeholderOpacity: 1,
-            width: '6.875rem',
+            width: '15ch',
             height: '1.25rem',
           }}
         />
