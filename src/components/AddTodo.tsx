@@ -41,6 +41,8 @@ interface IAddTodoProps {
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
+const currentDate = new Date();
+
 const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -72,7 +74,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   } = usePomodoroValue();
 
   /* React Day Picker State and Ref */
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
   const handleDaySelect: SelectSingleEventHandler = useCallback((date) => {
     if (!date) return;
     setSelectedDate(date);
