@@ -17,7 +17,6 @@ import {
   TypoAtom,
 } from '../atoms';
 import { CategoryInput } from '../molecules';
-import { CalendarInput } from '../organisms';
 
 /* custom hooks */
 import { usePomodoroValue } from '../hooks';
@@ -73,13 +72,6 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     settings: { focusStep },
   } = usePomodoroValue();
 
-  /* React Day Picker State and Ref */
-  const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
-  const handleDaySelect: SelectSingleEventHandler = useCallback((date) => {
-    if (!date) return;
-    setSelectedDate(date);
-  }, []);
-
   /* handler */
   const handleTitleInput: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => setTitle(event.currentTarget.value),
@@ -128,12 +120,12 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
   const addData: AddTodoDto = useMemo(
     () => ({
-      date: setTimeInFormat(selectedDate).toISOString(),
+      date: setTimeInFormat(new Date()).toISOString(),
       todo: title,
       duration: Number(`${tomato}`),
       categories: categoryArray.length > 0 ? categoryArray : null,
     }),
-    [selectedDate, title, tomato, categoryArray],
+    [title, tomato, categoryArray],
   );
 
   const handleAddSubmit = useCallback(
@@ -174,14 +166,6 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
           </BtnAtom>
         </TitleWrapper>
         <CalendarAndCategoryWrapper>
-          <CalendarWrapper>
-            <TypoAtom fontSize="h3">TODO 시작시간</TypoAtom>
-            <TypoAtom fontSize="h3">:</TypoAtom>
-            <CalendarInput
-              handleDaySelect={handleDaySelect}
-              selectedDay={selectedDate}
-            />
-          </CalendarWrapper>
           <CategoryWrapper>
             <CategoryInput
               categories={categoryArray}
@@ -258,14 +242,6 @@ const CalendarAndCategoryWrapper = styled.div`
   width: 100%;
   justify-content: flex-start;
   column-gap: 1rem;
-`;
-
-const CalendarWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  column-gap: 0.25rem;
-  width: 60%;
-  height: 1.75rem;
 `;
 
 const CategoryWrapper = styled.div`
