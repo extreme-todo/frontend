@@ -112,15 +112,17 @@ function CurrentTodoCard({
           <ExtremeModeIndicator />
           {currentTodo.currentTodo?.todo != null ? (
             <>
-              <CurrentTodo
-                todo={currentTodo.currentTodo}
-                doTodo={() => {
-                  currentTodo.doTodo();
-                }}
-                focusStep={pomodoroSettings.focusStep}
-                focusedOnTodo={currentTodo.focusedOnTodo}
-                startResting={actions.startResting}
-              ></CurrentTodo>
+              {status === PomodoroStatus.FOCUSING && (
+                <CurrentTodo
+                  todo={currentTodo.currentTodo}
+                  doTodo={() => {
+                    currentTodo.doTodo();
+                  }}
+                  focusStep={pomodoroSettings.focusStep}
+                  focusedOnTodo={currentTodo.focusedOnTodo}
+                  startResting={actions.startResting}
+                ></CurrentTodo>
+              )}
             </>
           ) : (
             <Overlay className="no-todo overlay">

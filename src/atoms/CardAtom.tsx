@@ -41,6 +41,7 @@ const CardAtom = styled.div<{
   align-items: center;
   overflow: hidden;
   box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
 `;
 
 export default CardAtom;
