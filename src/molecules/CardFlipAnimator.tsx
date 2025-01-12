@@ -93,7 +93,7 @@ const StyledCardFlipAnimatorWrapper = styled.div<
   height: ${({ h }) => `${h}px`};
   > div {
     position: absolute;
-    transform-origin: top left;
+    transform-origin: bottom left;
   }
 
   @keyframes oneCardUp {
