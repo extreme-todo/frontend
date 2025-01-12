@@ -109,10 +109,10 @@ const CurrentTodoContainer = styled.div`
   width: 100%;
   height: 100%;
   .todo-title {
-    white-space: nowrap;
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
+    max-width: 20ch;
   }
   .center-container {
     display: flex;
