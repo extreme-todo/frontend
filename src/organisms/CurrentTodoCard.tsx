@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { BtnAtom, CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
-import styled from '@emotion/styled';
 import {
   LoginContext,
   useCurrentTodo,
@@ -12,7 +11,6 @@ import {
 import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 import { PomodoroStatus } from '../services/PomodoroService';
-import { usersApi } from '../shared/apis';
 import RestCard from './RestCard';
 import CardFlipAnimator from '../molecules/CardFlipAnimator';
 
