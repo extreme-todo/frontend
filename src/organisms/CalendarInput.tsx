@@ -38,7 +38,6 @@ const CalendarInput = ({
           value={getDateInFormat(selectedDay)}
           ariaLabel="calendar_input"
           placeholder={'달력 아이콘을 눌러주세요.'}
-          handleChange={() => null}
           styleOption={{
             width: `${9}ch`,
             borderWidth: '0px',

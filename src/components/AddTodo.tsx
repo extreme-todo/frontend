@@ -40,8 +40,6 @@ interface IAddTodoProps {
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
-const currentDate = new Date();
-
 const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
