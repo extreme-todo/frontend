@@ -13,7 +13,6 @@ export interface ICardFlipAnimatorProps {
   className?: string;
   responsive?: boolean;
   cardSize?: ICardSize;
-  showCount?: number;
 }
 
 function CardFlipAnimator({
@@ -21,7 +20,6 @@ function CardFlipAnimator({
   degree = -3.65,
   currentCardIndex,
   responsive = true,
-  showCount = 2,
   ...props
 }: ICardFlipAnimatorProps) {
   const [cardSize, setCardSize] = useState<ICardSize>(
@@ -30,8 +28,6 @@ function CardFlipAnimator({
       h: 0,
     },
   );
-  const [beforeCurrentCardIndex, setBeforeCurrentCardIndex] =
-    useState<number>(0);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
