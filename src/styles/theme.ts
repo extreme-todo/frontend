@@ -3,12 +3,16 @@ import { responsiveBreakpoints } from '../shared/constants';
 import { Color, FontColor, FontSize, PrimaryColor } from './emotion';
 
 const primary: PrimaryColor = { primary1: '#523EA1', primary2: '#DBFE77' };
-const fontColor: FontColor = { white: '#FFFFFF', gray: '#DFDDDD', ...primary };
+const fontColor: FontColor = {
+  white: '#FFFFFF',
+  gray: '#DFDDDD',
+  extreme_dark: '#1C1C1D',
+  ...primary,
+};
 const color: Color = {
   primary,
   fontColor: fontColor,
   backgroundColor: {
-    extreme_dark: '#1C1C1D',
     extreme_orange: '#E44623',
     ...fontColor,
   },
@@ -85,6 +89,38 @@ export const designTheme: Theme = {
       },
     },
     darkBtn: {
+      height: '2.25rem',
+      fontSize: fontSize.b1,
+      default: {
+        backgroundColor: '#DBFE7733',
+        color: color.fontColor.primary2,
+      },
+      hover: {
+        backgroundColor: '#DBFE774D',
+        color: color.fontColor.primary2,
+      },
+      click: {
+        backgroundColor: color.backgroundColor.primary2,
+        color: color.fontColor.primary1,
+      },
+    },
+    extremeLightBtn: {
+      height: '2.25rem',
+      fontSize: fontSize.b1,
+      default: {
+        backgroundColor: '#00000033',
+        color: color.fontColor.extreme_dark,
+      },
+      hover: {
+        backgroundColor: '#0000004D',
+        color: color.fontColor.extreme_dark,
+      },
+      click: {
+        backgroundColor: color.backgroundColor.extreme_dark,
+        color: color.fontColor.extreme_dark,
+      },
+    },
+    extremeDarkBtn: {
       height: '2.25rem',
       fontSize: fontSize.b1,
       default: {
