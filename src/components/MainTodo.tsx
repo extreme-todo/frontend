@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { SideButtons } from '../molecules';
 import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
@@ -27,7 +27,39 @@ function MainTodo() {
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const mainTodoRef = useRef<HTMLDivElement>(null);
+
   useTimeMarker();
+
+  const handleClickSideButton = (type: ModalType) => {
+    if (!isLogin) {
+      if (window.confirm('로그인을 하시겠습니까?')) {
+        return usersApi.login();
+      }
+    } else {
+      setIsModal(type);
+    }
+  };
+
+  const handleClose = () => {
+    setIsModal(null);
+  };
+
+  const CurrentMainCard = useCallback(() => {
+    switch (isModal) {
+      case 'addTodoModal':
+        return <AddTodo handleClose={handleClose} />;
+      case 'timeModal':
+        return <PomodoroTimeSetting />;
+      case 'todolistModal':
+        return <TodoList />;
+      default:
+        return (
+          <CurrentTodoCard
+            openAddTodoModal={() => handleClickSideButton('addTodoModal')}
+          />
+        );
+    }
+  }, [isModal]);
 
   useEffect(() => {
     setFocusedPercent(
@@ -58,15 +90,7 @@ function MainTodo() {
         <MainTodoCenter>
           <SideButtons>
             <SideButtons.SideButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('timeModal');
-                }
-              }}
+              onClick={() => handleClickSideButton('timeModal')}
             >
               <img src="icons/clock.svg" />
               <TypoAtom fontSize="body">
@@ -77,70 +101,34 @@ function MainTodo() {
             </SideButtons.SideButton>
 
             <SideButtons.SideButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('todolistModal');
-                }
-              }}
+              onClick={() => handleClickSideButton('todolistModal')}
             >
               <img src="icons/list.svg" />
               <TypoAtom fontSize="body">오늘의 할일</TypoAtom>
             </SideButtons.SideButton>
             <SideButtons.SideButton
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  setIsModal('addTodoModal');
-                }
-              }}
+              onClick={() => handleClickSideButton('addTodoModal')}
             >
               <div className="tag-button">Todo +</div>
             </SideButtons.SideButton>
           </SideButtons>
-          <CurrentTodoCard
-            openAddTodoModal={() => {
-              if (!isLogin) {
-                if (window.confirm('로그인을 하시겠습니까?')) {
-                  return usersApi.login();
-                }
-              } else {
-                setIsModal('addTodoModal');
-              }
-            }}
-          ></CurrentTodoCard>
+          <CurrentMainCard />
         </MainTodoCenter>
-        {isModal === 'todolistModal' &&
+        {/* {isModal === 'todolistModal' &&
           createPortal(
-            <Modal
-              title="할 일 목록"
-              handleClose={() => {
-                setIsModal(null);
-              }}
-            >
+            <Modal title="할 일 목록" handleClose={handleClose}>
               <TodoList />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
-          )}
-        {isModal === 'timeModal' &&
+          )} */}
+        {/* {isModal === 'timeModal' &&
           createPortal(
-            <Modal
-              title="집중시간 / 휴식시간 설정"
-              handleClose={() => {
-                setIsModal(null);
-              }}
-            >
+            <Modal title="집중시간 / 휴식시간 설정" handleClose={handleClose}>
               <PomodoroTimeSetting />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
-          )}
-        {isModal === 'addTodoModal' &&
+          )} */}
+        {/* {isModal === 'addTodoModal' &&
           createPortal(
             <Modal
               title="새 할 일 추가하기"
@@ -151,7 +139,7 @@ function MainTodo() {
               <AddTodo />
             </Modal>,
             mainTodoRef.current as HTMLDivElement,
-          )}
+          )} */}
       </MainTodoContentWrapper>
     </MainTodoContainer>
   );

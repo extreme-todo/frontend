@@ -28,6 +28,7 @@ function BtnAtom({
         style={{ cursor: 'pointer' }}
         className={className}
         aria-label={ariaLabel}
+        type="button"
       >
         {children}
       </button>
@@ -41,6 +42,7 @@ function BtnAtom({
       paddingVertical={paddingVertical}
       className={className}
       aria-label={ariaLabel}
+      type="button"
     >
       {children}
     </ButtonWrapper>

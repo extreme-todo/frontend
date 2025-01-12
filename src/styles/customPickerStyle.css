@@ -1,3 +1,6 @@
+.dialog-sheet {
+  z-index: 10;
+}
 .rdp {
   --rdp-caption-font-size: 1.25rem;
   --rdp-background-color: none;

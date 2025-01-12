@@ -5,22 +5,27 @@ interface OptionParam {
 
 export const MAX_CATEGORY_ARRAY_LENGTH = 5;
 
-const regularCharacterRex =
+const regularCharacterReg =
   /^[a-zA-Z0-9 \u3131-\uD79D\u4E00-\u9FA5\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF\u2F800-\u2FA1F]+$/;
-const specialCharactersRex = /[@~₩?><|\\=_^]/;
+const titleCharacterReg =
+  /^[a-zA-Z0-9 \u3131-\uD79D\u4E00-\u9FA5\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF\u2F800-\u2FA1F\-']+$/;
 
 /**
  * @param value - 유효성 검사를 할 값
  * @param options - empty일 때 띄워줄 alert 메시지
  * @returns 유효성을 통과하면 trimmed가 된 값을 return
  */
-export const inputValidation = (value: string, options?: OptionParam) => {
+export const inputValidation = (
+  value: string,
+  options?: OptionParam,
+  reg: RegExp = regularCharacterReg,
+) => {
   if (options?.empty && !!!value.length) {
     return alert(options?.empty);
   }
-
+  const specialCharactersReg = /[@~₩?><|\\=_^]/;
   // 글로벌 문자(영어 포함 한국,중국,일본어)인지 && 특수문자와 이모지 제외처리
-  if (!regularCharacterRex.test(value) || specialCharactersRex.test(value))
+  if (!reg.test(value) || specialCharactersReg.test(value))
     return alert('특수문자와 이모지는 입력할 수 없습니다.');
 
   const trimmed = value.replace(/\s+/g, ' ').trim();
@@ -50,9 +55,13 @@ export const categoryValidation = (value: string, categories: Array<any>) => {
 };
 
 export const titleValidation = (value: string) => {
-  const trimmed = inputValidation(value, {
-    empty: '제목을 입력해주세요',
-  });
+  const trimmed = inputValidation(
+    value,
+    {
+      empty: '제목을 입력해주세요',
+    },
+    titleCharacterReg,
+  );
 
   if (!trimmed) return;
 

@@ -4,9 +4,19 @@ import {
   type TouchEvent,
   type MouseEvent,
   useEffect,
+  memo,
+  useCallback,
 } from 'react';
 import { formatTime } from '../shared/timeUtils';
 import styled from '@emotion/styled';
+
+interface ITomatoInputProps {
+  max: number;
+  min: number;
+  period: number;
+  handleTomato: (count: number) => void;
+  tomato: number;
+}
 
 const TomatoInput = ({
   max,
@@ -14,13 +24,7 @@ const TomatoInput = ({
   period,
   tomato,
   handleTomato,
-}: {
-  max: number;
-  min: number;
-  period: number;
-  handleTomato: (count: number) => void;
-  tomato: number;
-}) => {
+}: ITomatoInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const thumbRef = useRef<HTMLDivElement>(null);
   const tickRef = useRef<HTMLDivElement>(null);
@@ -45,7 +49,6 @@ const TomatoInput = ({
       // thumb가 위치할 수 있는 최대의 x좌표
       const maxPosX = event.currentTarget.offsetWidth;
       let posX = clientX - rangeInputRect.left;
-      console.log(rangeInputRect);
       posX = Math.min(
         Math.max(posX - halfThumbWidth, 0),
         maxPosX - halfThumbWidth,
@@ -81,15 +84,25 @@ const TomatoInput = ({
 
   const handleDragStart = () => setIsDragging(true);
 
-  useEffect(() => {
+  const handleInitTomato = useCallback(() => {
     if (thumbRef.current && tickRef.current) {
-      const initCorrection =
-        (tickRef.current.offsetWidth / 2 - thumbRef.current.offsetWidth / 2) *
-        tomato;
+      const tickWidth = tickRef.current.offsetWidth;
+      const thumbWidth = thumbRef.current.offsetWidth;
+      const halfTickWidth = tickWidth / 2;
+      const halfThumbWidth = thumbWidth / 2;
+      const newCorrection = tomato * tickWidth - halfTickWidth - halfThumbWidth;
       thumbRef.current.style.transform =
-        'translate(' + initCorrection + 'px, -50%)';
+        'translate(' + newCorrection + 'px, -50%)';
     }
-  }, []);
+  }, [tomato]);
+
+  useEffect(() => {
+    handleInitTomato();
+    window.addEventListener('resize', handleInitTomato);
+    return () => {
+      window.removeEventListener('resize', handleInitTomato);
+    };
+  }, [handleInitTomato]);
 
   return (
     <>
@@ -100,14 +113,15 @@ const TomatoInput = ({
         onTouchMove={handleDrag}
         onMouseUp={handleDrapEnd}
         onTouchEnd={handleDrapEnd}
+        aria-label="slider"
       >
-        <Thumb ref={thumbRef} data-value={`${tomato}round`}>
+        <Thumb ref={thumbRef} data-value={`${tomato}round`} aria-label="tomato">
           🍅
         </Thumb>
         <AssistantLine />
         <InputTickWrapper>
           {Array.from({ length: tickCount }).map((_, index) => (
-            <TickWrapper key={index} ref={tickRef}>
+            <TickWrapper key={index} ref={tickRef} aria-label="tick">
               <InputTick />
             </TickWrapper>
           ))}
@@ -115,7 +129,7 @@ const TomatoInput = ({
       </RangeInputWrapper>
       <LabelWrapper>
         {Array.from({ length: tickCount }).map((_, index) => (
-          <TickWrapper key={index}>
+          <TickWrapper key={index} aria-label="label">
             {formatTime((index + 1) * period)}
           </TickWrapper>
         ))}
@@ -124,19 +138,13 @@ const TomatoInput = ({
   );
 };
 
-export default TomatoInput;
+export default memo(TomatoInput);
 
 const RangeInputWrapper = styled.div`
   position: relative;
   width: 100%;
   cursor: pointer;
   height: 20px;
-
-  *,
-  *::after,
-  *::before {
-    outline: 1px solid lime;
-  }
 `;
 const AssistantLine = styled.div`
   background-color: ${({
@@ -165,6 +173,8 @@ const TickWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   flex: 1;
+  font-size: ${({ theme: { fontSize } }) => fontSize.b2.size};
+  font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
 `;
 
 const InputTick = styled.div`
@@ -237,5 +247,5 @@ const Thumb = styled.div`
 
 const LabelWrapper = styled.div`
   display: flex;
-  margin-top: 0.5625rem;
+  margin-top: 0.375rem;
 `;

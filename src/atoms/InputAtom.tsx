@@ -36,7 +36,7 @@ interface IInputAtomProps
 
 const Usual = memo(
   ({
-    handleChange,
+    handleChange = () => null,
     handleKeyDown,
     ariaLabel,
     styleOption,
@@ -58,7 +58,7 @@ const Usual = memo(
 
 const Underline = memo(
   ({
-    handleChange,
+    handleChange = () => null,
     handleKeyDown,
     ariaLabel,
     ...props
