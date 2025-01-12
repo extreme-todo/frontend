@@ -109,7 +109,7 @@ function CurrentTodoCard({
           className="card"
           bg={isExtreme ? 'extreme_dark' : 'primary1'}
         >
-          <ExtremeModeIndicator />
+          {status === PomodoroStatus.FOCUSING && <ExtremeModeIndicator />}
           {currentTodo.currentTodo?.todo != null ? (
             <>
               {status === PomodoroStatus.FOCUSING && (

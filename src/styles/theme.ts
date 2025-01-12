@@ -7,13 +7,13 @@ const fontColor: FontColor = {
   white: '#FFFFFF',
   gray: '#DFDDDD',
   extreme_dark: '#1C1C1D',
+  extreme_orange: '#E44623',
   ...primary,
 };
 const color: Color = {
   primary,
   fontColor: fontColor,
   backgroundColor: {
-    extreme_orange: '#E44623',
     ...fontColor,
   },
   tag: {
@@ -64,6 +64,7 @@ export const designTheme: Theme = {
   fontSize,
   shadow: {
     container: '16px 16px 40px rgba(0,0,0,0.25)',
+    tomato: '4px 6px 8px rgba(0,0,0,0.40)',
   },
   responsiveDevice: {
     desktop: `all and (min-width: ${responsiveBreakpoints.desktop.min}px) and (max-width: ${responsiveBreakpoints.desktop.max}px)`,

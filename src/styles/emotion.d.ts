@@ -37,7 +37,12 @@ type TagColor = ColorRecord<TagColorName>;
 type PrimaryColorName = 'primary1' | 'primary2';
 type PrimaryColor = ColorRecord<PrimaryColorName>;
 
-type FontColorName = 'white' | 'gray' | 'extreme_dark' | PrimaryColorName;
+type FontColorName =
+  | 'white'
+  | 'gray'
+  | 'extreme_dark'
+  | 'extreme_orange'
+  | PrimaryColorName;
 type FontColor = ColorRecord<FontColorName>;
 
 type BackgroundColorName =
@@ -57,7 +62,7 @@ interface Color {
   backgroundColor: BackgroundColor;
 }
 
-type ShadowName = 'container';
+type ShadowName = 'container' | 'tomato';
 type ShadowAttribute =
   `${number}px ${number}px ${number}px rgba(${number},${number},${number},${number})`;
 type Shadow = Record<ShadowName, ShadowAttribute>;
