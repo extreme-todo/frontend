@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { FontName, TagColorName } from '../styles/emotion';
+import { BackgroundColorName, FontName, TagColorName } from '../styles/emotion';
 
 export interface ITagAtomProps extends IChildProps {
   title?: string;
@@ -10,9 +10,10 @@ export interface ITagAtomProps extends IChildProps {
 }
 
 interface ITagSpanProps {
-  bg?: TagColorName;
+  bg?: TagColorName | 'transparent';
   fontsize?: FontName;
   size?: 'normal';
+  borderColor?: BackgroundColorName;
 }
 
 function TagAtom({
@@ -60,7 +61,11 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
   }};
 
   background: ${({ bg, theme }) =>
-    bg ? theme.color.tag[bg] : theme.color.tag['orange']};
+    bg
+      ? bg === 'transparent'
+        ? 'transparent'
+        : theme.color.tag[bg]
+      : theme.color.tag['orange']};
   color: ${({
     bg,
     theme: {
@@ -77,6 +82,12 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
         return fontColor.primary1;
     }
   }};
+  border-color: ${({
+    borderColor,
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => (borderColor ? backgroundColor[borderColor] : 'inherit')};
 
   border-radius: 50px;
 
