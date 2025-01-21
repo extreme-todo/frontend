@@ -54,8 +54,8 @@ describe('TodoCard', () => {
 
   describe('TodoUI', () => {
     describe('TodoUI는', () => {
-      it('Todo는 제목, 핸들 아이콘, 카테고리로 이루어져 있다.', () => {
-        const { getByText, getByRole } = renderUI(
+      it('Todo는 제목이 있다.', () => {
+        const { getByText } = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
@@ -63,7 +63,18 @@ describe('TodoCard', () => {
           />,
           wrapperCreator,
         );
-
+        const title = getByText('Go to grocery store');
+        expect(title).toBeInTheDocument();
+      });
+      it('Todo는 카테고리가 있다.', () => {
+        const { getByText } = renderUI(
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={setMockSnapshot(false)}
+          />,
+          wrapperCreator,
+        );
         const categories1 = getByText('영어');
         const categories2 = getByText('학교공부');
         expect(categories1).toBeInTheDocument();
@@ -89,7 +100,7 @@ describe('TodoCard', () => {
       });
     });
 
-    describe('TodoUI에', () => {
+    describe('남은 TodoUI에는', () => {
       it('수정 버튼이 있다.', () => {
         const { getByText } = renderUI(
           <TodoCard
@@ -122,9 +133,11 @@ describe('TodoCard', () => {
           expect(getByText('삭제')).toBeInTheDocument();
         });
       });
+      it('소요 시간이 있다.', () => {});
+      it('핸들러 아이콘이 있다.', () => {});
     });
 
-    describe('수정 버튼을 클릭하면', () => {
+    describe('남은 TodoUI의 수정 버튼을 클릭하면', () => {
       it('해당 todoCard의 UI가 EditUI로 바뀐다.', async () => {
         const { getByText, getAllByText, findByRole } = renderUI(
           <>
@@ -158,6 +171,19 @@ describe('TodoCard', () => {
         expect(titleInput).toBeInTheDocument();
         expect(titleTwo).toBeInTheDocument();
       });
+    });
+
+    describe('진행 중인 TodoUI에는', () => {
+      it('수정 버튼이 없다.', () => {});
+      it('삭제 버튼이 없다.', () => {});
+      it('진행중 태그가 있다.', () => {});
+    });
+
+    describe('완료한 TodoUI에는', () => {
+      it('소요 시간이 없다.', () => {});
+      it('삭제 버튼이 없다.', () => {});
+      it('수정 버튼이 없다.', () => {});
+      it('핸들러 아이콘이 없다.', () => {});
     });
   });
 

@@ -1,4 +1,10 @@
-import { BtnAtom, ITagSpanProps, TagAtom, TypoAtom } from '../../../atoms';
+import {
+  BtnAtom,
+  IconAtom,
+  ITagSpanProps,
+  TagAtom,
+  TypoAtom,
+} from '../../../atoms';
 
 import { ITodoCardProps } from '..';
 
@@ -19,35 +25,20 @@ const TodoUI = ({
   handleDeleteButton,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
-  const isMobile = useIsMobile();
-  // const tagSize: ITagSpanProps = useMemo(
-  //   () =>
-  //     isMobile
-  //       ? {
-  //           fontsize: 'md2',
-  //           size: 'md',
-  //           bg: 'cyan',
-  //           maxWidth: 10,
-  //         }
-  //       : {
-  //           fontsize: 'sm',
-  //           size: 'sm',
-  //           bg: 'cyan',
-  //           maxWidth: 10,
-  //         },
-  //   [isMobile],
-  // );
 
   return (
     <TodoCardContainer>
       <TitleCategoryContainer>
         <TitleContainer>
           <div {...dragHandleProps}>
-            <IconAtom src="icon/handle.svg" alt="handler" size={1.25} />
+            {/* TODO : 🚨 조건문 처리 필요 */}
+            <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
           </div>
           {/* TODO : 🚨 조건문 처리 및 변수 처리 필요 */}
-          <TypoAtom fontSize="h3">{'1.'}</TypoAtom>
-          <TypoAtom className="todoTitle" fontSize="h3">
+          <TypoAtom fontSize="h3" fontColor="primary2">
+            {'1.'}
+          </TypoAtom>
+          <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
             {todo}
           </TypoAtom>
         </TitleContainer>
@@ -70,26 +61,40 @@ const TodoUI = ({
       {snapshot?.isDragging ? null : (
         <EditContainer>
           <TimeWrapper>
-            <IconAtom src={'icon/timer.svg'} alt="timer" size={1.25} />
+            <IconAtom src={'icon/yellowTimer.svg'} alt="timer" size={1.25} />
             {/* TODO : 변수 처리 해야 됨 🚨 */}
             <TypoAtom
               fontSize="body"
-              {todo}
-          </TitleContainer>
-              })}
-            </CategoryContainer>
-          )}
-        </TitleCategoryContainer>
-      </DraggableWrapper>
-      {snapshot?.isDragging ? null : (
-        <EditWrapper id="editWrapper">
+              fontColor="primary2"
+            >{`1시간 40분`}</TypoAtom>
+          </TimeWrapper>
           <BtnAtom handleOnClick={handleEditButton}>
-            <TagAtom styleOption={{ size: 'normal' }}>수정</TagAtom>
+            <TagAtom
+              styleOption={{
+                size: 'normal',
+                bg: 'transparent',
+                borderColor: 'primary2',
+              }}
+            >
+              <TypoAtom fontSize="b2" fontColor="primary2">
+                수정
+              </TypoAtom>
+            </TagAtom>
           </BtnAtom>
           <BtnAtom handleOnClick={handleDeleteButton}>
-            <TagAtom styleOption={{ size: 'normal' }}>삭제</TagAtom>
+            <TagAtom
+              styleOption={{
+                size: 'normal',
+                bg: 'transparent',
+                borderColor: 'primary2',
+              }}
+            >
+              <TypoAtom fontSize="b2" fontColor="primary2">
+                삭제
+              </TypoAtom>
+            </TagAtom>
           </BtnAtom>
-        </EditWrapper>
+        </EditContainer>
       )}
     </TodoCardContainer>
   );
@@ -99,50 +104,41 @@ export default TodoUI;
 
 const TodoCardContainer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  @media all and (min-width: 1080px),
-    ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.desktop} {
-    &:hover {
-      #editWrapper {
-        display: flex;
-      }
-    }
-  }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    overflow-x: hidden;
-    #editWrapper {
-      button {
-        span {
-          font-size: 2.1rem;
-        }
-      }
-    }
-  }
-`;
+  width: 24.5rem;
 
-const DraggableWrapper = styled.div`
-  display: flex;
-  width: 80%;
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border-radius: 0.875rem;
+
+  &,
+  * {
+    outline: 1px solid limegreen;
+  }
 `;
 
 const TitleCategoryContainer = styled.div`
   margin-left: 1rem;
 `;
 
-const EditWrapper = styled.div`
-  display: none;
-  gap: 10px;
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    display: flex;
-  }
+const EditContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 0.5rem;
+`;
+
+const TimeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 0.25rem;
 `;
 
 const TitleContainer = styled.div`
   width: 100%;
-  margin-bottom: 0.5rem;
+  display: flex;
+  column-gap: 4px;
+  margin-bottom: 4px;
 
   & > span {
     overflow: hidden;
@@ -166,6 +162,10 @@ const TitleContainer = styled.div`
 export const CategoryContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+  padding-left: 1.25rem;
+
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
 
   > div {
     margin-right: 0.5rem;
