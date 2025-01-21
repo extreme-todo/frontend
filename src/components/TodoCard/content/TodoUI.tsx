@@ -40,29 +40,42 @@ const TodoUI = ({
 
   return (
     <TodoCardContainer>
-      <DraggableWrapper {...dragHandleProps}>
-        <TitleCategoryContainer>
-          <TitleContainer>
+      <TitleCategoryContainer>
+        <TitleContainer>
+          <div {...dragHandleProps}>
+            <IconAtom src="icon/handle.svg" alt="handler" size={1.25} />
+          </div>
+          {/* TODO : 🚨 조건문 처리 및 변수 처리 필요 */}
+          <TypoAtom fontSize="h3">{'1.'}</TypoAtom>
+          <TypoAtom className="todoTitle" fontSize="h3">
+            {todo}
+          </TypoAtom>
+        </TitleContainer>
+        {snapshot?.isDragging ? null : (
+          <CategoryContainer>
+            {categories?.map((category) => {
+              return (
+                <TagAtom
+                  key={category}
+                  title={category}
+                  // styleOption={tagSize}
+                >
+                  {category}
+                </TagAtom>
+              );
+            })}
+          </CategoryContainer>
+        )}
+      </TitleCategoryContainer>
+      {snapshot?.isDragging ? null : (
+        <EditContainer>
+          <TimeWrapper>
+            <IconAtom src={'icon/timer.svg'} alt="timer" size={1.25} />
+            {/* TODO : 변수 처리 해야 됨 🚨 */}
             <TypoAtom
-              className="todoTitle"
               fontSize="body"
-              padding={`${0.2}rem ${0}rem`}
-            >
               {todo}
-            </TypoAtom>
           </TitleContainer>
-          {snapshot?.isDragging ? null : (
-            <CategoryContainer>
-              {categories?.map((category) => {
-                return (
-                  <TagAtom
-                    key={category}
-                    title={category}
-                    // styleOption={tagSize}
-                  >
-                    {category}
-                  </TagAtom>
-                );
               })}
             </CategoryContainer>
           )}
