@@ -48,33 +48,29 @@ describe('TodoCard', () => {
     };
   };
 
-  let renderUI = (MainUI: JSX.Element, wrapperUI: typeof wrapperCreator) => {
+  const renderUI = (MainUI: JSX.Element, wrapperUI: typeof wrapperCreator) => {
     return render(MainUI, { wrapper: wrapperUI });
   };
+
+  const renderTodoUI = (isDragging: boolean) =>
+    renderUI(
+      <TodoCard
+        todoData={mockTodo}
+        dragHandleProps={undefined}
+        snapshot={setMockSnapshot(isDragging)}
+      />,
+      wrapperCreator,
+    );
 
   describe('TodoUI', () => {
     describe('TodoUI는', () => {
       it('Todo는 제목이 있다.', () => {
-        const { getByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
+        const { getByText } = renderTodoUI(false);
         const title = getByText('Go to grocery store');
         expect(title).toBeInTheDocument();
       });
       it('Todo는 카테고리가 있다.', () => {
-        const { getByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
+        const { getByText } = renderTodoUI(false);
         const categories1 = getByText('영어');
         const categories2 = getByText('학교공부');
         expect(categories1).toBeInTheDocument();
@@ -84,14 +80,7 @@ describe('TodoCard', () => {
 
     describe('drag 시에는', () => {
       it('Todo의 카테고리가 숨겨진다.', () => {
-        const { queryByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(true)}
-          />,
-          wrapperCreator,
-        );
+        const { queryByText } = renderTodoUI(true);
 
         const categories1 = queryByText('영어');
         const categories2 = queryByText('학교공부');
@@ -102,14 +91,7 @@ describe('TodoCard', () => {
 
     describe('남은 TodoUI에는', () => {
       it('수정 버튼이 있다.', () => {
-        const { getByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
+        const { getByText } = renderTodoUI(false);
 
         fireEvent.mouseOver(getByText('Go to grocery store'));
 
@@ -118,14 +100,7 @@ describe('TodoCard', () => {
         });
       });
       it('삭제 버튼이 있다.', () => {
-        const { getByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
+        const { getByText } = renderTodoUI(false);
 
         fireEvent.mouseOver(getByText('Go to grocery store'));
 
