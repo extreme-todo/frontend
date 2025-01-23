@@ -1,9 +1,6 @@
 import { memo, useCallback, useMemo } from 'react';
 
 /* component */
-import { BtnAtom } from '../../atoms';
-import { NowCard } from '../../molecules';
-import { DateCard } from '../../organisms/DateCard';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../../DB/indexed';
@@ -15,6 +12,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 /* react DnD */
 import {
   DragDropContext,
+  Draggable,
+  Droppable,
   DropResult,
   useMouseSensor,
 } from 'react-beautiful-dnd';
@@ -23,6 +22,7 @@ import {
 import {
   EditContextProvider,
   useCurrentTodo,
+  useDraggableInPortal,
   usePomodoroValue,
 } from '../../hooks';
 
@@ -33,8 +33,7 @@ import { setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
-
-const MemoDateCard = memo(DateCard);
+import TodoCard from '../TodoCard';
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
@@ -92,6 +91,7 @@ const TodoList = () => {
   const {
     settings: { focusStep },
   } = usePomodoroValue();
+  const optionalPortal = useDraggableInPortal();
 
   const onClickHandler = () => {
     const mock = addTodoMocks();
@@ -103,25 +103,7 @@ const TodoList = () => {
     temp();
   };
 
-  /* render helper function */
-  /* 날짜별 todo 데이터 render 함수 */
-  const listRender = useMemo(() => {
-    const dateList = todos && Array.from(todos.keys());
-    const todoList = todos && Array.from(todos.values());
-
-    const renderList =
-      dateList &&
-      todoList &&
-      dateList.map((date, idx) => (
-        <MemoDateCard
-          key={date}
-          date={date}
-          tododata={todoList[idx].filter((todo) => todo.id !== currentTodo?.id)}
-        />
-      ));
-
-    return renderList;
-  }, [todos, currentTodo]);
+  const todoList = todos ? Array.from(todos.values()) : [[]];
 
   /* react dnd의 onDragDropHandler */
   const handleDragEnd = useCallback(
@@ -144,24 +126,43 @@ const TodoList = () => {
       {/* <CardAtom> */}
       {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
       <TodoListContainer>
-        <NowCard
-          currentTodo={
-            currentTodo ||
-            ({
-              duration: 0,
-              todo: '오늘 할 일이 비어있습니다 :)',
-              categories: undefined,
-            } as unknown as TodoEntity)
-          }
-          focusStep={focusStep}
-        />
+        {/* TODO : list가 두 개 되어야 함. 완료한 todo, 해야 할 todo */}
         <DragDropContext
           onDragEnd={handleDragEnd}
           enableDefaultSensors={false}
           sensors={[useMouseSensor, useTouchSensor]}
         >
           {!isLoading && todos ? (
-            <EditContextProvider>{listRender}</EditContextProvider>
+            <EditContextProvider>
+              <Droppable droppableId="todoList">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {todoList[0].map((todo, idx) => (
+                      <Draggable
+                        draggableId={String(todo.id)}
+                        index={idx}
+                        key={todo.id}
+                      >
+                        {optionalPortal((provided, snapshot) => (
+                          <div
+                            {...provided.draggableProps}
+                            ref={provided.innerRef}
+                          >
+                            <TodoCard
+                              dragHandleProps={provided.dragHandleProps}
+                              todoData={todo}
+                              snapshot={snapshot}
+                              focusStep={focusStep}
+                            />
+                          </div>
+                        ))}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </EditContextProvider>
           ) : null}
         </DragDropContext>
       </TodoListContainer>
