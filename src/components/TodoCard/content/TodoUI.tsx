@@ -64,11 +64,11 @@ const TodoUI = ({
           <EditContainer>
             <TimeWrapper>
               <IconAtom src={'icon/yellowTimer.svg'} alt="timer" size={1.25} />
-              {/* TODO : 변수 처리 해야 됨 🚨 */}
               <TypoAtom fontSize="body" fontColor="primary2">
                 {formatTime(focusStep * todoData.duration)}
               </TypoAtom>
             </TimeWrapper>
+            {/* TODO : 조건문처리 해서 '진행중' 넣어줘야 됨 🚨 */}
             <BtnAtom handleOnClick={handleEditButton}>
               <TagAtom
                 styleOption={{
