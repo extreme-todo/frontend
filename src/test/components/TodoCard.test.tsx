@@ -58,6 +58,7 @@ describe('TodoCard', () => {
         todoData={mockTodo}
         dragHandleProps={undefined}
         snapshot={setMockSnapshot(isDragging)}
+        focusStep={1}
       />,
       wrapperCreator,
     );
@@ -108,7 +109,13 @@ describe('TodoCard', () => {
           expect(getByText('삭제')).toBeInTheDocument();
         });
       });
-      it('소요 시간이 있다.', () => {});
+      it('소요 시간이 있다.', () => {
+        const { getByText, getByAltText } = renderTodoUI(false);
+        const duration = getByText('3분');
+        const timer = getByAltText('timer');
+        expect(timer).toBeInTheDocument();
+        expect(duration).toBeInTheDocument();
+      });
       it('핸들러 아이콘이 있다.', () => {});
     });
 
@@ -120,11 +127,13 @@ describe('TodoCard', () => {
               todoData={mockTodo}
               dragHandleProps={undefined}
               snapshot={setMockSnapshot(false)}
+              focusStep={1}
             />
             <TodoCard
               todoData={mockFetchTodoList()[1]}
               dragHandleProps={undefined}
               snapshot={setMockSnapshot(false)}
+              focusStep={1}
             />
           </>,
           wrapperCreator,
@@ -172,6 +181,7 @@ describe('TodoCard', () => {
             todoData={mockTodo}
             dragHandleProps={undefined}
             snapshot={setMockSnapshot(false)}
+            focusStep={1}
           />,
           wrapperCreator,
         );

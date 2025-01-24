@@ -11,6 +11,7 @@ import { ITodoCardProps } from '..';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import { formatTime } from '../../../shared/timeUtils';
 
 interface ITodoUIProps extends ITodoCardProps {
   handleEditButton: () => void;
@@ -23,6 +24,7 @@ const TodoUI = ({
   snapshot,
   handleEditButton,
   handleDeleteButton,
+  focusStep,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
 
@@ -63,10 +65,9 @@ const TodoUI = ({
           <TimeWrapper>
             <IconAtom src={'icon/yellowTimer.svg'} alt="timer" size={1.25} />
             {/* TODO : 변수 처리 해야 됨 🚨 */}
-            <TypoAtom
-              fontSize="body"
-              fontColor="primary2"
-            >{`1시간 40분`}</TypoAtom>
+            <TypoAtom fontSize="body" fontColor="primary2">
+              {formatTime(focusStep * todoData.duration)}
+            </TypoAtom>
           </TimeWrapper>
           <BtnAtom handleOnClick={handleEditButton}>
             <TagAtom
