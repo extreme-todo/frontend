@@ -34,6 +34,7 @@ import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
 import TodoCard from '../TodoCard';
+import { CardAtom } from '../../atoms';
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
@@ -103,7 +104,7 @@ const TodoList = () => {
     temp();
   };
 
-  const todoList = todos ? Array.from(todos.values()) : [[]];
+  const todoList = todos && Array.from(todos.values())[0];
 
   /* react dnd의 onDragDropHandler */
   const handleDragEnd = useCallback(
@@ -125,7 +126,12 @@ const TodoList = () => {
       > */}
       {/* <CardAtom> */}
       {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
-      <TodoListContainer>
+      <TodoListContainer
+        w="53.75rem"
+        h="20rem"
+        padding="2rem 1.5rem"
+        className="card"
+      >
         {/* TODO : list가 두 개 되어야 함. 완료한 todo, 해야 할 todo */}
         <DragDropContext
           onDragEnd={handleDragEnd}
@@ -137,27 +143,29 @@ const TodoList = () => {
               <Droppable droppableId="todoList">
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {todoList[0].map((todo, idx) => (
-                      <Draggable
-                        draggableId={String(todo.id)}
-                        index={idx}
-                        key={todo.id}
-                      >
-                        {optionalPortal((provided, snapshot) => (
-                          <div
-                            {...provided.draggableProps}
-                            ref={provided.innerRef}
+                    {todoList
+                      ? todoList.map((todo, idx) => (
+                          <Draggable
+                            draggableId={String(todo.id)}
+                            index={idx}
+                            key={todo.id}
                           >
-                            <TodoCard
-                              dragHandleProps={provided.dragHandleProps}
-                              todoData={todo}
-                              snapshot={snapshot}
-                              focusStep={focusStep}
-                            />
-                          </div>
-                        ))}
-                      </Draggable>
-                    ))}
+                            {optionalPortal((provided, snapshot) => (
+                              <div
+                                {...provided.draggableProps}
+                                ref={provided.innerRef}
+                              >
+                                <TodoCard
+                                  dragHandleProps={provided.dragHandleProps}
+                                  todoData={todo}
+                                  snapshot={snapshot}
+                                  focusStep={focusStep}
+                                />
+                              </div>
+                            ))}
+                          </Draggable>
+                        ))
+                      : 'todo를 추가해보세요'}
                     {provided.placeholder}
                   </div>
                 )}
@@ -174,7 +182,11 @@ const TodoList = () => {
 
 export default TodoList;
 
-const TodoListContainer = styled.div`
-  width: 35.7275rem;
+const TodoListContainer = styled(CardAtom)`
+  background-color: ${({
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => backgroundColor.primary1};
   overflow: scroll;
 `;
