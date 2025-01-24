@@ -116,7 +116,11 @@ describe('TodoCard', () => {
         expect(timer).toBeInTheDocument();
         expect(duration).toBeInTheDocument();
       });
-      it('핸들러 아이콘이 있다.', () => {});
+      it('핸들러 아이콘이 있다.', () => {
+        const { getByAltText } = renderTodoUI(false);
+        const handler = getByAltText('handler');
+        expect(handler).toBeInTheDocument();
+      });
     });
 
     describe('남은 TodoUI의 수정 버튼을 클릭하면', () => {
