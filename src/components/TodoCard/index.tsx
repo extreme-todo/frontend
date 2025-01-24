@@ -14,12 +14,14 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 import { focusStep } from '../../hooks/usePomodoro';
+import { TagColorName } from '../../styles/emotion';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
   snapshot: DraggableStateSnapshot;
   focusStep: focusStep;
+  randomTagColor: Record<string, TagColorName>;
 }
 
 const TodoCard = ({
@@ -27,6 +29,7 @@ const TodoCard = ({
   dragHandleProps,
   snapshot,
   focusStep,
+  randomTagColor,
 }: ITodoCardProps) => {
   const { id, date: prevDate } = todoData;
   const queryClient = useQueryClient();
@@ -132,6 +135,7 @@ const TodoCard = ({
             handleEditButton={handleEditButton}
             handleDeleteButton={handleDeleteButton}
             focusStep={focusStep}
+            randomTagColor={randomTagColor}
           />
         );
     }

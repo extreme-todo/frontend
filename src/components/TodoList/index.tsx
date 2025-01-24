@@ -35,6 +35,7 @@ import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
 import TodoCard from '../TodoCard';
 import { CardAtom } from '../../atoms';
+import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
@@ -59,6 +60,8 @@ const orderMutationHandler = async ({
     await todosApi.reorderTodos(prevOrder, newOrder);
   }
 };
+
+const randomTagColor = RandomTagColorList.getInstance().getColorList;
 
 const TodoList = () => {
   /* hook 호출 */
@@ -160,6 +163,7 @@ const TodoList = () => {
                                   todoData={todo}
                                   snapshot={snapshot}
                                   focusStep={focusStep}
+                                  randomTagColor={randomTagColor}
                                 />
                               </div>
                             ))}

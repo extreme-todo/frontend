@@ -25,6 +25,7 @@ const TodoUI = ({
   handleEditButton,
   handleDeleteButton,
   focusStep,
+  randomTagColor,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
 
@@ -49,7 +50,11 @@ const TodoUI = ({
             <CategoryContainer>
               {categories.map((category) => {
                 return (
-                  <TagAtom key={category} title={category}>
+                  <TagAtom
+                    key={category}
+                    title={category}
+                    styleOption={{ bg: randomTagColor[category] }}
+                  >
                     {category}
                   </TagAtom>
                 );

@@ -15,6 +15,7 @@ import { designTheme } from '../../styles/theme';
 
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +24,8 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const randomTagColor = RandomTagColorList.getInstance().getColorList;
 
 const wrapperCreator = ({ children }: IChildProps) => (
   <QueryClientProvider client={queryClient}>
@@ -59,6 +62,7 @@ describe('TodoCard', () => {
         dragHandleProps={undefined}
         snapshot={setMockSnapshot(isDragging)}
         focusStep={1}
+        randomTagColor={randomTagColor}
       />,
       wrapperCreator,
     );
@@ -132,12 +136,14 @@ describe('TodoCard', () => {
               dragHandleProps={undefined}
               snapshot={setMockSnapshot(false)}
               focusStep={1}
+              randomTagColor={randomTagColor}
             />
             <TodoCard
               todoData={mockFetchTodoList()[1]}
               dragHandleProps={undefined}
               snapshot={setMockSnapshot(false)}
               focusStep={1}
+              randomTagColor={randomTagColor}
             />
           </>,
           wrapperCreator,
@@ -186,6 +192,7 @@ describe('TodoCard', () => {
             dragHandleProps={undefined}
             snapshot={setMockSnapshot(false)}
             focusStep={1}
+            randomTagColor={randomTagColor}
           />,
           wrapperCreator,
         );
