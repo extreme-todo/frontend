@@ -30,72 +30,70 @@ const TodoUI = ({
 
   return (
     <TodoCardContainer>
-      <TitleCategoryContainer>
-        <TitleContainer>
-          <div {...dragHandleProps}>
-            {/* TODO : 🚨 조건문 처리 필요 */}
-            <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
-          </div>
-          {/* TODO : 🚨 조건문 처리 및 변수 처리 필요 */}
-          <TypoAtom fontSize="h3" fontColor="primary2">
-            {'1.'}
-          </TypoAtom>
-          <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
-            {todo}
-          </TypoAtom>
-        </TitleContainer>
-        {snapshot?.isDragging ? null : (
-          <CategoryContainer>
-            {categories?.map((category) => {
-              return (
-                <TagAtom
-                  key={category}
-                  title={category}
-                  // styleOption={tagSize}
-                >
-                  {category}
-                </TagAtom>
-              );
-            })}
-          </CategoryContainer>
-        )}
-      </TitleCategoryContainer>
+      <TitleContainer>
+        <div {...dragHandleProps}>
+          {/* TODO : 🚨 조건문 처리 필요 */}
+          <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
+        </div>
+        {/* TODO : 🚨 조건문 처리 및 변수 처리 필요 */}
+        <TypoAtom fontSize="h3" fontColor="primary2">
+          {'1.'}
+        </TypoAtom>
+        <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
+          {todo}
+        </TypoAtom>
+      </TitleContainer>
       {snapshot?.isDragging ? null : (
-        <EditContainer>
-          <TimeWrapper>
-            <IconAtom src={'icon/yellowTimer.svg'} alt="timer" size={1.25} />
-            {/* TODO : 변수 처리 해야 됨 🚨 */}
-            <TypoAtom fontSize="body" fontColor="primary2">
-              {formatTime(focusStep * todoData.duration)}
-            </TypoAtom>
-          </TimeWrapper>
-          <BtnAtom handleOnClick={handleEditButton}>
-            <TagAtom
-              styleOption={{
-                size: 'normal',
-                bg: 'transparent',
-                borderColor: 'primary2',
-              }}
-            >
-              <TypoAtom fontSize="b2" fontColor="primary2">
-                수정
+        <>
+          {categories ? (
+            <CategoryContainer>
+              {categories.map((category) => {
+                return (
+                  <TagAtom key={category} title={category}>
+                    {category}
+                  </TagAtom>
+                );
+              })}
+            </CategoryContainer>
+          ) : null}
+          <EditContainer>
+            <TimeWrapper>
+              <IconAtom src={'icon/yellowTimer.svg'} alt="timer" size={1.25} />
+              {/* TODO : 변수 처리 해야 됨 🚨 */}
+              <TypoAtom fontSize="body" fontColor="primary2">
+                {formatTime(focusStep * todoData.duration)}
               </TypoAtom>
-            </TagAtom>
-          </BtnAtom>
-          <BtnAtom handleOnClick={handleDeleteButton}>
-            <TagAtom
-              styleOption={{
-                size: 'normal',
-                bg: 'transparent',
-                borderColor: 'primary2',
-              }}
-            >
-              <TypoAtom fontSize="b2" fontColor="primary2">
-                삭제
-              </TypoAtom>
-            </TagAtom>
-          </BtnAtom>
-        </EditContainer>
+            </TimeWrapper>
+            <BtnAtom handleOnClick={handleEditButton}>
+              <TagAtom
+                styleOption={{
+                  size: 'normal',
+                  bg: 'transparent',
+                  borderColor: 'primary2',
+                }}
+                className="edit__button"
+              >
+                <TypoAtom fontSize="b2" fontColor="primary2">
+                  수정
+                </TypoAtom>
+              </TagAtom>
+            </BtnAtom>
+            <BtnAtom handleOnClick={handleDeleteButton}>
+              <TagAtom
+                styleOption={{
+                  size: 'normal',
+                  bg: 'transparent',
+                  borderColor: 'primary2',
+                }}
+                className="edit__button"
+              >
+                <TypoAtom fontSize="b2" fontColor="primary2">
+                  삭제
+                </TypoAtom>
+              </TagAtom>
+            </BtnAtom>
+          </EditContainer>
+        </>
       )}
     </TodoCardContainer>
   );
@@ -113,20 +111,25 @@ const TodoCardContainer = styled.div`
   padding: 0.75rem;
   border-radius: 0.875rem;
 
-  &,
+  background-color: #463685;
+
+  /* &,
   * {
     outline: 1px solid limegreen;
-  }
-`;
-
-const TitleCategoryContainer = styled.div`
-  margin-left: 1rem;
+  } */
 `;
 
 const EditContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   column-gap: 0.5rem;
+  .edit__button {
+    &:hover {
+      background-color: ${({ theme: { button } }) =>
+        button.darkBtn.hover.backgroundColor};
+    }
+    transition: background-color 0.3s ease-in-out;
+  }
 `;
 
 const TimeWrapper = styled.div`
@@ -164,6 +167,7 @@ export const CategoryContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
 
   column-gap: 0.5rem;
   row-gap: 0.25rem;

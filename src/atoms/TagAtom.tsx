@@ -82,12 +82,13 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
         return fontColor.primary1;
     }
   }};
-  border-color: ${({
+  border: ${({
     borderColor,
     theme: {
       color: { backgroundColor },
     },
-  }) => (borderColor ? backgroundColor[borderColor] : 'inherit')};
+  }) =>
+    borderColor ? `${backgroundColor[borderColor]} 1px solid` : 'inherit'};
 
   border-radius: 50px;
 
