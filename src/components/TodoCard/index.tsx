@@ -13,14 +13,21 @@ import {
   DraggableProvidedDragHandleProps,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
+import { focusStep } from '../../hooks/usePomodoro';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
   snapshot: DraggableStateSnapshot;
+  focusStep: focusStep;
 }
 
-const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
+const TodoCard = ({
+  todoData,
+  dragHandleProps,
+  snapshot,
+  focusStep,
+}: ITodoCardProps) => {
   const { id, date: prevDate } = todoData;
   const queryClient = useQueryClient();
 
@@ -124,6 +131,7 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
             todoData={todoData}
             handleEditButton={handleEditButton}
             handleDeleteButton={handleDeleteButton}
+            focusStep={focusStep}
           />
         );
     }
