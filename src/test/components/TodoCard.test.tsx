@@ -15,6 +15,7 @@ import { designTheme } from '../../styles/theme';
 
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +24,8 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const randomTagColor = RandomTagColorList.getInstance().getColorList;
 
 const wrapperCreator = ({ children }: IChildProps) => (
   <QueryClientProvider client={queryClient}>
@@ -48,22 +51,33 @@ describe('TodoCard', () => {
     };
   };
 
-  let renderUI = (MainUI: JSX.Element, wrapperUI: typeof wrapperCreator) => {
+  const renderUI = (MainUI: JSX.Element, wrapperUI: typeof wrapperCreator) => {
     return render(MainUI, { wrapper: wrapperUI });
   };
 
+  const renderTodoUI = (isDragging: boolean, isCurrTodo = false) =>
+    renderUI(
+      <TodoCard
+        todoData={mockTodo}
+        dragHandleProps={undefined}
+        snapshot={setMockSnapshot(isDragging)}
+        focusStep={1}
+        randomTagColor={randomTagColor}
+        isCurrTodo={isCurrTodo}
+        order={1}
+      />,
+      wrapperCreator,
+    );
+
   describe('TodoUI', () => {
     describe('TodoUI는', () => {
-      it('Todo는 제목, 핸들 아이콘, 카테고리로 이루어져 있다.', () => {
-        const { getByText, getByRole } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
-
+      it('Todo는 제목이 있다.', () => {
+        const { getByText } = renderTodoUI(false);
+        const title = getByText('Go to grocery store');
+        expect(title).toBeInTheDocument();
+      });
+      it('Todo는 카테고리가 있다.', () => {
+        const { getByText } = renderTodoUI(false);
         const categories1 = getByText('영어');
         const categories2 = getByText('학교공부');
         expect(categories1).toBeInTheDocument();
@@ -73,14 +87,7 @@ describe('TodoCard', () => {
 
     describe('drag 시에는', () => {
       it('Todo의 카테고리가 숨겨진다.', () => {
-        const { queryByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(true)}
-          />,
-          wrapperCreator,
-        );
+        const { queryByText } = renderTodoUI(true);
 
         const categories1 = queryByText('영어');
         const categories2 = queryByText('학교공부');
@@ -89,16 +96,14 @@ describe('TodoCard', () => {
       });
     });
 
-    describe('TodoUI에', () => {
+    describe('남은 TodoUI에는', () => {
+      it('할 일의 번호가 있다.', () => {
+        const { getByText } = renderTodoUI(false);
+        const num = getByText('1.');
+        expect(num).toBeInTheDocument();
+      });
       it('수정 버튼이 있다.', () => {
-        const { getByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
+        const { getByText } = renderTodoUI(false);
 
         fireEvent.mouseOver(getByText('Go to grocery store'));
 
@@ -107,14 +112,7 @@ describe('TodoCard', () => {
         });
       });
       it('삭제 버튼이 있다.', () => {
-        const { getByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
+        const { getByText } = renderTodoUI(false);
 
         fireEvent.mouseOver(getByText('Go to grocery store'));
 
@@ -122,9 +120,21 @@ describe('TodoCard', () => {
           expect(getByText('삭제')).toBeInTheDocument();
         });
       });
+      it('소요 시간이 있다.', () => {
+        const { getByText, getByAltText } = renderTodoUI(false);
+        const duration = getByText('3분');
+        const timer = getByAltText('timer');
+        expect(timer).toBeInTheDocument();
+        expect(duration).toBeInTheDocument();
+      });
+      it('핸들러 아이콘이 있다.', () => {
+        const { getByAltText } = renderTodoUI(false);
+        const handler = getByAltText('handler');
+        expect(handler).toBeInTheDocument();
+      });
     });
 
-    describe('수정 버튼을 클릭하면', () => {
+    describe('남은 TodoUI의 수정 버튼을 클릭하면', () => {
       it('해당 todoCard의 UI가 EditUI로 바뀐다.', async () => {
         const { getByText, getAllByText, findByRole } = renderUI(
           <>
@@ -132,11 +142,19 @@ describe('TodoCard', () => {
               todoData={mockTodo}
               dragHandleProps={undefined}
               snapshot={setMockSnapshot(false)}
+              focusStep={1}
+              randomTagColor={randomTagColor}
+              isCurrTodo={false}
+              order={1}
             />
             <TodoCard
               todoData={mockFetchTodoList()[1]}
               dragHandleProps={undefined}
               snapshot={setMockSnapshot(false)}
+              focusStep={1}
+              randomTagColor={randomTagColor}
+              isCurrTodo={false}
+              order={2}
             />
           </>,
           wrapperCreator,
@@ -159,6 +177,61 @@ describe('TodoCard', () => {
         expect(titleTwo).toBeInTheDocument();
       });
     });
+
+    describe('진행 중인 TodoUI에는', () => {
+      it('수정 버튼이 없다.', () => {
+        const { queryByText } = renderTodoUI(false, true);
+        const editBtn = queryByText('수정');
+        expect(editBtn).not.toBeInTheDocument();
+      });
+      it('삭제 버튼이 없다.', () => {
+        const { queryByText } = renderTodoUI(false, true);
+        const deleteBtn = queryByText('삭제');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('진행중 태그가 있다.', () => {
+        const { getByText } = renderTodoUI(false, true);
+        const inProgressTag = getByText('진행중');
+        expect(inProgressTag).toBeInTheDocument();
+      });
+    });
+
+    describe('완료한 TodoUI에는', () => {
+      const doneTodoUI = renderUI(
+        <TodoCard
+          todoData={mockFetchTodoList()[2]}
+          dragHandleProps={undefined}
+          snapshot={setMockSnapshot(false)}
+          focusStep={1}
+          randomTagColor={randomTagColor}
+          isCurrTodo={false}
+          order={1}
+        />,
+        wrapperCreator,
+      );
+      it('소요 시간이 없다.', () => {
+        const { queryByAltText, queryByText } = doneTodoUI;
+        const timerIcon = queryByAltText('timer');
+        const duration = queryByText('2분');
+        expect(duration).not.toBeInTheDocument();
+        expect(timerIcon).not.toBeInTheDocument();
+      });
+      it('삭제 버튼이 없다.', () => {
+        const { queryByText } = doneTodoUI;
+        const deleteBtn = queryByText('삭제');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('수정 버튼이 없다.', () => {
+        const { queryByText } = doneTodoUI;
+        const editBtn = queryByText('수정');
+        expect(editBtn).not.toBeInTheDocument();
+      });
+      it('핸들러 아이콘이 없다.', () => {
+        const { queryByAltText } = doneTodoUI;
+        const handlerIcon = queryByAltText('handler');
+        expect(handlerIcon).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('EditUI', () => {
@@ -171,6 +244,10 @@ describe('TodoCard', () => {
             todoData={mockTodo}
             dragHandleProps={undefined}
             snapshot={setMockSnapshot(false)}
+            focusStep={1}
+            randomTagColor={randomTagColor}
+            isCurrTodo={false}
+            order={1}
           />,
           wrapperCreator,
         );

@@ -1,9 +1,6 @@
 import { memo, useCallback, useMemo } from 'react';
 
 /* component */
-import { BtnAtom } from '../../atoms';
-import { NowCard } from '../../molecules';
-import { DateCard } from '../../organisms/DateCard';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../../DB/indexed';
@@ -15,6 +12,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 /* react DnD */
 import {
   DragDropContext,
+  Draggable,
+  Droppable,
   DropResult,
   useMouseSensor,
 } from 'react-beautiful-dnd';
@@ -23,6 +22,7 @@ import {
 import {
   EditContextProvider,
   useCurrentTodo,
+  useDraggableInPortal,
   usePomodoroValue,
 } from '../../hooks';
 
@@ -33,8 +33,9 @@ import { setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
-
-const MemoDateCard = memo(DateCard);
+import TodoCard from '../TodoCard';
+import { CardAtom } from '../../atoms';
+import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
@@ -60,13 +61,24 @@ const orderMutationHandler = async ({
   }
 };
 
+const randomTagColor = RandomTagColorList.getInstance().getColorList;
+
+const MemoTodoCard = memo(TodoCard);
+
 const TodoList = () => {
   /* hook 호출 */
   const queryClient = useQueryClient();
 
-  const { data: todos, isLoading } = useQuery(
+  const { data: todos, isLoading: isTodoLoading } = useQuery(
     ['todos'],
     () => todosApi.getList(false),
+    {
+      staleTime: 1000 * 60 * 20,
+    },
+  );
+  const { data: doneTodos, isLoading: isDoneLoading } = useQuery(
+    ['doneTodos'],
+    () => todosApi.getList(true),
     {
       staleTime: 1000 * 60 * 20,
     },
@@ -92,6 +104,7 @@ const TodoList = () => {
   const {
     settings: { focusStep },
   } = usePomodoroValue();
+  const optionalPortal = useDraggableInPortal();
 
   const onClickHandler = () => {
     const mock = addTodoMocks();
@@ -103,25 +116,14 @@ const TodoList = () => {
     temp();
   };
 
-  /* render helper function */
-  /* 날짜별 todo 데이터 render 함수 */
-  const listRender = useMemo(() => {
-    const dateList = todos && Array.from(todos.keys());
-    const todoList = todos && Array.from(todos.values());
-
-    const renderList =
-      dateList &&
-      todoList &&
-      dateList.map((date, idx) => (
-        <MemoDateCard
-          key={date}
-          date={date}
-          tododata={todoList[idx].filter((todo) => todo.id !== currentTodo?.id)}
-        />
-      ));
-
-    return renderList;
-  }, [todos, currentTodo]);
+  const todoList = useMemo(
+    () => todos && Array.from(todos.values())[0],
+    [todos],
+  );
+  const doneTodoList = useMemo(
+    () => doneTodos && Array.from(doneTodos.values())[0],
+    [doneTodos],
+  );
 
   /* react dnd의 onDragDropHandler */
   const handleDragEnd = useCallback(
@@ -143,25 +145,60 @@ const TodoList = () => {
       > */}
       {/* <CardAtom> */}
       {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
-      <TodoListContainer>
-        <NowCard
-          currentTodo={
-            currentTodo ||
-            ({
-              duration: 0,
-              todo: '오늘 할 일이 비어있습니다 :)',
-              categories: undefined,
-            } as unknown as TodoEntity)
-          }
-          focusStep={focusStep}
-        />
+      <TodoListContainer
+        w="53.75rem"
+        h="20rem"
+        padding="2rem 1.5rem"
+        className="card"
+      >
+        {/* TODO : list가 두 개 되어야 함. 완료한 todo, 해야 할 todo */}
         <DragDropContext
           onDragEnd={handleDragEnd}
           enableDefaultSensors={false}
           sensors={[useMouseSensor, useTouchSensor]}
         >
-          {!isLoading && todos ? (
-            <EditContextProvider>{listRender}</EditContextProvider>
+          {!isTodoLoading && todos ? (
+            <EditContextProvider>
+              <Droppable droppableId="todoList">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {todoList
+                      ? todoList.map((todo, idx) => (
+                          <Draggable
+                            draggableId={String(todo.id)}
+                            index={idx}
+                            key={todo.id}
+                          >
+                            {optionalPortal((provided, snapshot) => (
+                              <div
+                                {...provided.draggableProps}
+                                ref={provided.innerRef}
+                              >
+                                <MemoTodoCard
+                                  dragHandleProps={provided.dragHandleProps}
+                                  todoData={todo}
+                                  snapshot={snapshot}
+                                  focusStep={focusStep}
+                                  randomTagColor={randomTagColor}
+                                  isCurrTodo={
+                                    currentTodo
+                                      ? currentTodo.id === todo.id
+                                      : false
+                                  }
+                                  order={
+                                    idx + 1 + (doneTodos ? doneTodos.size : 0)
+                                  }
+                                />
+                              </div>
+                            ))}
+                          </Draggable>
+                        ))
+                      : 'todo를 추가해보세요'}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </EditContextProvider>
           ) : null}
         </DragDropContext>
       </TodoListContainer>
@@ -173,7 +210,11 @@ const TodoList = () => {
 
 export default TodoList;
 
-const TodoListContainer = styled.div`
-  width: 35.7275rem;
+const TodoListContainer = styled(CardAtom)`
+  background-color: ${({
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => backgroundColor.primary1};
   overflow: scroll;
 `;

@@ -13,14 +13,28 @@ import {
   DraggableProvidedDragHandleProps,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
+import { focusStep } from '../../hooks/usePomodoro';
+import { TagColorName } from '../../styles/emotion';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
   snapshot: DraggableStateSnapshot;
+  focusStep: focusStep;
+  randomTagColor: Record<string, TagColorName>;
+  isCurrTodo: boolean;
+  order: number;
 }
 
-const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
+const TodoCard = ({
+  todoData,
+  dragHandleProps,
+  snapshot,
+  focusStep,
+  randomTagColor,
+  isCurrTodo,
+  order,
+}: ITodoCardProps) => {
   const { id, date: prevDate } = todoData;
   const queryClient = useQueryClient();
 
@@ -106,30 +120,29 @@ const TodoCard = ({ todoData, dragHandleProps, snapshot }: ITodoCardProps) => {
     deleteMutate({ id });
   };
 
-  const renderCard = (() => {
-    switch (editMode && editTodoId === id) {
-      case true:
-        return (
-          <EditUI
-            todoData={todoData}
-            handleEditCancel={handleEditCancel}
-            handleEditSubmit={handleEditSubmit}
-          />
-        );
-      case false:
-        return (
-          <TodoUI
-            dragHandleProps={dragHandleProps}
-            snapshot={snapshot}
-            todoData={todoData}
-            handleEditButton={handleEditButton}
-            handleDeleteButton={handleDeleteButton}
-          />
-        );
-    }
-  })();
-
-  return renderCard;
+  return (
+    <>
+      {editMode && editTodoId === id ? (
+        <EditUI
+          todoData={todoData}
+          handleEditCancel={handleEditCancel}
+          handleEditSubmit={handleEditSubmit}
+        />
+      ) : (
+        <TodoUI
+          dragHandleProps={dragHandleProps}
+          snapshot={snapshot}
+          todoData={todoData}
+          handleEditButton={handleEditButton}
+          handleDeleteButton={handleDeleteButton}
+          focusStep={focusStep}
+          randomTagColor={randomTagColor}
+          isCurrTodo={isCurrTodo}
+          order={order}
+        />
+      )}
+    </>
+  );
 };
 
 export default TodoCard;

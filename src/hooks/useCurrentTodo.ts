@@ -34,6 +34,7 @@ const useCurrentTodo = () => {
   const { mutate: doTodoMutate } = useMutation(doTodoMutateHandler, {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
+      queryClient.invalidateQueries({ queryKey: ['doneTodos'] });
     },
   });
 

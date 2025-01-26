@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { forwardRef } from 'react';
-import { BackgroundColor } from '../styles/emotion';
+import { BackgroundColorName } from '../styles/emotion';
 
 interface IIconAtomProps {
   src: string;
   alt?: string;
   size?: number;
-  backgroundColor?: keyof BackgroundColor | 'transparent';
+  backgroundColor?: BackgroundColorName | 'transparent';
   className?: string;
 }
 

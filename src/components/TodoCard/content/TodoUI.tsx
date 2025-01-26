@@ -1,10 +1,17 @@
-import { BtnAtom, ITagSpanProps, TagAtom, TypoAtom } from '../../../atoms';
+import {
+  BtnAtom,
+  IconAtom,
+  ITagSpanProps,
+  TagAtom,
+  TypoAtom,
+} from '../../../atoms';
 
 import { ITodoCardProps } from '..';
 
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import { formatTime } from '../../../shared/timeUtils';
 
 interface ITodoUIProps extends ITodoCardProps {
   handleEditButton: () => void;
@@ -17,66 +24,122 @@ const TodoUI = ({
   snapshot,
   handleEditButton,
   handleDeleteButton,
+  focusStep,
+  randomTagColor,
+  isCurrTodo,
+  order,
 }: ITodoUIProps) => {
-  const { todo, categories } = todoData;
-  const isMobile = useIsMobile();
-  // const tagSize: ITagSpanProps = useMemo(
-  //   () =>
-  //     isMobile
-  //       ? {
-  //           fontsize: 'md2',
-  //           size: 'md',
-  //           bg: 'cyan',
-  //           maxWidth: 10,
-  //         }
-  //       : {
-  //           fontsize: 'sm',
-  //           size: 'sm',
-  //           bg: 'cyan',
-  //           maxWidth: 10,
-  //         },
-  //   [isMobile],
-  // );
+  const { todo, categories, done } = todoData;
+  const HandlerIcon = useCallback(() => {
+    return isCurrTodo ? (
+      <IconAtom
+        src="icon/handle.svg"
+        alt="handler"
+        size={1.25}
+        className="handler"
+      />
+    ) : (
+      <div {...dragHandleProps}>
+        <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
+      </div>
+    );
+  }, [isCurrTodo]);
+  const FooterButton = useCallback(() => {
+    return isCurrTodo ? (
+      <TagAtom
+        styleOption={{
+          size: 'normal',
+          bg: 'transparent',
+          borderColor: 'primary2',
+        }}
+      >
+        <TypoAtom fontSize="b2" fontColor="primary2">
+          진행중
+        </TypoAtom>
+      </TagAtom>
+    ) : (
+      <>
+        <BtnAtom handleOnClick={handleEditButton}>
+          <TagAtom
+            styleOption={{
+              size: 'normal',
+              bg: 'transparent',
+              borderColor: 'primary2',
+            }}
+            className="edit__button"
+          >
+            <TypoAtom fontSize="b2" fontColor="primary2">
+              수정
+            </TypoAtom>
+          </TagAtom>
+        </BtnAtom>
+        <BtnAtom handleOnClick={handleDeleteButton}>
+          <TagAtom
+            styleOption={{
+              size: 'normal',
+              bg: 'transparent',
+              borderColor: 'primary2',
+            }}
+            className="edit__button"
+          >
+            <TypoAtom fontSize="b2" fontColor="primary2">
+              삭제
+            </TypoAtom>
+          </TagAtom>
+        </BtnAtom>
+      </>
+    );
+  }, [isCurrTodo]);
 
   return (
-    <TodoCardContainer>
-      <DraggableWrapper {...dragHandleProps}>
-        <TitleCategoryContainer>
-          <TitleContainer>
-            <TypoAtom
-              className="todoTitle"
-              fontSize="body"
-              padding={`${0.2}rem ${0}rem`}
-            >
-              {todo}
+    <TodoCardContainer done={done} isCurrTodo={isCurrTodo}>
+      <TitleContainer>
+        {done ? null : (
+          <>
+            <HandlerIcon />
+            <TypoAtom fontSize="h3" fontColor="primary2">
+              {order}.
             </TypoAtom>
-          </TitleContainer>
-          {snapshot?.isDragging ? null : (
-            <CategoryContainer>
-              {categories?.map((category) => {
+          </>
+        )}
+        <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
+          {todo}
+        </TypoAtom>
+      </TitleContainer>
+      {snapshot?.isDragging ? null : (
+        <>
+          {categories ? (
+            <CategoryContainer className="categories">
+              {categories.map((category) => {
                 return (
                   <TagAtom
                     key={category}
                     title={category}
-                    // styleOption={tagSize}
+                    styleOption={{ bg: randomTagColor[category] }}
                   >
                     {category}
                   </TagAtom>
                 );
               })}
             </CategoryContainer>
+          ) : null}
+          {done ? null : (
+            <EditContainer>
+              <TimeWrapper>
+                <IconAtom
+                  src={'icon/yellowTimer.svg'}
+                  alt="timer"
+                  className="timer"
+                  size={1.25}
+                />
+                <TypoAtom fontSize="body" fontColor="primary2">
+                  {formatTime(focusStep * todoData.duration)}
+                </TypoAtom>
+              </TimeWrapper>
+              <FooterButton />
+            </EditContainer>
           )}
-        </TitleCategoryContainer>
-      </DraggableWrapper>
-      {snapshot?.isDragging ? null : (
-        <EditWrapper id="editWrapper">
-          <BtnAtom handleOnClick={handleEditButton}>
-            <TagAtom styleOption={{ size: 'normal' }}>수정</TagAtom>
-          </BtnAtom>
-          <BtnAtom handleOnClick={handleDeleteButton}>
-            <TagAtom styleOption={{ size: 'normal' }}>삭제</TagAtom>
-          </BtnAtom>
-        </EditWrapper>
+        </>
       )}
     </TodoCardContainer>
   );
@@ -84,52 +147,67 @@ const TodoUI = ({
 
 export default TodoUI;
 
-const TodoCardContainer = styled.div`
+const TodoCardContainer = styled.div<{ done: boolean; isCurrTodo: boolean }>`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  @media all and (min-width: 1080px),
-    ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.desktop} {
-    &:hover {
-      #editWrapper {
-        display: flex;
-      }
-    }
+  width: 24.5rem;
+
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border-radius: 0.875rem;
+
+  background-color: #463685;
+
+  .todoTitle,
+  .categories {
+    opacity: ${({ done }) => (done ? 0.4 : 1)};
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    overflow-x: hidden;
-    #editWrapper {
-      button {
-        span {
-          font-size: 2.1rem;
-        }
-      }
-    }
+  .categories {
+    margin-left: ${({ done }) => (done ? 0 : '1.25rem')};
   }
+
+  border: ${({
+    isCurrTodo,
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => isCurrTodo && ` 1px solid ${backgroundColor.primary2}`};
+  .handler,
+  .timer {
+    cursor: auto;
+  }
+
+  /* &,
+  * {
+    outline: 1px solid limegreen;
+  } */
 `;
 
-const DraggableWrapper = styled.div`
+const EditContainer = styled.div`
   display: flex;
-  width: 80%;
-`;
-
-const TitleCategoryContainer = styled.div`
-  margin-left: 1rem;
-`;
-
-const EditWrapper = styled.div`
-  display: none;
-  gap: 10px;
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    display: flex;
+  justify-content: flex-end;
+  column-gap: 0.5rem;
+  .edit__button {
+    &:hover {
+      background-color: ${({ theme: { button } }) =>
+        button.darkBtn.hover.backgroundColor};
+    }
+    transition: background-color 0.3s ease-in-out;
   }
+`;
+
+const TimeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 0.25rem;
 `;
 
 const TitleContainer = styled.div`
   width: 100%;
-  margin-bottom: 0.5rem;
+  display: flex;
+  column-gap: 4px;
+  margin-bottom: 4px;
 
   & > span {
     overflow: hidden;
@@ -153,6 +231,10 @@ const TitleContainer = styled.div`
 export const CategoryContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
 
   > div {
     margin-right: 0.5rem;
