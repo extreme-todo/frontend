@@ -9,7 +9,7 @@ import {
 import { ITodoCardProps } from '..';
 
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { formatTime } from '../../../shared/timeUtils';
 
@@ -29,22 +29,71 @@ const TodoUI = ({
   isCurrTodo,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
+  const HandlerIcon = useCallback(() => {
+    return isCurrTodo ? (
+      <IconAtom
+        src="icon/handle.svg"
+        alt="handler"
+        size={1.25}
+        className="handler"
+      />
+    ) : (
+      <div {...dragHandleProps}>
+        <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
+      </div>
+    );
+  }, [isCurrTodo]);
+  const FooterButton = useCallback(() => {
+    return isCurrTodo ? (
+      <TagAtom
+        styleOption={{
+          size: 'normal',
+          bg: 'transparent',
+          borderColor: 'primary2',
+        }}
+      >
+        <TypoAtom fontSize="b2" fontColor="primary2">
+          진행중
+        </TypoAtom>
+      </TagAtom>
+    ) : (
+      <>
+        <BtnAtom handleOnClick={handleEditButton}>
+          <TagAtom
+            styleOption={{
+              size: 'normal',
+              bg: 'transparent',
+              borderColor: 'primary2',
+            }}
+            className="edit__button"
+          >
+            <TypoAtom fontSize="b2" fontColor="primary2">
+              수정
+            </TypoAtom>
+          </TagAtom>
+        </BtnAtom>
+        <BtnAtom handleOnClick={handleDeleteButton}>
+          <TagAtom
+            styleOption={{
+              size: 'normal',
+              bg: 'transparent',
+              borderColor: 'primary2',
+            }}
+            className="edit__button"
+          >
+            <TypoAtom fontSize="b2" fontColor="primary2">
+              삭제
+            </TypoAtom>
+          </TagAtom>
+        </BtnAtom>
+      </>
+    );
+  }, [isCurrTodo]);
 
   return (
     <TodoCardContainer>
       <TitleContainer>
-        {isCurrTodo ? (
-          <IconAtom
-            src="icon/handle.svg"
-            alt="handler"
-            size={1.25}
-            className="handler"
-          />
-        ) : (
-          <div {...dragHandleProps}>
-            <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
-          </div>
-        )}
+        <HandlerIcon />
         {/* TODO : 🚨 조건문 처리 및 변수 처리 필요 */}
         <TypoAtom fontSize="h3" fontColor="primary2">
           {'1.'}
@@ -82,50 +131,7 @@ const TodoUI = ({
                 {formatTime(focusStep * todoData.duration)}
               </TypoAtom>
             </TimeWrapper>
-            {isCurrTodo ? (
-              <TagAtom
-                styleOption={{
-                  size: 'normal',
-                  bg: 'transparent',
-                  borderColor: 'primary2',
-                }}
-              >
-                <TypoAtom fontSize="b2" fontColor="primary2">
-                  진행중
-                </TypoAtom>
-              </TagAtom>
-            ) : (
-              <>
-                <BtnAtom handleOnClick={handleEditButton}>
-                  <TagAtom
-                    styleOption={{
-                      size: 'normal',
-                      bg: 'transparent',
-                      borderColor: 'primary2',
-                    }}
-                    className="edit__button"
-                  >
-                    <TypoAtom fontSize="b2" fontColor="primary2">
-                      수정
-                    </TypoAtom>
-                  </TagAtom>
-                </BtnAtom>
-                <BtnAtom handleOnClick={handleDeleteButton}>
-                  <TagAtom
-                    styleOption={{
-                      size: 'normal',
-                      bg: 'transparent',
-                      borderColor: 'primary2',
-                    }}
-                    className="edit__button"
-                  >
-                    <TypoAtom fontSize="b2" fontColor="primary2">
-                      삭제
-                    </TypoAtom>
-                  </TagAtom>
-                </BtnAtom>
-              </>
-            )}
+            <FooterButton />
           </EditContainer>
         </>
       )}
