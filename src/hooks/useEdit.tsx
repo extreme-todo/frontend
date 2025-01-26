@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import { IChildProps } from '../shared/interfaces';
 
 interface IEdit {
@@ -21,11 +27,14 @@ const EditContextProvider = ({ children }: IChildProps): JSX.Element => {
     editTodoId: undefined,
   });
 
-  const handleState = (newEditState: IEdit) => {
+  const handleState = useCallback((newEditState: IEdit) => {
     setEdit(newEditState);
-  };
+  }, []);
 
-  const wrapState: editContextType = [edit, handleState];
+  const wrapState: editContextType = useMemo(
+    () => [edit, handleState],
+    [edit, handleState],
+  );
 
   return (
     <EditContext.Provider value={wrapState}>{children}</EditContext.Provider>

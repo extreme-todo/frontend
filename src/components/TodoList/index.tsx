@@ -63,6 +63,8 @@ const orderMutationHandler = async ({
 
 const randomTagColor = RandomTagColorList.getInstance().getColorList;
 
+const MemoTodoCard = memo(TodoCard);
+
 const TodoList = () => {
   /* hook 호출 */
   const queryClient = useQueryClient();
@@ -114,8 +116,14 @@ const TodoList = () => {
     temp();
   };
 
-  const todoList = todos && Array.from(todos.values())[0];
-  const doneTodoList = doneTodos && Array.from(doneTodos.values())[0];
+  const todoList = useMemo(
+    () => todos && Array.from(todos.values())[0],
+    [todos],
+  );
+  const doneTodoList = useMemo(
+    () => doneTodos && Array.from(doneTodos.values())[0],
+    [doneTodos],
+  );
 
   /* react dnd의 onDragDropHandler */
   const handleDragEnd = useCallback(
@@ -166,7 +174,7 @@ const TodoList = () => {
                                 {...provided.draggableProps}
                                 ref={provided.innerRef}
                               >
-                                <TodoCard
+                                <MemoTodoCard
                                   dragHandleProps={provided.dragHandleProps}
                                   todoData={todo}
                                   snapshot={snapshot}
