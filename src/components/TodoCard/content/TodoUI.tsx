@@ -92,8 +92,8 @@ const TodoUI = ({
   }, [isCurrTodo]);
 
   return (
-    <TodoCardContainer>
-      <TitleContainer done={done}>
+    <TodoCardContainer done={done} isCurrTodo={isCurrTodo}>
+      <TitleContainer>
         {done ? null : (
           <>
             <HandlerIcon />
@@ -109,7 +109,7 @@ const TodoUI = ({
       {snapshot?.isDragging ? null : (
         <>
           {categories ? (
-            <CategoryContainer done={done}>
+            <CategoryContainer className="categories">
               {categories.map((category) => {
                 return (
                   <TagAtom
@@ -147,7 +147,7 @@ const TodoUI = ({
 
 export default TodoUI;
 
-const TodoCardContainer = styled.div`
+const TodoCardContainer = styled.div<{ done: boolean; isCurrTodo: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -159,6 +159,20 @@ const TodoCardContainer = styled.div`
 
   background-color: #463685;
 
+  .todoTitle,
+  .categories {
+    opacity: ${({ done }) => (done ? 0.4 : 1)};
+  }
+  .categories {
+    margin-left: ${({ done }) => (done ? 0 : '1.25rem')};
+  }
+
+  border: ${({
+    isCurrTodo,
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => isCurrTodo && ` 1px solid ${backgroundColor.primary2}`};
   .handler,
   .timer {
     cursor: auto;
@@ -189,13 +203,11 @@ const TimeWrapper = styled.div`
   column-gap: 0.25rem;
 `;
 
-const TitleContainer = styled.div<{ done: boolean }>`
+const TitleContainer = styled.div`
   width: 100%;
   display: flex;
   column-gap: 4px;
   margin-bottom: 4px;
-
-  opacity: ${({ done }) => (done ? 0.4 : 1)};
 
   & > span {
     overflow: hidden;
@@ -216,11 +228,9 @@ const TitleContainer = styled.div<{ done: boolean }>`
   }
 `;
 
-export const CategoryContainer = styled.div<{ done: boolean }>`
+export const CategoryContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-left: ${({ done }) => (done ? 0 : '1.25rem')};
-  opacity: ${({ done }) => (done ? 0.4 : 1)};
   margin-bottom: 0.5rem;
 
   column-gap: 0.5rem;
