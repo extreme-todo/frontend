@@ -27,6 +27,7 @@ const TodoUI = ({
   focusStep,
   randomTagColor,
   isCurrTodo,
+  order,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
   const HandlerIcon = useCallback(() => {
@@ -94,9 +95,8 @@ const TodoUI = ({
     <TodoCardContainer>
       <TitleContainer>
         <HandlerIcon />
-        {/* TODO : 🚨 조건문 처리 및 변수 처리 필요 */}
         <TypoAtom fontSize="h3" fontColor="primary2">
-          {'1.'}
+          {order}.
         </TypoAtom>
         <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
           {todo}

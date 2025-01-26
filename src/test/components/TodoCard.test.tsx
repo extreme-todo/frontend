@@ -64,6 +64,7 @@ describe('TodoCard', () => {
         focusStep={1}
         randomTagColor={randomTagColor}
         isCurrTodo={isCurrTodo}
+        order={1}
       />,
       wrapperCreator,
     );
@@ -144,6 +145,7 @@ describe('TodoCard', () => {
               focusStep={1}
               randomTagColor={randomTagColor}
               isCurrTodo={false}
+              order={1}
             />
             <TodoCard
               todoData={mockFetchTodoList()[1]}
@@ -152,6 +154,7 @@ describe('TodoCard', () => {
               focusStep={1}
               randomTagColor={randomTagColor}
               isCurrTodo={false}
+              order={2}
             />
           </>,
           wrapperCreator,
@@ -214,6 +217,7 @@ describe('TodoCard', () => {
             focusStep={1}
             randomTagColor={randomTagColor}
             isCurrTodo={false}
+            order={1}
           />,
           wrapperCreator,
         );

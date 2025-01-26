@@ -23,6 +23,7 @@ interface ITodoCardProps {
   focusStep: focusStep;
   randomTagColor: Record<string, TagColorName>;
   isCurrTodo: boolean;
+  order: number;
 }
 
 const TodoCard = ({
@@ -32,6 +33,7 @@ const TodoCard = ({
   focusStep,
   randomTagColor,
   isCurrTodo,
+  order,
 }: ITodoCardProps) => {
   const { id, date: prevDate } = todoData;
   const queryClient = useQueryClient();
@@ -139,6 +141,7 @@ const TodoCard = ({
             focusStep={focusStep}
             randomTagColor={randomTagColor}
             isCurrTodo={isCurrTodo}
+            order={order}
           />
         );
     }

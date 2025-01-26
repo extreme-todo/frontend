@@ -176,6 +176,9 @@ const TodoList = () => {
                                       ? currentTodo.id === todo.id
                                       : false
                                   }
+                                  order={
+                                    idx + 1 + (doneTodos ? doneTodos.size : 0)
+                                  }
                                 />
                               </div>
                             ))}
