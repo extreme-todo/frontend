@@ -115,6 +115,7 @@ const TodoList = () => {
   };
 
   const todoList = todos && Array.from(todos.values())[0];
+  const doneTodoList = doneTodos && Array.from(doneTodos.values())[0];
 
   /* react dnd의 onDragDropHandler */
   const handleDragEnd = useCallback(

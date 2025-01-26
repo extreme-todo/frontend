@@ -29,7 +29,7 @@ const TodoUI = ({
   isCurrTodo,
   order,
 }: ITodoUIProps) => {
-  const { todo, categories } = todoData;
+  const { todo, categories, done } = todoData;
   const HandlerIcon = useCallback(() => {
     return isCurrTodo ? (
       <IconAtom
@@ -93,11 +93,15 @@ const TodoUI = ({
 
   return (
     <TodoCardContainer>
-      <TitleContainer>
-        <HandlerIcon />
-        <TypoAtom fontSize="h3" fontColor="primary2">
-          {order}.
-        </TypoAtom>
+      <TitleContainer done={done}>
+        {done ? null : (
+          <>
+            <HandlerIcon />
+            <TypoAtom fontSize="h3" fontColor="primary2">
+              {order}.
+            </TypoAtom>
+          </>
+        )}
         <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
           {todo}
         </TypoAtom>
@@ -105,7 +109,7 @@ const TodoUI = ({
       {snapshot?.isDragging ? null : (
         <>
           {categories ? (
-            <CategoryContainer>
+            <CategoryContainer done={done}>
               {categories.map((category) => {
                 return (
                   <TagAtom
@@ -119,20 +123,22 @@ const TodoUI = ({
               })}
             </CategoryContainer>
           ) : null}
-          <EditContainer>
-            <TimeWrapper>
-              <IconAtom
-                src={'icon/yellowTimer.svg'}
-                alt="timer"
-                className="timer"
-                size={1.25}
-              />
-              <TypoAtom fontSize="body" fontColor="primary2">
-                {formatTime(focusStep * todoData.duration)}
-              </TypoAtom>
-            </TimeWrapper>
-            <FooterButton />
-          </EditContainer>
+          {done ? null : (
+            <EditContainer>
+              <TimeWrapper>
+                <IconAtom
+                  src={'icon/yellowTimer.svg'}
+                  alt="timer"
+                  className="timer"
+                  size={1.25}
+                />
+                <TypoAtom fontSize="body" fontColor="primary2">
+                  {formatTime(focusStep * todoData.duration)}
+                </TypoAtom>
+              </TimeWrapper>
+              <FooterButton />
+            </EditContainer>
+          )}
         </>
       )}
     </TodoCardContainer>
@@ -183,11 +189,13 @@ const TimeWrapper = styled.div`
   column-gap: 0.25rem;
 `;
 
-const TitleContainer = styled.div`
+const TitleContainer = styled.div<{ done: boolean }>`
   width: 100%;
   display: flex;
   column-gap: 4px;
   margin-bottom: 4px;
+
+  opacity: ${({ done }) => (done ? 0.4 : 1)};
 
   & > span {
     overflow: hidden;
@@ -208,10 +216,11 @@ const TitleContainer = styled.div`
   }
 `;
 
-export const CategoryContainer = styled.div`
+export const CategoryContainer = styled.div<{ done: boolean }>`
   display: flex;
   flex-wrap: wrap;
-  padding-left: 1.25rem;
+  margin-left: ${({ done }) => (done ? 0 : '1.25rem')};
+  opacity: ${({ done }) => (done ? 0.4 : 1)};
   margin-bottom: 0.5rem;
 
   column-gap: 0.5rem;

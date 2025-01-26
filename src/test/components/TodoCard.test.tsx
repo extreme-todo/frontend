@@ -197,10 +197,40 @@ describe('TodoCard', () => {
     });
 
     describe('완료한 TodoUI에는', () => {
-      it('소요 시간이 없다.', () => {});
-      it('삭제 버튼이 없다.', () => {});
-      it('수정 버튼이 없다.', () => {});
-      it('핸들러 아이콘이 없다.', () => {});
+      const doneTodoUI = renderUI(
+        <TodoCard
+          todoData={mockFetchTodoList()[2]}
+          dragHandleProps={undefined}
+          snapshot={setMockSnapshot(false)}
+          focusStep={1}
+          randomTagColor={randomTagColor}
+          isCurrTodo={false}
+          order={1}
+        />,
+        wrapperCreator,
+      );
+      it('소요 시간이 없다.', () => {
+        const { queryByAltText, queryByText } = doneTodoUI;
+        const timerIcon = queryByAltText('timer');
+        const duration = queryByText('2분');
+        expect(duration).not.toBeInTheDocument();
+        expect(timerIcon).not.toBeInTheDocument();
+      });
+      it('삭제 버튼이 없다.', () => {
+        const { queryByText } = doneTodoUI;
+        const deleteBtn = queryByText('삭제');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('수정 버튼이 없다.', () => {
+        const { queryByText } = doneTodoUI;
+        const editBtn = queryByText('수정');
+        expect(editBtn).not.toBeInTheDocument();
+      });
+      it('핸들러 아이콘이 없다.', () => {
+        const { queryByAltText } = doneTodoUI;
+        const handlerIcon = queryByAltText('handler');
+        expect(handlerIcon).not.toBeInTheDocument();
+      });
     });
   });
 
