@@ -164,6 +164,11 @@ const TodoList = () => {
                                   snapshot={snapshot}
                                   focusStep={focusStep}
                                   randomTagColor={randomTagColor}
+                                  isCurrTodo={
+                                    currentTodo
+                                      ? currentTodo.id === todo.id
+                                      : false
+                                  }
                                 />
                               </div>
                             ))}

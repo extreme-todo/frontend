@@ -55,7 +55,7 @@ describe('TodoCard', () => {
     return render(MainUI, { wrapper: wrapperUI });
   };
 
-  const renderTodoUI = (isDragging: boolean) =>
+  const renderTodoUI = (isDragging: boolean, isCurrTodo = false) =>
     renderUI(
       <TodoCard
         todoData={mockTodo}
@@ -63,6 +63,7 @@ describe('TodoCard', () => {
         snapshot={setMockSnapshot(isDragging)}
         focusStep={1}
         randomTagColor={randomTagColor}
+        isCurrTodo={isCurrTodo}
       />,
       wrapperCreator,
     );
@@ -142,6 +143,7 @@ describe('TodoCard', () => {
               snapshot={setMockSnapshot(false)}
               focusStep={1}
               randomTagColor={randomTagColor}
+              isCurrTodo={false}
             />
             <TodoCard
               todoData={mockFetchTodoList()[1]}
@@ -149,6 +151,7 @@ describe('TodoCard', () => {
               snapshot={setMockSnapshot(false)}
               focusStep={1}
               randomTagColor={randomTagColor}
+              isCurrTodo={false}
             />
           </>,
           wrapperCreator,
@@ -173,9 +176,21 @@ describe('TodoCard', () => {
     });
 
     describe('진행 중인 TodoUI에는', () => {
-      it('수정 버튼이 없다.', () => {});
-      it('삭제 버튼이 없다.', () => {});
-      it('진행중 태그가 있다.', () => {});
+      it('수정 버튼이 없다.', () => {
+        const { queryByText } = renderTodoUI(false, true);
+        const editBtn = queryByText('수정');
+        expect(editBtn).not.toBeInTheDocument();
+      });
+      it('삭제 버튼이 없다.', () => {
+        const { queryByText } = renderTodoUI(false, true);
+        const deleteBtn = queryByText('삭제');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('진행중 태그가 있다.', () => {
+        const { getByText } = renderTodoUI(false, true);
+        const inProgressTag = getByText('진행중');
+        expect(inProgressTag).toBeInTheDocument();
+      });
     });
 
     describe('완료한 TodoUI에는', () => {
@@ -198,6 +213,7 @@ describe('TodoCard', () => {
             snapshot={setMockSnapshot(false)}
             focusStep={1}
             randomTagColor={randomTagColor}
+            isCurrTodo={false}
           />,
           wrapperCreator,
         );

@@ -26,16 +26,25 @@ const TodoUI = ({
   handleDeleteButton,
   focusStep,
   randomTagColor,
+  isCurrTodo,
 }: ITodoUIProps) => {
   const { todo, categories } = todoData;
 
   return (
     <TodoCardContainer>
       <TitleContainer>
-        <div {...dragHandleProps}>
-          {/* TODO : 🚨 조건문 처리 필요 */}
-          <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
-        </div>
+        {isCurrTodo ? (
+          <IconAtom
+            src="icon/handle.svg"
+            alt="handler"
+            size={1.25}
+            className="handler"
+          />
+        ) : (
+          <div {...dragHandleProps}>
+            <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
+          </div>
+        )}
         {/* TODO : 🚨 조건문 처리 및 변수 처리 필요 */}
         <TypoAtom fontSize="h3" fontColor="primary2">
           {'1.'}
@@ -63,40 +72,60 @@ const TodoUI = ({
           ) : null}
           <EditContainer>
             <TimeWrapper>
-              <IconAtom src={'icon/yellowTimer.svg'} alt="timer" size={1.25} />
+              <IconAtom
+                src={'icon/yellowTimer.svg'}
+                alt="timer"
+                className="timer"
+                size={1.25}
+              />
               <TypoAtom fontSize="body" fontColor="primary2">
                 {formatTime(focusStep * todoData.duration)}
               </TypoAtom>
             </TimeWrapper>
-            {/* TODO : 조건문처리 해서 '진행중' 넣어줘야 됨 🚨 */}
-            <BtnAtom handleOnClick={handleEditButton}>
+            {isCurrTodo ? (
               <TagAtom
                 styleOption={{
                   size: 'normal',
                   bg: 'transparent',
                   borderColor: 'primary2',
                 }}
-                className="edit__button"
               >
                 <TypoAtom fontSize="b2" fontColor="primary2">
-                  수정
+                  진행중
                 </TypoAtom>
               </TagAtom>
-            </BtnAtom>
-            <BtnAtom handleOnClick={handleDeleteButton}>
-              <TagAtom
-                styleOption={{
-                  size: 'normal',
-                  bg: 'transparent',
-                  borderColor: 'primary2',
-                }}
-                className="edit__button"
-              >
-                <TypoAtom fontSize="b2" fontColor="primary2">
-                  삭제
-                </TypoAtom>
-              </TagAtom>
-            </BtnAtom>
+            ) : (
+              <>
+                <BtnAtom handleOnClick={handleEditButton}>
+                  <TagAtom
+                    styleOption={{
+                      size: 'normal',
+                      bg: 'transparent',
+                      borderColor: 'primary2',
+                    }}
+                    className="edit__button"
+                  >
+                    <TypoAtom fontSize="b2" fontColor="primary2">
+                      수정
+                    </TypoAtom>
+                  </TagAtom>
+                </BtnAtom>
+                <BtnAtom handleOnClick={handleDeleteButton}>
+                  <TagAtom
+                    styleOption={{
+                      size: 'normal',
+                      bg: 'transparent',
+                      borderColor: 'primary2',
+                    }}
+                    className="edit__button"
+                  >
+                    <TypoAtom fontSize="b2" fontColor="primary2">
+                      삭제
+                    </TypoAtom>
+                  </TagAtom>
+                </BtnAtom>
+              </>
+            )}
           </EditContainer>
         </>
       )}
@@ -117,6 +146,11 @@ const TodoCardContainer = styled.div`
   border-radius: 0.875rem;
 
   background-color: #463685;
+
+  .handler,
+  .timer {
+    cursor: auto;
+  }
 
   /* &,
   * {

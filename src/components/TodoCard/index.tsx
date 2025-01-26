@@ -22,6 +22,7 @@ interface ITodoCardProps {
   snapshot: DraggableStateSnapshot;
   focusStep: focusStep;
   randomTagColor: Record<string, TagColorName>;
+  isCurrTodo: boolean;
 }
 
 const TodoCard = ({
@@ -30,6 +31,7 @@ const TodoCard = ({
   snapshot,
   focusStep,
   randomTagColor,
+  isCurrTodo,
 }: ITodoCardProps) => {
   const { id, date: prevDate } = todoData;
   const queryClient = useQueryClient();
@@ -136,6 +138,7 @@ const TodoCard = ({
             handleDeleteButton={handleDeleteButton}
             focusStep={focusStep}
             randomTagColor={randomTagColor}
+            isCurrTodo={isCurrTodo}
           />
         );
     }
