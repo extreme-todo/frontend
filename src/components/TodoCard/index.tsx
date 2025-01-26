@@ -120,34 +120,29 @@ const TodoCard = ({
     deleteMutate({ id });
   };
 
-  const renderCard = (() => {
-    switch (editMode && editTodoId === id) {
-      case true:
-        return (
-          <EditUI
-            todoData={todoData}
-            handleEditCancel={handleEditCancel}
-            handleEditSubmit={handleEditSubmit}
-          />
-        );
-      case false:
-        return (
-          <TodoUI
-            dragHandleProps={dragHandleProps}
-            snapshot={snapshot}
-            todoData={todoData}
-            handleEditButton={handleEditButton}
-            handleDeleteButton={handleDeleteButton}
-            focusStep={focusStep}
-            randomTagColor={randomTagColor}
-            isCurrTodo={isCurrTodo}
-            order={order}
-          />
-        );
-    }
-  })();
-
-  return renderCard;
+  return (
+    <>
+      {editMode && editTodoId === id ? (
+        <EditUI
+          todoData={todoData}
+          handleEditCancel={handleEditCancel}
+          handleEditSubmit={handleEditSubmit}
+        />
+      ) : (
+        <TodoUI
+          dragHandleProps={dragHandleProps}
+          snapshot={snapshot}
+          todoData={todoData}
+          handleEditButton={handleEditButton}
+          handleDeleteButton={handleDeleteButton}
+          focusStep={focusStep}
+          randomTagColor={randomTagColor}
+          isCurrTodo={isCurrTodo}
+          order={order}
+        />
+      )}
+    </>
+  );
 };
 
 export default TodoCard;
