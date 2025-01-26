@@ -67,9 +67,16 @@ const TodoList = () => {
   /* hook 호출 */
   const queryClient = useQueryClient();
 
-  const { data: todos, isLoading } = useQuery(
+  const { data: todos, isLoading: isTodoLoading } = useQuery(
     ['todos'],
     () => todosApi.getList(false),
+    {
+      staleTime: 1000 * 60 * 20,
+    },
+  );
+  const { data: doneTodos, isLoading: isDoneLoading } = useQuery(
+    ['doneTodos'],
+    () => todosApi.getList(true),
     {
       staleTime: 1000 * 60 * 20,
     },
@@ -141,7 +148,7 @@ const TodoList = () => {
           enableDefaultSensors={false}
           sensors={[useMouseSensor, useTouchSensor]}
         >
-          {!isLoading && todos ? (
+          {!isTodoLoading && todos ? (
             <EditContextProvider>
               <Droppable droppableId="todoList">
                 {(provided) => (
