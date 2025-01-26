@@ -95,6 +95,11 @@ describe('TodoCard', () => {
     });
 
     describe('남은 TodoUI에는', () => {
+      it('할 일의 번호가 있다.', () => {
+        const { getByText } = renderTodoUI(false);
+        const num = getByText('1.');
+        expect(num).toBeInTheDocument();
+      });
       it('수정 버튼이 있다.', () => {
         const { getByText } = renderTodoUI(false);
 
