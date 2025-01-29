@@ -30,23 +30,31 @@ function CardFlipAnimator({
   );
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const getBeforeCurrentIndex = (currentIndex: number) => {
+    return currentIndex - 1 < 0 ? cards.length - 1 : currentIndex - 1;
+  };
+
+  const getAfterCurrentIndex = (currentIndex: number) => {
+    return currentIndex + 1 > cards.length - 1 ? 0 : currentIndex + 1;
+  };
+
   useEffect(() => {
     cardRefs.current.forEach((cardRef, idx) => {
       if (cardRef) {
-        if (idx < currentCardIndex) {
-          cardRef.style.zIndex = `${idx + 1}`;
+        if (idx === getBeforeCurrentIndex(currentCardIndex)) {
+          // cardRef.style.zIndex = `${idx + 1}`;
           cardRef.style.pointerEvents = 'none';
-          cardRef.style.animation = 'oneCardUp 0.3s forwards ease-in-out';
+          cardRef.style.animation = 'toFront 0.3s forwards ease-in-out';
         }
         if (idx === currentCardIndex) {
-          cardRef.style.zIndex = `${cards.length}`;
+          // cardRef.style.zIndex = `${cards.length}`;
           cardRef.style.pointerEvents = 'auto';
-          cardRef.style.animation = 'flipToFront 0.3s forwards ease-in-out';
+          cardRef.style.animation = 'toCurrent 0.3s forwards ease-in-out';
         }
-        if (idx > currentCardIndex) {
-          cardRef.style.zIndex = `${cards.length - idx}`;
+        if (idx === getAfterCurrentIndex(currentCardIndex)) {
+          // cardRef.style.zIndex = `${cards.length - idx}`;
           cardRef.style.pointerEvents = 'none';
-          cardRef.style.animation = 'flipToBack 0.3s forwards ease-in-out';
+          cardRef.style.animation = 'toBack 0.3s forwards ease-in-out';
         }
       }
     });
@@ -117,18 +125,30 @@ const StyledCardFlipAnimatorWrapper = styled.div<
       transform: rotateZ(0deg);
       left: 0;
       top: 0;
+      opacity: 1;
     }
 
     50% {
-      transform: rotateZ(90deg);
+      transform: rotateZ(3.5deg);
       left: 17px;
-      top: 40px;
+      top: -40px;
+      opacity: 0;
+      z-index: 999;
+    }
+
+    99% {
+      transform: rotateZ(3.5deg);
+      left: 17px;
+      top: -40px;
+      opacity: 0;
+      z-index: 999;
     }
 
     100% {
       transform: rotateZ(${({ degree }) => -degree}deg);
       left: 17px;
       top: 40px;
+      opacity: 1;
     }
   }
 
@@ -149,6 +169,57 @@ const StyledCardFlipAnimatorWrapper = styled.div<
       transform: rotateZ(0deg);
       left: 0;
       top: 0;
+    }
+  }
+
+  @keyframes toCurrent {
+    0% {
+      transform: rotateZ(${({ degree }) => -degree}deg);
+      left: 17px;
+      top: 40px;
+      z-index: 0;
+      opacity: 1;
+    }
+    100% {
+      transform: rotateZ(0deg);
+      left: 0;
+      top: 0;
+      z-index: 1;
+      opacity: 1;
+    }
+  }
+
+  @keyframes toBack {
+    0% {
+      transform: rotateZ(0deg);
+      left: 0;
+      top: 0;
+      z-index: 1;
+      opacity: 1;
+    }
+    100% {
+      transform: rotateZ(${({ degree }) => degree}deg);
+      left: -17px;
+      top: -40px;
+      z-index: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes toFront {
+    0% {
+      transform: rotateZ(${({ degree }) => degree}deg);
+      left: 34px;
+      top: 40px;
+      z-index: 0;
+      opacity: 0;
+    }
+    100% {
+      transform: rotateZ(${({ degree }) => -degree}deg);
+      left: 17px;
+      top: 40px;
+      z-index: 0;
+      opacity: 1;
     }
   }
 `;
