@@ -193,17 +193,21 @@ const CurrentTodoContainer = styled.div`
     .title {
       font-size: ${({ theme: { fontSize } }) => fontSize.b1.size};
       font-weight: ${({ theme: { fontSize } }) => fontSize.b1.weight};
+      text-align: right;
     }
     .todo-title {
       overflow: auto;
       padding-right: 16rem;
       box-sizing: border-box;
       max-height: 50%;
+      text-align: right;
+
       span {
         vertical-align: middle;
         font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
         white-space: normal;
         overflow: initial;
+        text-align: right;
       }
     }
     .categories {

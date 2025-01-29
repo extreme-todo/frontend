@@ -12,7 +12,7 @@ import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 import { PomodoroStatus } from '../services/PomodoroService';
 import RestCard from './RestCard';
-import CardFlipAnimator from '../molecules/CardFlipAnimator';
+import CardFlipAnimator from '../atoms/CardFlipAnimator';
 
 interface ICurrentTodoCardProps extends IChildProps {
   openAddTodoModal: () => void;
@@ -100,13 +100,7 @@ function CurrentTodoCard({
   return (
     <CardFlipAnimator
       cards={[
-        <CardAtom
-          w="53.75rem"
-          h="20rem"
-          padding="2rem 2.75rem"
-          className="card"
-          bg={isExtreme ? 'extreme_dark' : 'primary1'}
-        >
+        <CardAtom className="card" bg={isExtreme ? 'extreme_dark' : 'primary1'}>
           {status === PomodoroStatus.FOCUSING && <ExtremeModeIndicator />}
           {currentTodo.currentTodo?.todo != null ? (
             <>

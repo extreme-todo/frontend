@@ -29,10 +29,10 @@ const CardAtom = styled.div<{
   }};
   box-shadow: ${({ theme: { shadow } }) => shadow.container};
   border-radius: 30px;
-  padding: ${({ padding }) => padding ?? '3rem'};
+  padding: ${({ padding }) => padding ?? '2rem 2.75rem'};
   margin: ${({ margin }) => margin ?? '0rem'};
-  width: ${({ w }) => w ?? 'fit-content'};
-  height: ${({ h }) => h ?? 'fit-content'};
+  width: ${({ w }) => w ?? '53.75rem'};
+  height: ${({ h }) => h ?? '20rem'};
   max-width: 100%;
   max-height: 100%;
   display: flex;

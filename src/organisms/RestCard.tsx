@@ -36,13 +36,7 @@ function RestCard({
     return settings.restStep * 60000 - (time ?? 0);
   };
   return (
-    <CardAtom
-      w="53.75rem"
-      h="20rem"
-      padding="2rem 2.75rem"
-      className="card"
-      bg={'primary2'}
-    >
+    <CardAtom className="card" bg={'primary2'}>
       {status === PomodoroStatus.RESTING && (
         <RestCardWrapper>
           <ExtremeModeIndicator />
