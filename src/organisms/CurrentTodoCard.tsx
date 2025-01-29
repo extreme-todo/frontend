@@ -12,7 +12,8 @@ import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 import { PomodoroStatus } from '../services/PomodoroService';
 import RestCard from './RestCard';
-import CardFlipAnimator from '../atoms/CardFlipAnimator';
+import CardAnimationPlayer from '../atoms/CardAnimationPlayer';
+import styled from '@emotion/styled';
 
 interface ICurrentTodoCardProps extends IChildProps {
   openAddTodoModal: () => void;
@@ -98,8 +99,12 @@ function CurrentTodoCard({
   };
 
   return (
-    <CardFlipAnimator
-      cards={[
+    <TransparentAbsoluteCardsParent>
+      <CardAnimationPlayer
+        animation={
+          status === PomodoroStatus.RESTING ? ['HIDE_UP', 'NEXT_UP'] : 'SHOW_UP'
+        }
+      >
         <CardAtom className="card" bg={isExtreme ? 'extreme_dark' : 'primary1'}>
           {status === PomodoroStatus.FOCUSING && <ExtremeModeIndicator />}
           {currentTodo.currentTodo?.todo != null ? (
@@ -129,7 +134,13 @@ function CurrentTodoCard({
               </BtnAtom>
             </Overlay>
           )}
-        </CardAtom>,
+        </CardAtom>
+      </CardAnimationPlayer>
+      <CardAnimationPlayer
+        animation={
+          status === PomodoroStatus.RESTING ? 'SHOW_UP' : ['HIDE_UP', 'NEXT_UP']
+        }
+      >
         <RestCard
           shouldFocus={shouldFocus}
           isLogin={isLogin}
@@ -141,11 +152,16 @@ function CurrentTodoCard({
             actions.startFocusing();
             setCanRest(false);
           }}
-        ></RestCard>,
-      ]}
-      currentCardIndex={status === PomodoroStatus.RESTING ? 1 : 0}
-    ></CardFlipAnimator>
+        ></RestCard>
+      </CardAnimationPlayer>
+    </TransparentAbsoluteCardsParent>
   );
 }
+
+const TransparentAbsoluteCardsParent = styled.div`
+  width: 53.75rem;
+  height: 20rem;
+  position: relative;
+`;
 
 export default CurrentTodoCard;

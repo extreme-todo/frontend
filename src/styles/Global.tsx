@@ -1,4 +1,5 @@
 import { css, Global } from '@emotion/react';
+import { CardAnimationStyle } from './cardAnimations';
 
 const style = css`
   html,
@@ -248,6 +249,8 @@ const style = css`
       }
     }
   }
+
+  ${CardAnimationStyle}
 `;
 
 export const rainbowStyle = css`
