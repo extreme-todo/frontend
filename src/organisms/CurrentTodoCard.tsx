@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { BtnAtom, CardAtom, Overlay, TagAtom, TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
-import styled from '@emotion/styled';
 import {
   LoginContext,
   useCurrentTodo,
@@ -12,7 +11,9 @@ import {
 import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import { pomodoroUnit } from '../hooks/usePomodoro';
 import { PomodoroStatus } from '../services/PomodoroService';
-import { usersApi } from '../shared/apis';
+import RestCard from './RestCard';
+import CardAnimationPlayer from '../atoms/CardAnimationPlayer';
+import styled from '@emotion/styled';
 
 interface ICurrentTodoCardProps extends IChildProps {
   openAddTodoModal: () => void;
@@ -98,167 +99,69 @@ function CurrentTodoCard({
   };
 
   return (
-    <CurrentTodoWrapper>
-      <CardAtom
-        w="53.75rem"
-        h="20rem"
-        padding="2rem 2.75rem"
-        className="card"
-        bg={isExtreme ? 'extreme_dark' : 'primary1'}
+    <TransparentAbsoluteCardsParent>
+      <CardAnimationPlayer
+        animation={
+          status === PomodoroStatus.RESTING ? ['HIDE_UP', 'NEXT_UP'] : 'SHOW_UP'
+        }
       >
-        <ExtremeModeIndicator />
-        {currentTodo.currentTodo?.todo != null ? (
-          <>
-            <CurrentTodo
-              todo={currentTodo.currentTodo}
-              doTodo={() => {
-                currentTodo.doTodo();
-              }}
-              focusStep={pomodoroSettings.focusStep}
-              focusedOnTodo={currentTodo.focusedOnTodo}
-              startResting={actions.startResting}
-            ></CurrentTodo>
-            {status === PomodoroStatus.RESTING && (
-              <Overlay className="resting overlay">
-                <TypoAtom fontSize="h1" fontColor="primary2">
-                  {shouldFocus ? '휴식 종료' : '휴식'}
-                </TypoAtom>
-                <button
-                  onClick={() => {
-                    if (!isLogin) {
-                      if (window.confirm('로그인을 하시겠습니까?')) {
-                        return usersApi.login();
-                      }
-                    } else {
-                      actions.startFocusing();
-                    }
+        <CardAtom className="card" bg={isExtreme ? 'extreme_dark' : 'primary1'}>
+          {status === PomodoroStatus.FOCUSING && <ExtremeModeIndicator />}
+          {currentTodo.currentTodo?.todo != null ? (
+            <>
+              {status === PomodoroStatus.FOCUSING && (
+                <CurrentTodo
+                  todo={currentTodo.currentTodo}
+                  doTodo={() => {
+                    currentTodo.doTodo();
                   }}
-                  className="end-rest-button"
-                >
-                  <TagAtom
-                    styleOption={{
-                      bg: 'purple',
-                      size: 'normal',
-                      fontsize: 'body',
-                    }}
-                  >
-                    {canRest
-                      ? '조금 더 집중하기'
-                      : shouldFocus
-                      ? '다음 할 일을 시작하세요'
-                      : '종료'}
-                  </TagAtom>
-                </button>
-                {canRest && (
-                  <button
-                    onClick={() => {
-                      if (!isLogin) {
-                        if (window.confirm('로그인을 하시겠습니까?')) {
-                          return usersApi.login();
-                        }
-                      } else {
-                        currentTodo.doTodo();
-                        actions.startFocusing();
-                        setCanRest(false);
-                      }
-                    }}
-                    className="end-rest-button"
-                  >
-                    <TagAtom
-                      styleOption={{
-                        bg: 'brown',
-                        size: 'normal',
-                        fontsize: 'body',
-                      }}
-                    >
-                      다음 할 일 하기
-                    </TagAtom>
-                  </button>
-                )}
-              </Overlay>
-            )}
-          </>
-        ) : (
-          <Overlay className="no-todo overlay">
-            <TypoAtom>아직 작성된 할 일이 없어요.</TypoAtom>
-            <TypoAtom>오늘 하루를 계획해 볼까요?</TypoAtom>
-            {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
-            <BtnAtom
-              handleOnClick={openAddTodoModal}
-              className="create-todo-button"
-            >
-              <TagAtom styleOption={{ bg: 'cyan' }}>할 일 기록하기</TagAtom>
-            </BtnAtom>
-          </Overlay>
-        )}
-      </CardAtom>
-    </CurrentTodoWrapper>
+                  focusStep={pomodoroSettings.focusStep}
+                  focusedOnTodo={currentTodo.focusedOnTodo}
+                  startResting={actions.startResting}
+                ></CurrentTodo>
+              )}
+            </>
+          ) : (
+            <Overlay className="no-todo overlay">
+              <TypoAtom>아직 작성된 할 일이 없어요.</TypoAtom>
+              <TypoAtom>오늘 하루를 계획해 볼까요?</TypoAtom>
+              {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
+              <BtnAtom
+                handleOnClick={openAddTodoModal}
+                className="create-todo-button"
+              >
+                <TagAtom styleOption={{ bg: 'cyan' }}>할 일 기록하기</TagAtom>
+              </BtnAtom>
+            </Overlay>
+          )}
+        </CardAtom>
+      </CardAnimationPlayer>
+      <CardAnimationPlayer
+        animation={
+          status === PomodoroStatus.RESTING ? 'SHOW_UP' : ['HIDE_UP', 'NEXT_UP']
+        }
+      >
+        <RestCard
+          shouldFocus={shouldFocus}
+          isLogin={isLogin}
+          canRest={canRest}
+          startFocusing={actions.startFocusing}
+          isExtreme={isExtreme}
+          doTodo={() => {
+            currentTodo.doTodo();
+            actions.startFocusing();
+            setCanRest(false);
+          }}
+        ></RestCard>
+      </CardAnimationPlayer>
+    </TransparentAbsoluteCardsParent>
   );
 }
 
-const CurrentTodoWrapper = styled.div`
+const TransparentAbsoluteCardsParent = styled.div`
+  width: 53.75rem;
+  height: 20rem;
   position: relative;
-  .overlay {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    text-align: center;
-    gap: 0.63rem;
-    height: 100%;
-    flex-wrap: wrap;
-    .create-todo-button {
-      width: fit-content;
-    }
-    .end-rest-button {
-      display: flex;
-      justify-content: center;
-    }
-  }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    width: 100%;
-    height: 100%;
-    .resting {
-      gap: 2rem;
-      > span {
-        font-size: 12rem;
-      }
-      .end-rest-button {
-        span {
-          font-size: 6rem;
-          border-radius: 6rem;
-          padding: 1rem 4rem;
-        }
-      }
-    }
-    .no-todo {
-      padding: 2rem;
-      box-sizing: border-box;
-      gap: 1.12rem;
-      justify-content: center;
-      align-items: center;
-      > span {
-        font-size: 4rem;
-        text-align: center;
-      }
-      .create-todo-button {
-        span {
-          font-size: 3rem;
-          margin-top: 2rem;
-          border-radius: 6rem;
-          padding: 1rem 3rem;
-        }
-      }
-    }
-    .card {
-      width: 100%;
-      height: 100%;
-    }
-    .card:not(:first-child) {
-      visibility: hidden;
-    }
-  }
 `;
 
 export default CurrentTodoCard;

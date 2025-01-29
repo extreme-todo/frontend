@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
-import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
+import { BtnAtom, IconAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import Clock from './Clock';
 import CategoryList from './CategoryList';
@@ -91,9 +91,12 @@ function CurrentTodo({
       </div>
 
       <div className="progress-container">
-        <TodoProgressBar progress={Math.min(todoProgress, 100)}>
+        <TodoProgressBarAtom
+          type="primary2"
+          progress={Math.min(todoProgress, 100)}
+        >
           <div className="progress"></div>
-        </TodoProgressBar>
+        </TodoProgressBarAtom>
       </div>
     </CurrentTodoContainer>
   );
@@ -109,10 +112,10 @@ const CurrentTodoContainer = styled.div`
   width: 100%;
   height: 100%;
   .todo-title {
-    white-space: nowrap;
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
+    max-width: 20ch;
   }
   .center-container {
     display: flex;
@@ -190,17 +193,21 @@ const CurrentTodoContainer = styled.div`
     .title {
       font-size: ${({ theme: { fontSize } }) => fontSize.b1.size};
       font-weight: ${({ theme: { fontSize } }) => fontSize.b1.weight};
+      text-align: right;
     }
     .todo-title {
       overflow: auto;
       padding-right: 16rem;
       box-sizing: border-box;
       max-height: 50%;
+      text-align: right;
+
       span {
         vertical-align: middle;
         font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
         white-space: normal;
         overflow: initial;
+        text-align: right;
       }
     }
     .categories {
@@ -239,41 +246,6 @@ const CurrentTodoContainer = styled.div`
         right: 8rem;
         background-position: center;
       }
-    }
-  }
-`;
-
-const TodoProgressBar = styled.div<{ progress: number }>`
-  background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
-  height: 0.75rem;
-  width: 100%;
-  border-radius: 1.75rem;
-  display: flex;
-  align-items: center;
-  position: relative;
-  box-sizing: border-box;
-  overflow: hidden;
-  .progress {
-    width: ${({ progress }) => `${progress}%`};
-    height: 100%;
-    line-height: 2.875rem;
-    border-radius: 3.125rem;
-    background: ${({ theme }) => theme.color.backgroundColor.extreme_orange};
-    transition: all 0.2s ease-in-out;
-  }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    width: 100%;
-    height: 100%;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 1rem 0 1rem 0;
-    .progress {
-      height: ${({ progress }) => `${progress}%`};
-      width: 70%;
-      overflow: hidden;
-      padding: 0;
-      color: transparent;
     }
   }
 `;

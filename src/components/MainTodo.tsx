@@ -5,7 +5,12 @@ import { CurrentTodoCard } from '../organisms';
 import { createPortal } from 'react-dom';
 import Modal from './Modal';
 import TodoList from './TodoList';
-import { LoginContext, usePomodoroValue, useTimeMarker } from '../hooks';
+import {
+  LoginContext,
+  useExtremeMode,
+  usePomodoroValue,
+  useTimeMarker,
+} from '../hooks';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
@@ -24,6 +29,7 @@ function MainTodo() {
     time: pomodoroTime,
   } = usePomodoroValue();
   const { isLogin } = useContext(LoginContext);
+  const { isExtreme } = useExtremeMode();
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const mainTodoRef = useRef<HTMLDivElement>(null);
@@ -92,24 +98,42 @@ function MainTodo() {
             <SideButtons.SideButton
               onClick={() => handleClickSideButton('timeModal')}
             >
-              <img src="icons/clock.svg" />
-              <TypoAtom fontSize="body">
+              {isExtreme ? (
+                <img src="icons/clock-red.svg" />
+              ) : (
+                <img src="icons/clock.svg" />
+              )}
+              <TypoAtom
+                fontSize="body"
+                fontColor={isExtreme ? 'extreme_orange' : 'primary1'}
+              >
                 {pomodoroSettings.focusStep}분 집중 |{' '}
                 {pomodoroSettings.restStep}분 휴식
               </TypoAtom>
-              <div className="tag-button">Edit</div>
             </SideButtons.SideButton>
 
             <SideButtons.SideButton
               onClick={() => handleClickSideButton('todolistModal')}
             >
-              <img src="icons/list.svg" />
-              <TypoAtom fontSize="body">오늘의 할일</TypoAtom>
+              {isExtreme ? (
+                <img src="icons/list-red.svg" />
+              ) : (
+                <img src="icons/list.svg" />
+              )}
+              {/* TODO: 남은 할 일 계산 로직 추가 */}
+              <TypoAtom
+                fontSize="body"
+                fontColor={isExtreme ? 'extreme_orange' : 'primary1'}
+              >
+                남은 할일
+              </TypoAtom>
             </SideButtons.SideButton>
             <SideButtons.SideButton
               onClick={() => handleClickSideButton('addTodoModal')}
             >
-              <div className="tag-button">Todo +</div>
+              <div className={'tag-button' + (isExtreme ? ' extreme' : '')}>
+                Todo +
+              </div>
             </SideButtons.SideButton>
           </SideButtons>
           <CurrentMainCard />
@@ -152,6 +176,7 @@ const MainTodoContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 `;
 
 const MainTodoContentWrapper = styled.div`
@@ -181,6 +206,14 @@ const MainTodoCenter = styled.div`
     justify-content: center;
     align-items: center;
     color: ${({ theme }) => theme.color.primary.primary1};
+    &.extreme {
+      color: ${({ theme }) => {
+        return theme.color.fontColor.extreme_orange;
+      }};
+      border-color: ${({ theme }) => {
+        return theme.color.fontColor.extreme_orange;
+      }};
+    }
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {

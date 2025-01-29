@@ -88,8 +88,12 @@ const useCurrentTodo = () => {
 
       if (
         todayTodos != null &&
-        getDateInFormat(new Date(todayTodos[0].date)) ===
-          getDateInFormat(new Date())
+        getDateInFormat(
+          new Date(
+            new Date(todayTodos[0].date).getTime() -
+              new Date().getTimezoneOffset() * 60000,
+          ),
+        ) === getDateInFormat(new Date())
       ) {
         setFocusedOnTodo(checkLocalStorageAndGetFocusTime(todayTodos[0]));
         return todayTodos[0];

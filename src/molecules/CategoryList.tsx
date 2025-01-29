@@ -30,9 +30,10 @@ function CategoryList({ categories }: ICategoryListProps) {
 
 const StyledCategoryList = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 `;
 
 export default CategoryList;

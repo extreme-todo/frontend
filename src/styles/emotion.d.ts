@@ -37,7 +37,12 @@ type TagColor = ColorRecord<TagColorName>;
 type PrimaryColorName = 'primary1' | 'primary2';
 type PrimaryColor = ColorRecord<PrimaryColorName>;
 
-type FontColorName = 'white' | 'gray' | PrimaryColorName;
+type FontColorName =
+  | 'white'
+  | 'gray'
+  | 'extreme_dark'
+  | 'extreme_orange'
+  | PrimaryColorName;
 type FontColor = ColorRecord<FontColorName>;
 
 type BackgroundColorName =
@@ -57,7 +62,7 @@ interface Color {
   backgroundColor: BackgroundColor;
 }
 
-type ShadowName = 'container';
+type ShadowName = 'container' | 'tomato';
 type ShadowAttribute =
   `${number}px ${number}px ${number}px rgba(${number},${number},${number},${number})`;
 type Shadow = Record<ShadowName, ShadowAttribute>;
@@ -79,7 +84,12 @@ interface ButtonCommonStyle {
   fontSize: FontAttribute;
 }
 type ButtonAction = 'default' | 'hover' | 'click';
-type ButtonName = 'lightBtn' | 'darkBtn' | 'textBtn';
+type ButtonName =
+  | 'lightBtn'
+  | 'darkBtn'
+  | 'textBtn'
+  | 'extremeLightBtn'
+  | 'extremeDarkBtn';
 type Button = Record<
   ButtonName,
   ButtonCommonStyle & Record<ButtonAction, ButtonColor>
