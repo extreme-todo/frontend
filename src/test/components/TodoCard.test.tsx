@@ -105,20 +105,12 @@ describe('TodoCard', () => {
       it('수정 버튼이 있다.', () => {
         const { getByText } = renderTodoUI(false);
 
-        fireEvent.mouseOver(getByText('Go to grocery store'));
-
-        act(() => {
-          expect(getByText('수정')).toBeInTheDocument();
-        });
+        expect(getByText('수정')).toBeInTheDocument();
       });
       it('삭제 버튼이 있다.', () => {
-        const { getByText } = renderTodoUI(false);
+        const { getByAltText } = renderTodoUI(false);
 
-        fireEvent.mouseOver(getByText('Go to grocery store'));
-
-        act(() => {
-          expect(getByText('삭제')).toBeInTheDocument();
-        });
+        expect(getByAltText('delete')).toBeInTheDocument();
       });
       it('소요 시간이 있다.', () => {
         const { getByText, getByAltText } = renderTodoUI(false);
@@ -165,8 +157,6 @@ describe('TodoCard', () => {
         // 다른 todoCard UI
         const titleTwo = getByText('Go to Gym');
         expect(titleTwo).toBeInTheDocument();
-
-        fireEvent.mouseOver(titleOne);
 
         const editBtn = getAllByText('수정');
         fireEvent.click(editBtn[0]);
@@ -251,9 +241,6 @@ describe('TodoCard', () => {
           />,
           wrapperCreator,
         );
-
-        const title = renderResult.getByText('Go to grocery store');
-        fireEvent.mouseOver(title);
 
         const editBtn = renderResult.getByText('수정');
         fireEvent.click(editBtn);

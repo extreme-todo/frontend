@@ -58,53 +58,42 @@ const TodoUI = ({
         </TypoAtom>
       </TagAtom>
     ) : (
-      <>
-        <BtnAtom handleOnClick={handleEditButton}>
-          <TagAtom
-            styleOption={{
-              size: 'normal',
-              bg: 'transparent',
-              borderColor: 'primary2',
-            }}
-            className="edit__button"
-          >
-            <TypoAtom fontSize="b2" fontColor="primary2">
-              수정
-            </TypoAtom>
-          </TagAtom>
-        </BtnAtom>
-        <BtnAtom handleOnClick={handleDeleteButton}>
-          <TagAtom
-            styleOption={{
-              size: 'normal',
-              bg: 'transparent',
-              borderColor: 'primary2',
-            }}
-            className="edit__button"
-          >
-            <TypoAtom fontSize="b2" fontColor="primary2">
-              삭제
-            </TypoAtom>
-          </TagAtom>
-        </BtnAtom>
-      </>
+      <BtnAtom handleOnClick={handleEditButton}>
+        <TagAtom
+          styleOption={{
+            size: 'normal',
+            bg: 'transparent',
+            borderColor: 'primary2',
+          }}
+          className="edit__button"
+        >
+          <TypoAtom fontSize="b2" fontColor="primary2">
+            수정
+          </TypoAtom>
+        </TagAtom>
+      </BtnAtom>
     );
   }, [isCurrTodo]);
 
   return (
     <TodoCardContainer done={done} isCurrTodo={isCurrTodo}>
       <TitleContainer>
-        {done ? null : (
-          <>
-            <HandlerIcon />
-            <TypoAtom fontSize="h3" fontColor="primary2">
-              {order}.
-            </TypoAtom>
-          </>
-        )}
-        <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
-          {todo}
-        </TypoAtom>
+        <div>
+          {done ? null : (
+            <>
+              <HandlerIcon />
+              <TypoAtom fontSize="h3" fontColor="primary2">
+                {order}.
+              </TypoAtom>
+            </>
+          )}
+          <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
+            {todo}
+          </TypoAtom>
+        </div>
+        <BtnAtom handleOnClick={handleDeleteButton}>
+          <IconAtom src={'icon/delete.svg'} size={1.25} alt="delete" />
+        </BtnAtom>
       </TitleContainer>
       {snapshot?.isDragging ? null : (
         <>
@@ -206,8 +195,14 @@ const TimeWrapper = styled.div`
 const TitleContainer = styled.div`
   width: 100%;
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   column-gap: 4px;
   margin-bottom: 4px;
+
+  & > div {
+    display: flex;
+  }
 
   & > span {
     overflow: hidden;
@@ -216,6 +211,10 @@ const TitleContainer = styled.div`
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+  }
+
+  .todoTitle {
+    width: 17.125rem;
   }
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
