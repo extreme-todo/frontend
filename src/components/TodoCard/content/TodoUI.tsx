@@ -44,6 +44,14 @@ const TodoUI = ({
       </div>
     );
   }, [isCurrTodo]);
+  const DeleteIcon = useCallback(() => {
+    return isCurrTodo || done ? null : (
+      <BtnAtom handleOnClick={handleDeleteButton}>
+        <IconAtom src={'icon/delete.svg'} size={1.25} alt="delete" />
+      </BtnAtom>
+    );
+  }, [isCurrTodo]);
+
   const FooterButton = useCallback(() => {
     return isCurrTodo ? (
       <TagAtom
@@ -91,9 +99,7 @@ const TodoUI = ({
             {todo}
           </TypoAtom>
         </div>
-        <BtnAtom handleOnClick={handleDeleteButton}>
-          <IconAtom src={'icon/delete.svg'} size={1.25} alt="delete" />
-        </BtnAtom>
+        {snapshot?.isDragging ? null : <DeleteIcon />}
       </TitleContainer>
       {snapshot?.isDragging ? null : (
         <>

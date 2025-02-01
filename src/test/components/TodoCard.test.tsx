@@ -86,13 +86,25 @@ describe('TodoCard', () => {
     });
 
     describe('drag 시에는', () => {
-      it('Todo의 카테고리가 숨겨진다.', () => {
+      it('카테고리가 숨겨진다.', () => {
         const { queryByText } = renderTodoUI(true);
 
         const categories1 = queryByText('영어');
         const categories2 = queryByText('학교공부');
         expect(categories1).not.toBeInTheDocument();
         expect(categories2).not.toBeInTheDocument();
+      });
+      it('삭제 버튼이 숨겨진다.', () => {
+        const { queryByAltText } = renderTodoUI(true);
+
+        const deleteBtn = queryByAltText('delete');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('수정 버튼이 숨겨진다.', () => {
+        const { queryByAltText } = renderTodoUI(true);
+
+        const editBtn = queryByAltText('edit');
+        expect(editBtn).not.toBeInTheDocument();
       });
     });
 
@@ -175,8 +187,8 @@ describe('TodoCard', () => {
         expect(editBtn).not.toBeInTheDocument();
       });
       it('삭제 버튼이 없다.', () => {
-        const { queryByText } = renderTodoUI(false, true);
-        const deleteBtn = queryByText('삭제');
+        const { queryByAltText } = renderTodoUI(false, true);
+        const deleteBtn = queryByAltText('delete');
         expect(deleteBtn).not.toBeInTheDocument();
       });
       it('진행중 태그가 있다.', () => {
