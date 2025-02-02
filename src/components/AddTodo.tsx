@@ -140,7 +140,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     <AddTodoWrapper
       w="53.75rem"
       h="20rem"
-      padding="2rem 1.5rem"
+      padding="1.5rem"
       className="card"
       as={'form'}
     >
@@ -233,6 +233,10 @@ const TitleWrapper = styled.div`
   display: flex;
   width: 100%;
   column-gap: 3rem;
+
+  & > button {
+    height: 2rem;
+  }
 `;
 
 const CalendarAndCategoryWrapper = styled.div`
