@@ -1,11 +1,10 @@
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Clock } from '../../molecules';
 import { IClockProps } from '../../molecules/Clock';
 
-jest.useFakeTimers();
 describe('Clock', () => {
   function renderClock(props: IClockProps) {
     return render(
