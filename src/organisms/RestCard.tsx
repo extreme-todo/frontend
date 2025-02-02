@@ -1,19 +1,10 @@
 import styled from '@emotion/styled';
-import {
-  BtnAtom,
-  CardAtom,
-  TagAtom,
-  TodoProgressBarAtom,
-  TypoAtom,
-} from '../atoms';
+import { BtnAtom, CardAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { useCurrentTodo, usePomodoroValue } from '../hooks';
 import { Clock, ExtremeModeIndicator } from '../molecules';
-import { usersApi } from '../shared/apis';
 import { PomodoroStatus } from '../services/PomodoroService';
 
 export interface IRestCardProps {
-  shouldFocus: boolean;
-  isLogin: boolean;
   startFocusing: () => void;
   canRest: boolean;
   doTodo: () => void;
@@ -21,8 +12,6 @@ export interface IRestCardProps {
 }
 
 function RestCard({
-  shouldFocus,
-  isLogin,
   startFocusing,
   canRest,
   doTodo,
@@ -61,21 +50,18 @@ function RestCard({
               <BtnAtom
                 className="focus"
                 btnType={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                handleOnClick={() => startFocusing()}
+                handleOnClick={() => {
+                  canRest ? doTodo() : startFocusing();
+                }}
               >
-                {shouldFocus
-                  ? canRest
-                    ? '다음 할 일 하기'
-                    : '끝내기'
-                  : '끝내기'}
+                {canRest ? '다음 할 일 하기' : '끝내기'}
               </BtnAtom>
               {canRest && (
                 <BtnAtom
-                  className="focus"
-                  btnType="lightBtn"
+                  className="focusMore"
                   handleOnClick={() => startFocusing()}
                 >
-                  '조금 더 집중하기'
+                  조금 더 집중하기
                 </BtnAtom>
               )}
             </div>
@@ -111,31 +97,6 @@ function RestCard({
               <div className="progress"></div>
             </TodoProgressBarAtom>
           </div>
-
-          {canRest && (
-            <button
-              onClick={() => {
-                if (!isLogin) {
-                  if (window.confirm('로그인을 하시겠습니까?')) {
-                    return usersApi.login();
-                  }
-                } else {
-                  doTodo();
-                }
-              }}
-              className="end-rest-button"
-            >
-              <TagAtom
-                styleOption={{
-                  bg: 'brown',
-                  size: 'normal',
-                  fontsize: 'body',
-                }}
-              >
-                다음 할 일 하기
-              </TagAtom>
-            </button>
-          )}
         </RestCardWrapper>
       )}
     </CardAtom>
@@ -155,8 +116,16 @@ const RestCardWrapper = styled.div`
     margin-bottom: 2.875rem;
   }
   .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
     .focus {
       min-width: 100px;
+      padding: 0 1rem;
+    }
+    .focusMore {
+      text-decoration: underline;
     }
   }
   .todo-duration {
