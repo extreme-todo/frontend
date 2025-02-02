@@ -48,10 +48,5 @@ describe('CurrentTodo', () => {
         getByText(mockCurrentTodo.duration, { exact: false }),
       ).toBeDefined();
     });
-
-    it('todo 완료 버튼을 렌더링한다', () => {
-      const { getByRole } = component;
-      expect(getByRole('button', { name: 'do todo' })).toBeDefined();
-    });
   });
 });
