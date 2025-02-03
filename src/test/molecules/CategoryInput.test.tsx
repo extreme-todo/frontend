@@ -68,5 +68,12 @@ describe('CategoryInput', () => {
 
       expect(categories.length).toBe(2);
     });
+
+    it('삭제할 수 있는 것을 알려주기 위한 delete svg가 있다.', () => {
+      const { getAllByLabelText } = renderUI();
+      const deleteSvg = getAllByLabelText('delete');
+
+      expect(deleteSvg[0]).toBeInTheDocument();
+    });
   });
 });
