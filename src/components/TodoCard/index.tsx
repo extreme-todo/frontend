@@ -217,14 +217,30 @@ const TodoCard = ({
     ({
       isCurrTodo,
       isEditMode,
+      isThisEdit,
       done,
     }: {
       isCurrTodo: boolean;
       isEditMode: boolean;
+      isThisEdit: boolean;
       done: boolean;
     }) => {
       if (done) return null;
-      else if (isCurrTodo || isEditMode) {
+      else if (isThisEdit) {
+        return (
+          <>
+            <IconAtom
+              src="icon/edit_handle.svg"
+              alt="handler"
+              size={1.25}
+              className="handler"
+            />
+            <TypoAtom fontSize="h3" fontColor="primary1">
+              {order}.
+            </TypoAtom>
+          </>
+        );
+      } else if (isCurrTodo || isEditMode) {
         return (
           <>
             <IconAtom
@@ -274,6 +290,14 @@ const TodoCard = ({
             placeholder="할 일을 입력하세요"
             ariaLabel="title_input"
             className="todoTitle"
+            styleOption={{
+              borderWidth: '1px',
+              padding: '0 0 0 0',
+              height: '1.25rem',
+              font: 'h3',
+              borderColor: 'primary1',
+              fontColor: 'primary1',
+            }}
           />
         );
       } else {
@@ -363,7 +387,7 @@ const TodoCard = ({
                 <TagAtom
                   key={category}
                   title={category}
-                  styleOption={{ bg: tagColorList[category] }}
+                  styleOption={{ bg: tagColorList[category], size: 'normal' }}
                 >
                   {category}
                 </TagAtom>
@@ -400,12 +424,12 @@ const TodoCard = ({
           <FooterContainer>
             <TimeWrapper>
               <IconAtom
-                src={'icon/yellowTimer.svg'}
+                src={'icon/timer.svg'}
                 alt="timer"
                 className="timer"
                 size={1.25}
               />
-              <TypoAtom fontSize="body" fontColor="primary2">
+              <TypoAtom fontSize="body" fontColor="primary1">
                 {duration}
               </TypoAtom>
             </TimeWrapper>
@@ -414,11 +438,11 @@ const TodoCard = ({
                 styleOption={{
                   size: 'normal',
                   bg: 'transparent',
-                  borderColor: 'primary2',
+                  borderColor: 'primary1',
                 }}
                 className="save__button"
               >
-                <TypoAtom fontSize="b2" fontColor="primary2">
+                <TypoAtom fontSize="b2" fontColor="primary1">
                   저장
                 </TypoAtom>
               </TagAtom>
@@ -488,13 +512,18 @@ const TodoCard = ({
   );
 
   return (
-    <TodoCardContainer done={done} isCurrTodo={isCurrTodo}>
+    <TodoCardContainer
+      done={done}
+      isCurrTodo={isCurrTodo}
+      isThisEdit={isThisEdit}
+    >
       <TitleContainer>
         <div>
           <HandlerIconAndOrder
             isCurrTodo={isCurrTodo}
             isEditMode={editTodoId !== undefined}
             done={done}
+            isThisEdit={isThisEdit}
           />
           <TitleOrInput
             titleValue={titleValue}
@@ -536,7 +565,11 @@ const TodoCard = ({
 export default TodoCard;
 export type { ITodoCardProps };
 
-const TodoCardContainer = styled.div<{ done: boolean; isCurrTodo: boolean }>`
+const TodoCardContainer = styled.div<{
+  done: boolean;
+  isCurrTodo: boolean;
+  isThisEdit: boolean;
+}>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -546,7 +579,19 @@ const TodoCardContainer = styled.div<{ done: boolean; isCurrTodo: boolean }>`
   padding: 0.75rem;
   border-radius: 0.875rem;
 
-  background-color: #463685;
+  background-color: ${({
+    isThisEdit,
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => (isThisEdit ? backgroundColor.primary2 : '#463685')};
+
+  color: ${({
+    isThisEdit,
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => (isThisEdit ? backgroundColor.primary1 : backgroundColor.primary2)};
 
   .todoTitle,
   .categories {
@@ -635,9 +680,4 @@ export const CategoryContainer = styled.div`
 
   column-gap: 0.5rem;
   row-gap: 0.25rem;
-
-  > div {
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
 `;
