@@ -44,16 +44,14 @@ const CategoryInput = ({
         >
           <TagAtom
             styleOption={{
-              fontsize: 'b2',
-              size: 'normal',
               bg: tagColorList[category],
             }}
             className="tag_with_delete"
           >
             {category}
             <svg
-              width={'0.875rem'}
-              height={'0.875rem'}
+              width={'0.625rem'}
+              height={'0.625rem'}
               viewBox="0 0 32 32"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
