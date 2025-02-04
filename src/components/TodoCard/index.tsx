@@ -60,17 +60,15 @@ const TodoCard = ({
   const [titleValue, setTitleValue] = useState(todo);
   const [categoryArray, setCategoryArray] = useState(categories ?? null);
   const [categoryValue, setCategoryValue] = useState('');
-  const [dateValue, setDateValue] = useState<Date>(new Date(prevDate));
   const [durationValue, setDurationValue] = useState(duration);
 
   const editData = useMemo(
     () => ({
       categories: categoryArray,
-      date: setTimeInFormat(dateValue).toISOString(),
       todo: titleValue,
       duration: durationValue,
     }),
-    [categoryArray, dateValue, titleValue, durationValue],
+    [categoryArray, titleValue, durationValue],
   );
 
   // apis
