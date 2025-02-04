@@ -51,7 +51,11 @@ const TodoCard = ({
   order,
 }: ITodoCardProps) => {
   const { id, date: prevDate, todo, categories, done, duration } = todoData;
-  const [{ editMode, editTodoId }, setIsEdit] = useEdit();
+  const [editTodoId, setEditTodoId] = useEdit();
+  const isThisEdit = useMemo(
+    () => (editTodoId ? editTodoId === id : false),
+    [editTodoId, id],
+  );
 
   const [titleValue, setTitleValue] = useState(todo);
   const [categoryArray, setCategoryArray] = useState(categories ?? null);
@@ -137,16 +141,15 @@ const TodoCard = ({
 
   // handlers
   const handleEditButton = () => {
-    setIsEdit({ editMode: true, editTodoId: id });
+    setEditTodoId(id);
   };
 
   const handleEditSubmit = () => {
     updateMutate({ newTodo: editData, id, prevDate });
-    setIsEdit({ editMode: false, editTodoId: undefined });
+    setEditTodoId(undefined);
   };
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
-    // (event: React.ChangeEvent<HTMLInputElement>) => {
     (event) => {
       console.log(event.currentTarget.value);
       setTitleValue(event.currentTarget.value);
@@ -155,7 +158,7 @@ const TodoCard = ({
   );
 
   const handleEditCancel = () => {
-    setIsEdit({ editMode: false, editTodoId: undefined });
+    setEditTodoId(undefined);
   };
 
   const handleDeleteButton = () => {
@@ -211,15 +214,15 @@ const TodoCard = ({
   const HandlerIconAndOrder = useCallback(
     ({
       isCurrTodo,
-      editMode,
+      isEditMode,
       done,
     }: {
       isCurrTodo: boolean;
-      editMode: boolean;
+      isEditMode: boolean;
       done: boolean;
     }) => {
       if (done) return null;
-      else if (isCurrTodo || editMode) {
+      else if (isCurrTodo || isEditMode) {
         return (
           <>
             <IconAtom
@@ -252,14 +255,14 @@ const TodoCard = ({
   const TitleOrInput = useCallback(
     ({
       titleValue,
-      editTodoId,
+      isThisEdit,
       handleChangeTitle,
     }: {
       titleValue: string;
-      editTodoId?: string;
+      isThisEdit: boolean;
       handleChangeTitle: ReactEventHandler<HTMLInputElement>;
     }) => {
-      if (editTodoId === id) {
+      if (isThisEdit) {
         return (
           <InputAtom.Underline
             value={titleValue}
@@ -284,16 +287,16 @@ const TodoCard = ({
     ({
       isCurrTodo,
       done,
-      editMode,
+      isThisEdit,
       isDragging,
     }: {
       isCurrTodo: boolean;
       done: boolean;
-      editMode: boolean;
+      isThisEdit: boolean;
       isDragging: boolean | undefined;
     }) => {
       if (isCurrTodo || done || isDragging) return null;
-      else if (editMode) {
+      else if (isThisEdit) {
         return (
           <BtnAtom handleOnClick={handleEditCancel}>
             <IconAtom src={'icon/close.svg'} size={1.25} alt="delete" />
@@ -319,8 +322,7 @@ const TodoCard = ({
       handleChangeCategory,
       tagColorList,
       isDragging,
-      editTodoId,
-      id,
+      isThisEdit,
     }: {
       categoryArray: string[] | null;
       handleAddCategory: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -331,20 +333,21 @@ const TodoCard = ({
       ) => void;
       tagColorList: Record<string, TagColorName>;
       isDragging: boolean | undefined;
-      editTodoId: string | undefined;
-      id: string;
+      isThisEdit: boolean;
     }) => {
-      if (isDragging || !categoryArray) return null;
-      else if (editTodoId === id) {
+      if (isDragging || !categories) return null;
+      else if (isThisEdit) {
         return (
-          <CategoryInput
-            categories={categoryArray}
-            handleSubmit={handleAddCategory}
-            handleClick={handleDeleteCategory}
-            category={categoryValue}
-            handleChangeCategory={handleChangeCategory}
-            tagColorList={tagColorList}
-          />
+          <CategoryContainer className="categories">
+            <CategoryInput
+              categories={categoryArray}
+              handleSubmit={handleAddCategory}
+              handleClick={handleDeleteCategory}
+              category={categoryValue}
+              handleChangeCategory={handleChangeCategory}
+              tagColorList={tagColorList}
+            />
+          </CategoryContainer>
         );
       } else if (categoryArray && categoryArray.length !== 0) {
         return (
@@ -373,22 +376,20 @@ const TodoCard = ({
     ({
       isDragging,
       done,
-      editTodoId,
-      id,
+      isThisEdit,
       duration,
       handleEditSubmit,
       handleEditButton,
     }: {
       isDragging: boolean | undefined;
       done: boolean;
-      editTodoId: undefined | string;
-      id: string;
+      isThisEdit: boolean;
       duration: string;
       handleEditSubmit: () => void;
       handleEditButton: () => void;
     }) => {
       if (isDragging || done) return null;
-      else if (editTodoId === id) {
+      else if (isThisEdit) {
         return (
           <FooterContainer>
             <TimeWrapper>
@@ -486,19 +487,19 @@ const TodoCard = ({
         <div>
           <HandlerIconAndOrder
             isCurrTodo={isCurrTodo}
-            editMode={editMode}
+            isEditMode={editTodoId !== undefined}
             done={done}
           />
           <TitleOrInput
             titleValue={titleValue}
-            editTodoId={editTodoId}
+            isThisEdit={isThisEdit}
             handleChangeTitle={handleChangeTitle}
           />
         </div>
         <TopRightCorner
           isCurrTodo={isCurrTodo}
           done={done}
-          editMode={editMode}
+          isThisEdit={isThisEdit}
           isDragging={snapshot?.isDragging}
         />
       </TitleContainer>
@@ -510,14 +511,13 @@ const TodoCard = ({
         handleChangeCategory={handleChangeCategory}
         tagColorList={tagColorList}
         isDragging={snapshot?.isDragging}
-        editTodoId={editTodoId}
-        id={id}
+        isThisEdit={isThisEdit}
+        categories={categories}
       />
       <FooterContent
         isDragging={snapshot?.isDragging}
         done={done}
-        editTodoId={editTodoId}
-        id={id}
+        isThisEdit={isThisEdit}
         duration={formatTime(focusStep * todoData.duration)}
         handleEditSubmit={handleEditSubmit}
         handleEditButton={handleEditButton}
