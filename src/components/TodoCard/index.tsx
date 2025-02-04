@@ -299,7 +299,7 @@ const TodoCard = ({
       else if (isThisEdit) {
         return (
           <BtnAtom handleOnClick={handleEditCancel}>
-            <IconAtom src={'icon/close.svg'} size={1.25} alt="delete" />
+            <IconAtom src={'icon/close.svg'} size={1.25} alt="cancel" />
           </BtnAtom>
         );
       } else {
@@ -410,10 +410,10 @@ const TodoCard = ({
                   bg: 'transparent',
                   borderColor: 'primary2',
                 }}
-                className="edit__button"
+                className="save__button"
               >
                 <TypoAtom fontSize="b2" fontColor="primary2">
-                  수정
+                  저장
                 </TypoAtom>
               </TagAtom>
             </BtnAtom>
@@ -570,7 +570,8 @@ const FooterContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   column-gap: 0.5rem;
-  .edit__button {
+  .edit__button,
+  .save__button {
     &:hover {
       background-color: ${({ theme: { button } }) =>
         button.darkBtn.hover.backgroundColor};

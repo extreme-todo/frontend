@@ -284,7 +284,6 @@ describe('TodoCard', () => {
         expect(titleInput.value).toBe('modified title');
       });
 
-      //  TODO : categoryInput
       it('category input에는 유저가 입력값을 입력할 수 있다.', () => {
         const { getByRole } = renderEditUI();
 
@@ -306,13 +305,27 @@ describe('TodoCard', () => {
       });
 
       // TODO : 소요시간 수정
-      it('소요시간이 있다.', () => {});
+      it('소요시간이 있다.', () => {
+        const { queryByAltText, queryByText } = renderEditUI();
+        const timerIcon = queryByAltText('timer');
+        const duration = queryByText('3분');
+        expect(duration).toBeInTheDocument();
+        expect(timerIcon).toBeInTheDocument();
+      });
 
       // TODO : 취소 svg 확인하기
-      it('취소 svg가 있다.', () => {});
+      it('취소 svg가 있다.', () => {
+        const { queryByAltText } = renderEditUI();
+        const cancelBtn = queryByAltText('cancel');
+        expect(cancelBtn).toBeInTheDocument();
+      });
 
       // TODO : 저장 버튼 확인하기
-      it('저장 버튼이 있다.', () => {});
+      it('저장 버튼이 있다.', () => {
+        const { queryByText } = renderEditUI();
+        const saveBtn = queryByText('저장');
+        expect(saveBtn).toBeInTheDocument();
+      });
     });
 
     describe('Category', () => {
