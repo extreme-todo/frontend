@@ -364,7 +364,7 @@ describe('TodoCard', () => {
         expect(spyAlert).toBeCalledTimes(1);
       });
 
-      it('태그가 5개를 초과하면 category_input 태그을 없앤다.', () => {
+      it('태그가 5개를 초과하면 category_input 태그를 없앤다.', () => {
         const { getByRole, queryAllByRole, queryByRole } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category_input' });
@@ -456,8 +456,8 @@ describe('TodoCard', () => {
       });
       // TODO : 취소 svg를 눌렀을 때 그대로인 UI
       it('취소 svg를 누르면 기존 TodoUI가 렌더링 된다.', () => {
-        // const { getByAltText, getByText } = renderEditUI();
-        // const cancelBtn = getByAltText('cancel_edit');
+        const { getByAltText, getByText } = renderEditUI();
+        const cancelBtn = getByAltText('cancel');
         // act(() => userEvent.click(cancelBtn));
         // const title = getByText('Go to grocery store');
         // expect(title).toBeInTheDocument();
