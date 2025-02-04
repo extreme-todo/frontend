@@ -45,6 +45,7 @@ const CategoryInput = ({
           <TagAtom
             styleOption={{
               bg: tagColorList[category],
+              size: 'normal',
             }}
             className="tag_with_delete"
           >
