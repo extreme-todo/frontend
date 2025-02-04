@@ -4,6 +4,7 @@ import { withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   BackgroundColorName,
+  FontColorName,
   FontName,
   LengthType,
   PaddingType,
@@ -13,14 +14,13 @@ interface CommonInputStyle {
   width?: LengthType;
   height?: LengthType;
   backgroundColor?: BackgroundColorName;
+  borderColor?: BackgroundColorName;
+  fontColor?: FontColorName;
   font?: FontName;
   margin?: PaddingType;
   textAlign?: 'center';
   borderWidth?: LengthType;
   placeholderOpacity?: number;
-}
-
-interface UsualInputStyle {
   padding?: PaddingType;
   borderStyle?: 'dashed' | 'dotted' | 'none';
   borderRadius?: LengthType;
@@ -42,7 +42,7 @@ const Usual = memo(
     styleOption,
     ...props
   }: IInputAtomProps & {
-    styleOption?: CommonInputStyle & UsualInputStyle;
+    styleOption?: CommonInputStyle;
   }) => {
     return (
       <UsualInput
@@ -102,7 +102,9 @@ const CommonInput = withTheme(
     fontWeight: styleOption?.font
       ? theme.fontSize[styleOption.font].weight
       : theme.fontSize.body.weight,
-    color: theme.color.fontColor.primary1,
+    color: styleOption?.fontColor
+      ? theme.color.fontColor[styleOption.fontColor]
+      : theme.color.fontColor.primary1,
     margin: styleOption?.margin,
     textAlign: styleOption?.textAlign ?? 'inherit',
     outline: 0,
@@ -114,12 +116,17 @@ const CommonInput = withTheme(
 );
 
 const UsualInput = withTheme(
-  styled(CommonInput)<{ styleOption?: UsualInputStyle }>(({ styleOption }) => ({
-    borderRadius: styleOption?.borderRadius ?? undefined,
-    borderWidth: styleOption?.borderWidth ?? 1,
-    padding: styleOption?.padding ?? '0 1rem 0 1rem',
-    borderStyle: styleOption?.borderStyle ?? 'solid',
-  })),
+  styled(CommonInput)<{ styleOption?: CommonInputStyle }>(
+    ({ styleOption, theme }) => ({
+      borderRadius: styleOption?.borderRadius ?? undefined,
+      borderWidth: styleOption?.borderWidth ?? 1,
+      padding: styleOption?.padding ?? '0 1rem 0 1rem',
+      borderStyle: styleOption?.borderStyle ?? 'solid',
+      borderColor: styleOption?.borderColor
+        ? theme.color.backgroundColor[styleOption.borderColor]
+        : theme.color.backgroundColor.primary1,
+    }),
+  ),
 );
 const UnderlineInput = withTheme(
   styled(CommonInput)<{
@@ -127,9 +134,11 @@ const UnderlineInput = withTheme(
   }>(({ styleOption, theme }) => ({
     border: 'none',
     borderBottom: `${styleOption?.borderWidth ?? '1px'} solid ${
-      theme.color.primary.primary1
+      styleOption?.borderColor
+        ? theme.color.backgroundColor[styleOption.borderColor]
+        : theme.color.backgroundColor.primary1
     }`,
     borderRadius: '0px',
-    padding: '0 0 0.5rem 0',
+    padding: styleOption?.padding ?? '0 0 0.5rem 0',
   })),
 );
