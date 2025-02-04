@@ -14,6 +14,18 @@ interface ICategoryInputProps {
   tagColorList: Record<string, TagColorName>;
 }
 
+const getSvgColor = (bg: string) => {
+  switch (bg) {
+    case 'mint':
+    case 'orange':
+    case 'pink':
+    case 'purple':
+      return '#FFFFFF';
+    default:
+      return '#523EA1';
+  }
+};
+
 const CategoryInput = ({
   categories,
   handleSubmit,
@@ -22,21 +34,6 @@ const CategoryInput = ({
   handleChangeCategory,
   tagColorList,
 }: ICategoryInputProps) => {
-  const isMobile = useIsMobile();
-  const tagSize: ITagSpanProps = useMemo(
-    () =>
-      isMobile
-        ? {
-            fontsize: 'b2',
-            size: 'normal',
-          }
-        : {
-            fontsize: 'b2',
-            size: 'normal',
-          },
-    [isMobile],
-  );
-
   return (
     <CategoryContainer>
       {categories?.map((category) => (
@@ -46,7 +43,11 @@ const CategoryInput = ({
           key={category}
         >
           <TagAtom
-            styleOption={{ ...tagSize, bg: tagColorList[category] }}
+            styleOption={{
+              fontsize: 'b2',
+              size: 'normal',
+              bg: tagColorList[category],
+            }}
             className="tag_with_delete"
           >
             {category}
@@ -62,7 +63,7 @@ const CategoryInput = ({
                 width="1.81331"
                 height="25.3864"
                 transform="matrix(-0.707107 0.707107 0.707107 0.707107 7.28223 6.19336)"
-                fill={tagColorList[category]}
+                fill={getSvgColor(tagColorList[category])}
               />
               <rect
                 x="7.28223"
@@ -70,7 +71,7 @@ const CategoryInput = ({
                 width="1.81331"
                 height="25.3864"
                 transform="rotate(-135 7.28223 25.2329)"
-                fill={tagColorList[category]}
+                fill={getSvgColor(tagColorList[category])}
               />
             </svg>
           </TagAtom>
