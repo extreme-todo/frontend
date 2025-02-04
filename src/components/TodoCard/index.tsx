@@ -157,8 +157,12 @@ const TodoCard = ({
     [],
   );
 
+  // TODO : TodoList 단에서 key를 새로 할당해서 상태 초기화가 될 수 있도록 하자!
   const handleEditCancel = () => {
     setEditTodoId(undefined);
+    setTitleValue(todo);
+    setCategoryArray(categories);
+    setDurationValue(duration);
   };
 
   const handleDeleteButton = () => {
@@ -254,10 +258,12 @@ const TodoCard = ({
 
   const TitleOrInput = useCallback(
     ({
+      todo,
       titleValue,
       isThisEdit,
       handleChangeTitle,
     }: {
+      todo: string;
       titleValue: string;
       isThisEdit: boolean;
       handleChangeTitle: ReactEventHandler<HTMLInputElement>;
@@ -275,7 +281,7 @@ const TodoCard = ({
       } else {
         return (
           <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
-            {titleValue}
+            {todo}
           </TypoAtom>
         );
       }
@@ -315,6 +321,7 @@ const TodoCard = ({
 
   const CategoryContent = useCallback(
     ({
+      categories,
       categoryArray,
       handleAddCategory,
       handleDeleteCategory,
@@ -324,6 +331,7 @@ const TodoCard = ({
       isDragging,
       isThisEdit,
     }: {
+      categories: string[] | null;
       categoryArray: string[] | null;
       handleAddCategory: (event: React.KeyboardEvent<HTMLInputElement>) => void;
       handleDeleteCategory: (category: string) => void;
@@ -349,10 +357,10 @@ const TodoCard = ({
             />
           </CategoryContainer>
         );
-      } else if (categoryArray && categoryArray.length !== 0) {
+      } else if (categories && categories.length !== 0) {
         return (
           <CategoryContainer className="categories">
-            {categoryArray.map((category) => {
+            {categories.map((category) => {
               return (
                 <TagAtom
                   key={category}
@@ -494,6 +502,7 @@ const TodoCard = ({
             titleValue={titleValue}
             isThisEdit={isThisEdit}
             handleChangeTitle={handleChangeTitle}
+            todo={todo}
           />
         </div>
         <TopRightCorner
