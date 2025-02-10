@@ -571,6 +571,10 @@ const TodoCard = ({
     };
   }, [showTomatoInput, handleClickBackgroundToCloseTomatoInput]);
 
+  useEffect(() => {
+    !isThisEdit && showTomatoInput && setShowTomatoInput(false);
+  }, [isThisEdit]);
+
   return (
     <TodoCardContainer
       done={done}
