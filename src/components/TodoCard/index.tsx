@@ -1,32 +1,41 @@
 import {
   ReactEventHandler,
-  SyntheticEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
-import EditUI from './content/EditUI';
-import TodoUI from './content/TodoUI';
+
+import {
+  BtnAtom,
+  IconAtom,
+  InputAtom,
+  PopperAtom,
+  TagAtom,
+  TomatoInput,
+  TypoAtom,
+} from '../../atoms';
+import { CategoryInput } from '../../molecules';
 
 import { useEdit } from '../../hooks';
+import { focusStep } from '../../hooks/usePomodoro';
 
 import { todosApi } from '../../shared/apis';
 import { TodoEntity } from '../../DB/indexedAction';
 import { ETIndexed, UpdateTodoDto } from '../../DB/indexed';
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import {
   DraggableProvidedDragHandleProps,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
-import { focusStep } from '../../hooks/usePomodoro';
+
+import { formatTime } from '../../shared/timeUtils';
+import { categoryValidation } from '../../shared/inputValidation';
+
+import { RandomTagColorList } from '../../shared/RandomTagColorList';
 import { TagColorName } from '../../styles/emotion';
 import styled from '@emotion/styled';
-import { BtnAtom, IconAtom, InputAtom, TagAtom, TypoAtom } from '../../atoms';
-import { formatTime, setTimeInFormat } from '../../shared/timeUtils';
-import { RandomTagColorList } from '../../shared/RandomTagColorList';
-import { categoryValidation } from '../../shared/inputValidation';
-import { CategoryInput } from '../../molecules';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -61,6 +70,14 @@ const TodoCard = ({
   const [categoryArray, setCategoryArray] = useState(categories ?? null);
   const [categoryValue, setCategoryValue] = useState('');
   const [durationValue, setDurationValue] = useState(duration);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null,
+  );
+  const [showTomatoInput, setShowTomatoInput] = useState(false);
+  const [triggerElement, setTriggerElement] = useState<HTMLDivElement | null>(
+    null,
+  );
+  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
   const editData = useMemo(
     () => ({
@@ -210,6 +227,20 @@ const TodoCard = ({
       setCategoryValue(event.target.value);
     },
     [],
+  );
+
+  const handleTomato = useCallback(
+    (count: number) => setDurationValue(count),
+    [],
+  );
+
+  const handleClickBackgroundToCloseTomatoInput = useCallback(
+    (event: Event) => {
+      if (popperElement && !popperElement.contains(event.target as Node)) {
+        setShowTomatoInput(false);
+      }
+    },
+    [popperElement],
   );
 
   // UI
@@ -401,7 +432,6 @@ const TodoCard = ({
     [],
   );
 
-  // TODO : editId 일 때 수정완료 버튼 넣고 tomato input 하기
   const FooterContent = useCallback(
     ({
       isDragging,
@@ -422,17 +452,25 @@ const TodoCard = ({
       else if (isThisEdit) {
         return (
           <FooterContainer>
-            <TimeWrapper>
-              <IconAtom
-                src={'icon/timer.svg'}
-                alt="timer"
-                className="timer"
-                size={1.25}
-              />
-              <TypoAtom fontSize="body" fontColor="primary1">
-                {duration}
-              </TypoAtom>
-            </TimeWrapper>
+            <BtnAtom handleOnClick={() => setShowTomatoInput(true)}>
+              <TimeWrapper>
+                <IconAtom
+                  src={'icon/timer.svg'}
+                  alt="timer"
+                  className="timer"
+                  size={1.25}
+                />
+                <div ref={setTriggerElement}>
+                  <TypoAtom
+                    fontSize="body"
+                    fontColor="primary1"
+                    className="duration"
+                  >
+                    {duration}
+                  </TypoAtom>
+                </div>
+              </TimeWrapper>
+            </BtnAtom>
             <BtnAtom handleOnClick={handleEditSubmit}>
               <TagAtom
                 styleOption={{
@@ -511,6 +549,28 @@ const TodoCard = ({
     [isCurrTodo, snapshot?.isDragging, done],
   );
 
+  useEffect(() => {
+    const rootElement = document.querySelector('#root');
+    if (!rootElement) return;
+    if (showTomatoInput) {
+      rootElement.addEventListener(
+        'click',
+        handleClickBackgroundToCloseTomatoInput,
+      );
+    } else {
+      rootElement.removeEventListener(
+        'click',
+        handleClickBackgroundToCloseTomatoInput,
+      );
+    }
+    return () => {
+      rootElement.removeEventListener(
+        'click',
+        handleClickBackgroundToCloseTomatoInput,
+      );
+    };
+  }, [showTomatoInput, handleClickBackgroundToCloseTomatoInput]);
+
   return (
     <TodoCardContainer
       done={done}
@@ -558,6 +618,28 @@ const TodoCard = ({
         handleEditSubmit={handleEditSubmit}
         handleEditButton={handleEditButton}
       />
+
+      {showTomatoInput && (
+        <PopperAtom
+          popperElement={popperElement}
+          setPopperElement={setPopperElement}
+          triggerElement={triggerElement}
+          arrowElement={arrowElement}
+          placement={'bottom'}
+        >
+          <TomatoInputWrapper aria-label="tomatoInput">
+            <TomatoInput
+              max={10}
+              min={0}
+              period={focusStep}
+              handleTomato={handleTomato}
+              tomato={+duration}
+              useBalloonOrNot={false}
+            />
+          </TomatoInputWrapper>
+          <PopperArrow id="arrow" data-popper-arrow ref={setArrowElement} />
+        </PopperAtom>
+      )}
     </TodoCardContainer>
   );
 };
@@ -599,6 +681,14 @@ const TodoCardContainer = styled.div<{
   }
   .categories {
     margin-left: ${({ done }) => (done ? 0 : '1.25rem')};
+  }
+
+  .duration {
+    border-bottom: ${({
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => `1px solid ${backgroundColor.primary1}`};
   }
 
   border: ${({
@@ -680,4 +770,36 @@ export const CategoryContainer = styled.div`
 
   column-gap: 0.5rem;
   row-gap: 0.25rem;
+`;
+
+const TomatoInputWrapper = styled.div`
+  background-color: ${({ theme }) => theme.color.backgroundColor.white};
+  width: 44.625rem;
+  height: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 1rem;
+  border-radius: 1.25rem;
+`;
+
+const PopperArrow = styled.div`
+  &,
+  &::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    z-index: -1;
+  }
+
+  &::before {
+    content: '';
+    transform: rotate(45deg);
+    background-color: ${({
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => backgroundColor.white};
+  }
 `;

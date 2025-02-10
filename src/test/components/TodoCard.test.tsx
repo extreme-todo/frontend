@@ -304,7 +304,6 @@ describe('TodoCard', () => {
         expect(getByText('학교공부')).toBeInTheDocument();
       });
 
-      // TODO : 소요시간 수정
       it('소요시간이 있다.', () => {
         const { queryByAltText, queryByText } = renderEditUI();
         const timerIcon = queryByAltText('timer');
@@ -313,14 +312,12 @@ describe('TodoCard', () => {
         expect(timerIcon).toBeInTheDocument();
       });
 
-      // TODO : 취소 svg 확인하기
       it('취소 svg가 있다.', () => {
         const { queryByAltText } = renderEditUI();
         const cancelBtn = queryByAltText('cancel');
         expect(cancelBtn).toBeInTheDocument();
       });
 
-      // TODO : 저장 버튼 확인하기
       it('저장 버튼이 있다.', () => {
         const { queryByText } = renderEditUI();
         const saveBtn = queryByText('저장');
@@ -429,38 +426,71 @@ describe('TodoCard', () => {
       });
     });
 
-    // TODO : popper 작동 테스트 코드
     describe('소요시간을 누르면', () => {
-      it('TomatoInput이 렌더링 된다.', () => {});
+      it('TomatoInput이 렌더링 된다.', () => {
+        const { getByLabelText, getByText } = renderEditUI();
+        const duration = getByText('3분');
+        act(() => userEvent.click(duration));
+        const tomatoInput = getByLabelText('tomatoInput');
+        expect(tomatoInput).toBeInTheDocument();
+      });
+      it('TomatoInput 외부를 클릭하면 TomatoInput이 언마운트 된다.', () => {
+        const { getByLabelText, queryByLabelText, getByText } = renderUI(
+          <div id="root">
+            <TodoCard
+              todoData={mockTodo}
+              dragHandleProps={undefined}
+              snapshot={setMockSnapshot(false)}
+              focusStep={1}
+              randomTagColor={randomTagColor}
+              isCurrTodo={false}
+              order={1}
+            />
+          </div>,
+          wrapperCreator,
+        );
+        // 수정 모드
+        const editBtn = getByText('수정');
+        act(() => userEvent.click(editBtn));
+
+        // 수정 모드에서 tomatoInput 렌더링
+        const duration = getByText('3분');
+        const titleInput = getByLabelText('title_input');
+        act(() => userEvent.click(duration));
+
+        // 렌더링 되었는지 확인
+        let tomatoInput = queryByLabelText('tomatoInput');
+        expect(tomatoInput).toBeInTheDocument();
+
+        // 외부 요소 클릭해서 언마운트 확인
+        act(() => userEvent.click(titleInput));
+        tomatoInput = queryByLabelText('tomatoInput');
+        expect(tomatoInput).not.toBeInTheDocument();
+      });
     });
 
     describe('Button', () => {
-      // TODO : 저장 버튼 눌렀을 때
-      it('저장 버튼을 누르면 handleEditSubmit 메소드가 호출된다.', () => {
-        // const mockHandleEditSubmit = jest.fn();
-        // const { getByAltText } = renderUI(
-        //   <EditUI
-        //     todoData={mockFetchTodoList()[0]}
-        //     handleEditCancel={jest.fn()}
-        //     handleEditSubmit={mockHandleEditSubmit}
-        //   />,
-        //   ({ children }: IChildProps) => (
-        //     <>
-        //       <ThemeProvider theme={designTheme}>{children}</ThemeProvider>
-        //     </>
-        //   ),
-        // );
-        // const submitBtn = getByAltText('submit_edit');
-        // act(() => userEvent.click(submitBtn));
-        // expect(mockHandleEditSubmit).toHaveBeenCalled();
+      it('저장 버튼을 누르면 변경 내용이 저장된다.', () => {
+        const { getByText, queryAllByRole } = renderEditUI();
+        const saveBtn = getByText('저장');
+        const firstTag = getByText('영어');
+        act(() => userEvent.click(firstTag));
+        const lastCheckPointCategories = queryAllByRole('button', {
+          name: 'category_tag',
+        });
+        act(() => userEvent.click(saveBtn));
+        expect(lastCheckPointCategories.length).toBe(1);
       });
-      // TODO : 취소 svg를 눌렀을 때 그대로인 UI
+
       it('취소 svg를 누르면 기존 TodoUI가 렌더링 된다.', () => {
-        const { getByAltText, getByText } = renderEditUI();
-        const cancelBtn = getByAltText('cancel');
-        // act(() => userEvent.click(cancelBtn));
-        // const title = getByText('Go to grocery store');
-        // expect(title).toBeInTheDocument();
+        const { getByAltText, queryByAltText } = renderEditUI();
+        let cancelBtn = queryByAltText('cancel');
+        expect(cancelBtn).toBeInTheDocument();
+        act(() => cancelBtn && userEvent.click(cancelBtn));
+        const deleteBtn = getByAltText('delete');
+        cancelBtn = queryByAltText('cancel');
+        expect(deleteBtn).toBeInTheDocument();
+        expect(cancelBtn).not.toBeInTheDocument();
       });
     });
   });
