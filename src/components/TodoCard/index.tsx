@@ -166,7 +166,6 @@ const TodoCard = ({
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
-      console.log(event.currentTarget.value);
       setTitleValue(event.currentTarget.value);
     },
     [],
