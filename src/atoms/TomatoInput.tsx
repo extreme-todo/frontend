@@ -16,6 +16,7 @@ interface ITomatoInputProps {
   period: number;
   handleTomato: (count: number) => void;
   tomato: number;
+  useBalloonOrNot?: boolean;
 }
 
 const TomatoInput = ({
@@ -24,6 +25,7 @@ const TomatoInput = ({
   period,
   tomato,
   handleTomato,
+  useBalloonOrNot = true,
 }: ITomatoInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const thumbRef = useRef<HTMLDivElement>(null);
@@ -115,7 +117,12 @@ const TomatoInput = ({
         onTouchEnd={handleDrapEnd}
         aria-label="slider"
       >
-        <Thumb ref={thumbRef} data-value={`${tomato}round`} aria-label="tomato">
+        <Thumb
+          ref={thumbRef}
+          data-value={`${tomato}round`}
+          aria-label="tomato"
+          useBalloonOrNot={useBalloonOrNot}
+        >
           🍅
         </Thumb>
         <AssistantLine />
@@ -188,62 +195,57 @@ const InputTick = styled.div`
   border-radius: 50%;
 `;
 
-const Thumb = styled.div`
-  font-size: 2.25rem;
-  width: 2.25rem;
-  height: 2.25rem;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  cursor: grab;
-  &:active {
-    cursor: grabbing;
-  }
+const Thumb = styled.div<{ useBalloonOrNot: boolean }>(
+  ({ theme, useBalloonOrNot }) => ({
+    fontSize: '2.25rem',
+    width: '2.25rem',
+    height: '2.25rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    zIndex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    cursor: 'grab',
 
-  &:before {
-    content: attr(data-value);
-    position: absolute;
-    /* top: -3rem; */
-    bottom: 4rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font: ${({ theme: { fontSize } }) => fontSize.h3.size};
-    font-weight: ${({ theme: { fontSize } }) => fontSize.h3.weight};
-    color: ${({
-      theme: {
-        color: { backgroundColor },
+    '&:active': {
+      cursor: 'grabbing',
+    },
+
+    ...(useBalloonOrNot === true && {
+      '&:before': {
+        content: 'attr(data-value)',
+        position: 'absolute',
+        bottom: '4rem', // 말풍선 위치
+        left: '50%',
+        transform: 'translateX(-50%)',
+        font: theme.fontSize.h3.size,
+        fontWeight: theme.fontSize.h3.weight,
+        color: theme.color.backgroundColor.extreme_orange,
+        backgroundColor: theme.color.backgroundColor.white,
+        padding: '0.5625rem 1.3125rem',
+        borderRadius: '4.5625rem',
+        zIndex: 1,
       },
-    }) => backgroundColor.extreme_orange};
-    background-color: ${({
-      theme: {
-        color: { backgroundColor },
+
+      '&:after': {
+        content: "''",
+        position: 'absolute',
+        bottom: '3rem', // 말풍선 꼬리 위치
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 0,
+        height: 0,
+        borderLeft: '0.5rem solid transparent',
+        borderRight: '0.5rem solid transparent',
+        borderTop: `1.5rem solid ${theme.color.backgroundColor.white}`, // 꼬리 색상
+        zIndex: 1,
       },
-    }) => backgroundColor.white};
-    padding: 0.5625rem 1.3125rem;
-    border-radius: 4.5625rem;
-    z-index: 1;
-  }
-  &:after {
-    content: '';
-    position: absolute;
-    /* top: -0.5rem; 말풍선 꼬리 위치 조정 */
-    bottom: 3rem; /* 말풍선 꼬리 위치 조정 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 0.5rem solid transparent;
-    border-right: 0.5rem solid transparent;
-    border-top: 1.5rem solid white; /* 꼬리의 색상 */
-    z-index: 1;
-  }
-`;
+    }),
+  }),
+);
 
 const LabelWrapper = styled.div`
   display: flex;
