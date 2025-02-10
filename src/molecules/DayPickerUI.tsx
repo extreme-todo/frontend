@@ -24,7 +24,7 @@ const DayPickerUI = ({
 
   return (
     <>
-      {showPopper && (
+      {/* {showPopper && (
         <FocusTrap
           active
           focusTrapOptions={{
@@ -55,7 +55,7 @@ const DayPickerUI = ({
             />
           </PopperAtom>
         </FocusTrap>
-      )}
+      )} */}
     </>
   );
 };

@@ -11,7 +11,8 @@ function ExtremeModeIndicator() {
   const { isExtreme, leftTime, handleExtremeMode } = useExtremeMode();
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
   const [popperOpen, setPopperOpen] = useState<boolean>(true);
-  const popperRef = useRef<HTMLDivElement | null>(null);
+  const [popperTriggerElement, setPopperTriggerElement] =
+    useState<HTMLDivElement | null>(null);
 
   const toggleExtremeMode = () => {
     if (!isLogin) {
@@ -35,7 +36,7 @@ function ExtremeModeIndicator() {
   }, [isExtreme, status]);
 
   return (
-    <ExtremeModeContainer ref={popperRef}>
+    <ExtremeModeContainer ref={setPopperTriggerElement}>
       {isExtreme && (
         <div>
           <TypoAtom
@@ -56,7 +57,7 @@ function ExtremeModeIndicator() {
         <PopperAtom
           popperElement={popperEl}
           setPopperElement={setPopperEl}
-          popperRef={popperRef}
+          triggerElement={popperTriggerElement}
           placement={'top'}
           offset={[0, 0]}
         >
