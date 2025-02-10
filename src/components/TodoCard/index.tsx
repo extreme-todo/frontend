@@ -439,6 +439,7 @@ const TodoCard = ({
       duration,
       handleEditSubmit,
       handleEditButton,
+      durationValue,
     }: {
       isDragging: boolean | undefined;
       done: boolean;
@@ -446,6 +447,7 @@ const TodoCard = ({
       duration: string;
       handleEditSubmit: () => void;
       handleEditButton: () => void;
+      durationValue: number;
     }) => {
       if (isDragging || done) return null;
       else if (isThisEdit) {
@@ -465,7 +467,7 @@ const TodoCard = ({
                     fontColor="primary1"
                     className="duration"
                   >
-                    {duration}
+                    {formatTime(durationValue)}
                   </TypoAtom>
                 </div>
               </TimeWrapper>
@@ -621,6 +623,7 @@ const TodoCard = ({
         duration={formatTime(focusStep * todoData.duration)}
         handleEditSubmit={handleEditSubmit}
         handleEditButton={handleEditButton}
+        durationValue={durationValue}
       />
 
       {showTomatoInput && (
@@ -637,7 +640,7 @@ const TodoCard = ({
               min={0}
               period={focusStep}
               handleTomato={handleTomato}
-              tomato={+duration}
+              tomato={+durationValue}
               useBalloonOrNot={false}
             />
           </TomatoInputWrapper>
