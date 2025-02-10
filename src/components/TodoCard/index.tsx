@@ -577,6 +577,7 @@ const TodoCard = ({
 
   return (
     <TodoCardContainer
+      as={isThisEdit ? 'form' : 'div'}
       done={done}
       isCurrTodo={isCurrTodo}
       isThisEdit={isThisEdit}
