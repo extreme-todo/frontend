@@ -148,6 +148,8 @@ function CurrentTodoCard({
             actions.startFocusing();
             setCanRest(false);
           }}
+          todo={currentTodo.currentTodo}
+          pomodoro={{ settings: pomodoroSettings, status, time }}
         ></RestCard>
       </CardAnimationPlayer>
     </TransparentAbsoluteCardsParent>

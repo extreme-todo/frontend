@@ -1,14 +1,17 @@
 import styled from '@emotion/styled';
 import { BtnAtom, CardAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
-import { useCurrentTodo, usePomodoroValue } from '../hooks';
 import { Clock, ExtremeModeIndicator } from '../molecules';
 import { PomodoroStatus } from '../services/PomodoroService';
+import { TodoEntity } from '../DB/indexedAction';
+import { IPomodoroData } from '../hooks/usePomodoro';
 
 export interface IRestCardProps {
   startFocusing: () => void;
   canRest: boolean;
   doTodo: () => void;
   isExtreme: boolean;
+  todo?: TodoEntity;
+  pomodoro: IPomodoroData;
 }
 
 function RestCard({
@@ -16,17 +19,15 @@ function RestCard({
   canRest,
   doTodo,
   isExtreme,
+  todo,
+  pomodoro,
 }: IRestCardProps) {
-  const { currentTodo: todo } = useCurrentTodo();
-  const { time, settings, status } = usePomodoroValue();
   const getLeftMs = () => {
-    console.log(settings.restStep * 60000 - (time ?? 0));
-
-    return settings.restStep * 60000 - (time ?? 0);
+    return pomodoro.settings.restStep * 60000 - (pomodoro.time ?? 0);
   };
   return (
     <CardAtom className="card" bg={'primary2'}>
-      {status === PomodoroStatus.RESTING && (
+      {pomodoro.status === PomodoroStatus.RESTING && (
         <RestCardWrapper>
           <ExtremeModeIndicator />
           <div className="center-container">
@@ -91,7 +92,8 @@ function RestCard({
             <TodoProgressBarAtom
               type={isExtreme ? 'extreme1' : 'primary1'}
               progress={Math.floor(
-                ((time ?? 0) / (settings.restStep * 60000)) * 100,
+                ((pomodoro.time ?? 0) / (pomodoro.settings.restStep * 60000)) *
+                  100,
               )}
             >
               <div className="progress"></div>
