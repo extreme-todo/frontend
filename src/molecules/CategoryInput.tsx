@@ -14,6 +14,18 @@ interface ICategoryInputProps {
   tagColorList: Record<string, TagColorName>;
 }
 
+const getSvgColor = (bg: string) => {
+  switch (bg) {
+    case 'mint':
+    case 'orange':
+    case 'pink':
+    case 'purple':
+      return '#FFFFFF';
+    default:
+      return '#523EA1';
+  }
+};
+
 const CategoryInput = ({
   categories,
   handleSubmit,
@@ -22,21 +34,6 @@ const CategoryInput = ({
   handleChangeCategory,
   tagColorList,
 }: ICategoryInputProps) => {
-  const isMobile = useIsMobile();
-  const tagSize: ITagSpanProps = useMemo(
-    () =>
-      isMobile
-        ? {
-            fontsize: 'b2',
-            size: 'normal',
-          }
-        : {
-            fontsize: 'b2',
-            size: 'normal',
-          },
-    [isMobile],
-  );
-
   return (
     <CategoryContainer>
       {categories?.map((category) => (
@@ -45,8 +42,37 @@ const CategoryInput = ({
           ariaLabel="category_tag"
           key={category}
         >
-          <TagAtom styleOption={{ ...tagSize, bg: tagColorList[category] }}>
+          <TagAtom
+            styleOption={{
+              bg: tagColorList[category],
+              size: 'normal',
+            }}
+            className="tag_with_delete"
+          >
             {category}
+            <svg
+              width={'0.625rem'}
+              height={'0.625rem'}
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-label="delete"
+            >
+              <rect
+                width="1.81331"
+                height="25.3864"
+                transform="matrix(-0.707107 0.707107 0.707107 0.707107 7.28223 6.19336)"
+                fill={getSvgColor(tagColorList[category])}
+              />
+              <rect
+                x="7.28223"
+                y="25.2329"
+                width="1.81331"
+                height="25.3864"
+                transform="rotate(-135 7.28223 25.2329)"
+                fill={getSvgColor(tagColorList[category])}
+              />
+            </svg>
           </TagAtom>
         </BtnAtom>
       ))}
@@ -85,5 +111,8 @@ const CategoryContainer = styled.div`
     input {
       font-size: ${({ theme }) => theme.fontSize.body.size};
     }
+  }
+  .tag_with_delete {
+    padding-right: 0.375rem;
   }
 `;

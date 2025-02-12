@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { BtnAtom, PopperAtom, SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
@@ -22,7 +22,8 @@ const Setting = ({ handleClose }: ISettingModal) => {
 
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
 
-  const popperRef = useRef<HTMLImageElement>(null);
+  const [popperTriggerElement, setPopperTriggerElement] =
+    useState<HTMLImageElement | null>(null);
 
   const handleReset = async () => {
     if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
@@ -80,7 +81,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
             <PopperAtom
               popperElement={popperEl}
               setPopperElement={setPopperEl}
-              popperRef={popperRef}
+              triggerElement={popperTriggerElement}
               placement={'top'}
               offset={[0, 15]}
             >
@@ -94,7 +95,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
           ) : null}
           <div onMouseOver={tooltipMouseOver} onMouseLeave={tooltipMouseLeave}>
             <IconAtom
-              ref={popperRef}
+              ref={setPopperTriggerElement}
               backgroundColor={'primary2'}
               size={1.5625}
               alt="tooltip"
