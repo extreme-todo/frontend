@@ -14,6 +14,7 @@ const color: Color = {
   primary,
   fontColor: fontColor,
   backgroundColor: {
+    dark_primary1: '#463685',
     ...fontColor,
   },
   tag: {
