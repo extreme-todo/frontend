@@ -39,13 +39,10 @@ interface ITodoCardProps {
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
   snapshot?: DraggableStateSnapshot;
   focusStep: focusStep;
-  randomTagColor: Record<string, TagColorName>;
+  randomTagColor: RandomTagColorList;
   isCurrTodo: boolean;
   order: number;
 }
-
-// TODO : 조금 있다가 TodoList에서 RandomTagColorList.getInstance()를 내리도록 하기
-const tagColorList = RandomTagColorList.getInstance().getColorList;
 
 const TodoCard = ({
   todoData,
@@ -306,7 +303,7 @@ const TodoCard = ({
         handleDeleteCategory={handleDeleteCategory}
         categoryValue={categoryValue}
         handleChangeCategory={handleChangeCategory}
-        tagColorList={tagColorList}
+        tagColorList={randomTagColor.getColorList}
         isDragging={snapshot?.isDragging}
         isThisEdit={isThisEdit}
         categories={categories}
