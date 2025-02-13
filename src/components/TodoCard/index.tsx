@@ -236,8 +236,6 @@ const TodoCard = ({
     [popperElement],
   );
 
-  // UI
-
   useEffect(() => {
     const rootElement = document.querySelector('#root');
     if (!rootElement) return;

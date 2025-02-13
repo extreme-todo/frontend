@@ -66,7 +66,7 @@ const randomTagColor = RandomTagColorList.getInstance();
 const MemoTodoCard = memo(TodoCard);
 
 const TodoList = () => {
-  /* hook 호출 */
+  /* api 호출 */
   const queryClient = useQueryClient();
 
   const { data: todos, isLoading: isTodoLoading } = useQuery(
@@ -76,6 +76,7 @@ const TodoList = () => {
       staleTime: 1000 * 60 * 20,
     },
   );
+
   const { data: doneTodos, isLoading: isDoneLoading } = useQuery(
     ['doneTodos'],
     () => todosApi.getList(true),
@@ -99,31 +100,22 @@ const TodoList = () => {
     },
   });
 
+  const todoList = useMemo(
+    () => todos && Array.from(todos.values())[0],
+    [todos],
+  );
+
+  const doneTodoList = useMemo(
+    () => doneTodos && Array.from(doneTodos.values())[0],
+    [doneTodos],
+  );
+
   /* custom hook 호출 */
   const { currentTodo } = useCurrentTodo();
   const {
     settings: { focusStep },
   } = usePomodoroValue();
   const optionalPortal = useDraggableInPortal();
-
-  const onClickHandler = () => {
-    const mock = addTodoMocks();
-    const temp = async () => {
-      for (let i = 0; i < mock.length; i++) {
-        await ETIndexed.getInstance().addTodo(mock[i]);
-      }
-    };
-    temp();
-  };
-
-  const todoList = useMemo(
-    () => todos && Array.from(todos.values())[0],
-    [todos],
-  );
-  const doneTodoList = useMemo(
-    () => doneTodos && Array.from(doneTodos.values())[0],
-    [doneTodos],
-  );
 
   /* react dnd의 onDragDropHandler */
   const handleDragEnd = useCallback(
@@ -134,6 +126,17 @@ const TodoList = () => {
     },
     [todos],
   );
+
+  /* dev mode에서 로컬 indexed DB에 mock todo data 추가하는 핸들러 */
+  const onClickHandler = () => {
+    const mock = addTodoMocks();
+    const temp = async () => {
+      for (let i = 0; i < mock.length; i++) {
+        await ETIndexed.getInstance().addTodo(mock[i]);
+      }
+    };
+    temp();
+  };
 
   return (
     <>
