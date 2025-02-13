@@ -145,13 +145,7 @@ const TodoList = () => {
       > */}
       {/* <CardAtom> */}
       {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
-      <TodoListContainer
-        w="53.75rem"
-        h="20rem"
-        padding="2rem 1.5rem"
-        className="card"
-      >
-        {/* TODO : list가 두 개 되어야 함. 완료한 todo, 해야 할 todo */}
+      <TodoListContainer padding="2rem 1.5rem" className="card">
         <DragDropContext
           onDragEnd={handleDragEnd}
           enableDefaultSensors={false}
