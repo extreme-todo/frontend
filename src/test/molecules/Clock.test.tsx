@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { Clock } from '../../molecules';
 import { IClockProps } from '../../molecules/Clock';
@@ -22,8 +22,8 @@ describe('Clock', () => {
       expect(
         screen.getAllByText((_, element) => {
           return element?.textContent === '0016';
-        }),
-      ).not.toBeNull();
+        })[0],
+      ).toBeInTheDocument();
     });
 
     describe('show 옵션이 없으면', () => {
@@ -34,8 +34,8 @@ describe('Clock', () => {
         expect(
           screen.getAllByText((_, element) => {
             return element?.textContent === '0016';
-          }),
-        ).not.toBeNull();
+          })[0],
+        ).toBeInTheDocument();
       });
     });
 
@@ -52,8 +52,8 @@ describe('Clock', () => {
         expect(
           screen.getAllByText((_, element) => {
             return element?.textContent === '001640';
-          }),
-        ).not.toBeNull();
+          })[0],
+        ).toBeInTheDocument();
       });
     });
 
@@ -70,8 +70,8 @@ describe('Clock', () => {
         expect(
           screen.getAllByText((_, element) => {
             return element?.textContent === '1640';
-          }),
-        ).not.toBeNull();
+          })[0],
+        ).toBeInTheDocument();
       });
     });
   });
