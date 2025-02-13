@@ -24,7 +24,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const randomTagColor = RandomTagColorList.getInstance().getColorList;
+const randomTagColor = RandomTagColorList.getInstance();
 
 const wrapperCreator = ({ children }: IChildProps) => (
   <QueryClientProvider client={queryClient}>

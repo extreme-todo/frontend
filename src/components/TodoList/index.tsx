@@ -61,7 +61,7 @@ const orderMutationHandler = async ({
   }
 };
 
-const randomTagColor = RandomTagColorList.getInstance().getColorList;
+const randomTagColor = RandomTagColorList.getInstance();
 
 const MemoTodoCard = memo(TodoCard);
 
