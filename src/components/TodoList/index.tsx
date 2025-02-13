@@ -34,7 +34,7 @@ import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
 import TodoCard from '../TodoCard';
-import { CardAtom, TypoAtom } from '../../atoms';
+import { BtnAtom, CardAtom, TypoAtom } from '../../atoms';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 interface orderMutationHandlerArgs {
@@ -150,7 +150,28 @@ const TodoList = () => {
           <TypoAtom fontSize="body" fontColor="primary2">
             완료한 TODO
           </TypoAtom>
-          <List>완료한 TODO</List>
+          <List>
+            {doneTodoList ? (
+              doneTodoList.map((doneTodo, idx) => (
+                <TodoCard
+                  todoData={doneTodo}
+                  focusStep={20}
+                  randomTagColor={randomTagColor}
+                  isCurrTodo={false}
+                  order={idx + 1}
+                />
+              ))
+            ) : (
+              <EmptyList>
+                <TypoAtom fontSize="body" fontColor="primary2">
+                  🍅
+                </TypoAtom>
+                <TypoAtom fontSize="body" fontColor="primary2">
+                  힘차게 시작해볼까요?
+                </TypoAtom>
+              </EmptyList>
+            )}
+          </List>
         </ListSection>
 
         <ListSection>
@@ -158,57 +179,67 @@ const TodoList = () => {
             남은 TODO
           </TypoAtom>
           <List>
-            <DragDropContext
-              onDragEnd={handleDragEnd}
-              enableDefaultSensors={false}
-              sensors={[useMouseSensor, useTouchSensor]}
-            >
-              {!isTodoLoading && todos ? (
+            {todoList ? (
+              <DragDropContext
+                onDragEnd={handleDragEnd}
+                enableDefaultSensors={false}
+                sensors={[useMouseSensor, useTouchSensor]}
+              >
                 <EditContextProvider>
                   <Droppable droppableId="todoList">
                     {(provided) => (
                       <div {...provided.droppableProps} ref={provided.innerRef}>
-                        {todoList
-                          ? todoList.map((todo, idx) => (
-                              <Draggable
-                                draggableId={String(todo.id)}
-                                index={idx}
-                                key={todo.id}
+                        {todoList.map((todo, idx) => (
+                          <Draggable
+                            draggableId={String(todo.id)}
+                            index={idx}
+                            key={todo.id}
+                          >
+                            {optionalPortal((provided, snapshot) => (
+                              <div
+                                {...provided.draggableProps}
+                                ref={provided.innerRef}
                               >
-                                {optionalPortal((provided, snapshot) => (
-                                  <div
-                                    {...provided.draggableProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    <MemoTodoCard
-                                      dragHandleProps={provided.dragHandleProps}
-                                      todoData={todo}
-                                      snapshot={snapshot}
-                                      focusStep={focusStep}
-                                      randomTagColor={randomTagColor}
-                                      isCurrTodo={
-                                        currentTodo
-                                          ? currentTodo.id === todo.id
-                                          : false
-                                      }
-                                      order={
-                                        idx +
-                                        1 +
-                                        (doneTodos ? doneTodos.size : 0)
-                                      }
-                                    />
-                                  </div>
-                                ))}
-                              </Draggable>
-                            ))
-                          : 'todo를 추가해보세요'}
+                                <MemoTodoCard
+                                  dragHandleProps={provided.dragHandleProps}
+                                  todoData={todo}
+                                  snapshot={snapshot}
+                                  focusStep={focusStep}
+                                  randomTagColor={randomTagColor}
+                                  isCurrTodo={
+                                    currentTodo
+                                      ? currentTodo.id === todo.id
+                                      : false
+                                  }
+                                  order={
+                                    idx + 1 + (doneTodos ? doneTodos.size : 0)
+                                  }
+                                />
+                              </div>
+                            ))}
+                          </Draggable>
+                        ))}
                         {provided.placeholder}
                       </div>
                     )}
                   </Droppable>
                 </EditContextProvider>
-              ) : null}
-            </DragDropContext>
+              </DragDropContext>
+            ) : (
+              <EmptyList>
+                <BtnAtom
+                  // TODO : click to render ADDTODO modal
+                  handleOnClick={() => alert('AddTodo modal 나와라')}
+                  btnType="extremeDarkBtn"
+                >
+                  <div style={{ padding: '0.375rem 1.28125rem' }}>
+                    <TypoAtom fontSize="b1" fontColor="primary2">
+                      Todo+
+                    </TypoAtom>
+                  </div>
+                </BtnAtom>
+              </EmptyList>
+            )}
           </List>
         </ListSection>
       </TodoListContainer>
@@ -242,14 +273,25 @@ const ListSection = styled.section`
   height: 100%;
 
   display: grid;
-  grid-template-rows: 1fr 6fr;
+  grid-template-rows: 1fr 9fr;
 `;
 
 const List = styled.ul`
+  border-radius: 0.875rem;
+`;
+
+const EmptyList = styled.div`
+  border-radius: 0.875rem;
   background-color: ${({
     theme: {
       color: { backgroundColor },
     },
   }) => backgroundColor.dark_primary1};
-  border-radius: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  row-gap: 0.3125rem;
 `;
