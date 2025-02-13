@@ -266,7 +266,7 @@ const TodoCard = ({
 
   return (
     <TodoCardContainer
-      as={isThisEdit ? 'form' : 'div'}
+      as={isThisEdit ? 'form' : 'li'}
       done={done}
       isCurrTodo={isCurrTodo}
       isThisEdit={isThisEdit}
