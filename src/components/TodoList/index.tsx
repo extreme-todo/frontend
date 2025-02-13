@@ -34,7 +34,7 @@ import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
 import TodoCard from '../TodoCard';
-import { CardAtom } from '../../atoms';
+import { CardAtom, TypoAtom } from '../../atoms';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 interface orderMutationHandlerArgs {
@@ -146,55 +146,71 @@ const TodoList = () => {
       {/* <CardAtom> */}
       {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
       <TodoListContainer padding="2rem 1.5rem" className="card">
-        <DragDropContext
-          onDragEnd={handleDragEnd}
-          enableDefaultSensors={false}
-          sensors={[useMouseSensor, useTouchSensor]}
-        >
-          {!isTodoLoading && todos ? (
-            <EditContextProvider>
-              <Droppable droppableId="todoList">
-                {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {todoList
-                      ? todoList.map((todo, idx) => (
-                          <Draggable
-                            draggableId={String(todo.id)}
-                            index={idx}
-                            key={todo.id}
-                          >
-                            {optionalPortal((provided, snapshot) => (
-                              <div
-                                {...provided.draggableProps}
-                                ref={provided.innerRef}
+        <ListSection>
+          <TypoAtom fontSize="body" fontColor="primary2">
+            완료한 TODO
+          </TypoAtom>
+          <List>완료한 TODO</List>
+        </ListSection>
+
+        <ListSection>
+          <TypoAtom fontSize="body" fontColor="primary2">
+            남은 TODO
+          </TypoAtom>
+          <List>
+            <DragDropContext
+              onDragEnd={handleDragEnd}
+              enableDefaultSensors={false}
+              sensors={[useMouseSensor, useTouchSensor]}
+            >
+              {!isTodoLoading && todos ? (
+                <EditContextProvider>
+                  <Droppable droppableId="todoList">
+                    {(provided) => (
+                      <div {...provided.droppableProps} ref={provided.innerRef}>
+                        {todoList
+                          ? todoList.map((todo, idx) => (
+                              <Draggable
+                                draggableId={String(todo.id)}
+                                index={idx}
+                                key={todo.id}
                               >
-                                <MemoTodoCard
-                                  dragHandleProps={provided.dragHandleProps}
-                                  todoData={todo}
-                                  snapshot={snapshot}
-                                  focusStep={focusStep}
-                                  randomTagColor={randomTagColor}
-                                  isCurrTodo={
-                                    currentTodo
-                                      ? currentTodo.id === todo.id
-                                      : false
-                                  }
-                                  order={
-                                    idx + 1 + (doneTodos ? doneTodos.size : 0)
-                                  }
-                                />
-                              </div>
-                            ))}
-                          </Draggable>
-                        ))
-                      : 'todo를 추가해보세요'}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </EditContextProvider>
-          ) : null}
-        </DragDropContext>
+                                {optionalPortal((provided, snapshot) => (
+                                  <div
+                                    {...provided.draggableProps}
+                                    ref={provided.innerRef}
+                                  >
+                                    <MemoTodoCard
+                                      dragHandleProps={provided.dragHandleProps}
+                                      todoData={todo}
+                                      snapshot={snapshot}
+                                      focusStep={focusStep}
+                                      randomTagColor={randomTagColor}
+                                      isCurrTodo={
+                                        currentTodo
+                                          ? currentTodo.id === todo.id
+                                          : false
+                                      }
+                                      order={
+                                        idx +
+                                        1 +
+                                        (doneTodos ? doneTodos.size : 0)
+                                      }
+                                    />
+                                  </div>
+                                ))}
+                              </Draggable>
+                            ))
+                          : 'todo를 추가해보세요'}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </EditContextProvider>
+              ) : null}
+            </DragDropContext>
+          </List>
+        </ListSection>
       </TodoListContainer>
       {/* </CardAtom> */}
       {/* </Modal> */}
@@ -205,10 +221,35 @@ const TodoList = () => {
 export default TodoList;
 
 const TodoListContainer = styled(CardAtom)`
+  &,
+  * {
+    outline: red 1px solid;
+  }
+  display: flex;
+  flex-direction: row;
+  column-gap: 1rem;
+
   background-color: ${({
     theme: {
       color: { backgroundColor },
     },
   }) => backgroundColor.primary1};
   overflow: scroll;
+`;
+
+const ListSection = styled.section`
+  width: 50%;
+  height: 100%;
+
+  display: grid;
+  grid-template-rows: 1fr 6fr;
+`;
+
+const List = styled.ul`
+  background-color: ${({
+    theme: {
+      color: { backgroundColor },
+    },
+  }) => backgroundColor.dark_primary1};
+  border-radius: 0.875rem;
 `;
