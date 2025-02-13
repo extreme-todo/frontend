@@ -197,6 +197,7 @@ const TodoCard = ({
         } else {
           setCategoryArray([trimmed]);
         }
+        randomTagColor.setColor = trimmed;
 
         setCategoryValue('');
       }
