@@ -370,7 +370,8 @@ const TodoCardContainer = styled.div<{
     theme: {
       color: { backgroundColor },
     },
-  }) => (isThisEdit ? backgroundColor.primary2 : '#463685')};
+  }) =>
+    isThisEdit ? backgroundColor.primary2 : backgroundColor.dark_primary1};
 
   color: ${({
     isThisEdit,
