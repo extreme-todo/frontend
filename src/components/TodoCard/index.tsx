@@ -7,7 +7,12 @@ import {
 } from 'react';
 
 import { PopperAtom, TomatoInput } from '../../atoms';
-import { CategoryInput } from '../../molecules';
+
+import FooterContent from './content/FooterContent';
+import CategoryContent from './content/CategoryContent';
+import HandlerIconAndOrder from './content/HandleIconAndOrder';
+import TitleOrInput from './content/TitleOrInput';
+import TopRightCornerIcon from './content/TopRightCornerIcon';
 
 import { useEdit } from '../../hooks';
 import { focusStep } from '../../hooks/usePomodoro';
@@ -24,15 +29,9 @@ import {
 
 import { formatTime } from '../../shared/timeUtils';
 import { categoryValidation } from '../../shared/inputValidation';
-
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
-import { TagColorName } from '../../styles/emotion';
+
 import styled from '@emotion/styled';
-import FooterContent from './content/FooterContent';
-import CategoryContent from './content/CategoryContent';
-import HandlerIconAndOrder from './content/HandleIconAndOrder';
-import TitleOrInput from './content/TitleOrInput';
-import TopRightCornerIcon from './content/TopRightCornerIcon';
 
 interface ITodoCardProps {
   todoData: TodoEntity;

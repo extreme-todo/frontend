@@ -1,7 +1,6 @@
-import { memo, useMemo } from 'react';
-import { BtnAtom, InputAtom, ITagSpanProps, TagAtom } from '../atoms';
+import { memo } from 'react';
+import { BtnAtom, InputAtom, TagAtom } from '../atoms';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
-import { useIsMobile } from '../hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { TagColorName } from '../styles/emotion';
 

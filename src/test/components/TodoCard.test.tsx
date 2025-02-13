@@ -2,7 +2,6 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { TodoCard } from '../../components';
-import EditUI from '../../components/TodoCard/content/EditUI';
 
 import { EditContextProvider } from '../../hooks';
 
