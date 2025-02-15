@@ -65,7 +65,7 @@ const randomTagColor = RandomTagColorList.getInstance();
 
 const MemoTodoCard = memo(TodoCard);
 
-const TodoList = () => {
+const TodoList = ({ openAddTodoModal }: { openAddTodoModal: () => void }) => {
   /* api 호출 */
   const queryClient = useQueryClient();
 
@@ -246,13 +246,12 @@ const TodoList = () => {
                         </div>
                       )}
                     </Droppable>
-                  // TODO : click to render ADDTODO modal
-                  handleOnClick={() => alert('AddTodo modal 나와라')}
                   </DragDropContext>
                 </>
               ) : (
                 <EmptyList>
                   <BtnAtom
+                    handleOnClick={openAddTodoModal}
                     btnType="extremeDarkBtn"
                   >
                     <div style={{ padding: '0.375rem 1.28125rem' }}>
