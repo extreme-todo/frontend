@@ -1,6 +1,8 @@
 import { memo, useCallback, useMemo } from 'react';
 
 /* component */
+import TodoCard from '../TodoCard';
+import { BtnAtom, CardAtom, TypoAtom } from '../../atoms';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../../DB/indexed';
@@ -8,6 +10,7 @@ import { TodoEntity } from '../../DB/indexedAction';
 
 /* react query */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { todosApi } from '../../shared/apis';
 
 /* react DnD */
 import {
@@ -27,14 +30,11 @@ import {
 } from '../../hooks';
 
 /* etc */
-import { todosApi } from '../../shared/apis';
 import styled from '@emotion/styled';
 import { getDateInFormat, setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
-import TodoCard from '../TodoCard';
-import { BtnAtom, CardAtom, TypoAtom } from '../../atoms';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 interface orderMutationHandlerArgs {
