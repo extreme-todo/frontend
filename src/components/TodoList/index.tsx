@@ -181,24 +181,24 @@ const TodoList = () => {
           <TypoAtom fontSize="body" fontColor="primary2">
             남은 TODO
           </TypoAtom>
-          <List>
-            {todoList ? (
-              <>
-                {currentTodo && (
-                  <MemoTodoCard
-                    todoData={currentTodo}
-                    focusStep={focusStep}
-                    randomTagColor={randomTagColor}
-                    isCurrTodo={true}
-                    order={(doneTodoList?.length ?? 0) + 1}
-                  />
-                )}
-                <DragDropContext
-                  onDragEnd={handleDragEnd}
-                  enableDefaultSensors={false}
-                  sensors={[useMouseSensor, useTouchSensor]}
-                >
-                  <EditContextProvider>
+          <EditContextProvider>
+            <List>
+              {todoList ? (
+                <>
+                  {currentTodo && (
+                    <MemoTodoCard
+                      todoData={currentTodo}
+                      focusStep={focusStep}
+                      randomTagColor={randomTagColor}
+                      isCurrTodo={true}
+                      order={(doneTodoList?.length ?? 0) + 1}
+                    />
+                  )}
+                  <DragDropContext
+                    onDragEnd={handleDragEnd}
+                    enableDefaultSensors={false}
+                    sensors={[useMouseSensor, useTouchSensor]}
+                  >
                     <Droppable droppableId="todoList">
                       {(provided) => (
                         <div
@@ -246,25 +246,25 @@ const TodoList = () => {
                         </div>
                       )}
                     </Droppable>
-                  </EditContextProvider>
-                </DragDropContext>
-              </>
-            ) : (
-              <EmptyList>
-                <BtnAtom
                   // TODO : click to render ADDTODO modal
                   handleOnClick={() => alert('AddTodo modal 나와라')}
-                  btnType="extremeDarkBtn"
-                >
-                  <div style={{ padding: '0.375rem 1.28125rem' }}>
-                    <TypoAtom fontSize="b1" fontColor="primary2">
-                      Todo+
-                    </TypoAtom>
-                  </div>
-                </BtnAtom>
-              </EmptyList>
-            )}
-          </List>
+                  </DragDropContext>
+                </>
+              ) : (
+                <EmptyList>
+                  <BtnAtom
+                    btnType="extremeDarkBtn"
+                  >
+                    <div style={{ padding: '0.375rem 1.28125rem' }}>
+                      <TypoAtom fontSize="b1" fontColor="primary2">
+                        Todo+
+                      </TypoAtom>
+                    </div>
+                  </BtnAtom>
+                </EmptyList>
+              )}
+            </List>
+          </EditContextProvider>
         </ListSection>
       </TodoListContainer>
       {/* </CardAtom> */}
@@ -276,10 +276,10 @@ const TodoList = () => {
 export default TodoList;
 
 const TodoListContainer = styled(CardAtom)`
-  &,
+  /* &,
   * {
     outline: red 1px solid;
-  }
+  } */
   display: flex;
   flex-direction: row;
   column-gap: 1rem;
@@ -302,6 +302,7 @@ const ListSection = styled.section`
 
 const List = styled.ul`
   border-radius: 0.875rem;
+  overflow-y: scroll;
 `;
 
 const EmptyList = styled.div`
