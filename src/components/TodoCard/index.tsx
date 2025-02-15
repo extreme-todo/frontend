@@ -27,7 +27,7 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 
-import { formatTime } from '../../shared/timeUtils';
+import { formatTime, getDateInFormat } from '../../shared/timeUtils';
 import { categoryValidation } from '../../shared/inputValidation';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
@@ -77,6 +77,7 @@ const TodoCard = ({
       categories: categoryArray,
       todo: titleValue,
       duration: durationValue,
+      date: getDateInFormat(new Date(prevDate)),
     }),
     [categoryArray, titleValue, durationValue],
   );
@@ -153,7 +154,11 @@ const TodoCard = ({
   };
 
   const handleEditSubmit = () => {
-    updateMutate({ newTodo: editData, id, prevDate });
+    updateMutate({
+      newTodo: editData,
+      id,
+      prevDate: getDateInFormat(new Date(prevDate)),
+    });
     setEditTodoId(undefined);
   };
 
