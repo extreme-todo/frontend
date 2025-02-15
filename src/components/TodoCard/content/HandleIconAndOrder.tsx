@@ -4,7 +4,6 @@ import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
 interface IHandleIconAndOrderProps {
   isCurrTodo: boolean;
-  isEditMode: boolean;
   isThisEdit: boolean;
   done: boolean;
   order: number;
@@ -14,28 +13,13 @@ interface IHandleIconAndOrderProps {
 const HandlerIconAndOrder = memo(
   ({
     isCurrTodo,
-    isEditMode,
     isThisEdit,
     done,
     order,
     dragHandleProps,
   }: IHandleIconAndOrderProps) => {
     if (done) return null;
-    else if (isThisEdit) {
-      return (
-        <>
-          <IconAtom
-            src="icon/edit_handle.svg"
-            alt="handler"
-            size={1.25}
-            className="handler"
-          />
-          <TypoAtom fontSize="h3" fontColor="primary1">
-            {order}.
-          </TypoAtom>
-        </>
-      );
-    } else if (isCurrTodo || isEditMode) {
+    else if (isCurrTodo) {
       return (
         <>
           <IconAtom
@@ -53,9 +37,18 @@ const HandlerIconAndOrder = memo(
       return (
         <>
           <div {...dragHandleProps}>
-            <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
+            <IconAtom
+              src={
+                isThisEdit ? 'icon/edit_handle.svg' : 'icon/yellowHandle.svg'
+              }
+              alt="handler"
+              size={1.25}
+            />
           </div>
-          <TypoAtom fontSize="h3" fontColor="primary2">
+          <TypoAtom
+            fontSize="h3"
+            fontColor={isThisEdit ? 'primary1' : 'primary2'}
+          >
             {order}.
           </TypoAtom>
         </>

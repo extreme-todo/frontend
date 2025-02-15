@@ -278,7 +278,6 @@ const TodoCard = ({
         <div>
           <HandlerIconAndOrder
             isCurrTodo={isCurrTodo}
-            isEditMode={editTodoId !== undefined}
             done={done}
             isThisEdit={isThisEdit}
             order={order}
