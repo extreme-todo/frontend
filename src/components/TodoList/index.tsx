@@ -29,7 +29,7 @@ import {
 /* etc */
 import { todosApi } from '../../shared/apis';
 import styled from '@emotion/styled';
-import { setTimeInFormat } from '../../shared/timeUtils';
+import { getDateInFormat, setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import useTouchSensor from '../../hooks/useTouchSensor';
@@ -99,6 +99,9 @@ const TodoList = ({ openAddTodoModal }: { openAddTodoModal: () => void }) => {
       return prevTodoList;
     },
   });
+
+  const droppableId =
+    (todos && Array.from(todos.keys())[0]) ?? getDateInFormat(new Date());
 
   const todoList = useMemo(
     () => todos && Array.from(todos.values())[0],
@@ -199,7 +202,7 @@ const TodoList = ({ openAddTodoModal }: { openAddTodoModal: () => void }) => {
                     enableDefaultSensors={false}
                     sensors={[useMouseSensor, useTouchSensor]}
                   >
-                    <Droppable droppableId="todoList">
+                    <Droppable droppableId={droppableId}>
                       {(provided) => (
                         <div
                           {...provided.droppableProps}
