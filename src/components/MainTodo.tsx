@@ -57,7 +57,11 @@ function MainTodo() {
       case 'timeModal':
         return <PomodoroTimeSetting />;
       case 'todolistModal':
-        return <TodoList />;
+        return (
+          <TodoList
+            openAddTodoModal={() => handleClickSideButton('addTodoModal')}
+          />
+        );
       default:
         return (
           <CurrentTodoCard
