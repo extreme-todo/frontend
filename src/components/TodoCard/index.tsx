@@ -149,18 +149,18 @@ const TodoCard = ({
   });
 
   // handlers
-  const handleEditButton = () => {
+  const handleEditButton = useCallback(() => {
     setEditTodoId(id);
-  };
+  }, [id]);
 
-  const handleEditSubmit = () => {
+  const handleEditSubmit = useCallback(() => {
     updateMutate({
       newTodo: editData,
       id,
       prevDate: getDateInFormat(new Date(prevDate)),
     });
     setEditTodoId(undefined);
-  };
+  }, [editData, id, prevDate]);
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
@@ -169,17 +169,16 @@ const TodoCard = ({
     [],
   );
 
-  // TODO : TodoList 단에서 key를 새로 할당해서 상태 초기화가 될 수 있도록 하자!
-  const handleEditCancel = () => {
+  const handleEditCancel = useCallback(() => {
     setEditTodoId(undefined);
     setTitleValue(todo);
     setCategoryArray(categories);
     setDurationValue(duration);
-  };
+  }, [todo, categories, duration]);
 
-  const handleDeleteButton = () => {
+  const handleDeleteButton = useCallback(() => {
     deleteMutate({ id });
-  };
+  }, [id]);
 
   const handleAddCategory = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
