@@ -305,6 +305,7 @@ const ListSection = styled.section`
 const List = styled.ul`
   border-radius: 0.875rem;
   overflow-y: scroll;
+  overscroll-behavior-y: contain;
   &,
   .innerList {
     display: grid;
