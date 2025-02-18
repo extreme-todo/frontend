@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { PopperAtom, TomatoInput } from '../../atoms';
+import { IconAtom, PopperAtom, TomatoInput } from '../../atoms';
 
 import FooterContent from './content/FooterContent';
 import CategoryContent from './content/CategoryContent';
@@ -70,7 +70,9 @@ const TodoCard = ({
   const [triggerElement, setTriggerElement] = useState<HTMLDivElement | null>(
     null,
   );
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+  const [arrowElement, setArrowElement] = useState<HTMLImageElement | null>(
+    null,
+  );
 
   const editData = useMemo(
     () => ({
@@ -339,7 +341,14 @@ const TodoCard = ({
               useBalloonOrNot={false}
             />
           </TomatoInputWrapper>
-          <PopperArrow id="arrow" data-popper-arrow ref={setArrowElement} />
+          <IconAtom
+            id="arrow"
+            data-popper-arrow
+            ref={setArrowElement}
+            h={3.125}
+            w={0.875}
+            src={'icon/popperArrow.svg'}
+          />
         </PopperAtom>
       )}
     </TodoCardContainer>
@@ -405,10 +414,10 @@ const TodoCardContainer = styled.div<{
     cursor: auto;
   }
 
-  /* &,
-  * {
-    outline: 1px solid limegreen;
-  } */
+  #arrow {
+    position: absolute;
+    z-index: -1;
+  }
 `;
 
 const TitleContainer = styled.div`
@@ -456,24 +465,4 @@ const TomatoInputWrapper = styled.div`
   box-sizing: border-box;
   padding: 1rem;
   border-radius: 1.25rem;
-`;
-
-const PopperArrow = styled.div`
-  &,
-  &::before {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    z-index: -1;
-  }
-
-  &::before {
-    content: '';
-    transform: rotate(45deg);
-    background-color: ${({
-      theme: {
-        color: { backgroundColor },
-      },
-    }) => backgroundColor.white};
-  }
 `;
