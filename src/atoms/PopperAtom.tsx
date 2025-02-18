@@ -42,6 +42,7 @@ const PopperAtom = ({
         ]
       : undefined
   ) as [number, number] | undefined;
+
   const memoOffsetModifier = useMemo<Partial<Modifier<string, object>>>(
     () => ({
       name: 'offset',
@@ -51,7 +52,7 @@ const PopperAtom = ({
         },
       },
     }),
-    [offset],
+    [offset, arrowElement?.clientHeight],
   );
 
   const memoArrowModifier = useMemo<Partial<Modifier<string, object>>>(
