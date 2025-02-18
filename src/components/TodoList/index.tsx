@@ -309,7 +309,7 @@ const List = styled.ul`
   &,
   .innerList {
     display: grid;
-    grid-template-columns: repeat(auto-fill, fit-content);
+    grid-auto-rows: min-content;
     row-gap: 0.5rem;
   }
 `;
