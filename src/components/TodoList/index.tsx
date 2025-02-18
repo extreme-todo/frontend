@@ -307,6 +307,7 @@ const List = styled.ul`
 
   overflow-y: scroll;
   overflow-x: hidden;
+  overscroll-behavior-y: contain;
   scrollbar-width: thin;
   scrollbar-color: #dbfe77 transparent;
   &::-webkit-scrollbar {
