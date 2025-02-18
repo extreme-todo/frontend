@@ -304,8 +304,26 @@ const ListSection = styled.section`
 
 const List = styled.ul`
   border-radius: 0.875rem;
+
   overflow-y: scroll;
-  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #dbfe77 transparent;
+  &::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => backgroundColor.primary2};
+    border-radius: 0.375rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   &,
   .innerList {
     display: grid;
