@@ -284,6 +284,7 @@ const TodoListContainer = styled(CardAtom)`
   * {
     outline: red 1px solid;
   } */
+  overflow: hidden;
   display: flex;
   flex-direction: row;
   column-gap: 1rem;
