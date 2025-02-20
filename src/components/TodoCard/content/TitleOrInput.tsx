@@ -1,4 +1,4 @@
-import { memo, ReactEventHandler } from 'react';
+import { memo, ReactEventHandler, useCallback } from 'react';
 import { InputAtom, TypoAtom } from '../../../atoms';
 
 interface ITitleOrInputProps {
@@ -18,6 +18,9 @@ const TitleOrInput = memo(
           placeholder="할 일을 입력하세요"
           ariaLabel="title_input"
           className="todoTitle"
+          inputRef={useCallback((node: HTMLInputElement | null) => {
+            node?.focus();
+          }, [])}
           styleOption={{
             borderWidth: '1px',
             padding: '0 0 0 0',

@@ -32,6 +32,9 @@ interface IInputAtomProps
   handleKeyDown?: (params: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
   ariaLabel?: string;
+  inputRef?: (
+    node: HTMLInputElement | null,
+  ) => void | React.RefObject<HTMLInputElement>;
 }
 
 const Usual = memo(
@@ -40,6 +43,7 @@ const Usual = memo(
     handleKeyDown,
     ariaLabel,
     styleOption,
+    inputRef,
     ...props
   }: IInputAtomProps & {
     styleOption?: CommonInputStyle;
@@ -50,6 +54,7 @@ const Usual = memo(
         onKeyDown={handleKeyDown}
         aria-label={ariaLabel}
         styleOption={styleOption}
+        ref={inputRef}
         {...props}
       />
     );
@@ -61,6 +66,7 @@ const Underline = memo(
     handleChange = () => null,
     handleKeyDown,
     ariaLabel,
+    inputRef,
     ...props
   }: IInputAtomProps & { styleOption?: CommonInputStyle }) => {
     return (
@@ -68,6 +74,7 @@ const Underline = memo(
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         aria-label={ariaLabel}
+        ref={inputRef}
         {...props}
       />
     );

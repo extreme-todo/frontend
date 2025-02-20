@@ -4,6 +4,7 @@ import {
   ReactEventHandler,
   useCallback,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -148,6 +149,9 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
         <TitleWrapper>
           <InputAtom.Underline
             value={title}
+            inputRef={useCallback((node: HTMLInputElement | null) => {
+              node?.focus();
+            }, [])}
             handleChange={handleTitleInput}
             placeholder="새로운 TODO를 작성해주세요"
             ariaLabel="title"
