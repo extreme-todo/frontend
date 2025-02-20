@@ -366,7 +366,8 @@ const TodoCardContainer = styled.div<{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 24.5rem;
+  /* width: 24.5rem; */
+  width: 100%;
 
   box-sizing: border-box;
   padding: 0.75rem;
