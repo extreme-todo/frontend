@@ -5,7 +5,7 @@ import { FontColorName } from '../styles/emotion';
 
 export interface IClockProps {
   ms: number;
-  fontColor: FontColorName;
+  fontColor?: FontColorName;
   show?: {
     hour: boolean;
     min: boolean;
@@ -15,7 +15,7 @@ export interface IClockProps {
 
 function Clock({
   ms,
-  fontColor,
+  fontColor = 'primary1',
   show = {
     hour: true,
     min: true,

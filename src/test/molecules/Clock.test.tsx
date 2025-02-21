@@ -1,56 +1,78 @@
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import { act, render } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { Clock } from '../../molecules';
+import { IClockProps } from '../../molecules/Clock';
 
-jest.useFakeTimers();
 describe('Clock', () => {
-  function renderClock() {
+  function renderClock(props: IClockProps) {
     return render(
       <ThemeProvider theme={designTheme}>
-        <Clock />
+        <Clock {...{ ...props }} />
       </ThemeProvider>,
     );
   }
 
-  describe('1분이 지나면', () => {
-    it('UI에도 1분 뒤의 시간이 반영된다', () => {
-      const beforeTime = new Date();
-      const { getByText } = renderClock();
-      act(() => {
-        jest.advanceTimersByTime(60000);
+  describe('1000000ms를 입력하면', () => {
+    it('00:16 이 출력된다', () => {
+      renderClock({
+        ms: 1000000,
       });
-      const afterTime = new Date(beforeTime.getTime() + 60000);
       expect(
-        getByText(
-          `${afterTime.getHours().toString().padStart(2, '0')}:${afterTime
-            .getMinutes()
-            .toString()
-            .padStart(2, '0')}`,
-        ),
-      ).not.toBeNull();
+        screen.getAllByText((_, element) => {
+          return element?.textContent === '0016';
+        })[0],
+      ).toBeInTheDocument();
     });
-  });
 
-  describe('1일이 지나면', () => {
-    const ONE_DAY_TO_MS = 86400000;
-    it('UI에도 1일 뒤의 시간이 반영된다', () => {
-      const beforeTime = new Date();
-      const { getByText } = renderClock();
-      act(() => {
-        jest.advanceTimersByTime(ONE_DAY_TO_MS);
+    describe('show 옵션이 없으면', () => {
+      it('시,분만 출력된다.', () => {
+        renderClock({
+          ms: 1000000,
+        });
+        expect(
+          screen.getAllByText((_, element) => {
+            return element?.textContent === '0016';
+          })[0],
+        ).toBeInTheDocument();
       });
-      const afterTime = new Date(beforeTime.getTime() + ONE_DAY_TO_MS);
-      expect(
-        getByText(
-          `${afterTime.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}`,
-        ),
-      ).not.toBeNull();
+    });
+
+    describe('show 옵션을 모두 true 로 하면', () => {
+      it('시,분,초가 출력된다', () => {
+        renderClock({
+          ms: 1000000,
+          show: {
+            hour: true,
+            min: true,
+            sec: true,
+          },
+        });
+        expect(
+          screen.getAllByText((_, element) => {
+            return element?.textContent === '001640';
+          })[0],
+        ).toBeInTheDocument();
+      });
+    });
+
+    describe('show 옵션에서 분, 초만 true로 하면', () => {
+      it('분,초만 출력된다', () => {
+        renderClock({
+          ms: 1000000,
+          show: {
+            hour: false,
+            min: true,
+            sec: true,
+          },
+        });
+        expect(
+          screen.getAllByText((_, element) => {
+            return element?.textContent === '1640';
+          })[0],
+        ).toBeInTheDocument();
+      });
     });
   });
 });
