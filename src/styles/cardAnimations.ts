@@ -15,7 +15,7 @@ export const CardAnimationStyle = css`
       left: -28.5px;
       top: -146.52px;
       z-index: 0;
-      opacity: 0;
+      opacity: 1;
       pointer-events: none;
     }
   }

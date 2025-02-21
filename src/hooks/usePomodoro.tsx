@@ -27,13 +27,13 @@ interface IPomodoroSettings {
   restStep: restStep;
 }
 
-interface IPomodoroData {
+export interface IPomodoroData {
   settings: IPomodoroSettings;
   status?: PomodoroStatus;
   time?: number;
 }
 
-interface IPomodoroActions {
+export interface IPomodoroActions {
   setFocusStep: (step: focusStep) => void;
   setRestStep: (step: restStep) => void;
   startFocusing: () => void;

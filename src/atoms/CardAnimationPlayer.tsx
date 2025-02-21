@@ -57,17 +57,17 @@ function CardAnimationPlayer({
   }, [animation]);
 
   return (
-    <StyleddCardAnimationPlayerWrapper
+    <StyledCardAnimationPlayerWrapper
       ref={(el) => {
         cardRef.current = el;
       }}
     >
       {children}
-    </StyleddCardAnimationPlayerWrapper>
+    </StyledCardAnimationPlayerWrapper>
   );
 }
 
-const StyleddCardAnimationPlayerWrapper = styled.div`
+const StyledCardAnimationPlayerWrapper = styled.div`
   position: absolute;
   transform-origin: bottom left;
 `;

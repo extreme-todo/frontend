@@ -6,6 +6,7 @@ import { BtnAtom, IconAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import Clock from './Clock';
 import CategoryList from './CategoryList';
+import { useExtremeMode } from '../hooks';
 
 export interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
@@ -23,6 +24,7 @@ function CurrentTodo({
   startResting,
 }: ICurrentTodoProps) {
   const [todoProgress, setTodoProgress] = useState<number>(0);
+  const { isExtreme } = useExtremeMode();
   useEffect(() => {
     setTodoProgress(
       Number(
@@ -46,7 +48,7 @@ function CurrentTodo({
   return (
     <CurrentTodoContainer>
       <TypoAtom fontSize={'h1'} fontColor={'primary2'} className="title">
-        힘 내세요!
+        {isExtreme ? '더 집중하셔야 합니다!' : '힘 내세요!'}
       </TypoAtom>
       <TypoAtom fontSize={'body'} fontColor={'primary2'} className="left-time">
         남은 시간

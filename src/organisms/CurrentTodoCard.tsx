@@ -122,15 +122,13 @@ function CurrentTodoCard({
               )}
             </>
           ) : (
-            <Overlay className="no-todo overlay">
-              <TypoAtom>아직 작성된 할 일이 없어요.</TypoAtom>
-              <TypoAtom>오늘 하루를 계획해 볼까요?</TypoAtom>
-              {/* TODO: 새 투두 만드는 모달로 연결하면 좋을 것 같다 */}
-              <BtnAtom
-                handleOnClick={openAddTodoModal}
-                className="create-todo-button"
-              >
-                <TagAtom styleOption={{ bg: 'cyan' }}>할 일 기록하기</TagAtom>
+            <Overlay className="no-todo">
+              <TypoAtom fontSize="h3">🍅</TypoAtom>
+              <TypoAtom fontSize="h3" fontColor="primary2">
+                새로운 TODO를 작성해볼까요?
+              </TypoAtom>
+              <BtnAtom btnType="darkBtn" handleOnClick={openAddTodoModal}>
+                Todo+
               </BtnAtom>
             </Overlay>
           )}
@@ -142,8 +140,6 @@ function CurrentTodoCard({
         }
       >
         <RestCard
-          shouldFocus={shouldFocus}
-          isLogin={isLogin}
           canRest={canRest}
           startFocusing={actions.startFocusing}
           isExtreme={isExtreme}
@@ -152,6 +148,8 @@ function CurrentTodoCard({
             actions.startFocusing();
             setCanRest(false);
           }}
+          todo={currentTodo.currentTodo}
+          pomodoro={{ settings: pomodoroSettings, status, time }}
         ></RestCard>
       </CardAnimationPlayer>
     </TransparentAbsoluteCardsParent>
@@ -162,6 +160,21 @@ const TransparentAbsoluteCardsParent = styled.div`
   width: 53.75rem;
   height: 20rem;
   position: relative;
+  .no-todo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    button {
+      min-width: 101px;
+    }
+    > :first-child {
+      margin-bottom: 8px;
+    }
+    > :nth-child(2) {
+      margin-bottom: 12px;
+    }
+  }
 `;
 
 export default CurrentTodoCard;
