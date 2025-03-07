@@ -464,12 +464,11 @@ const TitleContainer = styled.div`
 const TomatoInputWrapper = styled.div`
   background-color: ${({ theme }) => theme.color.backgroundColor.white};
   width: 44.625rem;
-  height: 5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  padding: 1rem;
+  padding: 1.25rem 1rem;
   border-radius: 1.25rem;
 `;
 
