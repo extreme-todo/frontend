@@ -21,8 +21,9 @@ interface CommonInputStyle {
   textAlign?: 'center';
   borderWidth?: LengthType;
   placeholderOpacity?: number;
+  placeholderColor?: FontColorName;
   padding?: PaddingType;
-  borderStyle?: 'dashed' | 'dotted' | 'none';
+  borderStyle?: 'dashed' | 'dotted' | 'none' | 'solid';
   borderRadius?: LengthType;
 }
 
@@ -30,6 +31,8 @@ interface IInputAtomProps
   extends Pick<HTMLInputElement, 'placeholder' | 'value'> {
   handleChange?: ReactEventHandler<HTMLInputElement>;
   handleKeyDown?: (params: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleFocus?: React.FocusEventHandler<HTMLInputElement>;
+  handleBlur?: React.FocusEventHandler<HTMLInputElement>;
   className?: string;
   ariaLabel?: string;
   inputRef?: (
@@ -41,6 +44,8 @@ const Usual = memo(
   ({
     handleChange = () => null,
     handleKeyDown,
+    handleFocus,
+    handleBlur,
     ariaLabel,
     styleOption,
     inputRef,
@@ -52,6 +57,8 @@ const Usual = memo(
       <UsualInput
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         aria-label={ariaLabel}
         styleOption={styleOption}
         ref={inputRef}
@@ -65,6 +72,8 @@ const Underline = memo(
   ({
     handleChange = () => null,
     handleKeyDown,
+    handleFocus,
+    handleBlur,
     ariaLabel,
     inputRef,
     ...props
@@ -73,6 +82,8 @@ const Underline = memo(
       <UnderlineInput
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         aria-label={ariaLabel}
         ref={inputRef}
         {...props}
@@ -118,6 +129,9 @@ const CommonInput = withTheme(
     boxSizing: 'border-box',
     '::placeholder': {
       opacity: styleOption?.placeholderOpacity ?? 0.4,
+      color: styleOption?.placeholderColor
+        ? theme.color.fontColor[styleOption.placeholderColor]
+        : 'inherit',
     },
   })),
 );

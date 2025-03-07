@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { BtnAtom, InputAtom, TagAtom } from '../atoms';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
 import styled from '@emotion/styled';
@@ -33,6 +33,7 @@ const CategoryInput = ({
   handleChangeCategory,
   tagColorList,
 }: ICategoryInputProps) => {
+  const [isFocus, setIsFocus] = useState(false);
   return (
     <CategoryContainer>
       {categories?.map((category) => (
@@ -80,16 +81,19 @@ const CategoryInput = ({
           value={category}
           handleChange={handleChangeCategory}
           handleKeyDown={handleSubmit}
-          placeholder="태그 추가하기"
+          handleFocus={() => setIsFocus(true)}
+          handleBlur={() => setIsFocus(false)}
+          placeholder={isFocus ? '태그를 적어주세요' : '태그 추가하기'}
           ariaLabel="category_input"
           styleOption={{
-            borderStyle: 'dashed',
+            borderStyle: isFocus ? 'solid' : 'dashed',
             borderRadius: '50px',
             borderWidth: '1px',
             textAlign: 'center',
             font: 'b2',
-            placeholderOpacity: 1,
-            width: '15ch',
+            placeholderOpacity: isFocus ? 0.3 : 1,
+            placeholderColor: 'primary1',
+            width: isFocus ? '17ch' : '15ch',
             height: '1.25rem',
           }}
         />
