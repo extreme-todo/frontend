@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { IconAtom, PopperAtom, TomatoInput } from '../../atoms';
+import { IconAtom, PopperAtom, TomatoInput, TypoAtom } from '../../atoms';
 
 import FooterContent from './content/FooterContent';
 import CategoryContent from './content/CategoryContent';
@@ -332,13 +332,18 @@ const TodoCard = ({
           placement={'bottom'}
         >
           <TomatoInputWrapper aria-label="tomatoInput">
+            <TomatoInfo>
+              <TypoAtom>{formatTime(durationValue * focusStep)}</TypoAtom>
+              <TypoAtom>{durationValue}round</TypoAtom>
+            </TomatoInfo>
             <TomatoInput
               max={10}
               min={0}
               period={focusStep}
               handleTomato={handleTomato}
               tomato={+durationValue}
-              useBalloonOrNot={false}
+              useBalloon={false}
+              useLabel={false}
             />
           </TomatoInputWrapper>
           <IconAtom
@@ -466,4 +471,17 @@ const TomatoInputWrapper = styled.div`
   box-sizing: border-box;
   padding: 1rem;
   border-radius: 1.25rem;
+`;
+
+const TomatoInfo = styled.div`
+  margin-bottom: 0.8rem;
+  & > span:first-of-type {
+    margin-right: 0.625rem;
+    font-size: ${({ theme: { fontSize } }) => fontSize.h2.size};
+    font-weight: ${({ theme: { fontSize } }) => fontSize.h2.weight};
+  }
+  & > span:last-of-type {
+    font-size: ${({ theme: { fontSize } }) => fontSize.b2.size};
+    font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
+  }
 `;

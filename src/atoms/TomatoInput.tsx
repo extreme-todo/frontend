@@ -16,7 +16,8 @@ interface ITomatoInputProps {
   period: number;
   handleTomato: (count: number) => void;
   tomato: number;
-  useBalloonOrNot?: boolean;
+  useBalloon?: boolean;
+  useLabel?: boolean;
 }
 
 const TomatoInput = ({
@@ -25,7 +26,8 @@ const TomatoInput = ({
   period,
   tomato,
   handleTomato,
-  useBalloonOrNot = true,
+  useBalloon = true,
+  useLabel = true,
 }: ITomatoInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const thumbRef = useRef<HTMLDivElement>(null);
@@ -121,7 +123,7 @@ const TomatoInput = ({
           ref={thumbRef}
           data-value={`${tomato}round`}
           aria-label="tomato"
-          useBalloonOrNot={useBalloonOrNot}
+          useBalloon={useBalloon}
         >
           🍅
         </Thumb>
@@ -134,13 +136,15 @@ const TomatoInput = ({
           ))}
         </InputTickWrapper>
       </RangeInputWrapper>
-      <LabelWrapper>
-        {Array.from({ length: tickCount }).map((_, index) => (
-          <TickWrapper key={index} aria-label="label">
-            {formatTime((index + 1) * period)}
-          </TickWrapper>
-        ))}
-      </LabelWrapper>
+      {useLabel ? (
+        <LabelWrapper>
+          {Array.from({ length: tickCount }).map((_, index) => (
+            <TickWrapper key={index} aria-label="label">
+              {formatTime((index + 1) * period)}
+            </TickWrapper>
+          ))}
+        </LabelWrapper>
+      ) : undefined}
     </>
   );
 };
@@ -195,57 +199,55 @@ const InputTick = styled.div`
   border-radius: 50%;
 `;
 
-const Thumb = styled.div<{ useBalloonOrNot: boolean }>(
-  ({ theme, useBalloonOrNot }) => ({
-    fontSize: '2.25rem',
-    width: '2.25rem',
-    height: '2.25rem',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    zIndex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-    cursor: 'grab',
+const Thumb = styled.div<{ useBalloon: boolean }>(({ theme, useBalloon }) => ({
+  fontSize: '2.25rem',
+  width: '2.25rem',
+  height: '2.25rem',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  zIndex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'relative',
+  cursor: 'grab',
 
-    '&:active': {
-      cursor: 'grabbing',
+  '&:active': {
+    cursor: 'grabbing',
+  },
+
+  ...(useBalloon === true && {
+    '&:before': {
+      content: 'attr(data-value)',
+      position: 'absolute',
+      bottom: '4rem', // 말풍선 위치
+      left: '50%',
+      transform: 'translateX(-50%)',
+      font: theme.fontSize.h3.size,
+      fontWeight: theme.fontSize.h3.weight,
+      color: theme.color.backgroundColor.extreme_orange,
+      backgroundColor: theme.color.backgroundColor.white,
+      padding: '0.5625rem 1.3125rem',
+      borderRadius: '4.5625rem',
+      zIndex: 1,
     },
 
-    ...(useBalloonOrNot === true && {
-      '&:before': {
-        content: 'attr(data-value)',
-        position: 'absolute',
-        bottom: '4rem', // 말풍선 위치
-        left: '50%',
-        transform: 'translateX(-50%)',
-        font: theme.fontSize.h3.size,
-        fontWeight: theme.fontSize.h3.weight,
-        color: theme.color.backgroundColor.extreme_orange,
-        backgroundColor: theme.color.backgroundColor.white,
-        padding: '0.5625rem 1.3125rem',
-        borderRadius: '4.5625rem',
-        zIndex: 1,
-      },
-
-      '&:after': {
-        content: "''",
-        position: 'absolute',
-        bottom: '3rem', // 말풍선 꼬리 위치
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 0,
-        height: 0,
-        borderLeft: '0.5rem solid transparent',
-        borderRight: '0.5rem solid transparent',
-        borderTop: `1.5rem solid ${theme.color.backgroundColor.white}`, // 꼬리 색상
-        zIndex: 1,
-      },
-    }),
+    '&:after': {
+      content: "''",
+      position: 'absolute',
+      bottom: '3rem', // 말풍선 꼬리 위치
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: 0,
+      height: 0,
+      borderLeft: '0.5rem solid transparent',
+      borderRight: '0.5rem solid transparent',
+      borderTop: `1.5rem solid ${theme.color.backgroundColor.white}`, // 꼬리 색상
+      zIndex: 1,
+    },
   }),
-);
+}));
 
 const LabelWrapper = styled.div`
   display: flex;
