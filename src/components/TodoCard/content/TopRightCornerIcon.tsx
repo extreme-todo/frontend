@@ -21,7 +21,7 @@ const TopRightCorner = memo(
     else if (isThisEdit) {
       return (
         <BtnAtom handleOnClick={handleEditCancel}>
-          <IconAtom src={'icon/close.svg'} size={1.25} alt="cancel" />
+          <IconAtom src={'icon/closeDark.svg'} size={1.25} alt="cancel" />
         </BtnAtom>
       );
     } else {
