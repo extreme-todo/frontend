@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../atoms';
-import { FlipCounter } from '../molecules';
+
 import {
   focusStepList,
   restStepList,
@@ -24,7 +24,12 @@ const TimeSetter = ({
   handleTimeDown,
 }: ITimeCounterProps) => {
   return (
-    <div style={{ outline: '1px solid red' }}>
+    <div
+      style={{
+        outline: '1px solid red',
+        width: '17.5625rem',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Rectangle />
         <TypoAtom fontSize="h2" fontColor="primary2">
@@ -74,41 +79,36 @@ const PomodoroTimeSetting = () => {
   const { setFocusStep, setRestStep } = usePomodoroActions();
 
   /* local state */
-  const [focusFlipIndex, setFocusFlipIndex] = useState(
+  const [focusTimeIndex, setFocusTimeIndex] = useState(
     focusStepList.findIndex((time) => time === focusStep),
   );
-  const [restFlipIndex, setRestFlipIndex] = useState(
+  const [restTimeIndex, setRestTimeIndex] = useState(
     restStepList.findIndex((time) => time === restStep),
   );
-  const [isPlus, setIsPlus] = useState(false);
 
   /* local variable */
   const newTime = {
-    newFocus: [...focusStepList][focusFlipIndex],
-    resetFocus: [...restStepList][restFlipIndex],
+    newFocus: [...focusStepList][focusTimeIndex],
+    resetFocus: [...restStepList][restTimeIndex],
   };
 
   /* handler */
-  const handleFocusPlus = () => {
-    setFocusFlipIndex((prev) =>
+  const handleFocusUp = () => {
+    setFocusTimeIndex((prev) =>
       prev >= focusStepList.length - 1 ? prev : prev + 1,
     );
-    setIsPlus(true);
   };
-  const handleFocusMinus = () => {
-    setFocusFlipIndex((prev) => (prev <= 0 ? prev : prev - 1));
-    setIsPlus(false);
+  const handleFocusDown = () => {
+    setFocusTimeIndex((prev) => (prev <= 0 ? prev : prev - 1));
   };
 
-  const handleRestPlus = () => {
-    setRestFlipIndex((prev) =>
+  const handleRestUp = () => {
+    setRestTimeIndex((prev) =>
       prev >= restStepList.length - 1 ? prev : prev + 1,
     );
-    setIsPlus(true);
   };
-  const handleRestMinus = () => {
-    setRestFlipIndex((prev) => (prev <= 0 ? prev : prev - 1));
-    setIsPlus(false);
+  const handleRestDown = () => {
+    setRestTimeIndex((prev) => (prev <= 0 ? prev : prev - 1));
   };
 
   const handleSubmit = () => {
@@ -116,7 +116,29 @@ const PomodoroTimeSetting = () => {
     if (newTime.resetFocus !== restStep) setRestStep(newTime.resetFocus);
   };
 
-  return <CardAtom bg="primary1"></CardAtom>;
+  return (
+    <CardAtom
+      bg="primary1"
+      style={{ display: 'flex', flexDirection: 'row', columnGap: '3rem' }}
+    >
+      <TimeSetter
+        timeTitle={'집중시간'}
+        time={focusStepList[focusTimeIndex]}
+        handleTimeUp={handleFocusUp}
+        handleTimeDown={handleFocusDown}
+      />
+      <TimeSetter
+        timeTitle={'휴식시간'}
+        time={restStepList[restTimeIndex]}
+        handleTimeUp={handleRestUp}
+        handleTimeDown={handleRestDown}
+      />
+      <BtnAtom handleOnClick={handleSubmit}>저장</BtnAtom>
+      <BtnAtom handleOnClick={() => alert('닫기')}>
+        <IconAtom src={'icon/closeYellow.svg'} size={2} />
+      </BtnAtom>
+    </CardAtom>
+  );
 };
 
 export default PomodoroTimeSetting;
@@ -141,5 +163,7 @@ const ClockTypo = styled(TypoAtom)`
 
 const ClockTypoContainer = styled.div`
   padding: 1.5rem 0.71875rem 1.25rem 0.40625rem;
+  width: 12.6875rem;
   border-bottom: 2px solid #dbfe77;
+  text-align: center;
 `;
