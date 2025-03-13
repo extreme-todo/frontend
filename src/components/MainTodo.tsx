@@ -7,6 +7,7 @@ import Modal from './Modal';
 import TodoList from './TodoList';
 import {
   LoginContext,
+  useCurrentTodo,
   useExtremeMode,
   usePomodoroValue,
   useTimeMarker,
@@ -18,7 +19,7 @@ import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
 import { TypoAtom } from '../atoms';
 
-type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
+export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
 function MainTodo() {
   const [isModal, setIsModal] = useState<ModalType | null>(null);
@@ -35,16 +36,23 @@ function MainTodo() {
   const mainTodoRef = useRef<HTMLDivElement>(null);
 
   useTimeMarker();
+  const { currentTodo } = useCurrentTodo();
+  const {
+    settings: { focusStep },
+  } = usePomodoroValue();
 
-  const handleClickSideButton = (type: ModalType) => {
-    if (!isLogin) {
-      if (window.confirm('로그인을 하시겠습니까?')) {
-        return usersApi.login();
+  const handleClickSideButton = useCallback(
+    (type: ModalType) => {
+      if (!isLogin) {
+        if (window.confirm('로그인을 하시겠습니까?')) {
+          return usersApi.login();
+        }
+      } else {
+        setIsModal(type);
       }
-    } else {
-      setIsModal(type);
-    }
-  };
+    },
+    [isLogin],
+  );
 
   const handleClose = () => {
     setIsModal(null);
@@ -57,7 +65,13 @@ function MainTodo() {
       case 'timeModal':
         return <PomodoroTimeSetting />;
       case 'todolistModal':
-        return <TodoList />;
+        return (
+          <TodoList
+            openAddTodoModal={handleClickSideButton}
+            currentTodo={currentTodo}
+            focusStep={focusStep}
+          />
+        );
       default:
         return (
           <CurrentTodoCard

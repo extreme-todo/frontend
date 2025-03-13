@@ -1,5 +1,6 @@
 interface OptionParam {
-  empty?: string;
+  emptyAlert?: string;
+  regAlert?: string;
   max?: number;
 }
 
@@ -12,7 +13,7 @@ const titleCharacterReg =
 
 /**
  * @param value - 유효성 검사를 할 값
- * @param options - empty일 때 띄워줄 alert 메시지
+ * @param options - empty일 때 혹은 정규표현식을 벗어났을 때 띄워줄 alert 메시지
  * @returns 유효성을 통과하면 trimmed가 된 값을 return
  */
 export const inputValidation = (
@@ -20,13 +21,16 @@ export const inputValidation = (
   options?: OptionParam,
   reg: RegExp = regularCharacterReg,
 ) => {
-  if (options?.empty && !!!value.length) {
-    return alert(options?.empty);
+  if (options?.emptyAlert && !!!value.length) {
+    return alert(options?.emptyAlert);
   }
   const specialCharactersReg = /[@~₩?><|\\=_^]/;
   // 글로벌 문자(영어 포함 한국,중국,일본어)인지 && 특수문자와 이모지 제외처리
   if (!reg.test(value) || specialCharactersReg.test(value))
-    return alert('특수문자와 이모지는 입력할 수 없습니다.');
+    return alert(
+      options?.regAlert ??
+        `특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`,
+    );
 
   const trimmed = value.replace(/\s+/g, ' ').trim();
 
@@ -38,7 +42,7 @@ export const inputValidation = (
 
 export const categoryValidation = (value: string, categories: Array<any>) => {
   const trimmed = inputValidation(value, {
-    empty: '카테고리를 입력해주세요.',
+    emptyAlert: '카테고리를 입력해주세요.',
     max: 20,
   });
 
@@ -58,7 +62,8 @@ export const titleValidation = (value: string) => {
   const trimmed = inputValidation(
     value,
     {
-      empty: '제목을 입력해주세요',
+      emptyAlert: '제목을 입력해주세요',
+      regAlert: `특수문자는 입력할 수 없습니다\n!"#$%&()*+,./:;<=>?@[\\]^_\`{|}~`,
     },
     titleCharacterReg,
   );

@@ -109,8 +109,10 @@ const style = css`
     line-height: 1;
   }
   ol,
+  li,
   ul {
     list-style: none;
+    list-style-type: none;
   }
   blockquote,
   q {

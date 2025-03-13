@@ -2,7 +2,6 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { TodoCard } from '../../components';
-import EditUI from '../../components/TodoCard/content/EditUI';
 
 import { EditContextProvider } from '../../hooks';
 
@@ -25,7 +24,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const randomTagColor = RandomTagColorList.getInstance().getColorList;
+const randomTagColor = RandomTagColorList.getInstance();
 
 const wrapperCreator = ({ children }: IChildProps) => (
   <QueryClientProvider client={queryClient}>

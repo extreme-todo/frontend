@@ -6,16 +6,13 @@ import {
   useState,
 } from 'react';
 
-import {
-  BtnAtom,
-  IconAtom,
-  InputAtom,
-  PopperAtom,
-  TagAtom,
-  TomatoInput,
-  TypoAtom,
-} from '../../atoms';
-import { CategoryInput } from '../../molecules';
+import { IconAtom, PopperAtom, TomatoInput, TypoAtom } from '../../atoms';
+
+import FooterContent from './content/FooterContent';
+import CategoryContent from './content/CategoryContent';
+import HandlerIconAndOrder from './content/HandleIconAndOrder';
+import TitleOrInput from './content/TitleOrInput';
+import TopRightCornerIcon from './content/TopRightCornerIcon';
 
 import { useEdit } from '../../hooks';
 import { focusStep } from '../../hooks/usePomodoro';
@@ -32,9 +29,8 @@ import {
 
 import { formatTime } from '../../shared/timeUtils';
 import { categoryValidation } from '../../shared/inputValidation';
-
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
-import { TagColorName } from '../../styles/emotion';
+
 import styled from '@emotion/styled';
 
 interface ITodoCardProps {
@@ -42,13 +38,10 @@ interface ITodoCardProps {
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
   snapshot?: DraggableStateSnapshot;
   focusStep: focusStep;
-  randomTagColor: Record<string, TagColorName>;
+  randomTagColor: RandomTagColorList;
   isCurrTodo: boolean;
   order: number;
 }
-
-// TODO : 조금 있다가 TodoList에서 RandomTagColorList.getInstance()를 내리도록 하기
-const tagColorList = RandomTagColorList.getInstance().getColorList;
 
 const TodoCard = ({
   todoData,
@@ -77,13 +70,16 @@ const TodoCard = ({
   const [triggerElement, setTriggerElement] = useState<HTMLDivElement | null>(
     null,
   );
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+  const [arrowElement, setArrowElement] = useState<HTMLImageElement | null>(
+    null,
+  );
 
   const editData = useMemo(
     () => ({
       categories: categoryArray,
       todo: titleValue,
       duration: durationValue,
+      date: new Date(prevDate).toISOString(),
     }),
     [categoryArray, titleValue, durationValue],
   );
@@ -155,14 +151,18 @@ const TodoCard = ({
   });
 
   // handlers
-  const handleEditButton = () => {
+  const handleEditButton = useCallback(() => {
     setEditTodoId(id);
-  };
+  }, [id]);
 
-  const handleEditSubmit = () => {
-    updateMutate({ newTodo: editData, id, prevDate });
+  const handleEditSubmit = useCallback(() => {
+    updateMutate({
+      newTodo: editData,
+      id,
+      prevDate: prevDate,
+    });
     setEditTodoId(undefined);
-  };
+  }, [editData, id, prevDate]);
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
@@ -171,17 +171,16 @@ const TodoCard = ({
     [],
   );
 
-  // TODO : TodoList 단에서 key를 새로 할당해서 상태 초기화가 될 수 있도록 하자!
-  const handleEditCancel = () => {
+  const handleEditCancel = useCallback(() => {
     setEditTodoId(undefined);
     setTitleValue(todo);
     setCategoryArray(categories);
     setDurationValue(duration);
-  };
+  }, [todo, categories, duration]);
 
-  const handleDeleteButton = () => {
+  const handleDeleteButton = useCallback(() => {
     deleteMutate({ id });
-  };
+  }, [id]);
 
   const handleAddCategory = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -203,6 +202,7 @@ const TodoCard = ({
         } else {
           setCategoryArray([trimmed]);
         }
+        randomTagColor.setColor = trimmed;
 
         setCategoryValue('');
       }
@@ -242,314 +242,6 @@ const TodoCard = ({
     [popperElement],
   );
 
-  // UI
-  const HandlerIconAndOrder = useCallback(
-    ({
-      isCurrTodo,
-      isEditMode,
-      isThisEdit,
-      done,
-    }: {
-      isCurrTodo: boolean;
-      isEditMode: boolean;
-      isThisEdit: boolean;
-      done: boolean;
-    }) => {
-      if (done) return null;
-      else if (isThisEdit) {
-        return (
-          <>
-            <IconAtom
-              src="icon/edit_handle.svg"
-              alt="handler"
-              size={1.25}
-              className="handler"
-            />
-            <TypoAtom fontSize="h3" fontColor="primary1">
-              {order}.
-            </TypoAtom>
-          </>
-        );
-      } else if (isCurrTodo || isEditMode) {
-        return (
-          <>
-            <IconAtom
-              src="icon/handle.svg"
-              alt="handler"
-              size={1.25}
-              className="handler"
-            />
-            <TypoAtom fontSize="h3" fontColor="primary2">
-              {order}.
-            </TypoAtom>
-          </>
-        );
-      } else {
-        return (
-          <>
-            <div {...dragHandleProps}>
-              <IconAtom src="icon/yellowHandle.svg" alt="handler" size={1.25} />
-            </div>
-            <TypoAtom fontSize="h3" fontColor="primary2">
-              {order}.
-            </TypoAtom>
-          </>
-        );
-      }
-    },
-    [],
-  );
-
-  const TitleOrInput = useCallback(
-    ({
-      todo,
-      titleValue,
-      isThisEdit,
-      handleChangeTitle,
-    }: {
-      todo: string;
-      titleValue: string;
-      isThisEdit: boolean;
-      handleChangeTitle: ReactEventHandler<HTMLInputElement>;
-    }) => {
-      if (isThisEdit) {
-        return (
-          <InputAtom.Underline
-            value={titleValue}
-            handleChange={handleChangeTitle}
-            placeholder="할 일을 입력하세요"
-            ariaLabel="title_input"
-            className="todoTitle"
-            styleOption={{
-              borderWidth: '1px',
-              padding: '0 0 0 0',
-              height: '1.25rem',
-              font: 'h3',
-              borderColor: 'primary1',
-              fontColor: 'primary1',
-            }}
-          />
-        );
-      } else {
-        return (
-          <TypoAtom className="todoTitle" fontSize="h3" fontColor="primary2">
-            {todo}
-          </TypoAtom>
-        );
-      }
-    },
-    [],
-  );
-
-  const TopRightCorner = useCallback(
-    ({
-      isCurrTodo,
-      done,
-      isThisEdit,
-      isDragging,
-    }: {
-      isCurrTodo: boolean;
-      done: boolean;
-      isThisEdit: boolean;
-      isDragging: boolean | undefined;
-    }) => {
-      if (isCurrTodo || done || isDragging) return null;
-      else if (isThisEdit) {
-        return (
-          <BtnAtom handleOnClick={handleEditCancel}>
-            <IconAtom src={'icon/close.svg'} size={1.25} alt="cancel" />
-          </BtnAtom>
-        );
-      } else {
-        return (
-          <BtnAtom handleOnClick={handleDeleteButton}>
-            <IconAtom src={'icon/delete.svg'} size={1.25} alt="delete" />
-          </BtnAtom>
-        );
-      }
-    },
-    [],
-  );
-
-  const CategoryContent = useCallback(
-    ({
-      categories,
-      categoryArray,
-      handleAddCategory,
-      handleDeleteCategory,
-      categoryValue,
-      handleChangeCategory,
-      tagColorList,
-      isDragging,
-      isThisEdit,
-    }: {
-      categories: string[] | null;
-      categoryArray: string[] | null;
-      handleAddCategory: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-      handleDeleteCategory: (category: string) => void;
-      categoryValue: string;
-      handleChangeCategory: (
-        event: React.ChangeEvent<HTMLInputElement>,
-      ) => void;
-      tagColorList: Record<string, TagColorName>;
-      isDragging: boolean | undefined;
-      isThisEdit: boolean;
-    }) => {
-      if (isDragging || !categories) return null;
-      else if (isThisEdit) {
-        return (
-          <CategoryContainer className="categories">
-            <CategoryInput
-              categories={categoryArray}
-              handleSubmit={handleAddCategory}
-              handleClick={handleDeleteCategory}
-              category={categoryValue}
-              handleChangeCategory={handleChangeCategory}
-              tagColorList={tagColorList}
-            />
-          </CategoryContainer>
-        );
-      } else if (categories && categories.length !== 0) {
-        return (
-          <CategoryContainer className="categories">
-            {categories.map((category) => {
-              return (
-                <TagAtom
-                  key={category}
-                  title={category}
-                  styleOption={{ bg: tagColorList[category], size: 'normal' }}
-                >
-                  {category}
-                </TagAtom>
-              );
-            })}
-          </CategoryContainer>
-        );
-      }
-      return null;
-    },
-    [],
-  );
-
-  const FooterContent = useCallback(
-    ({
-      isDragging,
-      done,
-      isThisEdit,
-      duration,
-      handleEditSubmit,
-      handleEditButton,
-      durationValue,
-    }: {
-      isDragging: boolean | undefined;
-      done: boolean;
-      isThisEdit: boolean;
-      duration: string;
-      handleEditSubmit: () => void;
-      handleEditButton: () => void;
-      durationValue: number;
-    }) => {
-      if (isDragging || done) return null;
-      else if (isThisEdit) {
-        return (
-          <FooterContainer>
-            <BtnAtom handleOnClick={() => setShowTomatoInput(true)}>
-              <TimeWrapper>
-                <IconAtom
-                  src={'icon/timer.svg'}
-                  alt="timer"
-                  className="timer"
-                  size={1.25}
-                />
-                <div ref={setTriggerElement}>
-                  <TypoAtom
-                    fontSize="body"
-                    fontColor="primary1"
-                    className="duration"
-                  >
-                    {formatTime(durationValue)}
-                  </TypoAtom>
-                </div>
-              </TimeWrapper>
-            </BtnAtom>
-            <BtnAtom handleOnClick={handleEditSubmit}>
-              <TagAtom
-                styleOption={{
-                  size: 'normal',
-                  bg: 'transparent',
-                  borderColor: 'primary1',
-                }}
-                className="save__button"
-              >
-                <TypoAtom fontSize="b2" fontColor="primary1">
-                  저장
-                </TypoAtom>
-              </TagAtom>
-            </BtnAtom>
-          </FooterContainer>
-        );
-      } else if (isCurrTodo) {
-        return (
-          <FooterContainer>
-            <TimeWrapper>
-              <IconAtom
-                src={'icon/yellowTimer.svg'}
-                alt="timer"
-                className="timer"
-                size={1.25}
-              />
-              <TypoAtom fontSize="body" fontColor="primary2">
-                {duration}
-              </TypoAtom>
-            </TimeWrapper>
-            <TagAtom
-              styleOption={{
-                size: 'normal',
-                bg: 'transparent',
-                borderColor: 'primary2',
-              }}
-            >
-              <TypoAtom fontSize="b2" fontColor="primary2">
-                진행중
-              </TypoAtom>
-            </TagAtom>
-          </FooterContainer>
-        );
-      } else {
-        return (
-          <FooterContainer>
-            <TimeWrapper>
-              <IconAtom
-                src={'icon/yellowTimer.svg'}
-                alt="timer"
-                className="timer"
-                size={1.25}
-              />
-              <TypoAtom fontSize="body" fontColor="primary2">
-                {duration}
-              </TypoAtom>
-            </TimeWrapper>
-            <BtnAtom handleOnClick={handleEditButton}>
-              <TagAtom
-                styleOption={{
-                  size: 'normal',
-                  bg: 'transparent',
-                  borderColor: 'primary2',
-                }}
-                className="edit__button"
-              >
-                <TypoAtom fontSize="b2" fontColor="primary2">
-                  수정
-                </TypoAtom>
-              </TagAtom>
-            </BtnAtom>
-          </FooterContainer>
-        );
-      }
-    },
-    [isCurrTodo, snapshot?.isDragging, done],
-  );
-
   useEffect(() => {
     const rootElement = document.querySelector('#root');
     if (!rootElement) return;
@@ -587,9 +279,10 @@ const TodoCard = ({
         <div>
           <HandlerIconAndOrder
             isCurrTodo={isCurrTodo}
-            isEditMode={editTodoId !== undefined}
             done={done}
             isThisEdit={isThisEdit}
+            order={order}
+            dragHandleProps={dragHandleProps}
           />
           <TitleOrInput
             titleValue={titleValue}
@@ -598,11 +291,13 @@ const TodoCard = ({
             todo={todo}
           />
         </div>
-        <TopRightCorner
+        <TopRightCornerIcon
           isCurrTodo={isCurrTodo}
           done={done}
           isThisEdit={isThisEdit}
           isDragging={snapshot?.isDragging}
+          handleEditCancel={handleEditCancel}
+          handleDeleteButton={handleDeleteButton}
         />
       </TitleContainer>
       <CategoryContent
@@ -611,7 +306,7 @@ const TodoCard = ({
         handleDeleteCategory={handleDeleteCategory}
         categoryValue={categoryValue}
         handleChangeCategory={handleChangeCategory}
-        tagColorList={tagColorList}
+        tagColorList={randomTagColor.getColorList}
         isDragging={snapshot?.isDragging}
         isThisEdit={isThisEdit}
         categories={categories}
@@ -624,8 +319,10 @@ const TodoCard = ({
         handleEditSubmit={handleEditSubmit}
         handleEditButton={handleEditButton}
         durationValue={durationValue}
+        isCurrTodo={isCurrTodo}
+        setShowTomatoInput={setShowTomatoInput}
+        setTriggerElement={setTriggerElement}
       />
-
       {showTomatoInput && (
         <PopperAtom
           popperElement={popperElement}
@@ -635,16 +332,28 @@ const TodoCard = ({
           placement={'bottom'}
         >
           <TomatoInputWrapper aria-label="tomatoInput">
+            <TomatoInfo>
+              <TypoAtom>{formatTime(durationValue * focusStep)}</TypoAtom>
+              <TypoAtom>{durationValue}round</TypoAtom>
+            </TomatoInfo>
             <TomatoInput
               max={10}
               min={0}
               period={focusStep}
               handleTomato={handleTomato}
               tomato={+durationValue}
-              useBalloonOrNot={false}
+              useBalloon={false}
+              useLabel={false}
             />
           </TomatoInputWrapper>
-          <PopperArrow id="arrow" data-popper-arrow ref={setArrowElement} />
+          <IconAtom
+            id="arrow"
+            data-popper-arrow
+            ref={setArrowElement}
+            h={3.125}
+            w={0.875}
+            src={'icon/popperArrow.svg'}
+          />
         </PopperAtom>
       )}
     </TodoCardContainer>
@@ -662,7 +371,8 @@ const TodoCardContainer = styled.div<{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 24.5rem;
+  /* width: 24.5rem; */
+  width: 100%;
 
   box-sizing: border-box;
   padding: 0.75rem;
@@ -673,7 +383,8 @@ const TodoCardContainer = styled.div<{
     theme: {
       color: { backgroundColor },
     },
-  }) => (isThisEdit ? backgroundColor.primary2 : '#463685')};
+  }) =>
+    isThisEdit ? backgroundColor.primary2 : backgroundColor.dark_primary1};
 
   color: ${({
     isThisEdit,
@@ -709,30 +420,10 @@ const TodoCardContainer = styled.div<{
     cursor: auto;
   }
 
-  /* &,
-  * {
-    outline: 1px solid limegreen;
-  } */
-`;
-
-const FooterContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  column-gap: 0.5rem;
-  .edit__button,
-  .save__button {
-    &:hover {
-      background-color: ${({ theme: { button } }) =>
-        button.darkBtn.hover.backgroundColor};
-    }
-    transition: background-color 0.3s ease-in-out;
+  #arrow {
+    position: absolute;
+    z-index: -1;
   }
-`;
-
-const TimeWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  column-gap: 0.25rem;
 `;
 
 const TitleContainer = styled.div`
@@ -770,43 +461,26 @@ const TitleContainer = styled.div`
   }
 `;
 
-export const CategoryContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-
-  column-gap: 0.5rem;
-  row-gap: 0.25rem;
-`;
-
 const TomatoInputWrapper = styled.div`
   background-color: ${({ theme }) => theme.color.backgroundColor.white};
   width: 44.625rem;
-  height: 5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  padding: 1rem;
+  padding: 1.25rem 1rem;
   border-radius: 1.25rem;
 `;
 
-const PopperArrow = styled.div`
-  &,
-  &::before {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    z-index: -1;
+const TomatoInfo = styled.div`
+  margin-bottom: 0.8rem;
+  & > span:first-of-type {
+    margin-right: 0.625rem;
+    font-size: ${({ theme: { fontSize } }) => fontSize.h2.size};
+    font-weight: ${({ theme: { fontSize } }) => fontSize.h2.weight};
   }
-
-  &::before {
-    content: '';
-    transform: rotate(45deg);
-    background-color: ${({
-      theme: {
-        color: { backgroundColor },
-      },
-    }) => backgroundColor.white};
+  & > span:last-of-type {
+    font-size: ${({ theme: { fontSize } }) => fontSize.b2.size};
+    font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
   }
 `;
