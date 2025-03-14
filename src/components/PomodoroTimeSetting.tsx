@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 
 import {
   focusStepList,
