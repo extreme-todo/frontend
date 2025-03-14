@@ -164,7 +164,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
             }}
           />
           <BtnAtom handleOnClick={handleClose} ariaLabel="close">
-            <IconAtom size={2} alt="close" src="icon/close.svg" />
+            <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
           </BtnAtom>
         </TitleWrapper>
         <CalendarAndCategoryWrapper>

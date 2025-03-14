@@ -64,7 +64,7 @@ const Modal = ({ title, children, handleClose }: IModalProps) => {
                 size={1}
                 backgroundColor={'transparent'}
                 alt="close"
-                src={'icon/close.svg'}
+                src={'icon/closeDark.svg'}
               />
             </BtnAtom>
           </HeaderContainer>

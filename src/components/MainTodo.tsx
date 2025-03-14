@@ -63,7 +63,7 @@ function MainTodo() {
       case 'addTodoModal':
         return <AddTodo handleClose={handleClose} />;
       case 'timeModal':
-        return <PomodoroTimeSetting />;
+        return <PomodoroTimeSetting handleClose={handleClose} />;
       case 'todolistModal':
         return (
           <TodoList
