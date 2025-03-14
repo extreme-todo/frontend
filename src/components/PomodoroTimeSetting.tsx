@@ -99,7 +99,7 @@ const TimeSetter = ({
   );
 };
 
-const PomodoroTimeSetting = () => {
+const PomodoroTimeSetting = ({ handleClose }: { handleClose: () => void }) => {
   /* pomodoro context */
   const {
     settings: { focusStep, restStep },
@@ -169,7 +169,7 @@ const PomodoroTimeSetting = () => {
             </TypoAtom>
           </div>
         </BtnAtom>
-        <BtnAtom handleOnClick={() => alert('닫기')}>
+        <BtnAtom handleOnClick={handleClose}>
           <svg
             width="2rem"
             height="2rem"
