@@ -55,7 +55,11 @@ const TimeSetter = ({
               margin: 'auto',
             }}
           >
-            <BtnAtom handleOnClick={handleTimeUp} btnType="lightBtn">
+            <BtnAtom
+              handleOnClick={handleTimeUp}
+              btnType="lightBtn"
+              ariaLabel="timeup"
+            >
               <svg
                 width="2.5rem"
                 height="2.5rem"
@@ -72,7 +76,7 @@ const TimeSetter = ({
                 />
               </svg>
             </BtnAtom>
-            <BtnAtom handleOnClick={handleTimeDown}>
+            <BtnAtom handleOnClick={handleTimeDown} ariaLabel="timedown">
               <svg
                 width="2.5rem"
                 height="2.5rem"
