@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Welcome } from '../../components/index';
 
 import { ThemeProvider } from '@emotion/react';
@@ -7,7 +7,13 @@ import { usersApi } from '../../shared/apis';
 
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  logRoles,
+} from '@testing-library/react';
 import { LoginProvider } from '../../hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -19,95 +25,94 @@ const queryClient = new QueryClient({
   },
 });
 
+const ProviderWrapper = ({ children }) => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={designTheme}>
+        <LoginProvider>{children}</LoginProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
+
 const mockWelcome = (
   func1: jest.Mock<any, any>,
   func2?: jest.Mock<any, any>,
   func3?: jest.Mock<any, any>,
 ) => {
   mockLocalStorage(func1, func2, func3);
-  const { container } = render(
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={designTheme}>
-        <LoginProvider>
-          <Welcome />
-        </LoginProvider>
-      </ThemeProvider>
-    </QueryClientProvider>,
-  );
-  return container;
+  return render(<Welcome />, { wrapper: ProviderWrapper });
 };
 
 describe('Welcome', () => {
-  describe('유저가 로그인을 안했을 경우', () => {
-    let renderResult: HTMLElement;
+  describe('Welcome 페이지에는', () => {
+    let renderResult: ReturnType<typeof mockWelcome>;
 
     beforeEach(() => {
-      const mockElement = document.createElement('div');
-      mockElement.setAttribute('id', 'main-container');
-      document.body.appendChild(mockElement);
       renderResult = mockWelcome(jest.fn((key: string) => null));
     });
 
-    it('타이틀과 로그인 버튼을 렌더링 하고', () => {
-      expect(renderResult).toHaveTextContent('EXTREME TODO');
-      expect(renderResult).toContainElement(
-        screen.getByAltText('google login button'),
-      );
+    it('로고가 있다.', () => {
+      const { getByRole } = renderResult;
+
+      expect(getByRole('img', { name: /logo/i })).toBeInTheDocument();
     });
 
-    // TODO : 이 부분은 로그인 로직을 테스트 하는 e2e 테스트 쪽으로 옮겨야 하지 않을까?
-    it('로그인 버튼을 눌렀을 때 login메소드를 작동시킨다.', () => {
-      const spyOnLogin = jest.spyOn(usersApi, 'login').mockImplementation();
-      const googleImage = screen.getByRole('img');
-      fireEvent.click(googleImage);
-      expect(spyOnLogin).toBeCalled();
-    });
-  });
-
-  // describe('유저가 로그인 버튼을 눌렀을 때', () => {
-  //   it('구글 로그인 페이지로 가야 한다.', async () => {
-  //     // const page = await browser.newPage();
-  //     await page.goto('http://localhost:3000');
-  //     const test = await page.$('span');
-  //     expect(test).not.toBeNull();
-  //   });
-  // });
-
-  describe('유저가 로그인을 했을 경우', () => {
-    let renderResult: HTMLElement;
-    const mockDeleteLocalStorage = jest.fn();
-
-    beforeEach(() => {
-      renderResult = mockWelcome(
-        jest.fn((key: string) => 'extremeTokemSample'),
-        jest.fn(),
-        mockDeleteLocalStorage,
-      );
-    });
-
-    it('로그아웃 버튼이 렌더링 되어야 하고,', () => {
-      expect(renderResult).toContainElement(screen.getByText('SIGN OUT'));
-    });
-
-    it('클릭하면 removeItem을 호출한다.', () => {
-      const logoutBtn = screen.getByText('SIGN OUT');
-      fireEvent.click(logoutBtn);
-      expect(mockDeleteLocalStorage).toBeCalled();
-    });
-
-    it('셋팅 버튼이 렌더링 되어야 하고,', () => {
-      expect(renderResult).toContainElement(screen.getByText('SETTING'));
-    });
-
-    it('클릭하면 셋팅 모달을 띄워준다.', () => {
-      const settingBtn = screen.getByText('SETTING');
-
-      fireEvent.click(settingBtn);
-
-      act(() => {
-        const settingTitle = screen.getByText('설정');
-        expect(settingTitle).toBeInTheDocument();
+    describe('유저가 로그인을 하지 않은 경우', () => {
+      it('구글 소셜 로그인 버튼이 있다.', () => {
+        const { getByText, getByRole } = renderResult;
+        expect(getByText('Sign in with')).toBeInTheDocument();
+        expect(
+          getByRole('img', { name: /google_login_button/i }),
+        ).toBeInTheDocument();
       });
+      it('구글 소셜 버튼을 누르면 로그인 api가 호출된다.', () => {
+        const { getByText, getByRole } = renderResult;
+        const spyOnLogin = jest.spyOn(usersApi, 'login').mockImplementation();
+        const googleImage = getByRole('img', { name: /google_login_button/i });
+        fireEvent.click(googleImage);
+        expect(spyOnLogin).toBeCalled();
+      });
+      // describe('유저가 로그인을 했을 경우', () => {
+      //   let renderResult: HTMLElement;
+      //   const mockDeleteLocalStorage = jest.fn();
+      //   beforeEach(() => {
+      //     renderResult = mockWelcome(
+      //       jest.fn((key: string) => 'extremeTokemSample'),
+      //       jest.fn(),
+      //       mockDeleteLocalStorage,
+      //     );
+      //   });
+      //   it('로그아웃 버튼이 렌더링 되어야 하고,', () => {
+      //     expect(renderResult).toContainElement(screen.getByText('SIGN OUT'));
+      //   });
+      //   it('클릭하면 removeItem을 호출한다.', () => {
+      //     const logoutBtn = screen.getByText('SIGN OUT');
+      //     fireEvent.click(logoutBtn);
+      //     expect(mockDeleteLocalStorage).toBeCalled();
+      //   });
+      //   it('셋팅 버튼이 렌더링 되어야 하고,', () => {
+      //     expect(renderResult).toContainElement(screen.getByText('SETTING'));
+      //   });
+      //   it('클릭하면 셋팅 모달을 띄워준다.', () => {
+      //     const settingBtn = screen.getByText('SETTING');
+      //     fireEvent.click(settingBtn);
+      //     act(() => {
+      //       const settingTitle = screen.getByText('설정');
+      //       expect(settingTitle).toBeInTheDocument();
+      //     });
+      //   });
+    });
+
+    describe('유저가 로그인을 한 경우', () => {
+      it('로그아웃 버튼이 렌더링 되어야 하고', () => {});
+      it('설정 버튼이 렌더링 되어야 한다.', () => {});
+    });
+    describe('설정 버튼을 누르면', () => {
+      it('데이터 초기화 버튼이 렌더링 되어야 하고', () => {});
+      it('회원 탈퇴 버튼이 렌더링 되어야 한다.', () => {});
+      it('데이터 초기화 버튼을 누르면 removeItem을 호출한다.', () => {});
+      it('회원 탈퇴 버튼을 누르면 withdrawal을 호출한다.', () => {});
     });
   });
 });

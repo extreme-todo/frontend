@@ -33,7 +33,7 @@ const Welcome = () => {
 
   return (
     <WelcomeContainer ref={welcomeRef}>
-      <img className="logo" src="/icon/logo.svg" />
+      <img className="logo" src="/icon/logo.svg" alt="logo" />
       {isLogin ? (
         <BtnContainer>
           <BtnAtom handleOnClick={handleLogoutBtn}>
@@ -51,11 +51,14 @@ const Welcome = () => {
             )}
         </BtnContainer>
       ) : (
-        <BtnAtom handleOnClick={handleLoginBtn}>
+        <BtnAtom handleOnClick={handleLoginBtn} className="login_button">
+          <TypoAtom fontColor="extreme_orange" fontSize="b1">
+            Sign in with
+          </TypoAtom>
           <IconAtom
-            className="login-button"
-            src="btn_google_signin_dark_pressed_web@2x.png"
-            alt="google login button"
+            className="google_logo"
+            src="/icon/googleIcon.svg"
+            alt="google_login_button"
           />
         </BtnAtom>
       )}
@@ -79,33 +82,19 @@ const WelcomeContainer = styled.div`
     height: 11.25rem;
   }
 
-  > span:first-of-type {
-    font-style: normal;
+  .login_button {
     display: flex;
-    align-items: center;
-    text-align: center;
-    letter-spacing: -0.05rem;
-
-    /* TitleColor */
-
-    background: linear-gradient(
-        114.81deg,
-        #00c2ff 22.57%,
-        rgba(0, 117, 255, 0) 65.81%
-      ),
-      #fa00ff;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .login-button {
-    width: 20rem;
-    height: 5rem;
-    img {
-      width: 100%;
-      height: 100%;
+    &:hover {
+      opacity: 0.7;
+      transition: opacity 0.3s ease-in-out;
     }
   }
+  .google_logo {
+    width: 6.25rem;
+    height: 1.75rem;
+    margin-left: 0.5rem;
+  }
+
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     > span:first-of-type {
