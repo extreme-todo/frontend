@@ -33,7 +33,7 @@ const Welcome = () => {
 
   return (
     <WelcomeContainer ref={welcomeRef}>
-      <img className="logo" src="logo.svg" />
+      <img className="logo" src="/icon/logo.svg" />
       {isLogin ? (
         <BtnContainer>
           <BtnAtom handleOnClick={handleLogoutBtn}>
