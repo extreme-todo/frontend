@@ -20,6 +20,8 @@
     "axios": "^0.27.2",
     "date-fns": "^3.6.0",
     "focus-trap-react": "^10.2.3",
+    "framer-motion": "^12.5.0",
+    "motion": "^12.5.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-beautiful-dnd": "^13.1.1",
