@@ -29,11 +29,11 @@ export const CardAnimationStyle = css`
       left: 34px;
       top: 40px;
       z-index: 0;
-      opacity: 0;
+      opacity: 1;
       pointer-events: none;
     }
     100% {
-      transform: rotateZ($cardDegree);
+      transform: rotateZ(0);
       left: 0;
       top: 0;
       z-index: 1;
