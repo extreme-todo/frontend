@@ -10,13 +10,16 @@ export const CardAnimationStyle = css`
       opacity: 1;
       pointer-events: none;
     }
-    100% {
+    99% {
       transform: rotateZ(-10deg);
       left: -28.5px;
       top: -146.52px;
       z-index: 0;
       opacity: 1;
       pointer-events: none;
+    }
+    100% {
+      opacity: 0;
     }
   }
 

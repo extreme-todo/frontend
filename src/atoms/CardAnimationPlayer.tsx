@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
 
 export type CardAnimationPlayerAnimationType =
   | 'HIDE_UP' // 맨 위에 있던 카드가 위로 사라질 때
@@ -15,57 +15,55 @@ export interface ICardAnimationPlayerProps {
     | CardAnimationPlayerAnimationType[];
 }
 
-function CardAnimationPlayer({
-  children,
-  animation,
-  duration = 0.3,
-}: ICardAnimationPlayerProps) {
-  const cardRef = useRef<HTMLDivElement | null>();
+const CardAnimationPlayer = forwardRef(
+  ({ children, animation, duration = 0.3 }: ICardAnimationPlayerProps) => {
+    const cardRef = useRef<HTMLDivElement | null>();
 
-  const getAnimation = (
-    anim: CardAnimationPlayerAnimationType,
-    idx?: number,
-  ) => {
-    switch (anim) {
-      case 'HIDE_UP':
-        return `hideUp ${duration}s ${
-          duration * (idx ?? 0)
-        }s forwards ease-in-out`;
-      case 'SHOW_UP':
-        return `showUp ${duration}s ${
-          duration * (idx ?? 0)
-        }s forwards ease-in-out`;
-      case 'NEXT_UP':
-        return `nextUp ${duration}s ${
-          duration * (idx ?? 0)
-        }s forwards ease-in-out`;
-      default:
-        return 'none';
-    }
-  };
-
-  useEffect(() => {
-    if (cardRef.current) {
-      if (Array.isArray(animation)) {
-        cardRef.current.style.animation = animation
-          .map((anim, idx) => getAnimation(anim, idx))
-          .join(', ');
-      } else {
-        cardRef.current.style.animation = getAnimation(animation);
+    const getAnimation = (
+      anim: CardAnimationPlayerAnimationType,
+      idx?: number,
+    ) => {
+      switch (anim) {
+        case 'HIDE_UP':
+          return `hideUp ${duration}s ${
+            duration * (idx ?? 0)
+          }s forwards ease-in-out`;
+        case 'SHOW_UP':
+          return `showUp ${duration}s ${
+            duration * (idx ?? 0)
+          }s forwards ease-in-out`;
+        case 'NEXT_UP':
+          return `nextUp ${duration}s ${
+            duration * (idx ?? 0)
+          }s forwards ease-in-out`;
+        default:
+          return 'none';
       }
-    }
-  }, [animation]);
+    };
 
-  return (
-    <StyledCardAnimationPlayerWrapper
-      ref={(el) => {
-        cardRef.current = el;
-      }}
-    >
-      {children}
-    </StyledCardAnimationPlayerWrapper>
-  );
-}
+    useEffect(() => {
+      if (cardRef.current) {
+        if (Array.isArray(animation)) {
+          cardRef.current.style.animation = animation
+            .map((anim, idx) => getAnimation(anim, idx))
+            .join(', ');
+        } else {
+          cardRef.current.style.animation = getAnimation(animation);
+        }
+      }
+    }, [animation]);
+
+    return (
+      <StyledCardAnimationPlayerWrapper
+        ref={(el) => {
+          cardRef.current = el;
+        }}
+      >
+        {children}
+      </StyledCardAnimationPlayerWrapper>
+    );
+  },
+);
 
 const StyledCardAnimationPlayerWrapper = styled.div`
   position: absolute;

@@ -17,12 +17,18 @@ import AddTodo from './AddTodo';
 import PomodoroTimeSetting from './PomodoroTimeSetting';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
-import { TypoAtom } from '../atoms';
+import { CardAtom, TypoAtom } from '../atoms';
+import CardAnimationPlayer, {
+  CardAnimationPlayerAnimationType,
+} from '../atoms/CardAnimationPlayer';
+import { BackgroundColorName } from '../styles/emotion';
 
 export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
 function MainTodo() {
   const [isModal, setIsModal] = useState<ModalType | null>(null);
+  const [currentCardColor, setCurrentCardColor] =
+    useState<BackgroundColorName>('primary1');
 
   const {
     status: pomodoroStatus,
@@ -34,6 +40,12 @@ function MainTodo() {
   const [focusedPercent, setFocusedPercent] = useState<number>(0);
   const [restedPercent, setRestedPercent] = useState<number>(0);
   const mainTodoRef = useRef<HTMLDivElement>(null);
+  const [currentCardAnimation, setCurrentCardAnimation] = useState<
+    CardAnimationPlayerAnimationType | CardAnimationPlayerAnimationType[]
+  >('SHOW_UP');
+  const [dummyCardAnimation, setDummyCardAnimation] = useState<
+    CardAnimationPlayerAnimationType | CardAnimationPlayerAnimationType[]
+  >('NEXT_UP');
 
   useTimeMarker();
   const { currentTodo } = useCurrentTodo();
@@ -48,6 +60,8 @@ function MainTodo() {
           return usersApi.login();
         }
       } else {
+        setCurrentCardAnimation('HIDE_UP');
+        setDummyCardAnimation('SHOW_UP');
         setIsModal(type);
       }
     },
@@ -58,13 +72,33 @@ function MainTodo() {
     setIsModal(null);
   };
 
+  const getDummyCardColor = (): BackgroundColorName => {
+    switch (currentCardColor) {
+      case 'primary1':
+        return 'primary2';
+      case 'primary2':
+        return 'primary1';
+      case 'extreme_dark':
+        return 'extreme_orange';
+      case 'extreme_orange':
+        return 'extreme_dark';
+      default:
+        return 'primary2';
+    }
+  };
+
   const CurrentMainCard = useCallback(() => {
+    setCurrentCardAnimation(['HIDE_UP', 'SHOW_UP']);
+    setDummyCardAnimation('NEXT_UP');
     switch (isModal) {
       case 'addTodoModal':
+        setCurrentCardColor('primary2');
         return <AddTodo handleClose={handleClose} />;
       case 'timeModal':
+        setCurrentCardColor('primary1');
         return <PomodoroTimeSetting handleClose={handleClose} />;
       case 'todolistModal':
+        setCurrentCardColor('primary1');
         return (
           <TodoList
             openAddTodoModal={handleClickSideButton}
@@ -73,6 +107,15 @@ function MainTodo() {
           />
         );
       default:
+        setCurrentCardColor(
+          pomodoroStatus === PomodoroStatus.FOCUSING
+            ? isExtreme
+              ? 'extreme_dark'
+              : 'primary1'
+            : isExtreme
+            ? 'extreme_orange'
+            : 'primary2',
+        );
         return (
           <CurrentTodoCard
             openAddTodoModal={() => handleClickSideButton('addTodoModal')}
@@ -150,7 +193,14 @@ function MainTodo() {
               </div>
             </SideButtons.SideButton>
           </SideButtons>
-          <CurrentMainCard />
+          <div className="center">
+            <CardAnimationPlayer animation={currentCardAnimation}>
+              <CurrentMainCard />
+            </CardAnimationPlayer>
+            <CardAnimationPlayer animation={dummyCardAnimation}>
+              <CardAtom bg={getDummyCardColor()} />
+            </CardAnimationPlayer>
+          </div>
         </MainTodoCenter>
         {/* {isModal === 'todolistModal' &&
           createPortal(
@@ -211,6 +261,14 @@ const MainTodoCenter = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 0.75rem;
+  .center {
+    width: 53.75rem;
+    height: 20rem;
+    position: relative;
+    > * {
+      position: absolute;
+    }
+  }
   .tag-button {
     border: 1px solid ${({ theme }) => theme.color.primary.primary1};
     border-radius: 1.25rem;

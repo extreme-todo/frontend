@@ -101,9 +101,7 @@ function CurrentTodoCard({
   return (
     <TransparentAbsoluteCardsParent>
       <CardAnimationPlayer
-        animation={
-          status === PomodoroStatus.RESTING ? ['HIDE_UP', 'NEXT_UP'] : 'SHOW_UP'
-        }
+        animation={status === PomodoroStatus.RESTING ? 'HIDE_UP' : 'SHOW_UP'}
       >
         <CardAtom className="card" bg={isExtreme ? 'extreme_dark' : 'primary1'}>
           {status === PomodoroStatus.FOCUSING && <ExtremeModeIndicator />}
@@ -135,9 +133,7 @@ function CurrentTodoCard({
         </CardAtom>
       </CardAnimationPlayer>
       <CardAnimationPlayer
-        animation={
-          status === PomodoroStatus.RESTING ? 'SHOW_UP' : ['HIDE_UP', 'NEXT_UP']
-        }
+        animation={status === PomodoroStatus.RESTING ? 'SHOW_UP' : 'HIDE_UP'}
       >
         <RestCard
           canRest={canRest}
