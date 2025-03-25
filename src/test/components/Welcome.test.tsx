@@ -63,7 +63,7 @@ describe('Welcome', () => {
         const spyOnLogin = jest.spyOn(usersApi, 'login').mockImplementation();
         const googleImage = getByRole('img', { name: /google_login_button/i });
         fireEvent.click(googleImage);
-        expect(spyOnLogin).toBeCalled();
+        expect(spyOnLogin).toHaveBeenCalled();
       });
     });
 
@@ -88,7 +88,7 @@ describe('Welcome', () => {
         const { getByRole } = renderResult;
         const logout = getByRole('button', { name: /logout/i });
         fireEvent.click(logout);
-        expect(mockDeleteLocalstorage).toBeCalledTimes(2);
+        expect(mockDeleteLocalstorage).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -124,8 +124,8 @@ describe('Welcome', () => {
           .spyOn(rankingApi, 'resetRanking')
           .mockImplementation();
         await act(() => fireEvent.click(reset));
-        expect(mockResetTodos).toBeCalled();
-        expect(mockResetRanking).toBeCalled();
+        expect(mockResetTodos).toHaveBeenCalled();
+        expect(mockResetRanking).toHaveBeenCalled();
       });
       it('회원 탈퇴 버튼을 누르면 withdrawal을 호출한다.', async () => {
         const mockConfirm = jest
@@ -136,7 +136,7 @@ describe('Welcome', () => {
         const { getByRole } = renderResult;
         const withdraw = getByRole('button', { name: /withdraw/i });
         await act(() => fireEvent.click(withdraw));
-        expect(mockConfirm).toBeCalled();
+        expect(mockConfirm).toHaveBeenCalled();
       });
       it('X 아이콘을 누르면 뒤로 간다.', () => {
         const { getByRole } = renderResult;
