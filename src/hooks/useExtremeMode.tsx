@@ -40,7 +40,14 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   // hooks
   const { status, settings, time } = usePomodoroValue();
   const pomodoroActions = usePomodoroActions();
-  const { currentTodo } = useCurrentTodo();
+  const { currentTodo } = useCurrentTodo({
+    value: {
+      settings,
+      status,
+      time,
+    },
+    actions: pomodoroActions,
+  });
   const isOnline = useIsOnline();
   const queryClient = useQueryClient();
 

@@ -2,26 +2,21 @@ import styled from '@emotion/styled';
 import { BtnAtom, CardAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { Clock, ExtremeModeIndicator } from '../molecules';
 import { PomodoroStatus } from '../services/PomodoroService';
-import { TodoEntity } from '../DB/indexedAction';
-import { IPomodoroData } from '../hooks/usePomodoro';
+import { usePomodoroActions, usePomodoroValue } from '../hooks/usePomodoro';
+import { useCurrentTodo, useExtremeMode } from '../hooks';
 
-export interface IRestCardProps {
-  startFocusing: () => void;
-  canRest: boolean;
-  doTodo: () => void;
-  isExtreme: boolean;
-  todo?: TodoEntity;
-  pomodoro: IPomodoroData;
-}
-
-function RestCard({
-  startFocusing,
-  canRest,
-  doTodo,
-  isExtreme,
-  todo,
-  pomodoro,
-}: IRestCardProps) {
+function RestCard() {
+  const pomodoro = usePomodoroValue();
+  const actions = usePomodoroActions();
+  const { isExtreme } = useExtremeMode();
+  const {
+    canRest,
+    currentTodo: todo,
+    doTodo,
+  } = useCurrentTodo({
+    value: { ...pomodoro },
+    actions,
+  });
   const getLeftMs = () => {
     return pomodoro.settings.restStep * 60000 - (pomodoro.time ?? 0);
   };
@@ -52,7 +47,7 @@ function RestCard({
                 className="focus"
                 btnType={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
                 handleOnClick={() => {
-                  canRest ? doTodo() : startFocusing();
+                  canRest ? doTodo() : actions.startFocusing();
                 }}
               >
                 {canRest ? '다음 할 일 하기' : '끝내기'}
@@ -60,7 +55,7 @@ function RestCard({
               {canRest && (
                 <BtnAtom
                   className="focusMore"
-                  handleOnClick={() => startFocusing()}
+                  handleOnClick={() => actions.startOverFocusing()}
                 >
                   조금 더 집중하기
                 </BtnAtom>

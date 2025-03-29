@@ -37,6 +37,7 @@ export interface IPomodoroActions {
   setFocusStep: (step: focusStep) => void;
   setRestStep: (step: restStep) => void;
   startFocusing: () => void;
+  startOverFocusing: () => void;
   startResting: () => void;
   stopTimer: () => void;
 }
@@ -83,6 +84,9 @@ const PomodoroProvider = ({ children }: IChildProps) => {
           settingsRef.current = newData;
           return newData;
         });
+      },
+      startOverFocusing: () => {
+        PomodoroService.setStatus(PomodoroStatus.OVERFOCUSING);
       },
       startFocusing: () => {
         PomodoroService.setStatus(PomodoroStatus.FOCUSING);
