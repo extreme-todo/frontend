@@ -1,6 +1,12 @@
-import { motion } from 'motion/react';
+import { motion, MotionValue } from 'motion/react';
 
-export const MainLogo = () => {
+export const MainLogo = ({
+  mainLogoPathLengthForScroll,
+  mainLogoFillForScroll,
+}: {
+  mainLogoPathLengthForScroll: MotionValue<number>;
+  mainLogoFillForScroll: MotionValue<string>;
+}) => {
   return (
     <svg
       width="540"
@@ -22,6 +28,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M147.51 43.7H196.31V55.86H179.35V100.34H164.63V55.86H147.51V43.7Z"
@@ -33,6 +43,10 @@ export const MainLogo = () => {
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
         <motion.path
@@ -46,6 +60,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M331.95 43.7L345.55 76.66H346.19L359.63 43.7H378.19V100.34H363.63V67.06H363.15L350.35 99.86H341.39L328.43 66.9H328.11V100.34H313.55V43.7H331.95Z"
@@ -56,7 +74,11 @@ export const MainLogo = () => {
           animate={{ pathLength: 1, fill: 'rgba(82, 62, 161, 1)' }}
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
-            fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+            fill: { delay: 2, duration: 0.6, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
         <motion.path
@@ -70,6 +92,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M408.14 168.6V111.96H429.42C446.86 112.04 457.74 122.6 457.74 140.28C457.74 157.96 446.86 168.6 429.58 168.6H408.14ZM429.1 155.96C437.82 155.96 442.78 152.2 442.7 140.28C442.78 128.36 437.82 124.68 428.78 124.6H423.02V155.96H429.1Z"
@@ -81,6 +107,10 @@ export const MainLogo = () => {
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
         <motion.path
@@ -94,6 +124,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M407.47 55.86C407.53 55.86 407.59 55.88 407.65 55.88V55.86H438.08V43.7H404.25C394.71 43.7 386.97 51.4399 386.97 60.9799C386.97 65.18 388.47 69.03 390.96 72.02C388.47 75.01 386.97 78.8599 386.97 83.0599C386.97 92.5999 394.71 100.34 404.25 100.34H438.08V88.3399H407.47C404.64 88.3399 402.35 86.0499 402.35 83.22C402.35 80.39 404.64 78.0999 407.47 78.0999H438.01V66.0999H407.65V66.08C407.59 66.08 407.53 66.0999 407.47 66.0999C404.64 66.0999 402.35 63.8099 402.35 60.9799C402.35 58.15 404.64 55.86 407.47 55.86Z"
@@ -105,6 +139,10 @@ export const MainLogo = () => {
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
         <motion.path
@@ -118,6 +156,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M103.02 10L14 40.13L46.53 69.57L24.89 100.34H32.17L83.23 64.3L65.67 53.07L103.02 10Z"
@@ -129,6 +171,10 @@ export const MainLogo = () => {
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
         <motion.path
@@ -142,6 +188,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M356.96 112.92C355.63 115.03 353.46 117.66 349.86 120.77C349.83 122.73 349.73 127.07 349.46 128.61L348.94 131.51L346.43 129.96C344.97 129.06 340.77 126.41 338.52 124.65C336.64 125.6 332.96 127.47 330.48 128.66L327.91 129.9L327.63 127.06C327.63 126.96 327.46 125.34 327.37 123.87C326.44 123.63 325.19 123.24 323.84 122.7C320.13 127.59 317.92 133.68 317.92 140.29C317.92 156.37 330.95 169.4 347.03 169.4C363.11 169.4 376.14 156.37 376.14 140.29C376.14 127.71 368.15 116.99 356.98 112.93L356.96 112.92Z"
@@ -153,6 +203,10 @@ export const MainLogo = () => {
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
         <motion.path
@@ -166,6 +220,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M505.67 112.92C504.34 115.03 502.17 117.66 498.57 120.77C498.54 122.73 498.44 127.07 498.17 128.61L497.65 131.51L495.14 129.96C493.68 129.06 489.48 126.41 487.23 124.65C485.35 125.6 481.67 127.47 479.19 128.66L476.62 129.9L476.34 127.06C476.34 126.96 476.17 125.34 476.08 123.87C475.15 123.63 473.9 123.24 472.55 122.7C468.84 127.59 466.63 133.68 466.63 140.29C466.63 156.37 479.66 169.4 495.74 169.4C511.82 169.4 524.85 156.37 524.85 140.29C524.85 127.71 516.86 116.99 505.69 112.93L505.67 112.92Z"
@@ -177,6 +235,10 @@ export const MainLogo = () => {
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
         <motion.path
@@ -190,6 +252,10 @@ export const MainLogo = () => {
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
           }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
+          }}
         />
         <motion.path
           d="M397.66 145.62H384.77V158.51H397.66V145.62Z"
@@ -201,6 +267,10 @@ export const MainLogo = () => {
           transition={{
             pathLength: { duration: 2, ease: 'easeInOut' },
             fill: { delay: 2, duration: 1, ease: 'easeInOut' },
+          }}
+          style={{
+            pathLength: mainLogoPathLengthForScroll,
+            fill: mainLogoFillForScroll,
           }}
         />
       </g>
