@@ -32,7 +32,7 @@ import { getDateInFormat, setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
-import { ModalType } from '../MainTodo';
+import { ModalType } from '../MainTodo/MainTodo';
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
