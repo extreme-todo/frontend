@@ -18,6 +18,11 @@ const queryClient = new QueryClient({
 
 function App() {
   const mainRef = useRef<HTMLDivElement>(null);
+  const [activeLabel, setActiveLabel] = useState<
+    'Welcome' | 'Main' | 'Ranking'
+  >('Welcome');
+  const [isLabelVisible, setIsLabelVisible] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { scrollYProgress } = useScroll({
     container: mainRef,
@@ -47,8 +52,20 @@ function App() {
     },
   );
 
-  useMotionValueEvent(mainLogoFillForScroll, 'change', (scrollYProgress) => {
-    console.log('scrollYProgress Page scroll: ', scrollYProgress);
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const THRESHOLD = 0.1;
+    let newLabel: 'Welcome' | 'Main' | 'Ranking' | null = null;
+
+    if (Math.abs(latest - 0) < THRESHOLD) newLabel = 'Welcome';
+    else if (Math.abs(latest - 0.5) < THRESHOLD) newLabel = 'Main';
+    else if (Math.abs(latest - 1) < THRESHOLD) newLabel = 'Ranking';
+
+    if (newLabel && newLabel !== activeLabel) {
+      setActiveLabel(newLabel);
+      setIsLabelVisible(true);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => setIsLabelVisible(false), 1000);
+    }
   });
 
   return (
@@ -76,6 +93,11 @@ function App() {
                     className="navigation__dot"
                   />
                   <motion.span
+                    animate={{
+                      opacity:
+                        activeLabel === 'Welcome' && isLabelVisible ? 1 : 0,
+                      transition: { duration: 0.3 },
+                    }}
                     className="navigation__label"
                   >
                     Welcome
@@ -102,6 +124,10 @@ function App() {
                     className="navigation__dot"
                   />
                   <motion.span
+                    animate={{
+                      opacity: activeLabel === 'Main' && isLabelVisible ? 1 : 0,
+                      transition: { duration: 0.3 },
+                    }}
                     className="navigation__label"
                   >
                     Main
@@ -125,6 +151,11 @@ function App() {
                     className="navigation__dot"
                   />
                   <motion.span
+                    animate={{
+                      opacity:
+                        activeLabel === 'Ranking' && isLabelVisible ? 1 : 0,
+                      transition: { duration: 0.3 },
+                    }}
                     className="navigation__label"
                   >
                     Ranking
