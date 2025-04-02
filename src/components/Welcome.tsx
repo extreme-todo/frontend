@@ -225,7 +225,7 @@ const Welcome = ({
 
 export default Welcome;
 
-const WelcomeContainer = styled.div`
+const WelcomeContainer = styled.main`
   width: 100dvw;
   height: 100dvh;
   display: flex;

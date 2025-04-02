@@ -32,7 +32,7 @@ function RankingAndRecords() {
   );
 }
 
-const RNRContainer = styled.div`
+const RNRContainer = styled.main`
   width: 100dvw;
   height: 100dvh;
   padding: 12.2vmin;

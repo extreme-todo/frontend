@@ -71,7 +71,7 @@ const MainContainer = styled.div`
   height: 100dvh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
-  & > div {
+  & > main {
     scroll-snap-align: center;
   }
 `;
