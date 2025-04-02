@@ -5,7 +5,12 @@ import PomodoroProvider from './hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ExtremeModeProvider } from './hooks/useExtremeMode';
-import { useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
+import {
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -51,6 +56,46 @@ function App() {
       <PomodoroProvider>
         <ExtremeModeProvider>
           <MainContainer id="main-container" ref={mainRef}>
+            <nav className="navigations">
+              <ul>
+                <li
+                  className="navigation"
+                >
+                  <motion.div
+                    className="navigation__dot"
+                  />
+                  <motion.span
+                    className="navigation__label"
+                  >
+                    Welcome
+                  </motion.span>
+                </li>
+                <li
+                  className="navigation"
+                >
+                  <motion.div
+                    className="navigation__dot"
+                  />
+                  <motion.span
+                    className="navigation__label"
+                  >
+                    Main
+                  </motion.span>
+                </li>
+                <li
+                  className="navigation"
+                >
+                  <motion.div
+                    className="navigation__dot"
+                  />
+                  <motion.span
+                    className="navigation__label"
+                  >
+                    Ranking
+                  </motion.span>
+                </li>
+              </ul>
+            </nav>
             <Welcome
               buttonOpacityForScroll={buttonOpacityForScroll}
               mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
@@ -73,6 +118,40 @@ const MainContainer = styled.div`
   scroll-snap-type: y mandatory;
   & > main {
     scroll-snap-align: center;
+  }
+
+  nav.navigations {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 2%;
+    z-index: 10;
+    li.navigation {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+
+      div.navigation__dot {
+        width: 0.35rem;
+        height: 0.35rem;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        background-color: ${({
+          theme: {
+            color: { backgroundColor },
+          },
+        }) => backgroundColor.white};
+      }
+      span.navigation__label {
+        color: ${({
+          theme: {
+            color: { fontColor },
+          },
+        }) => fontColor.white};
+        font-size: ${({ theme: { fontSize } }) => fontSize.b2.size};
+        font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
+      }
+    }
   }
 `;
 
