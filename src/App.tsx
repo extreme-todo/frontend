@@ -71,6 +71,10 @@ function App() {
     }
   });
 
+  const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <PomodoroProvider>
@@ -80,6 +84,7 @@ function App() {
               <ul>
                 <li
                   className="navigation"
+                  onClick={() => scrollToSection(welcomeRef)}
                 >
                   <motion.div
                     style={{
@@ -108,6 +113,7 @@ function App() {
                 </li>
                 <li
                   className="navigation"
+                  onClick={() => scrollToSection(mainTodoRef)}
                 >
                   <motion.div
                     style={{
@@ -138,6 +144,7 @@ function App() {
                 </li>
                 <li
                   className="navigation"
+                  onClick={() => scrollToSection(rankingRef)}
                 >
                   <motion.div
                     style={{
