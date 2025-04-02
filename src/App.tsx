@@ -62,6 +62,17 @@ function App() {
                   className="navigation"
                 >
                   <motion.div
+                    style={{
+                      opacity: useTransform(
+                        scrollYProgress,
+                        [0, 0.3],
+                        [1, 0.5],
+                        { clamp: true },
+                      ),
+                      scale: useTransform(scrollYProgress, [0, 0.3], [1.2, 1], {
+                        clamp: true,
+                      }),
+                    }}
                     className="navigation__dot"
                   />
                   <motion.span
@@ -74,6 +85,20 @@ function App() {
                   className="navigation"
                 >
                   <motion.div
+                    style={{
+                      opacity: useTransform(
+                        scrollYProgress,
+                        [0.3, 0.5, 1],
+                        [0.5, 1, 0.5],
+                        { clamp: true },
+                      ),
+                      scale: useTransform(
+                        scrollYProgress,
+                        [0.3, 0.5, 1],
+                        [1, 1.2, 1],
+                        { clamp: true },
+                      ),
+                    }}
                     className="navigation__dot"
                   />
                   <motion.span
@@ -86,6 +111,17 @@ function App() {
                   className="navigation"
                 >
                   <motion.div
+                    style={{
+                      opacity: useTransform(
+                        scrollYProgress,
+                        [0.7, 1],
+                        [0.5, 1],
+                        { clamp: true },
+                      ),
+                      scale: useTransform(scrollYProgress, [0.7, 1], [1, 1.2], {
+                        clamp: true,
+                      }),
+                    }}
                     className="navigation__dot"
                   />
                   <motion.span
