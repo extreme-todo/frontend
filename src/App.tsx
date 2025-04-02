@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { MainTodo, RankingAndRecords, Welcome } from './components';
 import styled from '@emotion/styled';
 import PomodoroProvider from './hooks/usePomodoro';
@@ -23,6 +23,9 @@ function App() {
   >('Welcome');
   const [isLabelVisible, setIsLabelVisible] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const welcomeRef = useRef<HTMLElement>(null);
+  const mainTodoRef = useRef<HTMLElement>(null);
+  const rankingRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
     container: mainRef,
@@ -167,9 +170,10 @@ function App() {
               buttonOpacityForScroll={buttonOpacityForScroll}
               mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
               mainLogoFillForScroll={mainLogoFillForScroll}
+              ref={welcomeRef}
             />
-            <MainTodo />
-            <RankingAndRecords />
+            <MainTodo ref={mainTodoRef} />
+            <RankingAndRecords ref={rankingRef} />
           </MainContainer>
         </ExtremeModeProvider>
       </PomodoroProvider>
