@@ -186,6 +186,7 @@ const MainContainer = styled.div`
         }) => fontColor.white};
         font-size: ${({ theme: { fontSize } }) => fontSize.b2.size};
         font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
+        opacity: 0;
       }
     }
   }
