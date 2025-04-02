@@ -1,9 +1,14 @@
-import styled from '@emotion/styled';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import {
+  ForwardedRef,
+  forwardRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { SideButtons } from '../../molecules';
 import { CurrentTodoCard } from '../../organisms';
-import { createPortal } from 'react-dom';
-import Modal from '../Modal';
 import TodoList from '../TodoList';
 import {
   LoginContext,
@@ -13,7 +18,6 @@ import {
   usePomodoroValue,
   useTimeMarker,
 } from '../../hooks';
-import { getPomodoroStepPercent } from '../../shared/timeUtils';
 import AddTodo from '../AddTodo';
 import PomodoroTimeSetting from '../PomodoroTimeSetting';
 import { PomodoroStatus } from '../../services/PomodoroService';
@@ -36,7 +40,7 @@ export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
 export type CardType = ModalType | 'noTodo' | 'currentTodo' | 'rest';
 
-function MainTodo() {
+const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
   const [currentCard, setCurrentCard] = useState<CardType>('currentTodo');
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
@@ -50,7 +54,6 @@ function MainTodo() {
   const actions = usePomodoroActions();
   const { isLogin } = useContext(LoginContext);
   const { isExtreme } = useExtremeMode();
-  const mainTodoRef = useRef<HTMLDivElement>(null);
   const currentCardAnimationTriggerSubject = useRef(
     new Subject<
       CardAnimationPlayerAnimationType | CardAnimationPlayerAnimationType[]
@@ -194,7 +197,7 @@ function MainTodo() {
   }, [currentCard, pomodoroStatus, isExtreme]);
 
   return (
-    <MainTodoContainer ref={mainTodoRef}>
+    <MainTodoContainer ref={ref}>
       <MainTodoContentWrapper>
         <MainTodoCenter>
           <SideButtons>
@@ -258,6 +261,6 @@ function MainTodo() {
       </MainTodoContentWrapper>
     </MainTodoContainer>
   );
-}
+});
 
 export default MainTodo;
