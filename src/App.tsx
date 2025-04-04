@@ -2,17 +2,19 @@ import { useRef, useState } from 'react';
 
 import { IconAtom } from './atoms';
 import { MainTodo, RankingAndRecords, Welcome } from './components';
-import styled from '@emotion/styled';
-import PomodoroProvider from './hooks/usePomodoro';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ExtremeModeProvider } from './hooks/useExtremeMode';
 import {
   motion,
   useMotionValueEvent,
   useScroll,
   useTransform,
 } from 'framer-motion';
+
+import { PomodoroProvider, ExtremeModeProvider } from './hooks';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import styled from '@emotion/styled';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
