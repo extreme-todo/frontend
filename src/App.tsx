@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react';
+
+import { IconAtom } from './atoms';
 import { MainTodo, RankingAndRecords, Welcome } from './components';
 import styled from '@emotion/styled';
 import PomodoroProvider from './hooks/usePomodoro';
@@ -181,6 +183,21 @@ function App() {
             />
             <MainTodo ref={mainTodoRef} />
             <RankingAndRecords ref={rankingRef} />
+            <motion.div
+              className="scroll__guide"
+              style={{
+                opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
+                  clamp: true,
+                }),
+              }}
+            >
+              <IconAtom
+                src="/icon/combobox.svg"
+                size={3}
+                className="scroll__guide__icon"
+                alt="An icon indicating to scroll down"
+              />
+            </motion.div>
           </MainContainer>
         </ExtremeModeProvider>
       </PomodoroProvider>
@@ -208,6 +225,7 @@ const MainContainer = styled.div`
       display: flex;
       align-items: center;
       margin-bottom: 0.75rem;
+      cursor: pointer;
 
       div.navigation__dot {
         width: 0.35rem;
@@ -230,6 +248,32 @@ const MainContainer = styled.div`
         font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
         opacity: 0;
       }
+    }
+  }
+
+  div.scroll__guide {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: ${({ theme: { fontSize } }) => fontSize.h3.size};
+    font-weight: ${({ theme: { fontSize } }) => fontSize.h3.weight};
+
+    img.scroll__guide__icon {
+      @keyframes updown {
+        0% {
+          transform: translateY(10px);
+          animation-timing-function: ease-in;
+        }
+        50% {
+          transform: translateY(-10px);
+          animation-timing-function: ease-out;
+        }
+        100% {
+          transform: translateY(10px);
+        }
+      }
+      animation: updown 1.5s infinite;
     }
   }
 `;
