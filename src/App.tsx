@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { IconAtom } from './atoms';
+import { Navigation } from './molecules';
 import { MainTodo, RankingAndRecords, Welcome } from './components';
 import {
   motion,
@@ -20,16 +21,43 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
 });
 
+export type NavigationPageType = 'Welcome' | 'Main' | 'Ranking';
+
+export interface NavigationListType {
+  componentName: NavigationPageType;
+  componentRef: React.RefObject<HTMLElement>;
+  dotActivePos: number[];
+}
+
 function App() {
   const mainRef = useRef<HTMLDivElement>(null);
-  const [activeLabel, setActiveLabel] = useState<
-    'Welcome' | 'Main' | 'Ranking'
-  >('Welcome');
+  const [activeLabel, setActiveLabel] = useState<NavigationPageType>('Welcome');
   const [isLabelVisible, setIsLabelVisible] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const welcomeRef = useRef<HTMLElement>(null);
   const mainTodoRef = useRef<HTMLElement>(null);
   const rankingRef = useRef<HTMLElement>(null);
+
+  const NAVIGATION_LIST: NavigationListType[] = useMemo(
+    () => [
+      {
+        componentName: 'Welcome',
+        componentRef: welcomeRef,
+        dotActivePos: [0, 0.3],
+      },
+      {
+        componentName: 'Main',
+        componentRef: mainTodoRef,
+        dotActivePos: [0.3, 0.5, 0.7],
+      },
+      {
+        componentName: 'Ranking',
+        componentRef: rankingRef,
+        dotActivePos: [0.7, 1],
+      },
+    ],
+    [welcomeRef, mainRef, rankingRef],
+  );
 
   const { scrollYProgress } = useScroll({
     container: mainRef,
@@ -61,7 +89,7 @@ function App() {
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const THRESHOLD = 0.1;
-    let newLabel: 'Welcome' | 'Main' | 'Ranking' | null = null;
+    let newLabel: NavigationPageType | null = null;
 
     if (Math.abs(latest - 0) < THRESHOLD) newLabel = 'Welcome';
     else if (Math.abs(latest - 0.5) < THRESHOLD) newLabel = 'Main';
@@ -75,108 +103,17 @@ function App() {
     }
   });
 
-  const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
-    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <PomodoroProvider>
         <ExtremeModeProvider>
           <MainContainer id="main-container" ref={mainRef}>
-            <nav className="navigations">
-              <ul>
-                <li
-                  className="navigation"
-                  onClick={() => scrollToSection(welcomeRef)}
-                >
-                  <motion.div
-                    style={{
-                      opacity: useTransform(
-                        scrollYProgress,
-                        [0, 0.3],
-                        [1, 0.5],
-                        { clamp: true },
-                      ),
-                      scale: useTransform(scrollYProgress, [0, 0.3], [1.2, 1], {
-                        clamp: true,
-                      }),
-                    }}
-                    className="navigation__dot"
-                  />
-                  <motion.span
-                    animate={{
-                      opacity:
-                        activeLabel === 'Welcome' && isLabelVisible ? 1 : 0,
-                      transition: { duration: 0.3 },
-                    }}
-                    className="navigation__label"
-                  >
-                    Welcome
-                  </motion.span>
-                </li>
-                <li
-                  className="navigation"
-                  onClick={() => scrollToSection(mainTodoRef)}
-                >
-                  <motion.div
-                    style={{
-                      opacity: useTransform(
-                        scrollYProgress,
-                        [0.3, 0.5, 1],
-                        [0.5, 1, 0.5],
-                        { clamp: true },
-                      ),
-                      scale: useTransform(
-                        scrollYProgress,
-                        [0.3, 0.5, 1],
-                        [1, 1.2, 1],
-                        { clamp: true },
-                      ),
-                    }}
-                    className="navigation__dot"
-                  />
-                  <motion.span
-                    animate={{
-                      opacity: activeLabel === 'Main' && isLabelVisible ? 1 : 0,
-                      transition: { duration: 0.3 },
-                    }}
-                    className="navigation__label"
-                  >
-                    Main
-                  </motion.span>
-                </li>
-                <li
-                  className="navigation"
-                  onClick={() => scrollToSection(rankingRef)}
-                >
-                  <motion.div
-                    style={{
-                      opacity: useTransform(
-                        scrollYProgress,
-                        [0.7, 1],
-                        [0.5, 1],
-                        { clamp: true },
-                      ),
-                      scale: useTransform(scrollYProgress, [0.7, 1], [1, 1.2], {
-                        clamp: true,
-                      }),
-                    }}
-                    className="navigation__dot"
-                  />
-                  <motion.span
-                    animate={{
-                      opacity:
-                        activeLabel === 'Ranking' && isLabelVisible ? 1 : 0,
-                      transition: { duration: 0.3 },
-                    }}
-                    className="navigation__label"
-                  >
-                    Ranking
-                  </motion.span>
-                </li>
-              </ul>
-            </nav>
+            <Navigation
+              navigationLists={NAVIGATION_LIST}
+              scrollYProgress={scrollYProgress}
+              isLabelVisible={isLabelVisible}
+              activeLabel={activeLabel}
+            />
             <Welcome
               buttonOpacityForScroll={buttonOpacityForScroll}
               mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
