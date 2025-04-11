@@ -4,19 +4,11 @@ import {
   ReactEventHandler,
   useCallback,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
 /* atomics */
-import {
-  BtnAtom,
-  CardAtom,
-  IconAtom,
-  InputAtom,
-  TomatoInput,
-  TypoAtom,
-} from '../atoms';
+import { BtnAtom, CardAtom, IconAtom, InputAtom, TomatoInput } from '../atoms';
 import { CategoryInput } from '../molecules';
 
 /* custom hooks */
@@ -26,12 +18,11 @@ import { usePomodoroValue } from '../hooks';
 import { todosApi } from '../shared/apis';
 import { categoryValidation, titleValidation } from '../shared/inputValidation';
 import { setTimeInFormat } from '../shared/timeUtils';
-import { AddTodoDto, ETIndexed } from '../DB/indexed';
+import { AddTodoDto } from '../DB/indexed';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
 
 /* packages */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { SelectSingleEventHandler } from 'react-day-picker';
 import styled from '@emotion/styled';
 import { AxiosError } from 'axios';
 
