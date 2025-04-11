@@ -129,7 +129,13 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   );
 
   return (
-    <AddTodoWrapper w="53.75rem" h="20rem" padding="1.5rem" className="card">
+    <AddTodoWrapper
+      w="53.75rem"
+      h="20rem"
+      padding="1.5rem"
+      className="card"
+      onSubmit={() => handleAddSubmit(addData)}
+    >
       <MainWrapper>
         <TitleWrapper>
           <InputAtom.Underline
@@ -176,11 +182,11 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
           />
         </TomatoContainer>
         <BtnAtom
-          handleOnClick={() => handleAddSubmit(addData)}
           paddingHorizontal="2.0625rem"
           paddingVertical="0.375rem"
           btnStyle="lightBtn"
           ariaLabel="submit"
+          type="submit"
         >
           <div style={{ width: 'max-content' }}>추가</div>
         </BtnAtom>
