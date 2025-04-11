@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const MainTodoContainer = styled.div`
+export const MainTodoContainer = styled.main`
   width: 100dvw;
   height: 100dvh;
   display: flex;

@@ -10,3 +10,4 @@ export { default as InputAtom } from './InputAtom';
 export { default as PopperAtom } from './PopperAtom';
 export { default as TomatoInput } from './TomatoInput';
 export { default as TodoProgressBarAtom } from './TodoProgressBarAtom';
+export { ListAtom } from './ListAtom';

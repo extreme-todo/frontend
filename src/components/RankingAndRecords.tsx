@@ -1,17 +1,17 @@
-import { useContext, useState } from 'react';
+import { ForwardedRef, forwardRef, useContext, useState } from 'react';
 import { BtnAtom, CardAtom, TagAtom } from '../atoms';
 import { Records, Ranking } from '../organisms';
 import { categoryApi, rankingApi, timerApi } from '../shared/apis';
 import styled from '@emotion/styled';
 import { LoginContext } from '../hooks';
 
-function RankingAndRecords() {
+const RankingAndRecords = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const { isLogin } = useContext(LoginContext);
   //TODO: 테스트용 주석 삭제 필요
   const [isRanking, setIsRanking] = useState(true);
   // const [isRanking, setIsRanking] = useState(false);
   return (
-    <RNRContainer data-testid={'records-component'}>
+    <RNRContainer data-testid={'records-component'} ref={ref}>
       <BtnAtom handleOnClick={() => setIsRanking((prev) => !prev)}>
         <TagAtom styleOption={{ bg: 'cyan' }}>
           {!isRanking ? '카테고리 별 랭킹' : '나의 집중 기록'}
@@ -30,9 +30,9 @@ function RankingAndRecords() {
       </CardAtom>
     </RNRContainer>
   );
-}
+});
 
-const RNRContainer = styled.div`
+const RNRContainer = styled.main`
   width: 100dvw;
   height: 100dvh;
   padding: 12.2vmin;
@@ -66,8 +66,9 @@ const RNRContainer = styled.div`
   }
 `;
 
-RankingAndRecords.CardAtom = CardAtom;
-RankingAndRecords.Ranking = Ranking;
-RankingAndRecords.Records = Records;
-
+Object.assign(RankingAndRecords, {
+  CardAtom,
+  Ranking,
+  Records,
+});
 export default RankingAndRecords;

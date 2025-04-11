@@ -158,5 +158,4 @@ function updatePomodoroData<T>(data: T, type: 'settings' | 'status') {
   localStorage.setItem(localKey, JSON.stringify(data));
 }
 
-export default PomodoroProvider;
-export { usePomodoroValue, usePomodoroActions };
+export { usePomodoroValue, usePomodoroActions, PomodoroProvider };

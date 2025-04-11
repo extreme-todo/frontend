@@ -1,111 +1,263 @@
-import { useContext, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { ForwardedRef, forwardRef, useContext, useRef, useState } from 'react';
 
 import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
-import Modal from './Modal';
-import Setting from './Setting';
+import { MainLogo } from '../svg/MainLogo';
 
-import { usersApi } from '../shared/apis';
 import { LoginContext } from '../hooks';
+import { rankingApi, todosApi, usersApi } from '../shared/apis';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
+import { motion, AnimatePresence, MotionValue } from 'framer-motion';
 
-const Welcome = () => {
-  const [isModal, setIsModal] = useState<boolean>(false);
-  const { isLogin, deleteToken } = useContext(LoginContext);
-  const welcomeRef = useRef<HTMLDivElement>(null);
+interface IWelcomeProps {
+  buttonOpacityForScroll: MotionValue<number>;
+  mainLogoPathLengthForScroll: MotionValue<number>;
+  mainLogoFillForScroll: MotionValue<string>;
+}
 
-  const handleLoginBtn = () => {
-    return usersApi.login();
-  };
+const Welcome = forwardRef(
+  (
+    {
+      buttonOpacityForScroll,
+      mainLogoPathLengthForScroll,
+      mainLogoFillForScroll,
+    }: IWelcomeProps,
+    ref: ForwardedRef<HTMLElement>,
+  ) => {
+    const [isSettingModal, setIsSettingModal] = useState<boolean>(false);
+    const { isLogin, deleteToken } = useContext(LoginContext);
 
-  const handleLogoutBtn = (): void => {
-    return deleteToken();
-  };
+    const handleLoginBtn = () => {
+      return usersApi.login();
+    };
 
-  const handleSetting = (): void => {
-    setIsModal((prev) => !prev);
-  };
+    const handleLogoutBtn = (): void => {
+      return deleteToken();
+    };
 
-  const handleClose = (): void => {
-    setIsModal(false);
-  };
+    const handleSetting = (): void => {
+      setIsSettingModal(true);
+    };
 
-  return (
-    <WelcomeContainer ref={welcomeRef}>
-      <img className="logo" src="logo.svg" />
-      {isLogin ? (
-        <BtnContainer>
-          <BtnAtom handleOnClick={handleLogoutBtn}>
-            <TypoAtom fontSize="b1">SIGN OUT</TypoAtom>
-          </BtnAtom>
-          <BtnAtom handleOnClick={handleSetting}>
-            <TypoAtom fontSize="b1">SETTING</TypoAtom>
-          </BtnAtom>
-          {isModal &&
-            createPortal(
-              <Modal title="설정" handleClose={handleClose}>
-                <Setting handleClose={handleClose} />
-              </Modal>,
-              welcomeRef.current as HTMLDivElement,
+    const handleClose = (): void => {
+      setIsSettingModal(false);
+    };
+
+    const handleReset = async () => {
+      if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
+      await Promise.all([todosApi.resetTodos(), rankingApi.resetRanking()]);
+    };
+
+    const handleWithdrawal = async () => {
+      if (!window.confirm('정말로 회원 탈퇴하시겠습니까?')) return;
+      console.debug('handleWithdrawal 작동');
+      await usersApi.withdrawal();
+    };
+
+    const queryClient = useQueryClient();
+    const { mutate: resetMutation } = useMutation(handleReset, {
+      onSuccess() {
+        window.alert('초기화 성공');
+        queryClient.invalidateQueries(['todos']);
+      },
+      onError(error) {
+        console.error(
+          '\n\n\n 🚨 error in SettingModal‘s useMutation 🚨 \n\n',
+          error,
+        );
+      },
+    });
+    const { mutate: withdrawMutation } = useMutation(handleWithdrawal, {
+      onSuccess() {
+        window.alert('회원 탈퇴 성공');
+        queryClient.invalidateQueries(['todos']);
+        queryClient.invalidateQueries(['category']);
+        handleClose();
+        deleteToken();
+      },
+      onError(error) {
+        console.error(
+          '\n\n\n 🚨 error in SettingModal‘s useMutation 🚨 \n\n',
+          error,
+        );
+      },
+    });
+
+    return (
+      <WelcomeContainer ref={ref}>
+        {isLogin ? (
+          <AnimatePresence mode="wait">
+            {isSettingModal ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: 1,
+                }}
+                exit={{
+                  transition: { delay: 0.6 },
+                  opacity: 0,
+                }}
+                style={{ opacity: buttonOpacityForScroll }}
+                key={'settingModal'}
+              >
+                <IconAtom src="/icon/logo.svg" size={10} />
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    rowGap: '1.25rem',
+                    alignItems: 'center',
+                  }}
+                >
+                  <motion.button
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
+                    exit={{ opacity: 0, y: -40, transition: { delay: 0.6 } }}
+                    transition={{
+                      duration: 0.3,
+                    }}
+                  >
+                    <BtnAtom handleOnClick={resetMutation} ariaLabel="reset">
+                      <TypoAtom fontSize="body" fontColor="extreme_orange">
+                        데이터 초기화
+                      </TypoAtom>
+                    </BtnAtom>
+                  </motion.button>
+                  <motion.button
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
+                    exit={{ opacity: 0, y: -40, transition: { delay: 0.4 } }}
+                    transition={{
+                      duration: 0.3,
+                    }}
+                  >
+                    <BtnAtom
+                      handleOnClick={withdrawMutation}
+                      ariaLabel="withdraw"
+                    >
+                      <TypoAtom fontSize="body" fontColor="extreme_orange">
+                        회원 탈퇴
+                      </TypoAtom>
+                    </BtnAtom>
+                  </motion.button>
+                  <motion.button
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.6 } }}
+                    exit={{ opacity: 0, y: -40, transition: { delay: 0.2 } }}
+                    transition={{
+                      duration: 0.3,
+                    }}
+                  >
+                    <BtnAtom handleOnClick={handleClose} ariaLabel="goback">
+                      <IconAtom size={2} src="/icon/closeOrange.svg" />
+                    </BtnAtom>
+                  </motion.button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 1 }}
+                exit={{
+                  opacity: 0,
+                  transition: { duration: 0.65, ease: 'easeInOut' },
+                }}
+                key={'mainLogo'}
+              >
+                <MainLogo
+                  mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
+                  mainLogoFillForScroll={mainLogoFillForScroll}
+                />
+                <motion.div style={{ opacity: buttonOpacityForScroll }}>
+                  <LoginContainer>
+                    <motion.div
+                      initial={{ x: 30, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                    >
+                      <BtnAtom
+                        handleOnClick={handleSetting}
+                        ariaLabel="setting"
+                        className="buttonWithIcon"
+                      >
+                        <IconAtom size={1.25} src="/icon/setting.svg" />
+                        <TypoAtom fontColor="extreme_orange" fontSize="b2">
+                          설정
+                        </TypoAtom>
+                      </BtnAtom>
+                    </motion.div>
+                    <TypoAtom fontColor="extreme_orange" fontSize="b2">
+                      |
+                    </TypoAtom>
+                    <motion.div
+                      initial={{ x: -30, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                    >
+                      <BtnAtom
+                        handleOnClick={handleLogoutBtn}
+                        ariaLabel="logout"
+                        className="buttonWithIcon"
+                      >
+                        <IconAtom size={1.25} src="/icon/logout.svg" />
+                        <TypoAtom fontColor="extreme_orange" fontSize="b2">
+                          로그아웃
+                        </TypoAtom>
+                      </BtnAtom>
+                    </motion.div>
+                  </LoginContainer>
+                </motion.div>
+              </motion.div>
             )}
-        </BtnContainer>
-      ) : (
-        <BtnAtom handleOnClick={handleLoginBtn}>
-          <IconAtom
-            className="login-button"
-            src="btn_google_signin_dark_pressed_web@2x.png"
-            alt="google login button"
-          />
-        </BtnAtom>
-      )}
-    </WelcomeContainer>
-  );
-};
+          </AnimatePresence>
+        ) : (
+          <BtnAtom handleOnClick={handleLoginBtn} className="login_button">
+            <TypoAtom fontColor="extreme_orange" fontSize="b1">
+              Sign in with
+            </TypoAtom>
+            <IconAtom
+              className="google_logo"
+              src="/icon/googleIcon.svg"
+              alt="google_login_button"
+            />
+          </BtnAtom>
+        )}
+      </WelcomeContainer>
+    );
+  },
+);
 
 export default Welcome;
 
-const WelcomeContainer = styled.div`
+const WelcomeContainer = styled.main`
   width: 100dvw;
   height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  row-gap: 1.5rem;
 
-  .logo {
+  #logo {
     width: 33.75rem;
     height: 11.25rem;
+    margin-bottom: 3.0625rem;
   }
 
-  > span:first-of-type {
-    font-style: normal;
+  .login_button {
     display: flex;
-    align-items: center;
-    text-align: center;
-    letter-spacing: -0.05rem;
-
-    /* TitleColor */
-
-    background: linear-gradient(
-        114.81deg,
-        #00c2ff 22.57%,
-        rgba(0, 117, 255, 0) 65.81%
-      ),
-      #fa00ff;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
-  .login-button {
-    width: 20rem;
-    height: 5rem;
-    img {
-      width: 100%;
-      height: 100%;
-    }
+
+  button:hover {
+    opacity: 0.7;
+    transition: opacity 0.3s ease-in-out;
   }
+
+  .google_logo {
+    width: 6.25rem;
+    height: 1.75rem;
+    margin-left: 0.5rem;
+  }
+
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     > span:first-of-type {
@@ -114,21 +266,17 @@ const WelcomeContainer = styled.div`
   }
 `;
 
-const BtnContainer = styled.div`
+const LoginContainer = styled.div`
   display: flex;
-  justify-content: space-around;
-  width: 23.375rem;
-  height: 2.375rem;
+  align-items: center;
+  justify-content: center;
+  column-gap: 1.25rem;
 
-  > div {
-    line-height: 30px;
-    color: ${({ theme: { color } }) => color.fontColor.primary1};
-    margin: auto;
-  }
-  > div:nth-of-type(2) {
-    width: 4px;
-    height: 31px;
-    background: rgba(108, 35, 35, 0.14);
-    transform: rotate(45deg);
+  .buttonWithIcon {
+    display: flex;
+    align-items: center;
+    > img {
+      margin-right: 0.25rem;
+    }
   }
 `;
