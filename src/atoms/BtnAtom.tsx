@@ -5,7 +5,7 @@ import { RemType, ButtonName } from '../styles/emotion';
 type PaddingType = RemType | 'auto';
 interface IBtnAtomProps extends IChildProps {
   handleOnClick: () => void;
-  btnType?: ButtonName;
+  btnStyle?: ButtonName;
   paddingHorizontal?: PaddingType;
   paddingVertical?: PaddingType;
   className?: string;
@@ -15,13 +15,13 @@ interface IBtnAtomProps extends IChildProps {
 function BtnAtom({
   children,
   handleOnClick,
-  btnType,
+  btnStyle,
   paddingHorizontal = 'auto',
   paddingVertical = 'auto',
   className,
   ariaLabel,
 }: IBtnAtomProps) {
-  if (btnType === undefined) {
+  if (btnStyle === undefined) {
     return (
       <button
         onClick={handleOnClick}
@@ -37,7 +37,7 @@ function BtnAtom({
   return (
     <ButtonWrapper
       onClick={handleOnClick}
-      btnType={btnType}
+      btnStyle={btnStyle}
       paddingHorizontal={paddingHorizontal}
       paddingVertical={paddingVertical}
       className={className}
@@ -50,7 +50,7 @@ function BtnAtom({
 }
 
 const ButtonWrapper = styled.button<{
-  btnType: ButtonName;
+  btnStyle: ButtonName;
   paddingVertical: PaddingType;
   paddingHorizontal: PaddingType;
 }>`
@@ -63,21 +63,26 @@ const ButtonWrapper = styled.button<{
   padding-bottom: ${({ paddingVertical }) => paddingVertical};
   padding-left: ${({ paddingHorizontal }) => paddingHorizontal};
   padding-right: ${({ paddingHorizontal }) => paddingHorizontal};
-  height: ${({ theme, btnType }) => theme.button[btnType].height};
-  font-size: ${({ theme, btnType }) => theme.button[btnType].fontSize.size};
-  font-weight: ${({ theme, btnType }) => theme.button[btnType].fontSize.weight};
-  background-color: ${({ theme, btnType }) =>
+  height: ${({ theme, btnStyle: btnType }) => theme.button[btnType].height};
+  font-size: ${({ theme, btnStyle: btnType }) =>
+    theme.button[btnType].fontSize.size};
+  font-weight: ${({ theme, btnStyle: btnType }) =>
+    theme.button[btnType].fontSize.weight};
+  background-color: ${({ theme, btnStyle: btnType }) =>
     theme.button[btnType].default.backgroundColor};
-  color: ${({ theme, btnType }) => theme.button[btnType].default.color};
+  color: ${({ theme, btnStyle: btnType }) =>
+    theme.button[btnType].default.color};
   &:hover {
-    background-color: ${({ theme, btnType }) =>
+    background-color: ${({ theme, btnStyle: btnType }) =>
       theme.button[btnType].hover.backgroundColor};
-    color: ${({ theme, btnType }) => theme.button[btnType].hover.color};
+    color: ${({ theme, btnStyle: btnType }) =>
+      theme.button[btnType].hover.color};
   }
   &:active {
-    background-color: ${({ theme, btnType }) =>
+    background-color: ${({ theme, btnStyle: btnType }) =>
       theme.button[btnType].click.backgroundColor};
-    color: ${({ theme, btnType }) => theme.button[btnType].click.color};
+    color: ${({ theme, btnStyle: btnType }) =>
+      theme.button[btnType].click.color};
   }
   transition: all 0.2s ease-in-out;
 `;

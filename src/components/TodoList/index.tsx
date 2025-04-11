@@ -258,7 +258,7 @@ const TodoList = memo(
               <EmptyList>
                 <BtnAtom
                   handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
-                  btnType="extremeDarkBtn"
+                  btnStyle="extremeDarkBtn"
                 >
                   <div style={{ padding: '0.375rem 1.28125rem' }}>
                     <TypoAtom fontSize="b1" fontColor="primary2">

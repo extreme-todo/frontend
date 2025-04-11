@@ -76,7 +76,7 @@ function CurrentTodo({
         <div className="button-container">
           <BtnAtom
             className="rest"
-            btnType="darkBtn"
+            btnStyle="darkBtn"
             handleOnClick={() => startResting()}
           >
             <IconAtom src="icons/pause-dark.svg" size={1} />
@@ -84,7 +84,7 @@ function CurrentTodo({
           <BtnAtom
             className="do-todo"
             aria-label="do todo"
-            btnType="darkBtn"
+            btnStyle="darkBtn"
             handleOnClick={() => doAndRest()}
           >
             끝내기

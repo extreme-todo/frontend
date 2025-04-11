@@ -57,7 +57,7 @@ const TimeSetter = ({
           >
             <BtnAtom
               handleOnClick={handleTimeUp}
-              btnType="lightBtn"
+              btnStyle="lightBtn"
               ariaLabel="timeup"
             >
               <svg
@@ -166,7 +166,7 @@ const PomodoroTimeSetting = ({ handleClose }: { handleClose: () => void }) => {
       </div>
 
       <div>
-        <BtnAtom handleOnClick={handleSubmit} btnType="extremeDarkBtn">
+        <BtnAtom handleOnClick={handleSubmit} btnStyle="extremeDarkBtn">
           <div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
             <TypoAtom fontColor="primary2" fontSize="b1">
               저장

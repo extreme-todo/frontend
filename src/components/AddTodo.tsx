@@ -194,7 +194,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
           handleOnClick={() => handleAddSubmit(addData)}
           paddingHorizontal="2.0625rem"
           paddingVertical="0.375rem"
-          btnType="lightBtn"
+          btnStyle="lightBtn"
           ariaLabel="submit"
         >
           <div style={{ width: 'max-content' }}>추가</div>
