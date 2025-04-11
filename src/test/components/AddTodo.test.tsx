@@ -9,7 +9,7 @@ import { IChildProps } from '../../shared/interfaces';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 import userEvent from '@testing-library/user-event';
-import PomodoroProvider from '../../hooks/usePomodoro';
+import { PomodoroProvider } from '../../hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
