@@ -1,10 +1,13 @@
-import styled from '@emotion/styled';
+import { ButtonHTMLAttributes } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { RemType, ButtonName } from '../styles/emotion';
+import styled from '@emotion/styled';
 
 type PaddingType = RemType | 'auto';
-interface IBtnAtomProps extends IChildProps {
-  handleOnClick: () => void;
+interface IBtnAtomProps
+  extends IChildProps,
+    ButtonHTMLAttributes<HTMLButtonElement> {
+  handleOnClick?: () => void;
   btnStyle?: ButtonName;
   paddingHorizontal?: PaddingType;
   paddingVertical?: PaddingType;
@@ -20,15 +23,18 @@ function BtnAtom({
   paddingVertical = 'auto',
   className,
   ariaLabel,
+  type = 'button',
+  ...props
 }: IBtnAtomProps) {
   if (btnStyle === undefined) {
     return (
       <button
+        {...props}
         onClick={handleOnClick}
         style={{ cursor: 'pointer' }}
         className={className}
         aria-label={ariaLabel}
-        type="button"
+        type={type}
       >
         {children}
       </button>
@@ -36,13 +42,14 @@ function BtnAtom({
   }
   return (
     <ButtonWrapper
+      {...props}
       onClick={handleOnClick}
       btnStyle={btnStyle}
       paddingHorizontal={paddingHorizontal}
       paddingVertical={paddingVertical}
       className={className}
       aria-label={ariaLabel}
-      type="button"
+      type={type}
     >
       {children}
     </ButtonWrapper>
