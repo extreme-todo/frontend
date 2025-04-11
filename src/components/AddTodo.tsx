@@ -129,13 +129,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   );
 
   return (
-    <AddTodoWrapper
-      w="53.75rem"
-      h="20rem"
-      padding="1.5rem"
-      className="card"
-      as={'form'}
-    >
+    <AddTodoWrapper w="53.75rem" h="20rem" padding="1.5rem" className="card">
       <MainWrapper>
         <TitleWrapper>
           <InputAtom.Underline
@@ -197,7 +191,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
 export default AddTodo;
 
-const AddTodoWrapper = styled(CardAtom)`
+const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
   overflow: visible;
   background-color: ${({
     theme: {
