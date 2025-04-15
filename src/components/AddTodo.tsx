@@ -233,6 +233,10 @@ const TitleWrapper = styled.div`
   width: 100%;
   column-gap: 3rem;
 
+  & > label {
+    width: 100%;
+  }
+
   & > button {
     height: 2rem;
   }
