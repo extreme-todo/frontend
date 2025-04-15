@@ -138,22 +138,26 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     >
       <MainWrapper>
         <TitleWrapper>
-          <InputAtom.Underline
-            value={title}
-            inputRef={useCallback((node: HTMLInputElement | null) => {
-              node?.focus();
-            }, [])}
-            handleChange={handleTitleInput}
-            placeholder="새로운 TODO를 작성해주세요"
-            ariaLabel="title"
-            className="todoTitle"
-            styleOption={{
-              borderWidth: '1px',
-              width: '100%',
-              height: '3rem',
-              font: 'h1',
-            }}
-          />
+          <label htmlFor="title">
+            <InputAtom.Underline
+              name="title"
+              value={title}
+              id={'title'}
+              inputRef={useCallback((node: HTMLInputElement | null) => {
+                node?.focus();
+              }, [])}
+              handleChange={handleTitleInput}
+              placeholder="새로운 TODO를 작성해주세요"
+              ariaLabel="title"
+              className="todoTitle"
+              styleOption={{
+                borderWidth: '1px',
+                width: '100%',
+                height: '3rem',
+                font: 'h1',
+              }}
+            />
+          </label>
           <BtnAtom handleOnClick={handleClose} ariaLabel="close">
             <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
           </BtnAtom>
