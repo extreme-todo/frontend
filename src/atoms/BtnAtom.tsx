@@ -4,15 +4,15 @@ import { RemType, ButtonName } from '../styles/emotion';
 import styled from '@emotion/styled';
 
 type PaddingType = RemType | 'auto';
-interface IBtnAtomProps
-  extends IChildProps,
-    ButtonHTMLAttributes<HTMLButtonElement> {
+interface IBtnAtomProps extends IChildProps {
   handleOnClick?: () => void;
   btnStyle?: ButtonName;
   paddingHorizontal?: PaddingType;
   paddingVertical?: PaddingType;
   className?: string;
   ariaLabel?: string;
+  type?: 'submit' | 'reset' | 'button';
+  disabled?: boolean;
 }
 
 function BtnAtom({
