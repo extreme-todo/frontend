@@ -1,5 +1,6 @@
 /* react */
 import {
+  FormEvent,
   KeyboardEventHandler,
   ReactEventHandler,
   useCallback,
@@ -119,11 +120,18 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   );
 
   const handleAddSubmit = useCallback(
-    (todo: AddTodoDto) => {
-      if (title.length <= 0) return alert('제목을 입력해주세요.');
-      const trimmed = titleValidation(addData.todo);
-      if (!trimmed) return;
-      mutate({ ...todo, todo: trimmed });
+    (event: FormEvent) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget as HTMLFormElement);
+      const todo = formData.get('title');
+      const duration = formData.get('duration');
+      const categories = categoryArray;
+      const date = setTimeInFormat(new Date()).toISOString();
+      // const date = formData.get('date');
+      // if (title.length <= 0) return alert('제목을 입력해주세요.');
+      // const trimmed = titleValidation(addData.todo);
+      // if (!trimmed) return;
+      // mutate({ ...todo, todo: trimmed });
     },
     [addData],
   );
@@ -134,7 +142,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
       h="20rem"
       padding="1.5rem"
       className="card"
-      onSubmit={() => handleAddSubmit(addData)}
+      onSubmit={handleAddSubmit}
     >
       <MainWrapper>
         <TitleWrapper>
