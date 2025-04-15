@@ -77,26 +77,30 @@ const CategoryInput = ({
         </BtnAtom>
       ))}
       {categories && categories.length >= MAX_CATEGORY_ARRAY_LENGTH ? null : (
-        <InputAtom.Usual
-          value={category}
-          handleChange={handleChangeCategory}
-          handleKeyDown={handleSubmit}
-          handleFocus={() => setIsFocus(true)}
-          handleBlur={() => setIsFocus(false)}
-          placeholder={isFocus ? '태그를 적어주세요' : '태그 추가하기'}
-          ariaLabel="category_input"
-          styleOption={{
-            borderStyle: isFocus ? 'solid' : 'dashed',
-            borderRadius: '50px',
-            borderWidth: '1px',
-            textAlign: 'center',
-            font: 'b2',
-            placeholderOpacity: isFocus ? 0.3 : 1,
-            placeholderColor: 'primary1',
-            width: isFocus ? '17ch' : '15ch',
-            height: '1.25rem',
-          }}
-        />
+        <label htmlFor="categories">
+          <InputAtom.Usual
+            value={category}
+            id="categories"
+            name="cateogries"
+            handleChange={handleChangeCategory}
+            handleKeyDown={handleSubmit}
+            handleFocus={() => setIsFocus(true)}
+            handleBlur={() => setIsFocus(false)}
+            placeholder={isFocus ? '태그를 적어주세요' : '태그 추가하기'}
+            ariaLabel="category_input"
+            styleOption={{
+              borderStyle: isFocus ? 'solid' : 'dashed',
+              borderRadius: '50px',
+              borderWidth: '1px',
+              textAlign: 'center',
+              font: 'b2',
+              placeholderOpacity: isFocus ? 0.3 : 1,
+              placeholderColor: 'primary1',
+              width: isFocus ? '17ch' : '15ch',
+              height: '1.25rem',
+            }}
+          />
+        </label>
       )}
     </CategoryContainer>
   );
