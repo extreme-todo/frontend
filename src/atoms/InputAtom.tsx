@@ -35,6 +35,8 @@ interface IInputAtomProps
   handleBlur?: React.FocusEventHandler<HTMLInputElement>;
   className?: string;
   ariaLabel?: string;
+  name?: string;
+  id?: string;
   inputRef?: (
     node: HTMLInputElement | null,
   ) => void | React.RefObject<HTMLInputElement>;
