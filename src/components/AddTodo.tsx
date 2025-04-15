@@ -162,18 +162,16 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
             <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
           </BtnAtom>
         </TitleWrapper>
-        <CalendarAndCategoryWrapper>
-          <CategoryWrapper>
-            <CategoryInput
-              categories={categoryArray}
-              category={category}
-              handleSubmit={handleSubmitCategory}
-              handleClick={handleClickCategory}
-              handleChangeCategory={handleCategoryInput}
-              tagColorList={ramdomTagColorList.getColorList}
-            />
-          </CategoryWrapper>
-        </CalendarAndCategoryWrapper>
+        <CategoryWrapper>
+          <CategoryInput
+            categories={categoryArray}
+            category={category}
+            handleSubmit={handleSubmitCategory}
+            handleClick={handleClickCategory}
+            handleChangeCategory={handleCategoryInput}
+            tagColorList={ramdomTagColorList.getColorList}
+          />
+        </CategoryWrapper>
       </MainWrapper>
       <FooterWrapper>
         <TomatoContainer>
@@ -242,12 +240,12 @@ const TitleWrapper = styled.div`
   }
 `;
 
-const CalendarAndCategoryWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: flex-start;
-  column-gap: 1rem;
-`;
+// const CalendarAndCategoryWrapper = styled.div`
+//   display: flex;
+//   width: 100%;
+//   justify-content: flex-start;
+//   column-gap: 1rem;
+// `;
 
 const CategoryWrapper = styled.div`
   width: 100%;
