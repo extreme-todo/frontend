@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import { BtnAtom, InputAtom, TagAtom } from '../atoms';
-import { MAX_CATEGORY_ARRAY_LENGTH } from '../shared/inputValidation';
+import { MAX_CATEGORY_ARRAY_LENGTH } from '../components/AddTodo';
 import styled from '@emotion/styled';
 import { TagColorName } from '../styles/emotion';
 
@@ -39,8 +39,8 @@ const CategoryInput = ({
       {categories?.map((category) => (
         <BtnAtom
           handleOnClick={() => handleClick.call(this, category)}
-          ariaLabel="category_tag"
           key={category}
+          ariaLabel={`category ${category}`}
         >
           <TagAtom
             styleOption={{
@@ -48,6 +48,7 @@ const CategoryInput = ({
               size: 'normal',
             }}
             className="tag_with_delete"
+            ariaLabel={`category ${category} delete button`}
           >
             {category}
             <svg
@@ -81,13 +82,13 @@ const CategoryInput = ({
           <InputAtom.Usual
             value={category}
             id="categories"
-            name="cateogries"
+            name="categories"
+            ariaLabel="category input"
             handleChange={handleChangeCategory}
             handleKeyDown={handleSubmit}
             handleFocus={() => setIsFocus(true)}
             handleBlur={() => setIsFocus(false)}
             placeholder={isFocus ? '태그를 적어주세요' : '태그 추가하기'}
-            ariaLabel="category_input"
             styleOption={{
               borderStyle: isFocus ? 'solid' : 'dashed',
               borderRadius: '50px',
