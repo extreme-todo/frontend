@@ -57,7 +57,6 @@ export const inputValidation = (
 
 export const categoryValidation = (value: string) => {
   const trimmed = inputValidation(value, {
-    emptyAlert: '카테고리를 입력해주세요.',
     max: 20,
   });
 
