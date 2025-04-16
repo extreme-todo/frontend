@@ -37,16 +37,15 @@ export const inputValidation = (
   }
 
   // 마지막에 refine 추가
-  const finalSchema = schema
-    .refine((val) => reg.test(val) && !specialCharactersReg.test(val), {
-      message:
-        options?.regAlert ??
-    })
-    .transform((val) => val.replace(/\s+/g, ' ').trim());
+  const finalSchema = schema.refine(
+    (val) => reg.test(val) && !specialCharactersReg.test(val),
+    {
       message: options?.regAlert ?? DEFAULT_SPECIAL_EXPRESSION,
+    },
+  );
 
   try {
-    return finalSchema.parse(value);
+    return finalSchema.parse(value.replace(/\s+/g, ' ').trim());
   } catch (error) {
     if (error instanceof z.ZodError) {
       return { errorMessage: error.errors[0].message };
