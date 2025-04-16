@@ -12,6 +12,9 @@ const titleCharacterReg =
   /^[a-zA-Z0-9 \u3131-\uD79D\u4E00-\u9FA5\u3040-\u309F\u30A0-\u30FF\u3400-\u4DBF\u20000-\u2A6DF\u2A700-\u2B73F\u2B740-\u2B81F\u2B820-\u2CEAF\u2CEB0-\u2EBEF\u2F800-\u2FA1F\-']+$/;
 const specialCharactersReg = /[@~₩?><|\\=_^]/;
 
+export const DEFAULT_EMPTY_MESSAGE = '입력값이 없습니다.';
+export const DEFAULT_SPECIAL_EXPRESSION = `특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`;
+
 /**
  * @param value - 유효성 검사를 할 값
  * @param options - empty일 때 혹은 정규표현식을 벗어났을 때 띄워줄 alert 메시지
@@ -24,7 +27,7 @@ export const inputValidation = (
 ) => {
   let schema = z.string();
   schema = schema.min(1, {
-    message: options?.emptyAlert ?? '입력값이 없습니다.',
+    message: options?.emptyAlert ?? DEFAULT_EMPTY_MESSAGE,
   });
 
   if (options?.max) {
@@ -38,9 +41,9 @@ export const inputValidation = (
     .refine((val) => reg.test(val) && !specialCharactersReg.test(val), {
       message:
         options?.regAlert ??
-        `특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`,
     })
     .transform((val) => val.replace(/\s+/g, ' ').trim());
+      message: options?.regAlert ?? DEFAULT_SPECIAL_EXPRESSION,
 
   try {
     return finalSchema.parse(value);
