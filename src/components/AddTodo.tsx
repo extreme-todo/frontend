@@ -17,7 +17,11 @@ import { usePomodoroValue } from '../hooks';
 
 /* custom functions or methods */
 import { todosApi } from '../shared/apis';
-import { categoryValidation, titleValidation } from '../shared/inputValidation';
+import {
+  categoryValidation,
+  DEFAULT_EMPTY_MESSAGE,
+  titleValidation,
+} from '../shared/inputValidation';
 import { setTimeInFormat } from '../shared/timeUtils';
 import { AddTodoDto } from '../DB/indexed';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
@@ -31,12 +35,16 @@ interface IAddTodoProps {
   handleClose: () => void;
 }
 
+export const MAX_CATEGORY_ARRAY_LENGTH = 5;
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
 const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
+  const [categoryError, setCategoryError] = useState<string | undefined>(
+    undefined,
+  );
   const [tomato, setTomato] = useState(1);
 
   const queryClient = useQueryClient();
@@ -70,8 +78,20 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   );
 
   const handleCategoryInput: ReactEventHandler<HTMLInputElement> = useCallback(
-    (event) => setCategory(event.currentTarget.value),
-    [],
+    (event) => {
+      const trimmed = categoryValidation(event.currentTarget.value);
+      if (
+        typeof trimmed === 'object' &&
+        trimmed.errorMessage !== categoryError &&
+        trimmed.errorMessage !== DEFAULT_EMPTY_MESSAGE
+      )
+        setCategoryError(trimmed.errorMessage);
+      else if (typeof trimmed === 'string' && categoryError !== undefined) {
+        setCategoryError(undefined);
+      }
+      setCategory(event.currentTarget.value);
+    },
+    [categoryError],
   );
 
   const handleSubmitCategory: KeyboardEventHandler<HTMLInputElement> =
@@ -80,20 +100,18 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
         if (event.code === 'Enter') {
           // 한글 중복 입력 처리
           if (event.nativeEvent.isComposing) return;
-
-          const newCategory = (event.target as HTMLInputElement).value;
-
-          const trimmed = categoryValidation(newCategory, categoryArray ?? []);
-          if (!trimmed) return;
-
-          if (categoryArray.length > 0) {
+          const trimmed = categoryValidation(event.currentTarget.value);
+          if (typeof trimmed === 'object') return;
+          else if (
+            typeof trimmed === 'string' &&
+            !categoryArray.includes(trimmed) &&
+            categoryArray.length <= MAX_CATEGORY_ARRAY_LENGTH
+          ) {
             const copy = categoryArray.slice();
             copy.push(trimmed);
             setCategoryArray(copy);
-          } else {
-            setCategoryArray([trimmed]);
+            ramdomTagColorList.setColor = trimmed;
           }
-          ramdomTagColorList.setColor = trimmed;
           setCategory('');
         }
       },
@@ -179,6 +197,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
             handleChangeCategory={handleCategoryInput}
             tagColorList={ramdomTagColorList.getColorList}
           />
+          {categoryError && <p>{categoryError}</p>}
         </CategoryWrapper>
       </MainWrapper>
       <FooterWrapper>
