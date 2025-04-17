@@ -99,9 +99,7 @@ class ETIndexed {
       focusTime: 0,
       done: false,
       createdAt: new Date(),
-      id: `${new Date().getTime()}-${Math.random()
-        .toString(36)
-        .substring(2, 9)}`,
+      id: crypto.randomUUID(),
     };
 
     await this.action.add(newTodo);
