@@ -11,7 +11,6 @@ import { designTheme } from '../../styles/theme';
 import userEvent from '@testing-library/user-event';
 import { PomodoroProvider } from '../../hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { DEFAULT_SPECIAL_EXPRESSION } from '../../shared/inputValidation';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,8 +93,7 @@ describe('AddTodo', () => {
     });
 
     it('카테고리 input이 비어있는채로 엔터를 입력하면 추가되지 않는다.', () => {
-      const { getByRole, getAllByRole, getByLabelText } = renderUI();
-      // screen.logTestingPlaygroundURL();
+      const { getByRole, getAllByRole } = renderUI();
       const categoryInput = getByRole('textbox', { name: /category input/i });
       const beforeAllButton = getAllByRole('button');
       act(() => userEvent.type(categoryInput, '{enter}'));
