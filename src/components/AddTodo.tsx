@@ -17,11 +17,7 @@ import { usePomodoroValue } from '../hooks';
 
 /* custom functions or methods */
 import { todosApi } from '../shared/apis';
-import {
-  categoryValidation,
-  DEFAULT_EMPTY_MESSAGE,
-  titleValidation,
-} from '../shared/inputValidation';
+import { categoryValidation, titleValidation } from '../shared/inputValidation';
 import { setTimeInFormat } from '../shared/timeUtils';
 import { AddTodoDto } from '../DB/indexed';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
@@ -79,17 +75,19 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
   const handleCategoryInput: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
-      const trimmed = categoryValidation(event.currentTarget.value);
+      setCategory(event.currentTarget.value);
       if (
-        typeof trimmed === 'object' &&
-        trimmed.errorMessage !== categoryError &&
-        trimmed.errorMessage !== DEFAULT_EMPTY_MESSAGE
-      )
+        event.currentTarget.value.length === 0 &&
+        categoryError !== undefined
+      ) {
+        return setCategoryError(undefined);
+      }
+      const trimmed = categoryValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
         setCategoryError(trimmed.errorMessage);
       else if (typeof trimmed === 'string' && categoryError !== undefined) {
         setCategoryError(undefined);
       }
-      setCategory(event.currentTarget.value);
     },
     [categoryError],
   );
@@ -98,6 +96,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     useCallback(
       (event) => {
         if (event.code === 'Enter') {
+          if (event.currentTarget.value.length === 0) return;
           // 한글 중복 입력 처리
           if (event.nativeEvent.isComposing) return;
           const trimmed = categoryValidation(event.currentTarget.value);
