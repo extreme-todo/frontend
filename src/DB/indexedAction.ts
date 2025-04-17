@@ -1,18 +1,41 @@
-import type { AddTodoDto } from './indexed';
+import { z } from 'zod';
 
 type CategoryType = { id: number; name: string };
 
-interface TodoEntity {
-  id: string;
-  date: string; // toISOstring() 처리된 Date
-  todo: string;
-  createdAt: Date;
-  duration: number;
-  done: boolean;
-  categories: string[] | null;
-  focusTime: number;
-  order: number | null;
-}
+export const unicodeLetterReg = new RegExp('^[\\p{L}\\p{M}\\s]+$', 'u');
+export const TITLE_EMPTY_MESSAGE = '제목을 입력해주세요.';
+export const MAX_CATEGORY_INPUT_LENGTH = 20;
+export const SPECIAL_EXPRESSION_WARNING = `특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`;
+const trimStr = (str: unknown) => {
+  return String(str).replace(/\s+/g, ' ').trim();
+};
+
+export const CategoryInputSchema = z.preprocess(
+  trimStr,
+  z
+    .string()
+    .max(
+      MAX_CATEGORY_INPUT_LENGTH,
+      `${MAX_CATEGORY_INPUT_LENGTH}자 이하로만 입력할 수 있습니다.`,
+    )
+    .regex(unicodeLetterReg, SPECIAL_EXPRESSION_WARNING),
+);
+export const TodoSchema = z.object({
+  todo: z.preprocess(trimStr, z.string().min(1, TITLE_EMPTY_MESSAGE)),
+  categories: z.array(CategoryInputSchema).nullable(),
+  duration: z.coerce
+    .number()
+    .min(1, '유효한 토마토 값이 아닙니다.')
+    .max(10, '유효한 토마토 값이 아닙니다.'),
+  date: z.string().datetime({ offset: true }),
+  focusTime: z.number().min(0).default(0),
+  order: z.number().nullable(),
+  done: z.boolean().default(false),
+  createdAt: z.coerce.date(),
+  id: z.string().uuid(),
+});
+
+type TodoEntity = z.infer<typeof TodoSchema>;
 
 type TransactionMode = 'readonly' | 'readwrite';
 type CrudType = 'add' | 'get' | 'update' | 'remove';
