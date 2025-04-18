@@ -5,7 +5,9 @@ type CategoryType = { id: number; name: string };
 export const unicodeLetterReg = new RegExp('^[\\p{L}\\p{M}\\s]+$', 'u');
 export const TITLE_EMPTY_MESSAGE = '제목을 입력해주세요.';
 export const MAX_CATEGORY_INPUT_LENGTH = 20;
+export const MAX_CATEGORY_ARRAY_LENGTH = 5;
 export const SPECIAL_EXPRESSION_WARNING = `특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`;
+export const MAX_CATEGORY_ARRAY_LENGTH_WARNING = `카테고리는 최대 ${MAX_CATEGORY_ARRAY_LENGTH}개 까지 설정할 수 있습니다.`;
 const trimStr = (str: unknown) => {
   return String(str).replace(/\s+/g, ' ').trim();
 };
@@ -22,7 +24,10 @@ export const CategoryInputSchema = z.preprocess(
 );
 export const TodoSchema = z.object({
   todo: z.preprocess(trimStr, z.string().min(1, TITLE_EMPTY_MESSAGE)),
-  categories: z.array(CategoryInputSchema).nullable(),
+  categories: z
+    .array(CategoryInputSchema)
+    .max(MAX_CATEGORY_ARRAY_LENGTH, MAX_CATEGORY_ARRAY_LENGTH_WARNING)
+    .nullable(),
   duration: z.coerce
     .number()
     .min(1, '유효한 토마토 값이 아닙니다.')
