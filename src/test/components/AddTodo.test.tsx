@@ -214,7 +214,15 @@ describe('AddTodo', () => {
       expect(submitBtn).toBeInTheDocument();
     });
 
-    it('title이 비어있으면 제출 버튼을 누를 때 alert창을 띄워준다.', () => {
+    it('title이 비워두면 경고 메시지를 보여준다.', () => {
+      const { getByRole, getByText } = renderUI();
+      const categoryInput = getByRole('textbox', {
+        name: /category input/i,
+      }) as HTMLInputElement;
+      act(() => userEvent.click(categoryInput));
+      const warningMessage = getByText(/제목을 입력해주세요./i);
+      expect(warningMessage).toBeInTheDocument();
+    });
       const { getByRole } = renderUI();
       const submitBtn = getByRole('button', {
         name: 'submit',

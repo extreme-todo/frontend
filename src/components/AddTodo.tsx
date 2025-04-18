@@ -39,6 +39,7 @@ const ramdomTagColorList = RandomTagColorList.getInstance();
 
 const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
+  const [titleError, setTitleError] = useState<string | undefined>(undefined);
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
   const [categoryError, setCategoryError] = useState<string | undefined>(
@@ -72,7 +73,28 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
   /* handler */
   const handleTitleInput: ReactEventHandler<HTMLInputElement> = useCallback(
-    (event) => setTitle(event.currentTarget.value),
+    (event) => {
+      const trimmed = titleValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object' && trimmed.errorMessage !== titleError) {
+        setTitleError(trimmed.errorMessage);
+      } else if (typeof trimmed === 'string' && titleError !== undefined) {
+        setTitleError(undefined);
+      }
+      setTitle(event.currentTarget.value);
+    },
+    [titleError],
+  );
+
+  const handleTitleBlur: ReactEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      const checkEmpty = titleValidation(event.currentTarget.value);
+      if (
+        typeof checkEmpty === 'object' &&
+        checkEmpty.errorMessage === TITLE_EMPTY_MESSAGE
+      ) {
+        setTitleError(checkEmpty.errorMessage);
+      }
+    },
     [],
   );
 
@@ -170,6 +192,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
             <InputAtom.Underline
               name="title"
               value={title}
+              handleBlur={handleTitleBlur}
               id={'title'}
               inputRef={useCallback((node: HTMLInputElement | null) => {
                 node?.focus();
@@ -186,6 +209,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
               }}
             />
           </label>
+          {titleError && <p>{titleError}</p>}
           <BtnAtom handleOnClick={handleClose} ariaLabel="close">
             <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
           </BtnAtom>
