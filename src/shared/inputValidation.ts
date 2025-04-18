@@ -1,11 +1,5 @@
 import { z } from 'zod';
-import {
-  CategoryInputSchema,
-  MAX_CATEGORY_INPUT_LENGTH,
-  SPECIAL_EXPRESSION_WARNING,
-  TodoSchema,
-  unicodeLetterReg,
-} from '../DB/indexedAction';
+import { CategoryInputSchema, TodoSchema } from '../DB/indexedAction';
 
 export const categoryValidation = (value: string) => {
   try {
