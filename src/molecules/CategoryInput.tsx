@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import { BtnAtom, InputAtom, TagAtom } from '../atoms';
-import { MAX_CATEGORY_ARRAY_LENGTH } from '../components/AddTodo';
+import { MAX_CATEGORY_ARRAY_LENGTH } from '../DB/indexedAction';
 import styled from '@emotion/styled';
 import { TagColorName } from '../styles/emotion';
 

@@ -20,18 +20,21 @@ import { todosApi } from '../shared/apis';
 import { categoryValidation, titleValidation } from '../shared/inputValidation';
 import { setTimeInFormat } from '../shared/timeUtils';
 import { AddTodoDto } from '../DB/indexed';
+import {
+  MAX_CATEGORY_ARRAY_LENGTH,
+  TITLE_EMPTY_MESSAGE,
+} from '../DB/indexedAction';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
 
 /* packages */
+import { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
-import { AxiosError } from 'axios';
 
 interface IAddTodoProps {
   handleClose: () => void;
 }
 
-export const MAX_CATEGORY_ARRAY_LENGTH = 5;
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
 const AddTodo = ({ handleClose }: IAddTodoProps) => {
