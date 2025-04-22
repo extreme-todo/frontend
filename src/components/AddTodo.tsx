@@ -199,7 +199,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
               }, [])}
               handleChange={handleTitleInput}
               placeholder="새로운 TODO를 작성해주세요"
-              ariaLabel="title"
+              ariaLabel="title input"
               className="todoTitle"
               styleOption={{
                 borderWidth: '1px',

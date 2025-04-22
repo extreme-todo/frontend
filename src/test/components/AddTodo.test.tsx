@@ -42,7 +42,7 @@ describe('AddTodo', () => {
     it('제목 input이 있다.', () => {
       const { getByRole } = renderUI();
 
-      const titleInput = getByRole('textbox', { name: 'title' });
+      const titleInput = getByRole('textbox', { name: 'title input' });
 
       expect(titleInput).toBeInTheDocument();
     });
@@ -51,7 +51,7 @@ describe('AddTodo', () => {
       const { getByRole } = renderUI();
 
       const titleInput = getByRole('textbox', {
-        name: 'title',
+        name: 'title input',
       }) as HTMLInputElement;
 
       act(() => userEvent.type(titleInput, '새로운 할 일 제목 입니다'));
