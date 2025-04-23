@@ -140,7 +140,6 @@ const style = css`
   }
   button {
     cursor: pointer;
-    outline: none;
     border: none;
     background-color: transparent;
     padding: 0;
