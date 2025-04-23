@@ -16,8 +16,8 @@ interface ITomatoInputProps {
   period: number;
   handleTomato: (count: number) => void;
   tomato: number;
-  useBalloon?: boolean;
-  useLabel?: boolean;
+  isBalloon?: boolean;
+  isLabel?: boolean;
 }
 
 const TomatoInput = ({
@@ -26,8 +26,8 @@ const TomatoInput = ({
   period,
   tomato,
   handleTomato,
-  useBalloon = true,
-  useLabel = true,
+  isBalloon = true,
+  isLabel = true,
 }: ITomatoInputProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const thumbRef = useRef<HTMLDivElement>(null);
@@ -123,7 +123,7 @@ const TomatoInput = ({
           ref={thumbRef}
           data-value={`${tomato}round`}
           aria-label="tomato"
-          useBalloon={useBalloon}
+          useBalloon={isBalloon}
         >
           🍅
         </Thumb>
@@ -136,7 +136,7 @@ const TomatoInput = ({
           ))}
         </InputTickWrapper>
       </RangeInputWrapper>
-      {useLabel ? (
+      {isLabel ? (
         <LabelWrapper>
           {Array.from({ length: tickCount }).map((_, index) => (
             <TickWrapper key={index} aria-label="label">
