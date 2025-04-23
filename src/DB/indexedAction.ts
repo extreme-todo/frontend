@@ -46,13 +46,6 @@ export const TodoSchema = z.object({
   id: z.string().uuid(),
 });
 
-export const AddTodoSchema = TodoSchema.pick({
-  duration: true,
-  todo: true,
-  date: true,
-  categories: true,
-});
-
 type TodoEntity = z.infer<typeof TodoSchema>;
 
 type TransactionMode = 'readonly' | 'readwrite';

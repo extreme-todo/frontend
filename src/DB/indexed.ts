@@ -260,5 +260,5 @@ class ETIndexed {
   }
 }
 
-export { ETIndexed };
+export { ETIndexed, AddTodoSchema };
 export type { AddTodoDto, UpdateTodoDto };
