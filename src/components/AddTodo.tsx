@@ -22,6 +22,7 @@ import { setTimeInFormat } from '../shared/timeUtils';
 import { AddTodoDto } from '../DB/indexed';
 import {
   MAX_CATEGORY_ARRAY_LENGTH,
+  MAX_TITLE_INPUT_LENGTH_WARNING,
   TITLE_EMPTY_MESSAGE,
 } from '../DB/indexedAction';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
@@ -75,8 +76,13 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const handleTitleInput: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
       const trimmed = titleValidation(event.currentTarget.value);
-      if (typeof trimmed === 'object' && trimmed.errorMessage !== titleError) {
-        setTitleError(trimmed.errorMessage);
+      if (typeof trimmed === 'object') {
+        if (trimmed.errorMessage !== titleError) {
+          setTitleError(trimmed.errorMessage);
+        }
+        if (trimmed.errorMessage === MAX_TITLE_INPUT_LENGTH_WARNING) {
+          return;
+        }
       } else if (typeof trimmed === 'string' && titleError !== undefined) {
         setTitleError(undefined);
       }

@@ -214,21 +214,26 @@ describe('AddTodo', () => {
       expect(submitBtn).toBeInTheDocument();
     });
 
-    it('title이 비워두면 경고 메시지를 보여준다.', () => {
+    it.only('title이 50자 이상 입력되면 더 이상 입력되지 않는다.', () => {
       const { getByRole, getByText } = renderUI();
-      const categoryInput = getByRole('textbox', {
-        name: /category input/i,
+      const titleInput = getByRole('textbox', {
+        name: /title input/i,
       }) as HTMLInputElement;
-      act(() => userEvent.click(categoryInput));
-      const warningMessage = getByText(/제목을 입력해주세요./i);
-      expect(warningMessage).toBeInTheDocument();
+      act(() => userEvent.type(titleInput, 'a'.repeat(50) + 'b'));
+
+      expect(titleInput.value[titleInput.value.length - 1]).toBe('a');
     });
+
+    it('title을 비워두면 제출 버튼이 disabled된다.', () => {
       const { getByRole } = renderUI();
+      const categoryInput = getByRole('textbox', {
+        name: 'category input',
+      }) as HTMLInputElement;
       const submitBtn = getByRole('button', {
         name: 'submit',
       });
-      act(() => userEvent.click(submitBtn));
-      expect(spyAlert).toHaveBeenCalledTimes(1);
+      act(() => userEvent.click(categoryInput));
+      expect(submitBtn).toBeDisabled();
     });
   });
 });
