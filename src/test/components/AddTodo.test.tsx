@@ -214,7 +214,7 @@ describe('AddTodo', () => {
       expect(submitBtn).toBeInTheDocument();
     });
 
-    it.only('title이 50자 이상 입력되면 더 이상 입력되지 않는다.', () => {
+    it('title이 50자 이상 입력되면 더 이상 입력되지 않는다.', () => {
       const { getByRole, getByText } = renderUI();
       const titleInput = getByRole('textbox', {
         name: /title input/i,

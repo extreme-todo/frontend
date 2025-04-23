@@ -40,7 +40,7 @@ const ramdomTagColorList = RandomTagColorList.getInstance();
 
 const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
-  const [titleError, setTitleError] = useState<string | undefined>(undefined);
+  const [titleError, setTitleError] = useState(false);
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
   const [categoryError, setCategoryError] = useState<string | undefined>(
@@ -77,14 +77,14 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     (event) => {
       const trimmed = titleValidation(event.currentTarget.value);
       if (typeof trimmed === 'object') {
-        if (trimmed.errorMessage !== titleError) {
-          setTitleError(trimmed.errorMessage);
+        if (!titleError) {
+          setTitleError(true);
         }
         if (trimmed.errorMessage === MAX_TITLE_INPUT_LENGTH_WARNING) {
           return;
         }
       } else if (typeof trimmed === 'string' && titleError !== undefined) {
-        setTitleError(undefined);
+        setTitleError(false);
       }
       setTitle(event.currentTarget.value);
     },
@@ -98,7 +98,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
         typeof checkEmpty === 'object' &&
         checkEmpty.errorMessage === TITLE_EMPTY_MESSAGE
       ) {
-        setTitleError(checkEmpty.errorMessage);
+        setTitleError(true);
       }
     },
     [],
@@ -208,14 +208,14 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
               ariaLabel="title input"
               className="todoTitle"
               styleOption={{
-                borderWidth: '1px',
+                borderWidth: titleError ? '2px' : '1px',
                 width: '100%',
                 height: '3rem',
                 font: 'h1',
+                borderColor: titleError ? 'extreme_orange' : 'primary1',
               }}
             />
           </label>
-          {titleError && <p>{titleError}</p>}
           <BtnAtom handleOnClick={handleClose} ariaLabel="close">
             <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
           </BtnAtom>
@@ -248,6 +248,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
           btnStyle="lightBtn"
           ariaLabel="submit"
           type="submit"
+          disabled={title.length === 0 && titleError}
         >
           <div style={{ width: 'max-content' }}>추가</div>
         </BtnAtom>
@@ -298,13 +299,6 @@ const TitleWrapper = styled.div`
     height: 2rem;
   }
 `;
-
-// const CalendarAndCategoryWrapper = styled.div`
-//   display: flex;
-//   width: 100%;
-//   justify-content: flex-start;
-//   column-gap: 1rem;
-// `;
 
 const CategoryWrapper = styled.div`
   width: 100%;
