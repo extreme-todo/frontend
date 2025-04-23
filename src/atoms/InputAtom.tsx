@@ -40,6 +40,7 @@ interface IInputAtomProps
   inputRef?: (
     node: HTMLInputElement | null,
   ) => void | React.RefObject<HTMLInputElement>;
+  tabIndex?: number;
 }
 
 const Usual = memo(
@@ -51,6 +52,7 @@ const Usual = memo(
     ariaLabel,
     styleOption,
     inputRef,
+    tabIndex = 0,
     ...props
   }: IInputAtomProps & {
     styleOption?: CommonInputStyle;
@@ -64,6 +66,7 @@ const Usual = memo(
         aria-label={ariaLabel}
         styleOption={styleOption}
         ref={inputRef}
+        tabIndex={tabIndex}
         {...props}
       />
     );
@@ -78,6 +81,7 @@ const Underline = memo(
     handleBlur,
     ariaLabel,
     inputRef,
+    tabIndex = 0,
     ...props
   }: IInputAtomProps & { styleOption?: CommonInputStyle }) => {
     return (
@@ -88,6 +92,7 @@ const Underline = memo(
         onBlur={handleBlur}
         aria-label={ariaLabel}
         ref={inputRef}
+        tabIndex={tabIndex}
         {...props}
       />
     );
