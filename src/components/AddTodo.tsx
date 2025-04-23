@@ -304,6 +304,7 @@ const CategoryWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 
 const TomatoContainer = styled.div`
