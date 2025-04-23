@@ -128,6 +128,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     useCallback(
       (event) => {
         if (event.code === 'Enter') {
+          event.preventDefault();
           if (event.currentTarget.value.length === 0) return;
           // 한글 중복 입력 처리
           if (event.nativeEvent.isComposing) return;
