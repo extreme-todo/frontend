@@ -19,7 +19,7 @@ import { usePomodoroValue } from '../hooks';
 import { todosApi } from '../shared/apis';
 import { categoryValidation, titleValidation } from '../shared/inputValidation';
 import { setTimeInFormat } from '../shared/timeUtils';
-import { AddTodoDto } from '../DB/indexed';
+import { AddTodoDto, AddTodoSchema } from '../DB/indexed';
 import {
   MAX_CATEGORY_ARRAY_LENGTH,
   MAX_TITLE_INPUT_LENGTH_WARNING,
@@ -31,6 +31,7 @@ import { RandomTagColorList } from '../shared/RandomTagColorList';
 import { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
+import { ZodError } from 'zod';
 
 interface IAddTodoProps {
   handleClose: () => void;
@@ -157,31 +158,27 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
   const handleTomato = useCallback((count: number) => setTomato(count), []);
 
-  const addData: AddTodoDto = useMemo(
-    () => ({
-      date: setTimeInFormat(new Date()).toISOString(),
-      todo: title,
-      duration: Number(`${tomato}`),
-      categories: categoryArray.length > 0 ? categoryArray : null,
-    }),
-    [title, tomato, categoryArray],
-  );
-
   const handleAddSubmit = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
       const formData = new FormData(event.currentTarget as HTMLFormElement);
-      const todo = formData.get('title');
-      const duration = formData.get('duration');
-      const categories = categoryArray;
-      const date = setTimeInFormat(new Date()).toISOString();
-      // const date = formData.get('date');
-      // if (title.length <= 0) return alert('제목을 입력해주세요.');
-      // const trimmed = titleValidation(addData.todo);
-      // if (!trimmed) return;
-      // mutate({ ...todo, todo: trimmed });
+      const newTodo = {
+        todo: formData.get('title') as string,
+        duration: tomato,
+        categories: categoryArray.length === 0 ? null : categoryArray,
+        date: setTimeInFormat(new Date()).toISOString(),
+      };
+      const { success, error } = AddTodoSchema.safeParse(newTodo);
+
+      if (success) {
+        mutate(newTodo);
+      } else {
+        if (error instanceof ZodError) {
+          alert(error.issues[0].message);
+        }
+      }
     },
-    [addData],
+    [categoryArray, tomato],
   );
 
   return (
