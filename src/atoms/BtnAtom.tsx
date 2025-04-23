@@ -13,6 +13,7 @@ interface IBtnAtomProps extends IChildProps {
   ariaLabel?: string;
   type?: 'submit' | 'reset' | 'button';
   disabled?: boolean;
+  tabIndex?: number;
 }
 
 function BtnAtom({
@@ -24,6 +25,7 @@ function BtnAtom({
   className,
   ariaLabel,
   type = 'button',
+  tabIndex = 0,
   ...props
 }: IBtnAtomProps) {
   if (btnStyle === undefined) {
@@ -35,6 +37,7 @@ function BtnAtom({
         className={className}
         aria-label={ariaLabel}
         type={type}
+        tabIndex={tabIndex}
       >
         {children}
       </button>
@@ -50,6 +53,7 @@ function BtnAtom({
       className={className}
       aria-label={ariaLabel}
       type={type}
+      tabIndex={tabIndex}
     >
       {children}
     </ButtonWrapper>
