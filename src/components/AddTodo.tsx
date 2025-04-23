@@ -51,7 +51,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
@@ -246,9 +246,11 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
           btnStyle="lightBtn"
           ariaLabel="submit"
           type="submit"
-          disabled={title.length === 0 && titleError}
+          disabled={title.length === 0 || titleError || isLoading}
         >
-          <div style={{ width: 'max-content' }}>추가</div>
+          <div style={{ width: 'max-content' }}>
+            {isLoading ? '제출 중' : '추가'}
+          </div>
         </BtnAtom>
       </FooterWrapper>
     </AddTodoWrapper>
