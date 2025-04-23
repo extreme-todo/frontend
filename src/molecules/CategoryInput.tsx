@@ -100,6 +100,7 @@ const CategoryInput = ({
               width: isFocus ? '17ch' : '15ch',
               height: '1.25rem',
             }}
+            tabIndex={0}
           />
         </label>
       )}

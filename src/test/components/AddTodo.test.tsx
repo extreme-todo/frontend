@@ -20,6 +20,8 @@ const queryClient = new QueryClient({
   },
 });
 
+jest.mock('tabbable');
+
 describe('AddTodo', () => {
   describe('AddTodo에는', () => {
     let renderUI: () => ReturnType<typeof render>;

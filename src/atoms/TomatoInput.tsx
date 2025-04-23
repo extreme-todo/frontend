@@ -131,7 +131,14 @@ const TomatoInput = ({
         <InputTickWrapper>
           {Array.from({ length: tickCount }).map((_, index) => (
             <TickWrapper key={index} ref={tickRef} aria-label="tick">
-              <InputTick />
+              <InputTick
+                tabIndex={1}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    handleTomato(index + 1);
+                  }
+                }}
+              />
             </TickWrapper>
           ))}
         </InputTickWrapper>

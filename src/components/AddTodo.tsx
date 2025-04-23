@@ -32,6 +32,7 @@ import { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 import { ZodError } from 'zod';
+import FocusTrap from 'focus-trap-react';
 
 interface IAddTodoProps {
   handleClose: () => void;
@@ -183,77 +184,87 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   );
 
   return (
-    <AddTodoWrapper
-      w="53.75rem"
-      h="20rem"
-      padding="1.5rem"
-      className="card"
-      onSubmit={handleAddSubmit}
+    <FocusTrap
+      focusTrapOptions={{
+        initialFocus: false,
+        escapeDeactivates: true,
+        clickOutsideDeactivates: true,
+      }}
     >
-      <MainWrapper>
-        <TitleWrapper>
-          <label htmlFor="title">
-            <InputAtom.Underline
-              name="title"
-              value={title}
-              handleBlur={handleTitleBlur}
-              id={'title'}
-              inputRef={useCallback((node: HTMLInputElement | null) => {
-                node?.focus();
-              }, [])}
-              handleChange={handleTitleInput}
-              placeholder="새로운 TODO를 작성해주세요"
-              ariaLabel="title input"
-              className="todoTitle"
-              styleOption={{
-                borderWidth: titleError ? '2px' : '1px',
-                width: '100%',
-                height: '3rem',
-                font: 'h1',
-                borderColor: titleError ? 'extreme_orange' : 'primary1',
-              }}
+      <AddTodoWrapper
+        w="53.75rem"
+        h="20rem"
+        padding="1.5rem"
+        className="card"
+        onSubmit={handleAddSubmit}
+      >
+        <MainWrapper>
+          <TitleWrapper>
+            <label htmlFor="title">
+              <InputAtom.Underline
+                name="title"
+                value={title}
+                handleBlur={handleTitleBlur}
+                id={'title'}
+                inputRef={useCallback((node: HTMLInputElement | null) => {
+                  node?.focus();
+                }, [])}
+                handleChange={handleTitleInput}
+                placeholder="새로운 TODO를 작성해주세요"
+                ariaLabel="title input"
+                className="todoTitle"
+                styleOption={{
+                  borderWidth: titleError ? '2px' : '1px',
+                  width: '100%',
+                  height: '3rem',
+                  font: 'h1',
+                  borderColor: titleError ? 'extreme_orange' : 'primary1',
+                }}
+                tabIndex={0}
+              />
+            </label>
+            <BtnAtom handleOnClick={handleClose} ariaLabel="close" tabIndex={3}>
+              <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
+            </BtnAtom>
+          </TitleWrapper>
+          <CategoryWrapper>
+            <CategoryInput
+              categories={categoryArray}
+              category={category}
+              handleSubmit={handleSubmitCategory}
+              handleClick={handleClickCategory}
+              handleChangeCategory={handleCategoryInput}
+              tagColorList={ramdomTagColorList.getColorList}
             />
-          </label>
-          <BtnAtom handleOnClick={handleClose} ariaLabel="close">
-            <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
+            {categoryError && <p className="category_error">{categoryError}</p>}
+          </CategoryWrapper>
+        </MainWrapper>
+        <FooterWrapper>
+          <TomatoContainer>
+            <TomatoInput
+              max={10}
+              min={0}
+              period={focusStep}
+              handleTomato={handleTomato}
+              tomato={tomato}
+            />
+          </TomatoContainer>
+          <BtnAtom
+            paddingHorizontal="2.0625rem"
+            paddingVertical="0.375rem"
+            btnStyle="lightBtn"
+            ariaLabel="submit"
+            type="submit"
+            disabled={title.length === 0 || titleError || isLoading}
+            tabIndex={2}
+          >
+            <div style={{ width: 'max-content' }}>
+              {isLoading ? '제출 중' : '추가'}
+            </div>
           </BtnAtom>
-        </TitleWrapper>
-        <CategoryWrapper>
-          <CategoryInput
-            categories={categoryArray}
-            category={category}
-            handleSubmit={handleSubmitCategory}
-            handleClick={handleClickCategory}
-            handleChangeCategory={handleCategoryInput}
-            tagColorList={ramdomTagColorList.getColorList}
-          />
-          {categoryError && <p>{categoryError}</p>}
-        </CategoryWrapper>
-      </MainWrapper>
-      <FooterWrapper>
-        <TomatoContainer>
-          <TomatoInput
-            max={10}
-            min={0}
-            period={focusStep}
-            handleTomato={handleTomato}
-            tomato={tomato}
-          />
-        </TomatoContainer>
-        <BtnAtom
-          paddingHorizontal="2.0625rem"
-          paddingVertical="0.375rem"
-          btnStyle="lightBtn"
-          ariaLabel="submit"
-          type="submit"
-          disabled={title.length === 0 || titleError || isLoading}
-        >
-          <div style={{ width: 'max-content' }}>
-            {isLoading ? '제출 중' : '추가'}
-          </div>
-        </BtnAtom>
-      </FooterWrapper>
-    </AddTodoWrapper>
+        </FooterWrapper>
+      </AddTodoWrapper>
+    </FocusTrap>
   );
 };
 
@@ -303,8 +314,15 @@ const TitleWrapper = styled.div`
 const CategoryWrapper = styled.div`
   width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  .category_error {
+    margin-top: 0.5rem;
+    color: ${({ theme }) => theme.color.fontColor.extreme_orange};
+    font-size: ${({ theme }) => theme.fontSize.body.size};
+    font-weight: ${({ theme }) => theme.fontSize.body.weight};
+  }
 `;
 
 const TomatoContainer = styled.div`
