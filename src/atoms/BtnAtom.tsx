@@ -91,6 +91,12 @@ const ButtonWrapper = styled.button<{
     color: ${({ theme, btnStyle: btnType }) =>
       theme.button[btnType].click.color};
   }
+  &:disabled {
+    background-color: ${({ theme }) =>
+      theme.button['extremeLightBtn'].default.backgroundColor};
+    color: ${({ theme }) => theme.button['extremeDarkBtn'].default.color};
+    cursor: not-allowed;
+  }
   transition: all 0.2s ease-in-out;
 `;
 
