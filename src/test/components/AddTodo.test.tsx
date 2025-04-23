@@ -2,7 +2,7 @@ import React, { act } from 'react';
 
 import { AddTodo } from '../../components';
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import { IChildProps } from '../../shared/interfaces';
 
@@ -23,10 +23,8 @@ const queryClient = new QueryClient({
 describe('AddTodo', () => {
   describe('AddTodo에는', () => {
     let renderUI: () => ReturnType<typeof render>;
-    let spyAlert: jest.SpyInstance<void, [message?: any]>;
 
     beforeEach(() => {
-      spyAlert = jest.spyOn(window, 'alert').mockImplementation();
       renderUI = () =>
         render(<AddTodo handleClose={jest.fn} />, {
           wrapper: ({ children }: IChildProps) => (
@@ -215,7 +213,7 @@ describe('AddTodo', () => {
     });
 
     it('title이 50자 이상 입력되면 더 이상 입력되지 않는다.', () => {
-      const { getByRole, getByText } = renderUI();
+      const { getByRole } = renderUI();
       const titleInput = getByRole('textbox', {
         name: /title input/i,
       }) as HTMLInputElement;
