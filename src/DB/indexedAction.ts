@@ -9,7 +9,7 @@ export const MAX_CATEGORY_INPUT_LENGTH = 20;
 export const MAX_TITLE_INPUT_LENGTH = 50;
 export const MAX_CATEGORY_INPUT_LENGTH_WARNING = `${MAX_CATEGORY_INPUT_LENGTH}자 이하로만 입력할 수 있습니다.`;
 export const MAX_TITLE_INPUT_LENGTH_WARNING = `${MAX_TITLE_INPUT_LENGTH}자 이하로만 입력할 수 있습니다.`;
-export const SPECIAL_EXPRESSION_WARNING = `특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`;
+export const SPECIAL_EXPRESSION_WARNING = `숫자,특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`;
 export const MAX_CATEGORY_ARRAY_LENGTH_WARNING = `카테고리는 최대 ${MAX_CATEGORY_ARRAY_LENGTH}개 까지 설정할 수 있습니다.`;
 const trimStr = (str: unknown) => {
   return String(str).replace(/\s+/g, ' ').trim();

@@ -139,7 +139,7 @@ describe('AddTodo', () => {
       const prevCategories = getAllByRole('button');
       act(() => userEvent.type(categoryInput, '🇰🇷 대한민국 최고{enter}'));
 
-      const errorMessage = getByText(/특수문자는 입력할 수 없습니다/i);
+      const errorMessage = getByText(/숫자,특수문자/i);
       const afterCategories = getAllByRole('button');
       expect(errorMessage).toBeInTheDocument();
       expect(afterCategories.length).toBe(prevCategories.length);
