@@ -150,6 +150,9 @@ const useCurrentTodo = ({
             focusTime: newtime,
           }),
         );
+        currentTodo.categories?.forEach((cantegory) => {
+          timerApi.recordFocusTime(cantegory, focusedTime);
+        });
         return newtime;
       });
   };

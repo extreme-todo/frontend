@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 
 import { IconAtom } from './atoms';
 import { Navigation } from './molecules';
-import { MainTodo, RankingAndRecords, Welcome } from './components';
+import { FocusedTime, MainTodo, Welcome } from './components';
 import {
   motion,
   useMotionValueEvent,
@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
 });
 
-export type NavigationPageType = 'Welcome' | 'Main' | 'Ranking';
+export type NavigationPageType = 'Welcome' | 'Main' | 'Focused';
 
 export interface NavigationListType {
   componentName: NavigationPageType;
@@ -36,7 +36,7 @@ function App() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const welcomeRef = useRef<HTMLElement>(null);
   const mainTodoRef = useRef<HTMLElement>(null);
-  const rankingRef = useRef<HTMLElement>(null);
+  const focusedRef = useRef<HTMLElement>(null);
 
   const NAVIGATION_LIST: NavigationListType[] = useMemo(
     () => [
@@ -51,12 +51,12 @@ function App() {
         dotActivePos: [0.3, 0.5, 0.7],
       },
       {
-        componentName: 'Ranking',
-        componentRef: rankingRef,
+        componentName: 'Focused',
+        componentRef: focusedRef,
         dotActivePos: [0.7, 1],
       },
     ],
-    [welcomeRef, mainRef, rankingRef],
+    [welcomeRef, mainRef, focusedRef],
   );
 
   const { scrollYProgress } = useScroll({
@@ -93,7 +93,7 @@ function App() {
 
     if (Math.abs(latest - 0) < THRESHOLD) newLabel = 'Welcome';
     else if (Math.abs(latest - 0.5) < THRESHOLD) newLabel = 'Main';
-    else if (Math.abs(latest - 1) < THRESHOLD) newLabel = 'Ranking';
+    else if (Math.abs(latest - 1) < THRESHOLD) newLabel = 'Focused';
 
     if (newLabel && newLabel !== activeLabel) {
       setActiveLabel(newLabel);
@@ -121,7 +121,7 @@ function App() {
               ref={welcomeRef}
             />
             <MainTodo ref={mainTodoRef} />
-            <RankingAndRecords ref={rankingRef} />
+            <FocusedTime ref={focusedRef} />
             <motion.div
               className="scroll__guide"
               style={{

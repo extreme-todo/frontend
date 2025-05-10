@@ -4,7 +4,7 @@ import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
 import { MainLogo } from '../svg/MainLogo';
 
 import { LoginContext } from '../hooks';
-import { rankingApi, todosApi, usersApi } from '../shared/apis';
+import { todosApi, usersApi } from '../shared/apis';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
@@ -46,7 +46,7 @@ const Welcome = forwardRef(
 
     const handleReset = async () => {
       if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
-      await Promise.all([todosApi.resetTodos(), rankingApi.resetRanking()]);
+      await Promise.all([todosApi.resetTodos()]);
     };
 
     const handleWithdrawal = async () => {

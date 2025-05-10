@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 import { BtnAtom, PopperAtom, SwitchAtom, TagAtom, TypoAtom } from '../atoms';
 import IconAtom from '../atoms/IconAtom';
 
-import { rankingApi, todosApi, usersApi } from '../shared/apis';
+import { todosApi, usersApi } from '../shared/apis';
 
 import styled from '@emotion/styled';
 import { useExtremeMode, LoginContext } from '../hooks';
@@ -27,7 +27,7 @@ const Setting = ({ handleClose }: ISettingModal) => {
 
   const handleReset = async () => {
     if (!window.confirm('정말로 기록을 초기화 하시겠습니까?')) return;
-    await Promise.all([todosApi.resetTodos(), rankingApi.resetRanking()]);
+    await Promise.all([todosApi.resetTodos()]);
   };
 
   const handleWithdrawal = async () => {

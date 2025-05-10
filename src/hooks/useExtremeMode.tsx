@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
-import { rankingApi, settingsApi, todosApi } from '../shared/apis';
+import { settingsApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useIsOnline } from './useIsOnline';
 import useCurrentTodo from './useCurrentTodo';
@@ -137,7 +137,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       handleLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
       Promise.all(
         isOnline
-          ? [todosApi.resetTodos(), rankingApi.resetRanking()]
+          ? [todosApi.resetTodos()]
           : [ETIndexed.getInstance().resetTodos()],
       )
         .then(() => {

@@ -4,24 +4,28 @@ export interface IChildProps {
   children?: ReactNode;
 }
 
-export interface ITotalFocusTime {
-  daily: number;
-  weekly: number;
-  monthly: number;
-}
-
-export interface IRecords {
-  daily: number;
-  weekly: number;
-  monthly: number;
-}
-
-export interface IRanking {
-  group: Record<string, number>[];
-  user: {
-    id: number;
-    time: number;
+export interface IFocusTime<UnitType extends { focused: number }> {
+  total: {
+    start: string;
+    end: string;
+    focused: number;
+    prevFocused: number;
   };
+  values: UnitType[];
+}
+
+export interface IDayFocusedTime {
+  start: number;
+  end: number;
+  focused: number;
+}
+export interface IWeekFocusedTime {
+  day: string;
+  focused: number;
+}
+export interface IMonthFocusedTime {
+  week: string;
+  focused: number;
 }
 
 export interface ICategory {
