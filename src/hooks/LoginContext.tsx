@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState, createContext } from 'react';
-import LoginEvent from '../shared/LoginEvent';
 import { IChildProps } from '../shared/interfaces';
 import { EXTREME_EMAIL_STORAGE, EXTREME_TOKEN_STORAGE } from '../shared/apis';
 
@@ -17,8 +16,6 @@ const DEFAULT_LOGIN_CONTEXT: ILogin = {
 
 export const LoginContext = createContext<ILogin>(DEFAULT_LOGIN_CONTEXT);
 
-const LOGINEVENT = LoginEvent.getInstance();
-
 export const LoginProvider = ({ children }: IChildProps) => {
   const [isLogin, setIsLogin] = useState(false);
 
@@ -31,19 +28,17 @@ export const LoginProvider = ({ children }: IChildProps) => {
   const setToken = useCallback((token: string, email: string) => {
     localStorage.setItem(EXTREME_TOKEN_STORAGE, token);
     localStorage.setItem(EXTREME_EMAIL_STORAGE, email);
-    window.dispatchEvent(LOGINEVENT.getEvent);
+    checkLogin();
   }, []);
 
   const deleteToken = useCallback(() => {
     localStorage.removeItem(EXTREME_TOKEN_STORAGE);
     localStorage.removeItem(EXTREME_EMAIL_STORAGE);
-    window.dispatchEvent(LOGINEVENT.getEvent);
+    checkLogin();
   }, []);
 
   useEffect(() => {
     checkLogin();
-    window.addEventListener('loginevent', checkLogin);
-    return () => window.removeEventListener('loginevent', checkLogin);
   }, []);
 
   useEffect(() => {
