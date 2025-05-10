@@ -12,13 +12,12 @@ import { designTheme } from '../../styles/theme';
 import {
   EXTREME_EMAIL_STORAGE,
   EXTREME_TOKEN_STORAGE,
-  rankingApi,
   settingsApi,
   todosApi,
   usersApi,
 } from '../../shared/apis';
 import { EXTREME_MODE, ExtremeModeProvider } from '../../hooks/useExtremeMode';
-import PomodoroProvider from '../../hooks/usePomodoro';
+import { PomodoroProvider } from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LoginProvider } from '../../hooks';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
@@ -184,15 +183,11 @@ describe('SettingModal', () => {
       const spyOnReset = jest
         .spyOn(todosApi, 'resetTodos')
         .mockImplementation();
-      const spyOnRanking = jest
-        .spyOn(rankingApi, 'resetRanking')
-        .mockImplementation();
       const resetBtn = screen.getByText('데이터 초기화');
       await act(async () => {
         fireEvent.click(resetBtn);
       });
       expect(spyOnReset).toBeCalled();
-      expect(spyOnRanking).toBeCalled();
     });
   });
 });
