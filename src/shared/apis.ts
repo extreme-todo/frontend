@@ -4,7 +4,6 @@ import axios, {
   AxiosResponse,
   Cancel,
 } from 'axios';
-import LoginEvent from './LoginEvent';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
@@ -19,7 +18,6 @@ const EXTREME_TOKEN_HEADER = 'extreme-token';
 const EXTREME_EMAIL_HEADER = 'extreme-email';
 export const EXTREME_TOKEN_STORAGE = 'extremeToken';
 export const EXTREME_EMAIL_STORAGE = 'extremeEmail';
-const LOGINEVENT = LoginEvent.getInstance();
 
 interface AxiosCustomRequest extends AxiosRequestConfig {
   retryCount: number;
