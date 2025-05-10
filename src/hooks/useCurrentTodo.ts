@@ -3,14 +3,8 @@ import { TodoEntity } from '../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { timerApi, todosApi } from '../shared/apis';
 import { getDateInFormat } from '../shared/timeUtils';
-import { PomodoroStatus } from '../services/PomodoroService';
-import {
-  IPomodoroActions,
-  IPomodoroData,
-  pomodoroUnit,
-  usePomodoroActions,
-  usePomodoroValue,
-} from './usePomodoro';
+import { PomodoroService, PomodoroStatus } from '../services/PomodoroService';
+import { IPomodoroActions, IPomodoroData, pomodoroUnit } from './usePomodoro';
 
 interface ITodoFocusedTime {
   id: TodoEntity['id'];
@@ -31,9 +25,13 @@ const useCurrentTodo = ({
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
 
-  const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
-    staleTime: 1000 * 60 * 20,
-  });
+  const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
+    ['todos'],
+    () => todosApi.getList(false),
+    {
+      staleTime: 1000 * 60 * 20,
+    },
+  );
 
   const queryClient = useQueryClient();
 
@@ -53,6 +51,16 @@ const useCurrentTodo = ({
       queryClient.invalidateQueries({ queryKey: ['doneTodos'] });
     },
   });
+
+  useEffect(() => {
+    PomodoroService.pomodoroStatus$.subscribe((changedStatus) => {
+      if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
+        currentTodo?.categories?.forEach((cantegory) => {
+          timerApi.recordFocusTime(cantegory, time ?? 0);
+        });
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const nextTodo = getNextTodo();
@@ -150,9 +158,6 @@ const useCurrentTodo = ({
             focusTime: newtime,
           }),
         );
-        currentTodo.categories?.forEach((cantegory) => {
-          timerApi.recordFocusTime(cantegory, focusedTime);
-        });
         return newtime;
       });
   };
@@ -168,19 +173,11 @@ const useCurrentTodo = ({
 
   const getNextTodo = (): TodoEntity | undefined => {
     if (todos) {
-      const todayTodos: TodoEntity[] = todos.values().next()
-        .value as TodoEntity[];
-
-      if (
-        todayTodos != null &&
-        getDateInFormat(
-          new Date(
-            new Date(todayTodos[0].date).getTime() -
-              new Date().getTimezoneOffset() * 60000,
-          ),
-        ) === getDateInFormat(new Date())
-      ) {
+      const todayTodos = todos.get(getDateInFormat(new Date()));
+      if (todayTodos != null) {
         setFocusedOnTodo(checkLocalStorageAndGetFocusTime(todayTodos[0]));
+        setCurrentTodo(todayTodos[0]);
+        actions.startFocusing();
         return todayTodos[0];
       } else {
         setCurrentTodo(undefined);

@@ -4,14 +4,14 @@ export interface IChildProps {
   children?: ReactNode;
 }
 
-export interface IFocusTime<UnitType extends { focused: number }> {
+export interface IFocusTime {
   total: {
     start: string;
     end: string;
     focused: number;
     prevFocused: number;
   };
-  values: UnitType[];
+  values: IDayFocusedTime[] | IWeekFocusedTime[] | IMonthFocusedTime[];
 }
 
 export interface IDayFocusedTime {

@@ -8,7 +8,7 @@ import LoginEvent from './LoginEvent';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
-import { ICategory, ISettings } from './interfaces';
+import { ICategory, IFocusTime, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
 import { RandomTagColorList } from './RandomTagColorList';
 
@@ -170,10 +170,10 @@ export const timerApi = {
   getRecords: async (
     timezoneOffset: number,
     unit: 'week' | 'month' | 'day',
-    category?: string,
+    categoryId?: number,
   ) => {
-    return baseApi.get(`${timerApi._route}/focused-time`, {
-      params: { timezoneOffset, unit, category },
+    return baseApi.get<IFocusTime>(`${timerApi._route}/focused-time`, {
+      params: { timezoneOffset, unit, categoryId },
     });
   },
 };

@@ -33,30 +33,42 @@ const fontSize: FontSize = {
   clock: {
     size: '8.75rem',
     weight: 700,
+    lineHeight: '6.25rem',
   },
   h1: {
     size: '2.25rem',
     weight: 700,
+    lineHeight: '2.5rem',
   },
   h2: {
     size: '1.875rem',
     weight: 400,
+    lineHeight: '2rem',
   },
   h3: {
     size: '1.25rem',
     weight: 400,
+    lineHeight: '1.75rem',
   },
   body: {
     size: '1rem',
     weight: 400,
+    lineHeight: '1.25rem',
   },
   b1: {
     size: '1.25rem',
     weight: 600,
+    lineHeight: '1.5rem',
   },
   b2: {
     size: '0.875rem',
     weight: 400,
+    lineHeight: '1.25rem',
+  },
+  tag: {
+    size: '0.875rem',
+    weight: 600,
+    lineHeight: '1.25rem',
   },
 };
 
