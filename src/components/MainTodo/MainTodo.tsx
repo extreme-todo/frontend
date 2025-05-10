@@ -172,7 +172,6 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
       setTimeout(() => {
         setPrevCard(null);
       }, ANIMATION_DURATION);
-    console.log(prevCard);
   }, [prevCard]);
 
   useEffect(() => {
@@ -253,7 +252,7 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
             )}
             {!prevCard && (
               <CardAnimationPlayer animation={'NEXT_UP'}>
-                <CardAtom bg={getDummyCardColor()} />
+                <CardAtom bg={getDummyCardColor()} style={{ zIndex: -1 }} />
               </CardAnimationPlayer>
             )}
           </div>
