@@ -10,6 +10,7 @@ import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 import { ICategory, IRanking, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
 import { RandomTagColorList } from './RandomTagColorList';
+import { queryClient } from '../App';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
@@ -22,6 +23,8 @@ export const EXTREME_EMAIL_STORAGE = 'extremeEmail';
 interface AxiosCustomRequest extends AxiosRequestConfig {
   retryCount: number;
 }
+
+let IS_INVALID_TOKEN = false;
 
 const baseApi = axios.create({
   baseURL: SERVER_URL + '/api',
@@ -48,6 +51,7 @@ baseApi.interceptors.request.use((config) => {
       : (false as boolean);
     config.headers[EXTREME_EMAIL_HEADER] = email ? email : (false as boolean);
   }
+
   return config;
 });
 
@@ -58,7 +62,6 @@ baseApi.interceptors.response.use(
         EXTREME_TOKEN_STORAGE,
         config.headers[EXTREME_TOKEN_HEADER],
       );
-
     return config;
   },
   (err: AxiosError) => {
@@ -69,12 +72,16 @@ baseApi.interceptors.response.use(
     const shouldRetry = config.retryCount < MAX_RETRY_COUNT;
     if (shouldRetry) {
       config.retryCount += 1;
-      return axios(config);
+      return baseApi(config);
     }
     if (err.response?.status === 401) {
-      localStorage.removeItem(EXTREME_EMAIL_STORAGE);
-      localStorage.removeItem(EXTREME_TOKEN_STORAGE);
-      window.alert('다시 로그인 해주세요');
+      if (IS_INVALID_TOKEN === false) {
+        IS_INVALID_TOKEN = true;
+        queryClient.cancelQueries();
+        localStorage.removeItem(EXTREME_EMAIL_STORAGE);
+        localStorage.removeItem(EXTREME_TOKEN_STORAGE);
+        window.alert('토큰이 만료됐습니다!\n 다시 로그인 해주세요.');
+      }
     }
     return Promise.reject(err);
   },
