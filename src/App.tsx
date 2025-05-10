@@ -56,7 +56,7 @@ function App() {
         dotActivePos: [0.7, 1],
       },
     ],
-    [welcomeRef, mainRef, rankingRef],
+    [welcomeRef.current, mainRef.current, rankingRef.current],
   );
 
   const { scrollYProgress } = useScroll({
