@@ -1,4 +1,5 @@
 import {
+  FormEvent,
   ReactEventHandler,
   useCallback,
   useEffect,
@@ -24,7 +25,7 @@ import {
   TITLE_EMPTY_MESSAGE,
   TodoEntity,
 } from '../../DB/indexedAction';
-import { ETIndexed, UpdateTodoDto } from '../../DB/indexed';
+import { ETIndexed, UpdateDto, UpdateSchema } from '../../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -32,7 +33,7 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 
-import { formatTime } from '../../shared/timeUtils';
+import { formatTime, setTimeInFormat } from '../../shared/timeUtils';
 import {
   categoryValidation,
   titleValidation,
@@ -40,6 +41,7 @@ import {
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 import styled from '@emotion/styled';
+import { ZodError } from 'zod';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -90,16 +92,6 @@ const TodoCard = ({
     null,
   );
 
-  const editData = useMemo(
-    () => ({
-      categories: categoryArray,
-      todo: titleValue,
-      duration: durationValue,
-      date: new Date(prevDate).toISOString(),
-    }),
-    [categoryArray, titleValue, durationValue],
-  );
-
   // apis
   const queryClient = useQueryClient();
 
@@ -109,7 +101,7 @@ const TodoCard = ({
       id,
       prevDate,
     }: {
-      newTodo: UpdateTodoDto;
+      newTodo: UpdateDto;
       id: string;
       prevDate: string;
     }) => {
@@ -172,13 +164,28 @@ const TodoCard = ({
     setEditTodoId(id);
   }, [id]);
 
-  const handleEditSubmit = useCallback(() => {
-    updateMutate({
-      newTodo: editData,
-      id,
-      prevDate: prevDate,
-    });
-  }, [editData, id, prevDate]);
+  const handleEditSubmit = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget as HTMLFormElement);
+      const newTodo: UpdateDto = {
+        todo: formData.get('title') as string,
+        duration,
+        categories: categoryArray.length === 0 ? null : categoryArray,
+        date: setTimeInFormat(new Date()).toISOString(),
+      };
+      const { success, error } = UpdateSchema.safeParse(newTodo);
+
+      if (success) {
+        updateMutate({ newTodo, id, prevDate });
+      } else {
+        if (error instanceof ZodError) {
+          alert(error.issues[0].message);
+        }
+      }
+    },
+    [id, prevDate, categoryArray, duration],
+  );
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
@@ -327,6 +334,7 @@ const TodoCard = ({
       done={done}
       isCurrTodo={isCurrTodo}
       isThisEdit={isThisEdit}
+      onSubmit={handleEditSubmit}
     >
       <TitleContainer>
         <div>
