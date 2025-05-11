@@ -176,6 +176,17 @@ const TodoCard = ({
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
+      const trimmed = titleValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object') {
+        if (!titleError) {
+          setTitleError(true);
+        }
+        if (trimmed.errorMessage === MAX_TITLE_INPUT_LENGTH_WARNING) {
+          return;
+        }
+      } else if (typeof trimmed === 'string' && titleError !== undefined) {
+        setTitleError(false);
+      }
       setTitleValue(event.currentTarget.value);
     },
     [],
