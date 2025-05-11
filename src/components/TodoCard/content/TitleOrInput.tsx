@@ -12,15 +12,6 @@ const TitleOrInput = memo(
   ({ todo, titleValue, isThisEdit, handleChangeTitle }: ITitleOrInputProps) => {
     if (isThisEdit) {
       return (
-        <InputAtom.Underline
-          value={titleValue}
-          handleChange={handleChangeTitle}
-          placeholder="할 일을 입력하세요"
-          ariaLabel="title_input"
-          className="todoTitle"
-          inputRef={useCallback((node: HTMLInputElement | null) => {
-            node?.focus();
-          }, [])}
           styleOption={{
             borderWidth: '1px',
             padding: '0 0 0 0',
@@ -29,7 +20,19 @@ const TitleOrInput = memo(
             borderColor: 'primary1',
             fontColor: 'primary1',
           }}
-        />
+        <label htmlFor="title">
+          <InputAtom.Underline
+            value={titleValue}
+            handleChange={handleChangeTitle}
+            placeholder="할 일을 입력하세요"
+            ariaLabel="title_input"
+            name="title"
+            className="todoTitle"
+            inputRef={useCallback((node: HTMLInputElement | null) => {
+              node?.focus();
+            }, [])}
+          />
+        </label>
       );
     } else {
       return (
