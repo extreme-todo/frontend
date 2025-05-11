@@ -379,6 +379,7 @@ const TodoCard = ({
         isDragging={snapshot?.isDragging}
         done={done}
         isThisEdit={isThisEdit}
+        isDisabled={titleValue.length === 0 || titleError || isLoading}
         isSubmitting={isLoading}
         duration={formatTime(focusStep * todoData.duration)}
         handleEditButton={handleEditButton}
