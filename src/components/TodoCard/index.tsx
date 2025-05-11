@@ -18,7 +18,11 @@ import { useEdit } from '../../hooks';
 import { focusStep } from '../../hooks/usePomodoro';
 
 import { todosApi } from '../../shared/apis';
-import { TodoEntity } from '../../DB/indexedAction';
+import {
+  MAX_TITLE_INPUT_LENGTH_WARNING,
+  TITLE_EMPTY_MESSAGE,
+  TodoEntity,
+} from '../../DB/indexedAction';
 import { ETIndexed, UpdateTodoDto } from '../../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -28,7 +32,10 @@ import {
 } from 'react-beautiful-dnd';
 
 import { formatTime } from '../../shared/timeUtils';
-import { categoryValidation } from '../../shared/inputValidation';
+import {
+  categoryValidation,
+  titleValidation,
+} from '../../shared/inputValidation';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 import styled from '@emotion/styled';
@@ -60,7 +67,10 @@ const TodoCard = ({
   );
 
   const [titleValue, setTitleValue] = useState(todo);
-  const [categoryArray, setCategoryArray] = useState(categories ?? null);
+  const [titleError, setTitleError] = useState(false);
+  const [categoryArray, setCategoryArray] = useState<string[] | null>(
+    categories ?? null,
+  );
   const [categoryValue, setCategoryValue] = useState('');
   const [durationValue, setDurationValue] = useState(duration);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
@@ -289,6 +299,7 @@ const TodoCard = ({
             isThisEdit={isThisEdit}
             handleChangeTitle={handleChangeTitle}
             todo={todo}
+            titleError={titleError}
           />
         </div>
         <TopRightCornerIcon
