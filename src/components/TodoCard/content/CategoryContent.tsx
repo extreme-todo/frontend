@@ -14,6 +14,7 @@ interface ICategoryContentProps {
   tagColorList: Record<string, TagColorName>;
   isDragging: boolean | undefined;
   isThisEdit: boolean;
+  categoryError?: string;
 }
 
 const CategoryContent = memo(
@@ -27,6 +28,7 @@ const CategoryContent = memo(
     tagColorList,
     isDragging,
     isThisEdit,
+    categoryError,
   }: ICategoryContentProps) => {
     if (isDragging || !categories) return null;
     else if (isThisEdit) {
@@ -40,6 +42,11 @@ const CategoryContent = memo(
             handleChangeCategory={handleChangeCategory}
             tagColorList={tagColorList}
           />
+          {categoryError && (
+            <p className="category_error" role="alert">
+              {categoryError}
+            </p>
+          )}
         </CategoryContainer>
       );
     } else if (categories && categories.length !== 0) {
@@ -70,6 +77,13 @@ export const CategoryContainer = styled.div`
 
   column-gap: 0.5rem;
   row-gap: 0.25rem;
+
+  .category_error {
+    margin-top: 0.5rem;
+    color: ${({ theme }) => theme.color.fontColor.extreme_orange};
+    font-size: ${({ theme }) => theme.fontSize.b2.size};
+    font-weight: ${({ theme }) => theme.fontSize.b2.weight};
+  }
 `;
 
 export default CategoryContent;
