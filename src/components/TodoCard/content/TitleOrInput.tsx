@@ -6,20 +6,19 @@ interface ITitleOrInputProps {
   titleValue: string;
   isThisEdit: boolean;
   handleChangeTitle: ReactEventHandler<HTMLInputElement>;
+  titleError: boolean;
 }
 
 const TitleOrInput = memo(
-  ({ todo, titleValue, isThisEdit, handleChangeTitle }: ITitleOrInputProps) => {
+  ({
+    todo,
+    titleValue,
+    isThisEdit,
+    handleChangeTitle,
+    titleError,
+  }: ITitleOrInputProps) => {
     if (isThisEdit) {
       return (
-          styleOption={{
-            borderWidth: '1px',
-            padding: '0 0 0 0',
-            height: '1.25rem',
-            font: 'h3',
-            borderColor: 'primary1',
-            fontColor: 'primary1',
-          }}
         <label htmlFor="title">
           <InputAtom.Underline
             value={titleValue}
@@ -31,6 +30,14 @@ const TitleOrInput = memo(
             inputRef={useCallback((node: HTMLInputElement | null) => {
               node?.focus();
             }, [])}
+            styleOption={{
+              borderWidth: titleError ? '2px' : '1px',
+              padding: '0 0 0 0',
+              height: '1.25rem',
+              font: 'h3',
+              borderColor: titleError ? 'extreme_orange' : 'primary1',
+              fontColor: 'primary1',
+            }}
           />
         </label>
       );
