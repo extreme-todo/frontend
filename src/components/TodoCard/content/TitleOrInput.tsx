@@ -6,6 +6,7 @@ interface ITitleOrInputProps {
   titleValue: string;
   isThisEdit: boolean;
   handleChangeTitle: ReactEventHandler<HTMLInputElement>;
+  handleBlurTitle: ReactEventHandler<HTMLInputElement>;
   titleError: boolean;
 }
 
@@ -15,6 +16,7 @@ const TitleOrInput = memo(
     titleValue,
     isThisEdit,
     handleChangeTitle,
+    handleBlurTitle,
     titleError,
   }: ITitleOrInputProps) => {
     if (isThisEdit) {
@@ -23,6 +25,7 @@ const TitleOrInput = memo(
           <InputAtom.Underline
             value={titleValue}
             handleChange={handleChangeTitle}
+            handleBlur={handleBlurTitle}
             placeholder="할 일을 입력하세요"
             ariaLabel="title_input"
             name="title"

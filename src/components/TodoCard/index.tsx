@@ -192,6 +192,19 @@ const TodoCard = ({
     [],
   );
 
+  const handleTitleBlur: ReactEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      const checkEmpty = titleValidation(event.currentTarget.value);
+      if (
+        typeof checkEmpty === 'object' &&
+        checkEmpty.errorMessage === TITLE_EMPTY_MESSAGE
+      ) {
+        setTitleError(true);
+      }
+    },
+    [],
+  );
+
   const handleEditCancel = useCallback(() => {
     setEditTodoId(undefined);
     setTitleValue(todo);
@@ -309,6 +322,7 @@ const TodoCard = ({
             titleValue={titleValue}
             isThisEdit={isThisEdit}
             handleChangeTitle={handleChangeTitle}
+            handleBlurTitle={handleTitleBlur}
             todo={todo}
             titleError={titleError}
           />
