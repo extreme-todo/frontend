@@ -64,7 +64,7 @@ const FooterContent = memo(
               className="save__button"
             >
               <TypoAtom fontSize="b2" fontColor="primary1">
-                저장
+                {isSubmitting ? '저장 중' : '저장'}
               </TypoAtom>
             </TagAtom>
           </BtnAtom>
