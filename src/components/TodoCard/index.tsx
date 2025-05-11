@@ -68,8 +68,8 @@ const TodoCard = ({
 
   const [titleValue, setTitleValue] = useState(todo);
   const [titleError, setTitleError] = useState(false);
-  const [categoryArray, setCategoryArray] = useState<string[] | null>(
-    categories ?? null,
+  const [categoryArray, setCategoryArray] = useState<string[]>(
+    categories ?? [],
   );
   const [categoryValue, setCategoryValue] = useState('');
   const [durationValue, setDurationValue] = useState(duration);
@@ -208,7 +208,7 @@ const TodoCard = ({
   const handleEditCancel = useCallback(() => {
     setEditTodoId(undefined);
     setTitleValue(todo);
-    setCategoryArray(categories);
+    setCategoryArray(categories ?? []);
     setDurationValue(duration);
   }, [todo, categories, duration]);
 
@@ -250,7 +250,6 @@ const TodoCard = ({
         return tag !== category;
       }) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
 
-      if (deleted.length === 0) return null;
       return deleted;
     });
   }, []);
