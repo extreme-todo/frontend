@@ -83,17 +83,17 @@ const TodoList = memo(
     );
 
     const { mutate: reorderMutate } = useMutation(orderMutationHandler, {
-      onError(_err: any, _: any, context) {
-        queryClient.setQueryData(['todos'], context);
-      },
-      onSettled() {
-        queryClient.invalidateQueries({ queryKey: ['todos'] });
-      },
       onMutate({ todolist }: { todolist?: Map<string, TodoEntity[]> }) {
         queryClient.cancelQueries({ queryKey: ['todos'] });
-        const prevTodoList = queryClient.getQueryData(['todos']);
+        const prevTodoList = queryClient.getQueryData<
+          Map<string, TodoEntity[]> | undefined
+        >(['todos']);
         queryClient.setQueryData(['todos'], todolist);
+
         return prevTodoList;
+      },
+      onError(_err: any, _: any, context) {
+        queryClient.setQueryData(['todos'], context);
       },
     });
 

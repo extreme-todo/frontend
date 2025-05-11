@@ -138,24 +138,69 @@ const TodoCard = ({
 
   const { mutate: updateMutate, isLoading } = useMutation({
     mutationFn: updateMutationHandler,
+    onMutate: async ({ newTodo, id }) => {
+      await queryClient.cancelQueries({ queryKey: ['todos'] });
+      const previousTodos = queryClient.getQueryData<
+        Map<string, TodoEntity[]> | undefined
+      >(['todos']);
+
+      queryClient.setQueryData<Map<string, TodoEntity[]> | undefined>(
+        ['todos'],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const todoMap = new Map(oldData);
+          Array.from(todoMap.entries()).forEach(([date, todos]) => {
+            const updatedTodos = todos.map((todo: TodoEntity) =>
+              todo.id === id ? { ...todo, ...newTodo } : todo,
+            );
+            todoMap.set(date, updatedTodos);
+          });
+          return todoMap;
+        },
+      );
+
+      return previousTodos;
+    },
     onSuccess(data) {
-      console.debug('\n\n\n ✅ data in TodoCard‘s updateTodos ✅ \n\n', data);
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
+      console.debug('\n\n\n ✅ data in TodoCard updateTodos ✅ \n\n', data);
       setEditTodoId(undefined);
     },
-    onError(error) {
-      console.debug('\n\n\n 🚨 error in TodoCard‘s updateTodos 🚨 \n\n', error);
+    onError(error, _, context) {
+      console.debug('\n\n\n 🚨 error in TodoCard updateTodos 🚨 \n\n', error);
+      queryClient.setQueryData(['todos'], context);
     },
   });
 
   const { mutate: deleteMutate } = useMutation({
     mutationFn: ({ id }: { id: string }) => todosApi.deleteTodo(id),
-    onSuccess(data) {
-      console.debug('\n\n\n ✅ data in TodoCard‘s deleteTodo ✅ \n\n', data);
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    onMutate: async ({ id }) => {
+      await queryClient.cancelQueries({ queryKey: ['todos'] });
+      const previousTodos = queryClient.getQueryData<
+        Map<string, TodoEntity[]> | undefined
+      >(['todos']);
+      queryClient.setQueryData<Map<string, TodoEntity[]> | undefined>(
+        ['todos'],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const todoMap = new Map(oldData);
+          Array.from(todoMap.entries()).forEach(([date, todos]) => {
+            const updatedTodos = todos.filter(
+              (todo: TodoEntity) => todo.id !== id,
+            );
+            todoMap.set(date, updatedTodos);
+          });
+          return todoMap;
+        },
+      );
+
+      return previousTodos;
     },
-    onError(error) {
-      console.debug('\n\n\n 🚨 error in TodoCard‘s deleteTodo 🚨 \n\n', error);
+    onSuccess(data) {
+      console.debug('\n\n\n ✅ data in TodoCard deleteTodo ✅ \n\n', data);
+    },
+    onError(error, _, context) {
+      console.debug('\n\n\n 🚨 error in TodoCard deleteTodo 🚨 \n\n', error);
+      queryClient.setQueryData(['todos'], context);
     },
   });
 
