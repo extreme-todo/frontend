@@ -73,20 +73,13 @@ const TodoList = memo(
     /* api 호출 */
     const queryClient = useQueryClient();
 
-    const { data: todos, isLoading: isTodoLoading } = useQuery(
-      ['todos'],
-      () => todosApi.getList(false),
-      {
-        staleTime: 1000 * 60 * 20,
-      },
+    const { data: todos, isLoading: isTodoLoading } = useQuery(['todos'], () =>
+      todosApi.getList(false),
     );
 
     const { data: doneTodos, isLoading: isDoneLoading } = useQuery(
       ['doneTodos'],
       () => todosApi.getList(true),
-      {
-        staleTime: 1000 * 60 * 20,
-      },
     );
 
     const { mutate: reorderMutate } = useMutation(orderMutationHandler, {
