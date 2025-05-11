@@ -225,24 +225,26 @@ const TodoCard = ({
   const handleAddCategory = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.code === 'Enter') {
+        event.preventDefault();
+        if (event.currentTarget.value.length === 0) return;
         // 한글 중복 입력 처리
         if (event.nativeEvent.isComposing) return;
 
         const newCategory = (event.target as HTMLInputElement).value;
 
-        const trimmed = categoryValidation(newCategory, categoryArray ?? []);
+        const trimmed = categoryValidation(newCategory);
 
         if (typeof trimmed === 'object') return;
-
-        if (categoryArray) {
+        else if (
+          typeof trimmed === 'string' &&
+          !categoryArray.includes(trimmed) &&
+          categoryArray.length <= MAX_CATEGORY_ARRAY_LENGTH
+        ) {
           const copy = categoryArray.slice();
           copy.push(trimmed);
-
           setCategoryArray(copy);
-        } else {
-          setCategoryArray([trimmed]);
+          ramdomTagColorList.setColor = trimmed;
         }
-        randomTagColor.setColor = trimmed;
 
         setCategoryValue('');
       }
@@ -263,8 +265,20 @@ const TodoCard = ({
   const handleChangeCategory = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setCategoryValue(event.target.value);
+      if (
+        event.currentTarget.value.length === 0 &&
+        categoryError !== undefined
+      ) {
+        return setCategoryError(undefined);
+      }
+      const trimmed = categoryValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
+        setCategoryError(trimmed.errorMessage);
+      else if (typeof trimmed === 'string' && categoryError !== undefined) {
+        setCategoryError(undefined);
+      }
     },
-    [],
+    [categoryError],
   );
 
   const handleTomato = useCallback(
