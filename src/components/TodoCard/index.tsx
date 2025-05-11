@@ -365,6 +365,7 @@ const TodoCard = ({
         isDragging={snapshot?.isDragging}
         isThisEdit={isThisEdit}
         categories={categories}
+        categoryError={categoryError}
       />
       <FooterContent
         isDragging={snapshot?.isDragging}
