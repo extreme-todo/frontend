@@ -127,15 +127,15 @@ const TodoList = memo(
     );
 
     /* dev mode에서 로컬 indexed DB에 mock todo data 추가하는 핸들러 */
-    const onClickHandler = useCallback(() => {
-      const mock = addTodoMocks();
-      const temp = async () => {
-        for (let i = 0; i < mock.length; i++) {
-          await ETIndexed.getInstance().addTodo(mock[i]);
-        }
-      };
-      temp();
-    }, []);
+    // const onClickHandler = useCallback(() => {
+    //   const mock = addTodoMocks();
+    //   const temp = async () => {
+    //     for (let i = 0; i < mock.length; i++) {
+    //       await ETIndexed.getInstance().addTodo(mock[i]);
+    //     }
+    //   };
+    //   temp();
+    // }, []);
 
     return (
       <>
