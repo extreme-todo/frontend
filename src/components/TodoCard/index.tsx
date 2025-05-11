@@ -19,6 +19,7 @@ import { focusStep } from '../../hooks/usePomodoro';
 
 import { todosApi } from '../../shared/apis';
 import {
+  MAX_CATEGORY_ARRAY_LENGTH,
   MAX_TITLE_INPUT_LENGTH_WARNING,
   TITLE_EMPTY_MESSAGE,
   TodoEntity,
@@ -50,6 +51,8 @@ interface ITodoCardProps {
   order: number;
 }
 
+const ramdomTagColorList = RandomTagColorList.getInstance();
+
 const TodoCard = ({
   todoData,
   dragHandleProps,
@@ -72,6 +75,9 @@ const TodoCard = ({
     categories ?? [],
   );
   const [categoryValue, setCategoryValue] = useState('');
+  const [categoryError, setCategoryError] = useState<string | undefined>(
+    undefined,
+  );
   const [durationValue, setDurationValue] = useState(duration);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
