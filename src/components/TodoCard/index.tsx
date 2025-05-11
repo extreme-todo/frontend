@@ -126,7 +126,7 @@ const TodoCard = ({
         ) as TodoEntity;
         const searchDate = arrayTodos
           .reverse()
-          .find((todo) => todo.date <= (newTodo.date as string)) as TodoEntity;
+          .find((todo) => todo.date <= newTodo.date) as TodoEntity;
         let newOrder: number;
         if (!searchDate) {
           newOrder = 1;
@@ -256,7 +256,7 @@ const TodoCard = ({
     setCategoryArray((prev) => {
       const deleted = prev?.filter((tag) => {
         return tag !== category;
-      }) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
+      });
 
       return deleted;
     });
