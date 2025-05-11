@@ -6,10 +6,11 @@
 
 // TODO : - 새벽 4시 -> 프론트 엔드에서 스윽 - 어쩌지..
 
-import { ETIndexedDBAction } from './indexedAction';
+import { ETIndexedDBAction, TodoSchema } from './indexedAction';
 import { ETIndexedDBCalc } from './indexedCalc';
 import type { TodoEntity } from './indexedAction';
 import { groupByDate, setTimeInFormat } from '../shared/timeUtils';
+import { z } from 'zod';
 // import type { TodoModuleType } from '../shared/TodoModule';
 
 /* 
@@ -25,10 +26,15 @@ TODO : 날짜를 바꾸면 order는 어떻게 하지?.. 그냥 그 날짜 마지
 날짜를 넘겨서 order를 수정하는 부분이 있다면 update 메서드랑 다 불러야 할까?.. 정리를 제대로 해봐야 할 듯!
 */
 
-type AddTodoDto = Omit<
-  TodoEntity,
-  'id' | 'createdAt' | 'focusTime' | 'done' | 'order'
->;
+const AddTodoSchema = TodoSchema.omit({
+  id: true,
+  createdAt: true,
+  focusTime: true,
+  done: true,
+  order: true,
+});
+
+type AddTodoDto = z.infer<typeof AddTodoSchema>;
 
 type UpdateTodoDto = Partial<
   Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'date'>
@@ -93,9 +99,7 @@ class ETIndexed {
       focusTime: 0,
       done: false,
       createdAt: new Date(),
-      id: `${new Date().getTime()}-${Math.random()
-        .toString(36)
-        .substring(2, 9)}`,
+      id: crypto.randomUUID(),
     };
 
     await this.action.add(newTodo);
@@ -256,5 +260,5 @@ class ETIndexed {
   }
 }
 
-export { ETIndexed };
+export { ETIndexed, AddTodoSchema };
 export type { AddTodoDto, UpdateTodoDto };

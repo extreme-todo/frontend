@@ -1,22 +1,15 @@
 /* react */
 import {
+  FormEvent,
   KeyboardEventHandler,
   ReactEventHandler,
   useCallback,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
 /* atomics */
-import {
-  BtnAtom,
-  CardAtom,
-  IconAtom,
-  InputAtom,
-  TomatoInput,
-  TypoAtom,
-} from '../atoms';
+import { BtnAtom, CardAtom, IconAtom, InputAtom, TomatoInput } from '../atoms';
 import { CategoryInput } from '../molecules';
 
 /* custom hooks */
@@ -26,14 +19,20 @@ import { usePomodoroValue } from '../hooks';
 import { todosApi } from '../shared/apis';
 import { categoryValidation, titleValidation } from '../shared/inputValidation';
 import { setTimeInFormat } from '../shared/timeUtils';
-import { AddTodoDto, ETIndexed } from '../DB/indexed';
+import { AddTodoDto, AddTodoSchema } from '../DB/indexed';
+import {
+  MAX_CATEGORY_ARRAY_LENGTH,
+  MAX_TITLE_INPUT_LENGTH_WARNING,
+  TITLE_EMPTY_MESSAGE,
+} from '../DB/indexedAction';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
 
 /* packages */
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { SelectSingleEventHandler } from 'react-day-picker';
-import styled from '@emotion/styled';
 import { AxiosError } from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import styled from '@emotion/styled';
+import { ZodError } from 'zod';
+import FocusTrap from 'focus-trap-react';
 
 interface IAddTodoProps {
   handleClose: () => void;
@@ -43,13 +42,17 @@ const ramdomTagColorList = RandomTagColorList.getInstance();
 
 const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
+  const [titleError, setTitleError] = useState(false);
   const [category, setCategory] = useState('');
   const [categoryArray, setCategoryArray] = useState<Array<string>>([]);
+  const [categoryError, setCategoryError] = useState<string | undefined>(
+    undefined,
+  );
   const [tomato, setTomato] = useState(1);
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (todo: AddTodoDto) => todosApi.addTodo(todo),
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s useMutation ✅ \n\n', data);
@@ -73,35 +76,75 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
   /* handler */
   const handleTitleInput: ReactEventHandler<HTMLInputElement> = useCallback(
-    (event) => setTitle(event.currentTarget.value),
+    (event) => {
+      const trimmed = titleValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object') {
+        if (!titleError) {
+          setTitleError(true);
+        }
+        if (trimmed.errorMessage === MAX_TITLE_INPUT_LENGTH_WARNING) {
+          return;
+        }
+      } else if (typeof trimmed === 'string' && titleError !== undefined) {
+        setTitleError(false);
+      }
+      setTitle(event.currentTarget.value);
+    },
+    [titleError],
+  );
+
+  const handleTitleBlur: ReactEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      const checkEmpty = titleValidation(event.currentTarget.value);
+      if (
+        typeof checkEmpty === 'object' &&
+        checkEmpty.errorMessage === TITLE_EMPTY_MESSAGE
+      ) {
+        setTitleError(true);
+      }
+    },
     [],
   );
 
   const handleCategoryInput: ReactEventHandler<HTMLInputElement> = useCallback(
-    (event) => setCategory(event.currentTarget.value),
-    [],
+    (event) => {
+      setCategory(event.currentTarget.value);
+      if (
+        event.currentTarget.value.length === 0 &&
+        categoryError !== undefined
+      ) {
+        return setCategoryError(undefined);
+      }
+      const trimmed = categoryValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
+        setCategoryError(trimmed.errorMessage);
+      else if (typeof trimmed === 'string' && categoryError !== undefined) {
+        setCategoryError(undefined);
+      }
+    },
+    [categoryError],
   );
 
   const handleSubmitCategory: KeyboardEventHandler<HTMLInputElement> =
     useCallback(
       (event) => {
         if (event.code === 'Enter') {
+          event.preventDefault();
+          if (event.currentTarget.value.length === 0) return;
           // 한글 중복 입력 처리
           if (event.nativeEvent.isComposing) return;
-
-          const newCategory = (event.target as HTMLInputElement).value;
-
-          const trimmed = categoryValidation(newCategory, categoryArray ?? []);
-          if (!trimmed) return;
-
-          if (categoryArray.length > 0) {
+          const trimmed = categoryValidation(event.currentTarget.value);
+          if (typeof trimmed === 'object') return;
+          else if (
+            typeof trimmed === 'string' &&
+            !categoryArray.includes(trimmed) &&
+            categoryArray.length <= MAX_CATEGORY_ARRAY_LENGTH
+          ) {
             const copy = categoryArray.slice();
             copy.push(trimmed);
             setCategoryArray(copy);
-          } else {
-            setCategoryArray([trimmed]);
+            ramdomTagColorList.setColor = trimmed;
           }
-          ramdomTagColorList.setColor = trimmed;
           setCategory('');
         }
       },
@@ -117,57 +160,73 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
 
   const handleTomato = useCallback((count: number) => setTomato(count), []);
 
-  const addData: AddTodoDto = useMemo(
-    () => ({
-      date: setTimeInFormat(new Date()).toISOString(),
-      todo: title,
-      duration: Number(`${tomato}`),
-      categories: categoryArray.length > 0 ? categoryArray : null,
-    }),
-    [title, tomato, categoryArray],
-  );
-
   const handleAddSubmit = useCallback(
-    (todo: AddTodoDto) => {
-      if (title.length <= 0) return alert('제목을 입력해주세요.');
-      const trimmed = titleValidation(addData.todo);
-      if (!trimmed) return;
-      mutate({ ...todo, todo: trimmed });
+    (event: FormEvent) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget as HTMLFormElement);
+      const newTodo = {
+        todo: formData.get('title') as string,
+        duration: tomato,
+        categories: categoryArray.length === 0 ? null : categoryArray,
+        date: setTimeInFormat(new Date()).toISOString(),
+      };
+      const { success, error } = AddTodoSchema.safeParse(newTodo);
+
+      if (success) {
+        mutate(newTodo);
+      } else {
+        if (error instanceof ZodError) {
+          alert(error.issues[0].message);
+        }
+      }
     },
-    [addData],
+    [categoryArray, tomato],
   );
 
   return (
-    <AddTodoWrapper
-      w="53.75rem"
-      h="20rem"
-      padding="1.5rem"
-      className="card"
-      as={'form'}
+    <FocusTrap
+      focusTrapOptions={{
+        initialFocus: false,
+        escapeDeactivates: true,
+        clickOutsideDeactivates: true,
+      }}
     >
-      <MainWrapper>
-        <TitleWrapper>
-          <InputAtom.Underline
-            value={title}
-            inputRef={useCallback((node: HTMLInputElement | null) => {
-              node?.focus();
-            }, [])}
-            handleChange={handleTitleInput}
-            placeholder="새로운 TODO를 작성해주세요"
-            ariaLabel="title"
-            className="todoTitle"
-            styleOption={{
-              borderWidth: '1px',
-              width: '100%',
-              height: '3rem',
-              font: 'h1',
-            }}
-          />
-          <BtnAtom handleOnClick={handleClose} ariaLabel="close">
-            <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
-          </BtnAtom>
-        </TitleWrapper>
-        <CalendarAndCategoryWrapper>
+      <AddTodoWrapper
+        w="53.75rem"
+        h="20rem"
+        padding="1.5rem"
+        className="card"
+        onSubmit={handleAddSubmit}
+      >
+        <MainWrapper>
+          <TitleWrapper>
+            <label htmlFor="title">
+              <InputAtom.Underline
+                name="title"
+                value={title}
+                handleBlur={handleTitleBlur}
+                id={'title'}
+                inputRef={useCallback((node: HTMLInputElement | null) => {
+                  node?.focus();
+                }, [])}
+                handleChange={handleTitleInput}
+                placeholder="새로운 TODO를 작성해주세요"
+                ariaLabel="title input"
+                className="todoTitle"
+                styleOption={{
+                  borderWidth: titleError ? '2px' : '1px',
+                  width: '100%',
+                  height: '3rem',
+                  font: 'h1',
+                  borderColor: titleError ? 'extreme_orange' : 'primary1',
+                }}
+                tabIndex={0}
+              />
+            </label>
+            <BtnAtom handleOnClick={handleClose} ariaLabel="close" tabIndex={3}>
+              <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
+            </BtnAtom>
+          </TitleWrapper>
           <CategoryWrapper>
             <CategoryInput
               categories={categoryArray}
@@ -177,36 +236,41 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
               handleChangeCategory={handleCategoryInput}
               tagColorList={ramdomTagColorList.getColorList}
             />
+            {categoryError && <p className="category_error">{categoryError}</p>}
           </CategoryWrapper>
-        </CalendarAndCategoryWrapper>
-      </MainWrapper>
-      <FooterWrapper>
-        <TomatoContainer>
-          <TomatoInput
-            max={10}
-            min={0}
-            period={focusStep}
-            handleTomato={handleTomato}
-            tomato={tomato}
-          />
-        </TomatoContainer>
-        <BtnAtom
-          handleOnClick={() => handleAddSubmit(addData)}
-          paddingHorizontal="2.0625rem"
-          paddingVertical="0.375rem"
-          btnType="lightBtn"
-          ariaLabel="submit"
-        >
-          <div style={{ width: 'max-content' }}>추가</div>
-        </BtnAtom>
-      </FooterWrapper>
-    </AddTodoWrapper>
+        </MainWrapper>
+        <FooterWrapper>
+          <TomatoContainer>
+            <TomatoInput
+              max={10}
+              min={0}
+              period={focusStep}
+              handleTomato={handleTomato}
+              tomato={tomato}
+            />
+          </TomatoContainer>
+          <BtnAtom
+            paddingHorizontal="2.0625rem"
+            paddingVertical="0.375rem"
+            btnStyle="lightBtn"
+            ariaLabel="submit"
+            type="submit"
+            disabled={title.length === 0 || titleError || isLoading}
+            tabIndex={2}
+          >
+            <div style={{ width: 'max-content' }}>
+              {isLoading ? '제출 중' : '추가'}
+            </div>
+          </BtnAtom>
+        </FooterWrapper>
+      </AddTodoWrapper>
+    </FocusTrap>
   );
 };
 
 export default AddTodo;
 
-const AddTodoWrapper = styled(CardAtom)`
+const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
   overflow: visible;
   background-color: ${({
     theme: {
@@ -238,22 +302,27 @@ const TitleWrapper = styled.div`
   width: 100%;
   column-gap: 3rem;
 
+  & > label {
+    width: 100%;
+  }
+
   & > button {
     height: 2rem;
   }
 `;
 
-const CalendarAndCategoryWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: flex-start;
-  column-gap: 1rem;
-`;
-
 const CategoryWrapper = styled.div`
   width: 100%;
   display: flex;
-  align-items: center;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  .category_error {
+    margin-top: 0.5rem;
+    color: ${({ theme }) => theme.color.fontColor.extreme_orange};
+    font-size: ${({ theme }) => theme.fontSize.body.size};
+    font-weight: ${({ theme }) => theme.fontSize.body.weight};
+  }
 `;
 
 const TomatoContainer = styled.div`

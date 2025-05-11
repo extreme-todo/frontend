@@ -192,7 +192,7 @@ const TodoCard = ({
 
         const trimmed = categoryValidation(newCategory, categoryArray ?? []);
 
-        if (!trimmed) return;
+        if (typeof trimmed === 'object') return;
 
         if (categoryArray) {
           const copy = categoryArray.slice();
@@ -342,8 +342,8 @@ const TodoCard = ({
               period={focusStep}
               handleTomato={handleTomato}
               tomato={+durationValue}
-              useBalloon={false}
-              useLabel={false}
+              isBalloon={false}
+              isLabel={false}
             />
           </TomatoInputWrapper>
           <IconAtom

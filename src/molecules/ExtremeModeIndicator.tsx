@@ -67,7 +67,7 @@ function ExtremeModeIndicator() {
                 휴식 시간이 끝나면 기록이 삭제됩니다!
               </TypoAtom>
               <BtnAtom
-                btnType="textBtn"
+                btnStyle="textBtn"
                 handleOnClick={() => {
                   setPopperOpen(false);
                 }}
