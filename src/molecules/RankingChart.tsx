@@ -34,6 +34,7 @@ function RankingChart({ options, series, color }: IRankingChartProps) {
                 ? designTheme.color.tag[color]
                 : designTheme.color.primary.primary2,
               fontSize: designTheme.fontSize.b2.size,
+              fontFamily: 'Pretendard',
             },
           },
         },

@@ -177,14 +177,15 @@ const useCurrentTodo = ({
       if (todayTodos != null) {
         setFocusedOnTodo(checkLocalStorageAndGetFocusTime(todayTodos[0]));
         setCurrentTodo(todayTodos[0]);
-        actions.startFocusing();
         return todayTodos[0];
       } else {
         setCurrentTodo(undefined);
+        actions.stopTimer();
         return undefined;
       }
     } else {
       setCurrentTodo(undefined);
+      actions.stopTimer();
       return undefined;
     }
   };
