@@ -149,6 +149,7 @@ const TodoCard = ({
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s updateTodos ✅ \n\n', data);
       queryClient.invalidateQueries({ queryKey: ['todos'] });
+      setEditTodoId(undefined);
     },
     onError(error) {
       console.debug('\n\n\n 🚨 error in TodoCard‘s updateTodos 🚨 \n\n', error);
@@ -177,7 +178,6 @@ const TodoCard = ({
       id,
       prevDate: prevDate,
     });
-    setEditTodoId(undefined);
   }, [editData, id, prevDate]);
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
