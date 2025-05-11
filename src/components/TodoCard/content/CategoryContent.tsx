@@ -15,7 +15,7 @@ interface ICategoryContentProps {
   tagColorList: Record<string, TagColorName>;
   isDragging: boolean | undefined;
   isThisEdit: boolean;
-  categoryError: boolean;
+  categoryError?: string;
 }
 
 const CategoryContent = memo(
@@ -31,11 +31,13 @@ const CategoryContent = memo(
     isThisEdit,
     categoryError,
   }: ICategoryContentProps) => {
-    console.log(categoryError);
     if (isDragging || !categories) return null;
     else if (isThisEdit) {
       return (
-        <CategoryContainer className="categories" categoryError={categoryError}>
+        <CategoryContainer
+          className="categories"
+          categoryError={categoryError !== undefined}
+        >
           <CategoryInput
             categories={categoryArray}
             handleSubmit={handleAddCategory}
@@ -45,13 +47,13 @@ const CategoryContent = memo(
             tagColorList={tagColorList}
           />
           <p className="category_error" role="alert">
-            {SPECIAL_EXPRESSION_WARNING}
+            {categoryError ? categoryError : SPECIAL_EXPRESSION_WARNING}
           </p>
         </CategoryContainer>
       );
     } else if (categories && categories.length !== 0) {
       return (
-        <CategoryContainer className="categories" categoryError={categoryError}>
+        <CategoryContainer className="categories" categoryError={false}>
           {categories.map((category) => {
             return (
               <TagAtom
@@ -85,7 +87,7 @@ export const CategoryContainer = styled.div<{
     color: ${({ theme }) => theme.color.fontColor.extreme_orange};
     font-size: ${({ theme }) => theme.fontSize.b2.size};
     font-weight: ${({ theme }) => theme.fontSize.b2.weight};
-    height: ${({ categoryError }) => (categoryError ? '2rem' : '0px')};
+    height: ${({ categoryError }) => (categoryError ? '1.8rem' : '0px')};
     overflow: hidden;
   }
 `;
