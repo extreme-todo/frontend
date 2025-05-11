@@ -41,6 +41,7 @@ const UpdateSchema = TodoSchema.omit({
   focusTime: true,
   done: true,
   order: true,
+  id: true,
 });
 
 type UpdateDto = z.infer<typeof UpdateSchema>;
@@ -270,4 +271,4 @@ class ETIndexed {
 }
 
 export { ETIndexed, AddTodoSchema, UpdateSchema };
-export type { AddTodoDto, UpdateTodoDto };
+export type { AddTodoDto, UpdateTodoDto, UpdateDto };
