@@ -229,7 +229,7 @@ const TodoCard = ({
         }
       }
     },
-    [id, prevDate, categoryArray, duration],
+    [id, prevDate, categoryArray, duration, updateMutate],
   );
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
@@ -272,7 +272,7 @@ const TodoCard = ({
 
   const handleDeleteButton = useCallback(() => {
     deleteMutate({ id });
-  }, [id]);
+  }, [id, deleteMutate]);
 
   const handleAddCategory = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
