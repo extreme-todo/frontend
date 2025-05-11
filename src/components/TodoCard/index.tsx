@@ -268,6 +268,9 @@ const TodoCard = ({
     setTitleValue(todo);
     setCategoryArray(categories ?? []);
     setDurationValue(duration);
+    setCategoryValue('');
+    setTitleError(false);
+    setCategoryError(undefined);
   }, [todo, categories, duration]);
 
   const handleDeleteButton = useCallback(() => {
