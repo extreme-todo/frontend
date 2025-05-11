@@ -128,7 +128,7 @@ const TodoCard = ({
     [queryClient],
   );
 
-  const { mutate: updateMutate } = useMutation({
+  const { mutate: updateMutate, isLoading } = useMutation({
     mutationFn: updateMutationHandler,
     onSuccess(data) {
       console.debug('\n\n\n ✅ data in TodoCard‘s updateTodos ✅ \n\n', data);
@@ -315,8 +315,8 @@ const TodoCard = ({
         isDragging={snapshot?.isDragging}
         done={done}
         isThisEdit={isThisEdit}
+        isSubmitting={isLoading}
         duration={formatTime(focusStep * todoData.duration)}
-        handleEditSubmit={handleEditSubmit}
         handleEditButton={handleEditButton}
         durationValue={durationValue}
         isCurrTodo={isCurrTodo}

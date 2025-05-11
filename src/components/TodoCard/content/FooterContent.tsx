@@ -10,12 +10,12 @@ interface IFooterContentProps {
   isCurrTodo: boolean;
   duration: string;
   durationValue: number;
-  handleEditSubmit: () => void;
   handleEditButton: () => void;
   setShowTomatoInput: React.Dispatch<React.SetStateAction<boolean>>;
   setTriggerElement: React.Dispatch<
     React.SetStateAction<HTMLDivElement | null>
   >;
+  isSubmitting: boolean;
 }
 
 const FooterContent = memo(
@@ -24,12 +24,12 @@ const FooterContent = memo(
     done,
     isThisEdit,
     duration,
-    handleEditSubmit,
     handleEditButton,
     durationValue,
     setShowTomatoInput,
     isCurrTodo,
     setTriggerElement,
+    isSubmitting,
   }: IFooterContentProps) => {
     if (isDragging || done) return null;
     else if (isThisEdit) {
