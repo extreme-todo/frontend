@@ -195,7 +195,7 @@ const TodoCard = ({
       }
       setTitleValue(event.currentTarget.value);
     },
-    [],
+    [titleError],
   );
 
   const handleTitleBlur: ReactEventHandler<HTMLInputElement> = useCallback(
