@@ -77,9 +77,7 @@ const TodoCard = ({
     categories ?? [],
   );
   const [categoryValue, setCategoryValue] = useState('');
-  const [categoryError, setCategoryError] = useState<string | undefined>(
-    undefined,
-  );
+  const [categoryError, setCategoryError] = useState<boolean>(false);
   const [durationValue, setDurationValue] = useState(duration);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
@@ -272,17 +270,13 @@ const TodoCard = ({
   const handleChangeCategory = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setCategoryValue(event.target.value);
-      if (
-        event.currentTarget.value.length === 0 &&
-        categoryError !== undefined
-      ) {
-        return setCategoryError(undefined);
+      if (event.currentTarget.value.length === 0 && categoryError !== false) {
+        return setCategoryError(false);
       }
       const trimmed = categoryValidation(event.currentTarget.value);
-      if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
-        setCategoryError(trimmed.errorMessage);
-      else if (typeof trimmed === 'string' && categoryError !== undefined) {
-        setCategoryError(undefined);
+      if (typeof trimmed === 'object') setCategoryError(true);
+      else if (typeof trimmed === 'string' && categoryError !== false) {
+        setCategoryError(false);
       }
     },
     [categoryError],
