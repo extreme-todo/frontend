@@ -54,7 +54,7 @@ const FooterContent = memo(
               </div>
             </TimeWrapper>
           </BtnAtom>
-          <BtnAtom handleOnClick={handleEditSubmit}>
+          <BtnAtom type="submit" disabled={isSubmitting}>
             <TagAtom
               styleOption={{
                 size: 'normal',
