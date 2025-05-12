@@ -22,7 +22,7 @@ import {
 } from 'react-beautiful-dnd';
 
 /* hooks */
-import { EditContextProvider, useDraggableInPortal } from '../../hooks';
+import { useDraggableInPortal, useEdit } from '../../hooks';
 import { type focusStep } from '../../hooks/usePomodoro';
 import useTouchSensor from '../../hooks/useTouchSensor';
 
@@ -115,6 +115,7 @@ const TodoList = memo(
 
     /* custom hook 호출 */
     const optionalPortal = useDraggableInPortal();
+    const [editTodoId, setEditTodoId] = useEdit();
 
     /* react dnd의 onDragDropHandler */
     const handleDragEnd = useCallback(
@@ -156,6 +157,8 @@ const TodoList = memo(
               <List>
                 {doneTodoList.map((doneTodo, idx) => (
                   <MemoTodoCard
+                    isThisEdit={editTodoId === doneTodo.id}
+                    setEditTodoId={setEditTodoId}
                     todoData={doneTodo}
                     focusStep={focusStep}
                     randomTagColor={randomTagColor}
@@ -180,73 +183,73 @@ const TodoList = memo(
               남은 TODO
             </TypoAtom>
             {todoList ? (
-              <EditContextProvider>
-                <List>
-                  {currentTodo && (
-                    <MemoTodoCard
-                      todoData={currentTodo}
-                      focusStep={focusStep}
-                      randomTagColor={randomTagColor}
-                      isCurrTodo={true}
-                      order={(doneTodoList?.length ?? 0) + 1}
-                    />
-                  )}
-                  <DragDropContext
-                    onDragEnd={handleDragEnd}
-                    enableDefaultSensors={false}
-                    sensors={[useMouseSensor, useTouchSensor]}
-                  >
-                    <Droppable droppableId={droppableId}>
-                      {(provided) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                          className="innerList"
-                        >
-                          {todoList.map(
-                            (todo, idx) =>
-                              todo.id !== currentTodo?.id && (
-                                <Draggable
-                                  draggableId={String(todo.id)}
-                                  index={idx}
-                                  key={todo.id}
-                                >
-                                  {optionalPortal((provided, snapshot) => (
-                                    <li
-                                      {...provided.draggableProps}
-                                      ref={provided.innerRef}
-                                    >
-                                      <MemoTodoCard
-                                        dragHandleProps={
-                                          provided.dragHandleProps
-                                        }
-                                        todoData={todo}
-                                        snapshot={snapshot}
-                                        focusStep={focusStep}
-                                        randomTagColor={randomTagColor}
-                                        isCurrTodo={
-                                          currentTodo
-                                            ? currentTodo.id === todo.id
-                                            : false
-                                        }
-                                        order={
-                                          idx +
-                                          1 +
-                                          (doneTodos ? doneTodos.size : 0)
-                                        }
-                                      />
-                                    </li>
-                                  ))}
-                                </Draggable>
-                              ),
-                          )}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-                </List>
-              </EditContextProvider>
+              <List>
+                {currentTodo && (
+                  <MemoTodoCard
+                    isThisEdit={editTodoId === currentTodo.id}
+                    setEditTodoId={setEditTodoId}
+                    todoData={currentTodo}
+                    focusStep={focusStep}
+                    randomTagColor={randomTagColor}
+                    isCurrTodo={true}
+                    order={(doneTodoList?.length ?? 0) + 1}
+                  />
+                )}
+                <DragDropContext
+                  onDragEnd={handleDragEnd}
+                  enableDefaultSensors={false}
+                  sensors={[useMouseSensor, useTouchSensor]}
+                >
+                  <Droppable droppableId={droppableId}>
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="innerList"
+                      >
+                        {todoList.map(
+                          (todo, idx) =>
+                            todo.id !== currentTodo?.id && (
+                              <Draggable
+                                draggableId={String(todo.id)}
+                                index={idx}
+                                key={todo.id}
+                              >
+                                {optionalPortal((provided, snapshot) => (
+                                  <li
+                                    {...provided.draggableProps}
+                                    ref={provided.innerRef}
+                                  >
+                                    <MemoTodoCard
+                                      isThisEdit={editTodoId === todo.id}
+                                      setEditTodoId={setEditTodoId}
+                                      dragHandleProps={provided.dragHandleProps}
+                                      todoData={todo}
+                                      snapshot={snapshot}
+                                      focusStep={focusStep}
+                                      randomTagColor={randomTagColor}
+                                      isCurrTodo={
+                                        currentTodo
+                                          ? currentTodo.id === todo.id
+                                          : false
+                                      }
+                                      order={
+                                        idx +
+                                        1 +
+                                        (doneTodos ? doneTodos.size : 0)
+                                      }
+                                    />
+                                  </li>
+                                ))}
+                              </Draggable>
+                            ),
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+              </List>
             ) : (
               <EmptyList>
                 <BtnAtom

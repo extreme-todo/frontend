@@ -3,7 +3,6 @@ import {
   ReactEventHandler,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 
@@ -15,7 +14,6 @@ import HandlerIconAndOrder from './content/HandleIconAndOrder';
 import TitleOrInput from './content/TitleOrInput';
 import TopRightCornerIcon from './content/TopRightCornerIcon';
 
-import { useEdit } from '../../hooks';
 import { focusStep } from '../../hooks/usePomodoro';
 
 import { todosApi } from '../../shared/apis';
@@ -51,6 +49,8 @@ interface ITodoCardProps {
   randomTagColor: RandomTagColorList;
   isCurrTodo: boolean;
   order: number;
+  isThisEdit: boolean;
+  setEditTodoId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
@@ -63,13 +63,10 @@ const TodoCard = ({
   randomTagColor,
   isCurrTodo,
   order,
+  isThisEdit,
+  setEditTodoId,
 }: ITodoCardProps) => {
   const { id, date: prevDate, todo, categories, done, duration } = todoData;
-  const [editTodoId, setEditTodoId] = useEdit();
-  const isThisEdit = useMemo(
-    () => (editTodoId ? editTodoId === id : false),
-    [editTodoId, id],
-  );
 
   const [titleValue, setTitleValue] = useState(todo);
   const [titleError, setTitleError] = useState(false);

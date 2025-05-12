@@ -9,8 +9,10 @@ import {
 } from 'react';
 import { SideButtons } from '../../molecules';
 import { CurrentTodoCard } from '../../organisms';
+import AddTodo from '../AddTodo';
 import TodoList from '../TodoList';
 import {
+  EditContextProvider,
   LoginContext,
   useCurrentTodo,
   useExtremeMode,
@@ -18,7 +20,6 @@ import {
   usePomodoroValue,
   useTimeMarker,
 } from '../../hooks';
-import AddTodo from '../AddTodo';
 import PomodoroTimeSetting from '../PomodoroTimeSetting';
 import { PomodoroStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
@@ -126,11 +127,13 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           return <PomodoroTimeSetting handleClose={handleClose} />;
         case 'todolistModal':
           return (
-            <TodoList
-              openAddTodoModal={handleClickSideButton}
-              currentTodo={currentTodo}
-              focusStep={focusStep}
-            />
+            <EditContextProvider>
+              <TodoList
+                openAddTodoModal={handleClickSideButton}
+                currentTodo={currentTodo}
+                focusStep={focusStep}
+              />
+            </EditContextProvider>
           );
         case 'rest':
           return <RestCard />;
