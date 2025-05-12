@@ -56,7 +56,12 @@ const FooterContent = memo(
               </div>
             </TimeWrapper>
           </BtnAtom>
-          <BtnAtom type="submit" disabled={isDisabled} className="submit_btn">
+          <BtnAtom
+            type="submit"
+            disabled={isDisabled}
+            className="submit_btn"
+            aria-label="submit"
+          >
             <TagAtom
               styleOption={{
                 size: 'normal',
