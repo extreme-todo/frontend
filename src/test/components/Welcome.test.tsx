@@ -7,9 +7,10 @@ import { rankingApi, todosApi, usersApi } from '../../shared/apis';
 
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { LoginProvider } from '../../hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useMotionValue } from 'framer-motion';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,13 +30,35 @@ const ProviderWrapper = ({ children }) => {
   );
 };
 
+jest.mock('framer-motion', () => ({
+  ...jest.requireActual('../../__mocks__/framerMotion.tsx'),
+  useMotionValue: jest.fn().mockImplementation((initial) => ({
+    get: () => 1,
+    set: jest.fn(),
+    on: jest.fn(), // 이벤트 리스너 추가
+    off: jest.fn(),
+    stop: jest.fn(),
+    current: 1,
+  })),
+}));
+
 const mockWelcome = (
   func1: jest.Mock<any, any>,
   func2?: jest.Mock<any, any>,
   func3?: jest.Mock<any, any>,
 ) => {
   mockLocalStorage(func1, func2, func3);
-  return render(<Welcome />, { wrapper: ProviderWrapper });
+  const mockButtonOpacityForScroll = useMotionValue(1);
+  const mockMainLogoPathLengthForScroll = useMotionValue(1);
+  const mockMainLogoFillForScroll = useMotionValue('black');
+  return render(
+    <Welcome
+      buttonOpacityForScroll={mockButtonOpacityForScroll}
+      mainLogoPathLengthForScroll={mockMainLogoPathLengthForScroll}
+      mainLogoFillForScroll={mockMainLogoFillForScroll}
+    />,
+    { wrapper: ProviderWrapper },
+  );
 };
 
 describe('Welcome', () => {
@@ -48,7 +71,9 @@ describe('Welcome', () => {
 
     it('로고가 있다.', () => {
       const { container } = renderResult;
-      expect(container.querySelector('#logo')).toBeInTheDocument();
+      waitFor(() =>
+        expect(container.querySelector('#logo')).toBeInTheDocument(),
+      );
     });
     describe('유저가 로그인을 하지 않은 경우', () => {
       it('구글 소셜 로그인 버튼이 있다.', () => {
@@ -94,16 +119,15 @@ describe('Welcome', () => {
 
     describe('설정 버튼을 누르면', () => {
       const mockDeleteLocalstorage = jest.fn();
-      beforeEach(() => {
+      beforeEach(async () => {
         renderResult = mockWelcome(
           jest.fn((key: string) => 'token_something'),
           jest.fn(),
           mockDeleteLocalstorage,
         );
         const setting = renderResult.getByRole('button', { name: /setting/ });
-        fireEvent.click(setting);
+        await act(() => fireEvent.click(setting));
       });
-
       it('데이터 초기화 버튼이 렌더링 되어야 하고', () => {
         const { getByRole } = renderResult;
         expect(getByRole('button', { name: /reset/i })).toBeInTheDocument();
@@ -112,7 +136,7 @@ describe('Welcome', () => {
         const { getByRole } = renderResult;
         expect(getByRole('button', { name: /withdraw/i })).toBeInTheDocument();
       });
-      it('데이터 초기화 버튼을 누르면 removeItem을 호출한다.', async () => {
+      it('데이터 초기화 버튼을 누르면 resetTodos와 resetRanking API를 호출한다.', async () => {
         const { getByRole } = renderResult;
         jest.spyOn(window, 'alert').mockImplementation();
         jest.spyOn(window, 'confirm').mockImplementation(() => true);

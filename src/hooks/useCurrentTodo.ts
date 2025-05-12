@@ -32,7 +32,7 @@ const useCurrentTodo = ({
   const [shouldFocus, setShouldFocus] = useState(false);
 
   const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
-    staleTime: 1000 * 60 * 20,
+    staleTime: Infinity,
   });
 
   const queryClient = useQueryClient();

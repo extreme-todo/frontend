@@ -36,6 +36,16 @@ const AddTodoSchema = TodoSchema.omit({
 
 type AddTodoDto = z.infer<typeof AddTodoSchema>;
 
+const UpdateSchema = TodoSchema.omit({
+  createdAt: true,
+  focusTime: true,
+  done: true,
+  order: true,
+  id: true,
+});
+
+type UpdateDto = z.infer<typeof UpdateSchema>;
+
 type UpdateTodoDto = Partial<
   Pick<TodoEntity, 'duration' | 'todo' | 'categories' | 'date'>
 >;
@@ -260,5 +270,5 @@ class ETIndexed {
   }
 }
 
-export { ETIndexed, AddTodoSchema };
-export type { AddTodoDto, UpdateTodoDto };
+export { ETIndexed, AddTodoSchema, UpdateSchema };
+export type { AddTodoDto, UpdateTodoDto, UpdateDto };

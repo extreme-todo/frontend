@@ -186,7 +186,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   return (
     <FocusTrap
       focusTrapOptions={{
-        initialFocus: false,
+        initialFocus: '#title',
         escapeDeactivates: true,
         clickOutsideDeactivates: true,
       }}
@@ -236,7 +236,11 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
               handleChangeCategory={handleCategoryInput}
               tagColorList={ramdomTagColorList.getColorList}
             />
-            {categoryError && <p className="category_error">{categoryError}</p>}
+            {categoryError && (
+              <p className="category_error" role="alert">
+                {categoryError}
+              </p>
+            )}
           </CategoryWrapper>
         </MainWrapper>
         <FooterWrapper>

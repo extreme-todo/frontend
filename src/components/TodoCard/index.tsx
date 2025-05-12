@@ -1,8 +1,8 @@
 import {
+  FormEvent,
   ReactEventHandler,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 
@@ -14,12 +14,16 @@ import HandlerIconAndOrder from './content/HandleIconAndOrder';
 import TitleOrInput from './content/TitleOrInput';
 import TopRightCornerIcon from './content/TopRightCornerIcon';
 
-import { useEdit } from '../../hooks';
 import { focusStep } from '../../hooks/usePomodoro';
 
 import { todosApi } from '../../shared/apis';
-import { TodoEntity } from '../../DB/indexedAction';
-import { ETIndexed, UpdateTodoDto } from '../../DB/indexed';
+import {
+  MAX_CATEGORY_ARRAY_LENGTH,
+  MAX_TITLE_INPUT_LENGTH_WARNING,
+  TITLE_EMPTY_MESSAGE,
+  TodoEntity,
+} from '../../DB/indexedAction';
+import { ETIndexed, UpdateDto, UpdateSchema } from '../../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -27,11 +31,15 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 
-import { formatTime } from '../../shared/timeUtils';
-import { categoryValidation } from '../../shared/inputValidation';
+import { formatTime, setTimeInFormat } from '../../shared/timeUtils';
+import {
+  categoryValidation,
+  titleValidation,
+} from '../../shared/inputValidation';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 import styled from '@emotion/styled';
+import { ZodError } from 'zod';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
@@ -41,7 +49,11 @@ interface ITodoCardProps {
   randomTagColor: RandomTagColorList;
   isCurrTodo: boolean;
   order: number;
+  isThisEdit: boolean;
+  setEditTodoId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
+
+const ramdomTagColorList = RandomTagColorList.getInstance();
 
 const TodoCard = ({
   todoData,
@@ -51,17 +63,20 @@ const TodoCard = ({
   randomTagColor,
   isCurrTodo,
   order,
+  isThisEdit,
+  setEditTodoId,
 }: ITodoCardProps) => {
   const { id, date: prevDate, todo, categories, done, duration } = todoData;
-  const [editTodoId, setEditTodoId] = useEdit();
-  const isThisEdit = useMemo(
-    () => (editTodoId ? editTodoId === id : false),
-    [editTodoId, id],
-  );
 
   const [titleValue, setTitleValue] = useState(todo);
-  const [categoryArray, setCategoryArray] = useState(categories ?? null);
+  const [titleError, setTitleError] = useState(false);
+  const [categoryArray, setCategoryArray] = useState<string[]>(
+    categories ?? [],
+  );
   const [categoryValue, setCategoryValue] = useState('');
+  const [categoryError, setCategoryError] = useState<string | undefined>(
+    undefined,
+  );
   const [durationValue, setDurationValue] = useState(duration);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
@@ -74,16 +89,6 @@ const TodoCard = ({
     null,
   );
 
-  const editData = useMemo(
-    () => ({
-      categories: categoryArray,
-      todo: titleValue,
-      duration: durationValue,
-      date: new Date(prevDate).toISOString(),
-    }),
-    [categoryArray, titleValue, durationValue],
-  );
-
   // apis
   const queryClient = useQueryClient();
 
@@ -93,7 +98,7 @@ const TodoCard = ({
       id,
       prevDate,
     }: {
-      newTodo: UpdateTodoDto;
+      newTodo: UpdateDto;
       id: string;
       prevDate: string;
     }) => {
@@ -110,7 +115,7 @@ const TodoCard = ({
         ) as TodoEntity;
         const searchDate = arrayTodos
           .reverse()
-          .find((todo) => todo.date <= (newTodo.date as string)) as TodoEntity;
+          .find((todo) => todo.date <= newTodo.date) as TodoEntity;
         let newOrder: number;
         if (!searchDate) {
           newOrder = 1;
@@ -128,25 +133,71 @@ const TodoCard = ({
     [queryClient],
   );
 
-  const { mutate: updateMutate } = useMutation({
+  const { mutate: updateMutate, isLoading } = useMutation({
     mutationFn: updateMutationHandler,
-    onSuccess(data) {
-      console.debug('\n\n\n ✅ data in TodoCard‘s updateTodos ✅ \n\n', data);
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    onMutate: async ({ newTodo, id }) => {
+      await queryClient.cancelQueries({ queryKey: ['todos'] });
+      const previousTodos = queryClient.getQueryData<
+        Map<string, TodoEntity[]> | undefined
+      >(['todos']);
+
+      queryClient.setQueryData<Map<string, TodoEntity[]> | undefined>(
+        ['todos'],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const todoMap = new Map(oldData);
+          Array.from(todoMap.entries()).forEach(([date, todos]) => {
+            const updatedTodos = todos.map((todo: TodoEntity) =>
+              todo.id === id ? { ...todo, ...newTodo } : todo,
+            );
+            todoMap.set(date, updatedTodos);
+          });
+          return todoMap;
+        },
+      );
+
+      return previousTodos;
     },
-    onError(error) {
-      console.debug('\n\n\n 🚨 error in TodoCard‘s updateTodos 🚨 \n\n', error);
+    onSuccess(data) {
+      console.debug('\n\n\n ✅ data in TodoCard updateTodos ✅ \n\n', data);
+      setEditTodoId(undefined);
+    },
+    onError(error, _, context) {
+      console.debug('\n\n\n 🚨 error in TodoCard updateTodos 🚨 \n\n', error);
+      queryClient.setQueryData(['todos'], context);
     },
   });
 
   const { mutate: deleteMutate } = useMutation({
     mutationFn: ({ id }: { id: string }) => todosApi.deleteTodo(id),
-    onSuccess(data) {
-      console.debug('\n\n\n ✅ data in TodoCard‘s deleteTodo ✅ \n\n', data);
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    onMutate: async ({ id }) => {
+      await queryClient.cancelQueries({ queryKey: ['todos'] });
+      const previousTodos = queryClient.getQueryData<
+        Map<string, TodoEntity[]> | undefined
+      >(['todos']);
+      queryClient.setQueryData<Map<string, TodoEntity[]> | undefined>(
+        ['todos'],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const todoMap = new Map(oldData);
+          Array.from(todoMap.entries()).forEach(([date, todos]) => {
+            const updatedTodos = todos.filter(
+              (todo: TodoEntity) => todo.id !== id,
+            );
+            todoMap.set(date, updatedTodos);
+          });
+          return todoMap;
+        },
+      );
+
+      return previousTodos;
     },
-    onError(error) {
-      console.debug('\n\n\n 🚨 error in TodoCard‘s deleteTodo 🚨 \n\n', error);
+    onSuccess(data) {
+      console.debug('\n\n\n ✅ data in TodoCard deleteTodo ✅ \n\n', data);
+    },
+    onError(error, _, context) {
+      console.debug('\n\n\n 🚨 error in TodoCard deleteTodo 🚨 \n\n', error);
+      queryClient.setQueryData(['todos'], context);
     },
   });
 
@@ -155,18 +206,56 @@ const TodoCard = ({
     setEditTodoId(id);
   }, [id]);
 
-  const handleEditSubmit = useCallback(() => {
-    updateMutate({
-      newTodo: editData,
-      id,
-      prevDate: prevDate,
-    });
-    setEditTodoId(undefined);
-  }, [editData, id, prevDate]);
+  const handleEditSubmit = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget as HTMLFormElement);
+      const newTodo: UpdateDto = {
+        todo: formData.get('title') as string,
+        duration,
+        categories: categoryArray.length === 0 ? null : categoryArray,
+        date: setTimeInFormat(new Date()).toISOString(),
+      };
+      const { success, error } = UpdateSchema.safeParse(newTodo);
+
+      if (success) {
+        updateMutate({ newTodo, id, prevDate });
+      } else {
+        if (error instanceof ZodError) {
+          alert(error.issues[0].message);
+        }
+      }
+    },
+    [id, prevDate, categoryArray, duration, updateMutate],
+  );
 
   const handleChangeTitle: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
+      const trimmed = titleValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object') {
+        if (!titleError) {
+          setTitleError(true);
+        }
+        if (trimmed.errorMessage === MAX_TITLE_INPUT_LENGTH_WARNING) {
+          return;
+        }
+      } else if (typeof trimmed === 'string' && titleError !== undefined) {
+        setTitleError(false);
+      }
       setTitleValue(event.currentTarget.value);
+    },
+    [titleError],
+  );
+
+  const handleTitleBlur: ReactEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      const checkEmpty = titleValidation(event.currentTarget.value);
+      if (
+        typeof checkEmpty === 'object' &&
+        checkEmpty.errorMessage === TITLE_EMPTY_MESSAGE
+      ) {
+        setTitleError(true);
+      }
     },
     [],
   );
@@ -174,35 +263,40 @@ const TodoCard = ({
   const handleEditCancel = useCallback(() => {
     setEditTodoId(undefined);
     setTitleValue(todo);
-    setCategoryArray(categories);
+    setCategoryArray(categories ?? []);
     setDurationValue(duration);
+    setCategoryValue('');
+    setTitleError(false);
+    setCategoryError(undefined);
   }, [todo, categories, duration]);
 
   const handleDeleteButton = useCallback(() => {
     deleteMutate({ id });
-  }, [id]);
+  }, [id, deleteMutate]);
 
   const handleAddCategory = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.code === 'Enter') {
+        event.preventDefault();
+        if (event.currentTarget.value.length === 0) return;
         // 한글 중복 입력 처리
         if (event.nativeEvent.isComposing) return;
 
         const newCategory = (event.target as HTMLInputElement).value;
 
-        const trimmed = categoryValidation(newCategory, categoryArray ?? []);
+        const trimmed = categoryValidation(newCategory);
 
         if (typeof trimmed === 'object') return;
-
-        if (categoryArray) {
+        else if (
+          typeof trimmed === 'string' &&
+          !categoryArray.includes(trimmed) &&
+          categoryArray.length <= MAX_CATEGORY_ARRAY_LENGTH
+        ) {
           const copy = categoryArray.slice();
           copy.push(trimmed);
-
           setCategoryArray(copy);
-        } else {
-          setCategoryArray([trimmed]);
+          ramdomTagColorList.setColor = trimmed;
         }
-        randomTagColor.setColor = trimmed;
 
         setCategoryValue('');
       }
@@ -214,9 +308,8 @@ const TodoCard = ({
     setCategoryArray((prev) => {
       const deleted = prev?.filter((tag) => {
         return tag !== category;
-      }) as string[]; // QUESTION event.currentTarget.innerHTML를 바로 넣어주면 에러가 왜 날까?
+      });
 
-      if (deleted.length === 0) return null;
       return deleted;
     });
   }, []);
@@ -224,8 +317,20 @@ const TodoCard = ({
   const handleChangeCategory = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setCategoryValue(event.target.value);
+      if (
+        event.currentTarget.value.length === 0 &&
+        categoryError !== undefined
+      ) {
+        return setCategoryError(undefined);
+      }
+      const trimmed = categoryValidation(event.currentTarget.value);
+      if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
+        setCategoryError(trimmed.errorMessage);
+      else if (typeof trimmed === 'string' && categoryError !== undefined) {
+        setCategoryError(undefined);
+      }
     },
-    [],
+    [categoryError],
   );
 
   const handleTomato = useCallback(
@@ -274,6 +379,7 @@ const TodoCard = ({
       done={done}
       isCurrTodo={isCurrTodo}
       isThisEdit={isThisEdit}
+      onSubmit={handleEditSubmit}
     >
       <TitleContainer>
         <div>
@@ -288,7 +394,9 @@ const TodoCard = ({
             titleValue={titleValue}
             isThisEdit={isThisEdit}
             handleChangeTitle={handleChangeTitle}
+            handleBlurTitle={handleTitleBlur}
             todo={todo}
+            titleError={titleError}
           />
         </div>
         <TopRightCornerIcon
@@ -310,13 +418,15 @@ const TodoCard = ({
         isDragging={snapshot?.isDragging}
         isThisEdit={isThisEdit}
         categories={categories}
+        categoryError={categoryError}
       />
       <FooterContent
         isDragging={snapshot?.isDragging}
         done={done}
         isThisEdit={isThisEdit}
+        isDisabled={titleValue.length === 0 || titleError || isLoading}
+        isSubmitting={isLoading}
         duration={formatTime(focusStep * todoData.duration)}
-        handleEditSubmit={handleEditSubmit}
         handleEditButton={handleEditButton}
         durationValue={durationValue}
         isCurrTodo={isCurrTodo}
