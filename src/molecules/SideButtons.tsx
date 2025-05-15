@@ -44,7 +44,7 @@ const SideButton = ({
   children?: ReactNode;
 }) => {
   return (
-    <BtnAtom btnType="textBtn" handleOnClick={onClick}>
+    <BtnAtom btnStyle="textBtn" handleOnClick={onClick}>
       {children}
     </BtnAtom>
   );

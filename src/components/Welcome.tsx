@@ -87,142 +87,153 @@ const Welcome = forwardRef(
 
     return (
       <WelcomeContainer ref={ref}>
-        {isLogin ? (
-          <AnimatePresence mode="wait">
-            {isSettingModal ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
+        <AnimatePresence mode="wait">
+          {isSettingModal ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                transition: { delay: 0.6 },
+                opacity: 0,
+              }}
+              style={{ opacity: buttonOpacityForScroll }}
+              key={'settingModal'}
+            >
+              <IconAtom src="/icon/logo.svg" size={10} />
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  rowGap: '1.25rem',
+                  alignItems: 'center',
                 }}
-                exit={{
-                  transition: { delay: 0.6 },
-                  opacity: 0,
-                }}
-                style={{ opacity: buttonOpacityForScroll }}
-                key={'settingModal'}
               >
-                <IconAtom src="/icon/logo.svg" size={10} />
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    rowGap: '1.25rem',
-                    alignItems: 'center',
+                <motion.button
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
+                  exit={{ opacity: 0, y: -40, transition: { delay: 0.6 } }}
+                  transition={{
+                    duration: 0.3,
                   }}
                 >
-                  <motion.button
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
-                    exit={{ opacity: 0, y: -40, transition: { delay: 0.6 } }}
-                    transition={{
-                      duration: 0.3,
-                    }}
-                  >
-                    <BtnAtom handleOnClick={resetMutation} ariaLabel="reset">
-                      <TypoAtom fontSize="body" fontColor="extreme_orange">
-                        데이터 초기화
-                      </TypoAtom>
-                    </BtnAtom>
-                  </motion.button>
-                  <motion.button
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
-                    exit={{ opacity: 0, y: -40, transition: { delay: 0.4 } }}
-                    transition={{
-                      duration: 0.3,
-                    }}
-                  >
-                    <BtnAtom
-                      handleOnClick={withdrawMutation}
-                      ariaLabel="withdraw"
-                    >
-                      <TypoAtom fontSize="body" fontColor="extreme_orange">
-                        회원 탈퇴
-                      </TypoAtom>
-                    </BtnAtom>
-                  </motion.button>
-                  <motion.button
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0, transition: { delay: 0.6 } }}
-                    exit={{ opacity: 0, y: -40, transition: { delay: 0.2 } }}
-                    transition={{
-                      duration: 0.3,
-                    }}
-                  >
-                    <BtnAtom handleOnClick={handleClose} ariaLabel="goback">
-                      <IconAtom size={2} src="/icon/closeOrange.svg" />
-                    </BtnAtom>
-                  </motion.button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 1 }}
-                exit={{
-                  opacity: 0,
-                  transition: { duration: 0.65, ease: 'easeInOut' },
-                }}
-                key={'mainLogo'}
-              >
-                <MainLogo
-                  mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
-                  mainLogoFillForScroll={mainLogoFillForScroll}
-                />
-                <motion.div style={{ opacity: buttonOpacityForScroll }}>
-                  <LoginContainer>
-                    <motion.div
-                      initial={{ x: 30, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ duration: 0.5, ease: 'easeOut' }}
-                    >
-                      <BtnAtom
-                        handleOnClick={handleSetting}
-                        ariaLabel="setting"
-                        className="buttonWithIcon"
-                      >
-                        <IconAtom size={1.25} src="/icon/setting.svg" />
-                        <TypoAtom fontColor="extreme_orange" fontSize="b2">
-                          설정
-                        </TypoAtom>
-                      </BtnAtom>
-                    </motion.div>
-                    <TypoAtom fontColor="extreme_orange" fontSize="b2">
-                      |
+                  <BtnAtom handleOnClick={resetMutation} ariaLabel="reset">
+                    <TypoAtom fontSize="body" fontColor="extreme_orange">
+                      데이터 초기화
                     </TypoAtom>
-                    <motion.div
-                      initial={{ x: -30, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ duration: 0.5, ease: 'easeOut' }}
-                    >
-                      <BtnAtom
-                        handleOnClick={handleLogoutBtn}
-                        ariaLabel="logout"
-                        className="buttonWithIcon"
+                  </BtnAtom>
+                </motion.button>
+                <motion.button
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
+                  exit={{ opacity: 0, y: -40, transition: { delay: 0.4 } }}
+                  transition={{
+                    duration: 0.3,
+                  }}
+                >
+                  <BtnAtom
+                    handleOnClick={withdrawMutation}
+                    ariaLabel="withdraw"
+                  >
+                    <TypoAtom fontSize="body" fontColor="extreme_orange">
+                      회원 탈퇴
+                    </TypoAtom>
+                  </BtnAtom>
+                </motion.button>
+                <motion.button
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{ opacity: 1, y: 0, transition: { delay: 0.6 } }}
+                  exit={{ opacity: 0, y: -40, transition: { delay: 0.2 } }}
+                  transition={{
+                    duration: 0.3,
+                  }}
+                >
+                  <BtnAtom handleOnClick={handleClose} ariaLabel="goback">
+                    <IconAtom size={2} src="/icon/closeOrange.svg" />
+                  </BtnAtom>
+                </motion.button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{
+                opacity: 0,
+                transition: { duration: 0.65, ease: 'easeInOut' },
+              }}
+              key={'mainLogo'}
+            >
+              <MainLogo
+                mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
+                mainLogoFillForScroll={mainLogoFillForScroll}
+              />
+              <motion.div
+                style={{ opacity: buttonOpacityForScroll }}
+                key={'login_btn_container'}
+              >
+                <LoginContainer>
+                  {isLogin ? (
+                    <>
+                      <motion.div
+                        initial={{ x: 30, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                        style={{ opacity: buttonOpacityForScroll }}
+                        key={'login_btn-setting'}
                       >
-                        <IconAtom size={1.25} src="/icon/logout.svg" />
-                        <TypoAtom fontColor="extreme_orange" fontSize="b2">
-                          로그아웃
-                        </TypoAtom>
-                      </BtnAtom>
-                    </motion.div>
-                  </LoginContainer>
-                </motion.div>
+                        <BtnAtom
+                          handleOnClick={handleSetting}
+                          ariaLabel="setting"
+                          className="buttonWithIcon"
+                        >
+                          <IconAtom size={1.25} src="/icon/setting.svg" />
+                          <TypoAtom fontColor="extreme_orange" fontSize="b2">
+                            설정
+                          </TypoAtom>
+                        </BtnAtom>
+                      </motion.div>
+                      <TypoAtom fontColor="extreme_orange" fontSize="b2">
+                        |
+                      </TypoAtom>
+                      <motion.div
+                        initial={{ x: -30, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                        key={'login_btn-logout'}
+                      >
+                        <BtnAtom
+                          handleOnClick={handleLogoutBtn}
+                          ariaLabel="logout"
+                          className="buttonWithIcon"
+                        >
+                          <IconAtom size={1.25} src="/icon/logout.svg" />
+                          <TypoAtom fontColor="extreme_orange" fontSize="b2">
+                            로그아웃
+                          </TypoAtom>
+                        </BtnAtom>
+                      </motion.div>
+                    </>
+                  ) : (
+                    <BtnAtom
+                      handleOnClick={handleLoginBtn}
+                      className="login_button"
+                    >
+                      <TypoAtom fontColor="extreme_orange" fontSize="b1">
+                        Sign in with
+                      </TypoAtom>
+                      <IconAtom
+                        className="google_logo"
+                        src="/icon/googleIcon.svg"
+                        alt="google_login_button"
+                      />
+                    </BtnAtom>
+                  )}
+                </LoginContainer>
               </motion.div>
-            )}
-          </AnimatePresence>
-        ) : (
-          <BtnAtom handleOnClick={handleLoginBtn} className="login_button">
-            <TypoAtom fontColor="extreme_orange" fontSize="b1">
-              Sign in with
-            </TypoAtom>
-            <IconAtom
-              className="google_logo"
-              src="/icon/googleIcon.svg"
-              alt="google_login_button"
-            />
-          </BtnAtom>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </WelcomeContainer>
     );
   },

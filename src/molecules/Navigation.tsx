@@ -34,6 +34,7 @@ const Navigation = ({
         {navigationLists.map((list, idx, arr) => {
           return (
             <ListAtom
+              key={idx}
               handleClick={() => {
                 list.componentRef.current?.scrollIntoView({
                   behavior: 'smooth',

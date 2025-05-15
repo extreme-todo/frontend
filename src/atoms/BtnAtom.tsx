@@ -1,34 +1,43 @@
-import styled from '@emotion/styled';
+import { ButtonHTMLAttributes } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { RemType, ButtonName } from '../styles/emotion';
+import styled from '@emotion/styled';
 
 type PaddingType = RemType | 'auto';
 interface IBtnAtomProps extends IChildProps {
-  handleOnClick: () => void;
-  btnType?: ButtonName;
+  handleOnClick?: () => void;
+  btnStyle?: ButtonName;
   paddingHorizontal?: PaddingType;
   paddingVertical?: PaddingType;
   className?: string;
   ariaLabel?: string;
+  type?: 'submit' | 'reset' | 'button';
+  disabled?: boolean;
+  tabIndex?: number;
 }
 
 function BtnAtom({
   children,
   handleOnClick,
-  btnType,
+  btnStyle,
   paddingHorizontal = 'auto',
   paddingVertical = 'auto',
   className,
   ariaLabel,
+  type = 'button',
+  tabIndex = 0,
+  ...props
 }: IBtnAtomProps) {
-  if (btnType === undefined) {
+  if (btnStyle === undefined) {
     return (
       <button
+        {...props}
         onClick={handleOnClick}
         style={{ cursor: 'pointer' }}
         className={className}
         aria-label={ariaLabel}
-        type="button"
+        type={type}
+        tabIndex={tabIndex}
       >
         {children}
       </button>
@@ -36,13 +45,15 @@ function BtnAtom({
   }
   return (
     <ButtonWrapper
+      {...props}
       onClick={handleOnClick}
-      btnType={btnType}
+      btnStyle={btnStyle}
       paddingHorizontal={paddingHorizontal}
       paddingVertical={paddingVertical}
       className={className}
       aria-label={ariaLabel}
-      type="button"
+      type={type}
+      tabIndex={tabIndex}
     >
       {children}
     </ButtonWrapper>
@@ -50,7 +61,7 @@ function BtnAtom({
 }
 
 const ButtonWrapper = styled.button<{
-  btnType: ButtonName;
+  btnStyle: ButtonName;
   paddingVertical: PaddingType;
   paddingHorizontal: PaddingType;
 }>`
@@ -63,21 +74,32 @@ const ButtonWrapper = styled.button<{
   padding-bottom: ${({ paddingVertical }) => paddingVertical};
   padding-left: ${({ paddingHorizontal }) => paddingHorizontal};
   padding-right: ${({ paddingHorizontal }) => paddingHorizontal};
-  height: ${({ theme, btnType }) => theme.button[btnType].height};
-  font-size: ${({ theme, btnType }) => theme.button[btnType].fontSize.size};
-  font-weight: ${({ theme, btnType }) => theme.button[btnType].fontSize.weight};
-  background-color: ${({ theme, btnType }) =>
+  height: ${({ theme, btnStyle: btnType }) => theme.button[btnType].height};
+  font-size: ${({ theme, btnStyle: btnType }) =>
+    theme.button[btnType].fontSize.size};
+  font-weight: ${({ theme, btnStyle: btnType }) =>
+    theme.button[btnType].fontSize.weight};
+  background-color: ${({ theme, btnStyle: btnType }) =>
     theme.button[btnType].default.backgroundColor};
-  color: ${({ theme, btnType }) => theme.button[btnType].default.color};
+  color: ${({ theme, btnStyle: btnType }) =>
+    theme.button[btnType].default.color};
   &:hover {
-    background-color: ${({ theme, btnType }) =>
+    background-color: ${({ theme, btnStyle: btnType }) =>
       theme.button[btnType].hover.backgroundColor};
-    color: ${({ theme, btnType }) => theme.button[btnType].hover.color};
+    color: ${({ theme, btnStyle: btnType }) =>
+      theme.button[btnType].hover.color};
   }
   &:active {
-    background-color: ${({ theme, btnType }) =>
+    background-color: ${({ theme, btnStyle: btnType }) =>
       theme.button[btnType].click.backgroundColor};
-    color: ${({ theme, btnType }) => theme.button[btnType].click.color};
+    color: ${({ theme, btnStyle: btnType }) =>
+      theme.button[btnType].click.color};
+  }
+  &:disabled {
+    background-color: ${({ theme }) =>
+      theme.button['extremeLightBtn'].default.backgroundColor};
+    color: ${({ theme }) => theme.button['extremeDarkBtn'].default.color};
+    cursor: not-allowed;
   }
   transition: all 0.2s ease-in-out;
 `;

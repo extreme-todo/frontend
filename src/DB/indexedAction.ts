@@ -1,18 +1,52 @@
-import type { AddTodoDto } from './indexed';
+import { z } from 'zod';
 
 type CategoryType = { id: number; name: string };
 
-interface TodoEntity {
-  id: string;
-  date: string; // toISOstring() 처리된 Date
-  todo: string;
-  createdAt: Date;
-  duration: number;
-  done: boolean;
-  categories: string[] | null;
-  focusTime: number;
-  order: number | null;
-}
+export const unicodeLetterReg = new RegExp('^[\\p{L}\\p{M}\\s]+$', 'u');
+export const TITLE_EMPTY_MESSAGE = '제목을 입력해주세요.';
+export const MAX_CATEGORY_ARRAY_LENGTH = 5;
+export const MAX_CATEGORY_INPUT_LENGTH = 20;
+export const MAX_TITLE_INPUT_LENGTH = 50;
+export const MAX_CATEGORY_INPUT_LENGTH_WARNING = `${MAX_CATEGORY_INPUT_LENGTH}자 이하로만 입력할 수 있습니다.`;
+export const MAX_TITLE_INPUT_LENGTH_WARNING = `${MAX_TITLE_INPUT_LENGTH}자 이하로만 입력할 수 있습니다.`;
+export const SPECIAL_EXPRESSION_WARNING = `숫자,특수문자는 입력할 수 없습니다\n!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~`;
+export const MAX_CATEGORY_ARRAY_LENGTH_WARNING = `카테고리는 최대 ${MAX_CATEGORY_ARRAY_LENGTH}개 까지 설정할 수 있습니다.`;
+const trimStr = (str: unknown) => {
+  return String(str).replace(/\s+/g, ' ').trim();
+};
+
+export const CategoryInputSchema = z.preprocess(
+  trimStr,
+  z
+    .string()
+    .max(MAX_CATEGORY_INPUT_LENGTH, MAX_CATEGORY_INPUT_LENGTH_WARNING)
+    .regex(unicodeLetterReg, SPECIAL_EXPRESSION_WARNING),
+);
+export const TodoSchema = z.object({
+  todo: z.preprocess(
+    trimStr,
+    z
+      .string()
+      .min(1, TITLE_EMPTY_MESSAGE)
+      .max(MAX_TITLE_INPUT_LENGTH, MAX_TITLE_INPUT_LENGTH_WARNING),
+  ),
+  categories: z
+    .array(CategoryInputSchema)
+    .max(MAX_CATEGORY_ARRAY_LENGTH, MAX_CATEGORY_ARRAY_LENGTH_WARNING)
+    .nullable(),
+  duration: z.coerce
+    .number()
+    .min(1, '유효한 토마토 값이 아닙니다.')
+    .max(10, '유효한 토마토 값이 아닙니다.'),
+  date: z.string().datetime({ offset: true }),
+  focusTime: z.number().min(0).default(0),
+  order: z.number().nullable(),
+  done: z.boolean().default(false),
+  createdAt: z.coerce.date(),
+  id: z.string().uuid(),
+});
+
+type TodoEntity = z.infer<typeof TodoSchema>;
 
 type TransactionMode = 'readonly' | 'readwrite';
 type CrudType = 'add' | 'get' | 'update' | 'remove';

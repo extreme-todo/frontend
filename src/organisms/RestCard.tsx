@@ -45,7 +45,7 @@ function RestCard() {
             <div className="button-container">
               <BtnAtom
                 className="focus"
-                btnType={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
                 handleOnClick={() => {
                   canRest ? doTodo() : actions.startFocusing();
                 }}

@@ -18,7 +18,7 @@ function NoTodoCard({ addTodoHandler }: INoTodoCardProps) {
         </TypoAtom>
         <BtnAtom
           className="add-todo"
-          btnType="darkBtn"
+          btnStyle="darkBtn"
           handleOnClick={addTodoHandler}
         >
           Todo +

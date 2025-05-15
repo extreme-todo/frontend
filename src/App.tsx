@@ -17,7 +17,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import styled from '@emotion/styled';
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
 });
 

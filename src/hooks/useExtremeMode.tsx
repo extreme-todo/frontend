@@ -55,7 +55,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { data: extremeModeData, isLoading } = useQuery({
     queryFn: settingsApi.getSettings,
     queryKey: ['settings'],
-    staleTime: 1000 * 60 * 60,
+    staleTime: Infinity,
   });
 
   const { mutate: handleExtremeMutation } = useMutation(

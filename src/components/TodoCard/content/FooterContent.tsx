@@ -10,12 +10,13 @@ interface IFooterContentProps {
   isCurrTodo: boolean;
   duration: string;
   durationValue: number;
-  handleEditSubmit: () => void;
   handleEditButton: () => void;
   setShowTomatoInput: React.Dispatch<React.SetStateAction<boolean>>;
   setTriggerElement: React.Dispatch<
     React.SetStateAction<HTMLDivElement | null>
   >;
+  isDisabled: boolean;
+  isSubmitting: boolean;
 }
 
 const FooterContent = memo(
@@ -24,12 +25,13 @@ const FooterContent = memo(
     done,
     isThisEdit,
     duration,
-    handleEditSubmit,
     handleEditButton,
     durationValue,
     setShowTomatoInput,
     isCurrTodo,
     setTriggerElement,
+    isDisabled,
+    isSubmitting,
   }: IFooterContentProps) => {
     if (isDragging || done) return null;
     else if (isThisEdit) {
@@ -54,7 +56,12 @@ const FooterContent = memo(
               </div>
             </TimeWrapper>
           </BtnAtom>
-          <BtnAtom handleOnClick={handleEditSubmit}>
+          <BtnAtom
+            type="submit"
+            disabled={isDisabled}
+            className="submit_btn"
+            aria-label="submit"
+          >
             <TagAtom
               styleOption={{
                 size: 'normal',
@@ -63,8 +70,8 @@ const FooterContent = memo(
               }}
               className="save__button"
             >
-              <TypoAtom fontSize="b2" fontColor="primary1">
-                저장
+              <TypoAtom fontSize="b2" fontColor={'primary1'}>
+                {isSubmitting ? '저장 중' : '저장'}
               </TypoAtom>
             </TagAtom>
           </BtnAtom>
@@ -142,6 +149,12 @@ const FooterContainer = styled.div`
         button.darkBtn.hover.backgroundColor};
     }
     transition: background-color 0.3s ease-in-out;
+  }
+  .submit_btn:disabled {
+    opacity: 0.4;
+    * {
+      cursor: not-allowed;
+    }
   }
 `;
 
