@@ -42,7 +42,7 @@ describe('CategoryInput', () => {
   describe('CategoryInput은', () => {
     it('input이 있다.', () => {
       const { getByRole } = renderUI();
-      const input = getByRole('textbox', { name: 'category_input' });
+      const input = getByRole('textbox', { name: 'category input' });
 
       expect(input).toBeInTheDocument();
     });
@@ -53,7 +53,7 @@ describe('CategoryInput', () => {
       expect(getByText('학교공부')).toBeInTheDocument();
 
       const categoryInput = getByRole('textbox', {
-        name: 'category_input',
+        name: 'category input',
       }) as HTMLInputElement;
 
       expect(categoryInput).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('CategoryInput', () => {
     it('최초에 설정된 태그가 있다.', () => {
       const { getAllByRole } = renderUI();
 
-      const categories = getAllByRole('button', { name: 'category_tag' });
+      const categories = getAllByRole('button', { name: /category/i });
 
       expect(categories.length).toBe(2);
     });

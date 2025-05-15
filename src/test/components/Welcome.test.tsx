@@ -1,13 +1,13 @@
-import React, { act } from 'react';
+import { act } from 'react';
 import { Welcome } from '../../components/index';
 
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import { rankingApi, todosApi, usersApi } from '../../shared/apis';
+import { timerApi, todosApi, usersApi } from '../../shared/apis';
 
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { LoginProvider } from '../../hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMotionValue } from 'framer-motion';
@@ -145,7 +145,7 @@ describe('Welcome', () => {
           .spyOn(todosApi, 'resetTodos')
           .mockImplementation();
         const mockResetRanking = jest
-          .spyOn(rankingApi, 'resetRanking')
+          .spyOn(timerApi, 'resetRecords')
           .mockImplementation();
         await act(() => fireEvent.click(reset));
         expect(mockResetTodos).toHaveBeenCalled();
