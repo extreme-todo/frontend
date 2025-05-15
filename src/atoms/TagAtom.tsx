@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
 import { BackgroundColorName, FontName, TagColorName } from '../styles/emotion';
 import { css } from '@emotion/react';
-import { get } from 'http';
 
 export interface ITagAtomProps extends IChildProps {
   title?: string;
