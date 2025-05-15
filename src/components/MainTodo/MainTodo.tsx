@@ -148,7 +148,7 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           return <></>;
       }
     },
-    [currentCard, prevCard, currentTodo],
+    [currentCard, prevCard, currentTodo, isLogin],
   );
 
   useEffect(() => {
