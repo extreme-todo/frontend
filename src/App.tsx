@@ -13,7 +13,6 @@ import {
 import { PomodoroProvider, ExtremeModeProvider } from './hooks';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import styled from '@emotion/styled';
 
@@ -140,7 +139,6 @@ function App() {
           </MainContainer>
         </ExtremeModeProvider>
       </PomodoroProvider>
-      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 }
