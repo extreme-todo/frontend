@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, useContext } from 'react';
+import React, { ForwardedRef, forwardRef, useContext, useState } from 'react';
 import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
@@ -18,9 +18,10 @@ import { formatTime } from '../shared/timeUtils';
 const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const tagColorList = RandomTagColorList.getInstance().getColorList;
 
-  const [unit, setUnit] = React.useState<'day' | 'week' | 'month'>('day');
-  const [selectedCategory, setSelectedCategory] =
-    React.useState<ICategory | null>(null);
+  const [unit, setUnit] = useState<'day' | 'week' | 'month'>('day');
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
+    null,
+  );
 
   const getRecord = () =>
     selectedCategory
@@ -49,7 +50,7 @@ const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   };
 
   const { data: recordData } = useQuery(
-    ['category', selectedCategory, unit],
+    ['category', selectedCategory, unit, 'focusedTime'],
     getRecord,
   );
   const { data: categories } = useQuery(['category'], () =>
