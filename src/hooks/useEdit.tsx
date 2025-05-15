@@ -7,7 +7,7 @@ type IEditContext = [
   React.Dispatch<React.SetStateAction<EditTodoType>>,
 ];
 
-const EditContext = createContext<IEditContext>([undefined, () => {}]);
+const EditContext = createContext<IEditContext>([undefined, () => undefined]);
 
 const EditContextProvider = ({ children }: IChildProps): JSX.Element => {
   const editTodoId = useState<EditTodoType>(undefined);
