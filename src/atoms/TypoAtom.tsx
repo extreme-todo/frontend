@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { designTheme } from '../styles/theme';
 import { rainbowStyle } from '../styles/Global';
+import { FontColor, FontName } from '../styles/emotion';
 
 interface ITypoProps extends IChildProps {
-  fontSize?: keyof typeof designTheme.fontSize;
-  fontColor?: keyof typeof designTheme.colors;
+  fontSize?: FontName;
+  fontColor?: keyof FontColor;
   rainbow?: boolean;
   className?: string;
   padding?: `${number}rem ${number}rem`;
@@ -35,18 +35,18 @@ const TypoAtom = ({
 export default TypoAtom;
 
 const Typo = styled.span<ITypoProps>`
-  color: ${({ fontColor }) =>
+  color: ${({ theme, fontColor }) =>
     fontColor
-      ? designTheme.colors[fontColor]
-      : designTheme.colors.subFontColor};
-  font-size: ${({ fontSize }) =>
-    fontSize
-      ? designTheme.fontSize[fontSize].size
-      : designTheme.fontSize.body.size};
-  font-weight: ${({ fontSize }) =>
-    fontSize
-      ? designTheme.fontSize[fontSize].weight
-      : designTheme.fontSize.body.weight};
+      ? theme.color.fontColor[fontColor]
+      : theme.color.fontColor.primary1};
+  font-size: ${({ theme, fontSize }) =>
+    fontSize ? theme.fontSize[fontSize].size : theme.fontSize.body.size};
+  font-weight: ${({ theme, fontSize }) =>
+    fontSize ? theme.fontSize[fontSize].weight : theme.fontSize.body.weight};
   ${({ rainbow }) => rainbow && rainbowStyle};
   padding: ${({ padding }) => padding || 0};
+  line-height: ${({ theme, fontSize }) =>
+    fontSize
+      ? (theme.fontSize[fontSize].lineHeight as string)
+      : (theme.fontSize.body.lineHeight as string)};
 `;

@@ -15,9 +15,7 @@ function RecordCell({ children, label, record }: IRankingProps) {
   // Typo에 적용된 inline css들은 typo 컴포넌트 머지 이후 변경 필요
   return (
     <RecordCellContainer>
-      <RecordCell.RecordLabel
-        styleOption={{ size: 'big', fontsize: 'b1', shadow: 'basic_shadow' }}
-      >
+      <RecordCell.RecordLabel styleOption={{ size: 'normal', fontsize: 'b1' }}>
         {label}
       </RecordCell.RecordLabel>
       <div className="record-time-wrapper">

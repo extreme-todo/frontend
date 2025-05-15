@@ -1,6 +1,6 @@
 import { Children, isValidElement, ReactNode } from 'react';
 import { IChildProps } from '../shared/interfaces';
-import { TagAtom, TypoAtom } from '../atoms';
+import { BtnAtom, TagAtom, TypoAtom } from '../atoms';
 import styled from '@emotion/styled';
 
 export interface ILogInToUnlockProps extends IChildProps {
@@ -22,8 +22,8 @@ function LogInToUnlock({
         <img className="lock-icon" src={icon ?? '/icons/icon-lock.svg'} />
         <div>
           <LogInToUnlock.typo
-            fontSize={'body_bold'}
-            fontColor={'titleColor'}
+            fontSize={'h2'}
+            fontColor={'primary1'}
             className="login-typo"
           >
             {label ?? '로그인이 필요한 기능입니다.'}
@@ -33,18 +33,17 @@ function LogInToUnlock({
           </LogInToUnlock.typo>
         </div>
       </div>
-      <LogInToUnlock.loginButton
-        styleOption={{
-          size: 'big2',
-          fontsize: 'md1',
-          bold: 'extraBold',
-          bg: 'titleColor',
-          shadow: 'button_shadow',
-        }}
-        handler={navigate}
-      >
-        로그인하기
-      </LogInToUnlock.loginButton>
+      <BtnAtom handleOnClick={navigate}>
+        <LogInToUnlock.loginButton
+          styleOption={{
+            size: 'normal',
+            fontsize: 'h2',
+            bg: 'pink',
+          }}
+        >
+          로그인하기
+        </LogInToUnlock.loginButton>
+      </BtnAtom>
     </UnlockContainer>
   );
 }

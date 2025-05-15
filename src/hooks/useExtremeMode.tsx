@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
-import { rankingApi, settingsApi, todosApi } from '../shared/apis';
+import { settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useIsOnline } from './useIsOnline';
 import useCurrentTodo from './useCurrentTodo';
@@ -40,7 +40,14 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   // hooks
   const { status, settings, time } = usePomodoroValue();
   const pomodoroActions = usePomodoroActions();
-  const { currentTodo } = useCurrentTodo();
+  const { currentTodo } = useCurrentTodo({
+    value: {
+      settings,
+      status,
+      time,
+    },
+    actions: pomodoroActions,
+  });
   const isOnline = useIsOnline();
   const queryClient = useQueryClient();
 
@@ -48,7 +55,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { data: extremeModeData, isLoading } = useQuery({
     queryFn: settingsApi.getSettings,
     queryKey: ['settings'],
-    staleTime: 1000 * 60 * 60,
+    staleTime: Infinity,
   });
 
   const { mutate: handleExtremeMutation } = useMutation(
@@ -75,9 +82,9 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   // ref and const
   const prevStatus = useRef(status);
   const isExtreme = extremeModeData
-    ? extremeModeData?.data.extremeMode === undefined
+    ? extremeModeData.data.extremeMode === undefined
       ? true
-      : extremeModeData?.data.extremeMode
+      : extremeModeData.data.extremeMode
     : true;
 
   // handlers
@@ -130,7 +137,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       handleLeftTime('휴식시간이 초과되었습니다. 초기화가 진행됩니다...');
       Promise.all(
         isOnline
-          ? [todosApi.resetTodos(), rankingApi.resetRanking()]
+          ? [todosApi.resetTodos(), timerApi.resetRecords]
           : [ETIndexed.getInstance().resetTodos()],
       )
         .then(() => {
@@ -138,6 +145,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
           pomodoroActions.stopTimer();
           queryClient.invalidateQueries(['todos']);
           queryClient.invalidateQueries(['category']);
+          queryClient.invalidateQueries(['focusedTime']);
         })
         .catch(() => {
           handleLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');

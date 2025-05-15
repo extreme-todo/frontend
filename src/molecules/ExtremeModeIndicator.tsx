@@ -1,7 +1,7 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { LoginContext, useExtremeMode, usePomodoroValue } from '../hooks';
 import styled from '@emotion/styled';
-import { TypoAtom } from '../atoms';
+import { BtnAtom, IconAtom, PopperAtom, TypoAtom } from '../atoms';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
 
@@ -9,6 +9,10 @@ function ExtremeModeIndicator() {
   const { isLogin } = useContext(LoginContext);
   const { status } = usePomodoroValue();
   const { isExtreme, leftTime, handleExtremeMode } = useExtremeMode();
+  const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
+  const [popperOpen, setPopperOpen] = useState<boolean>(true);
+  const [popperTriggerElement, setPopperTriggerElement] =
+    useState<HTMLDivElement | null>(null);
 
   const toggleExtremeMode = () => {
     if (!isLogin) {
@@ -26,17 +30,57 @@ function ExtremeModeIndicator() {
     }
   };
 
+  useEffect(() => {
+    if (isExtreme && status === PomodoroStatus.RESTING) setPopperOpen(true);
+    else setPopperOpen(false);
+  }, [isExtreme, status]);
+
   return (
-    <ExtremeModeContainer>
+    <ExtremeModeContainer ref={setPopperTriggerElement}>
       {isExtreme && (
-        <TypoAtom fontSize="h5" className="extreme-status">
-          {status === PomodoroStatus.RESTING && leftTime}
-        </TypoAtom>
+        <div>
+          <TypoAtom
+            fontSize="b2"
+            fontColor="extreme_orange"
+            className="extreme-status"
+          >
+            Extreme ON
+          </TypoAtom>
+        </div>
       )}
       {isExtreme ? (
-        <img src="/icons/extreme-pink.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icons/bolt-red.svg" onClick={toggleExtremeMode}></img>
       ) : (
-        <img src="/icons/extreme-gray.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icons/bolt.svg" onClick={toggleExtremeMode}></img>
+      )}
+      {popperOpen && (
+        <PopperAtom
+          popperElement={popperEl}
+          setPopperElement={setPopperEl}
+          triggerElement={popperTriggerElement}
+          placement={'top'}
+          offset={[0, 0]}
+        >
+          <div className="tooltip">
+            <div className="tooltip-body">
+              <TypoAtom fontSize={'body'} fontColor="extreme_orange">
+                휴식 시간이 끝나면 기록이 삭제됩니다!
+              </TypoAtom>
+              <BtnAtom
+                btnStyle="textBtn"
+                handleOnClick={() => {
+                  setPopperOpen(false);
+                }}
+              >
+                <IconAtom
+                  className="close-icon"
+                  src="icons/close-red.svg"
+                ></IconAtom>
+              </BtnAtom>
+            </div>
+            <img src="/icons/tooltip-arrow.svg" className="tooltip-arrow"></img>
+          </div>
+        </PopperAtom>
       )}
     </ExtremeModeContainer>
   );
@@ -50,11 +94,38 @@ const ExtremeModeContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  top: 2.75rem;
+  top: 2rem;
   right: 2.0625rem;
+  gap: 9px;
   img {
-    width: 3.4375rem;
-    height: 3.4375rem;
+    width: 1.5625rem;
+    height: 2.5rem;
+  }
+  .tooltip {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    filter: drop-shadow(${({ theme }) => theme.shadow.tomato});
+    .tooltip-body {
+      background-color: white;
+      border-radius: 4.5625rem;
+      white-space: nowrap;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .tooltip-arrow {
+      margin-top: -0.3rem;
+      width: 0.533125rem;
+      height: 1.5rem;
+    }
+  }
+  .close-icon {
+    width: 20px;
+    height: 20px;
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {

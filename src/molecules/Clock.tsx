@@ -1,51 +1,88 @@
 import styled from '@emotion/styled';
-import React, { useEffect, useState } from 'react';
 import { TypoAtom } from '../atoms';
+import { intervalToDuration } from 'date-fns';
+import { FontColorName } from '../styles/emotion';
 
-function Clock() {
-  const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  let interval: NodeJS.Timer;
+export interface IClockProps {
+  ms: number;
+  fontColor?: FontColorName;
+  show?: {
+    hour: boolean;
+    min: boolean;
+    sec: boolean;
+  };
+}
 
-  useEffect(() => {
-    interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
+function Clock({
+  ms,
+  fontColor = 'primary1',
+  show = {
+    hour: true,
+    min: true,
+    sec: false,
+  },
+}: IClockProps) {
   return (
-    <ClockContainer>
-      <TypoAtom fontSize="sub" rainbow={true} className="clock-date">
-        {currentTime.toLocaleDateString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
-      </TypoAtom>
-      <TypoAtom fontSize="h1" rainbow={true} className="clock-time">
-        {currentTime.getHours().toString().padStart(2, '0')}:
-        {currentTime.getMinutes().toString().padStart(2, '0')}
-      </TypoAtom>
+    <ClockContainer {...{ ms, fontColor }}>
+      {show.hour && (
+        <TypoAtom fontSize="clock" className="clock-time">
+          {ms < 0
+            ? '00'
+            : intervalToDuration({ start: 0, end: ms })
+                .hours?.toString()
+                .padStart(2, '0') ?? '00'}
+        </TypoAtom>
+      )}
+      {show.min && (
+        <TypoAtom fontSize="clock" className="clock-time">
+          {ms < 0
+            ? '00'
+            : intervalToDuration({ start: 0, end: ms })
+                .minutes?.toString()
+                .padStart(2, '0') ?? '00'}
+        </TypoAtom>
+      )}
+      {show.sec && (
+        <TypoAtom fontSize="clock" className="clock-time">
+          {ms < 0
+            ? '00'
+            : intervalToDuration({ start: 0, end: ms })
+                .seconds?.toString()
+                .padStart(2, '0') ?? '00'}
+        </TypoAtom>
+      )}
     </ClockContainer>
   );
 }
 
-const ClockContainer = styled.div`
+const ClockContainer = styled.div<IClockProps>`
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  .clock-time {
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.02em;
+    vertical-align: middle;
+    line-height: 6.25rem;
+    color: ${({ theme: { color }, fontColor }) =>
+      fontColor ? color.fontColor[fontColor] : color.fontColor.primary2};
+    &:not(:last-child) {
+      &::after {
+        display: block;
+        content: ':';
+      }
+    }
+  }
   @media ${({ theme }) => theme.responsiveDevice.mobile},
     ${({ theme }) => theme.responsiveDevice.tablet_v} {
     position: fixed;
     top: 4rem;
     .clock-date {
-      font-size: 4rem;
+      font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
     }
     .clock-time {
-      font-size: 12rem;
+      font-size: ${({ theme: { fontSize } }) => fontSize.clock.size};
     }
   }
 `;

@@ -1,55 +1,80 @@
-.rdp {
-  background-color: #feca57;
-  border-radius: 1rem;
-  padding: 0.3rem;
-  box-shadow: 0 0 0.4rem #f4b537;
-  --rdp-background-color: #2e86de;
-}
-
-.rdp-day_selected:hover {
-  background-color: #ff6b6b;
-}
-
-.rdp-day_selected {
-  background-color: #54a0ff;
-}
-
 .dialog-sheet {
-  z-index: 99;
+  z-index: 10;
 }
+.rdp {
+  --rdp-caption-font-size: 1.25rem;
+  --rdp-background-color: none;
+  --rdp-cell-size: 1.5rem;
+  --rdp-accent-color: transparent;
 
-.rdp-cell,
-.rdp-head_cell {
-  @media screen and (max-width: 767px) {
-    font-size: 1.6rem;
+  background-color: white;
+  border-radius: 22px;
+  box-shadow: 0rem 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+
+  margin: 0;
+  padding: 1rem;
+  box-sizing: border-box;
+
+  width: 13.25rem;
+  height: 15.125rem;
+
+  .rdp-months,
+  .rdp-month {
+    height: 100%;
+    width: 100%;
   }
-}
 
-.daypickerFooterWrapper {
-  display: flex;
-  justify-content: flex-end;
-  height: 2rem;
-  align-items: center;
-  @media screen and (max-width: 767px) {
-    height: 4rem;
-    padding-right: 1rem;
-    padding-bottom: 0.3rem;
-    margin-top: 1rem;
-  }
+  .rdp-months {
+    .rdp-table {
+      color: #523ea1;
+      font-weight: 400;
+      font-size: 0.75rem;
+      border-spacing: 0.125rem 0.25rem;
+      border-collapse: initial;
 
-  .daypickerFooter {
-    background-color: #f4b537;
-    width: 3rem;
-    height: 2rem;
-    border-radius: 10px;
-    font-size: 1rem;
-    @media screen and (max-width: 767px) {
-      font-size: 1.6rem;
-      width: 8rem;
-      height: 4rem;
+      .rdp-cell {
+        .rdp-button {
+          position: relative;
+          &:hover {
+            &::before {
+              font-size: 1.26rem;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-40%, -40%);
+              opacity: 0.3;
+              content: '🍅';
+            }
+          }
+        }
+        .rdp-day_selected {
+          font-weight: 700;
+          color: white;
+          background: no-repeat center url('../../public/icon/tomato.svg');
+          background-size: contain;
+        }
+      }
     }
-  }
-  .daypickerFooter:hover {
-    background-color: #ff6b6b;
+
+    .rdp-caption {
+      display: flex;
+      position: relative;
+      justify-content: center;
+      font-weight: 400;
+      margin-bottom: 1.125rem;
+      .rdp-nav {
+        white-space: nowrap;
+        position: absolute;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        & > button {
+          width: 1.25rem;
+          height: 1.25rem;
+          padding: 0.1875rem;
+          border: none;
+        }
+      }
+    }
   }
 }

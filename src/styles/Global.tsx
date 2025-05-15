@@ -1,4 +1,5 @@
 import { css, Global } from '@emotion/react';
+import { CardAnimationStyle } from './cardAnimations';
 
 const style = css`
   html,
@@ -88,7 +89,6 @@ const style = css`
     border: 0;
     font-size: 100%;
     font: inherit;
-    font-family: pretendard;
     vertical-align: baseline;
   }
   /* HTML5 display-role reset for older browsers */
@@ -109,8 +109,10 @@ const style = css`
     line-height: 1;
   }
   ol,
+  li,
   ul {
     list-style: none;
+    list-style-type: none;
   }
   blockquote,
   q {
@@ -138,14 +140,13 @@ const style = css`
   }
   button {
     cursor: pointer;
-    outline: none;
     border: none;
     background-color: transparent;
     padding: 0;
   }
 
   body {
-    background: linear-gradient(328deg, #b8a2e4, #edbff1, #8ef0e8);
+    background: #dfdfdd;
     background-size: 600% 600%;
 
     -webkit-animation: AnimationName 59s ease infinite;
@@ -208,9 +209,14 @@ const style = css`
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+ */
   }
+  * {
+    font-family: Pretendard;
+  }
   html,
   *,
   body {
+    font-family: Pretendard;
+
     /* Hide scrollbar for Chrome, Safari and Opera */
     ::-webkit-scrollbar {
       display: none;
@@ -222,7 +228,7 @@ const style = css`
     /* basic 16px 1280+ */
     /* 노트북 & 테블릿 가로 (해상도 1024px ~ 1279px)*/
     @media all and (min-width: 1024px) and (max-width: 1279px) {
-      font-size: 14px;
+      font-size: 16px;
     }
 
     /* 테블릿 가로 (해상도 768px ~ 1023px)*/
@@ -244,6 +250,8 @@ const style = css`
       }
     }
   }
+
+  ${CardAnimationStyle}
 `;
 
 export const rainbowStyle = css`

@@ -1,44 +1,40 @@
 import styled from '@emotion/styled';
-import { designTheme } from '../styles/theme';
-import { forwardRef, ReactElement } from 'react';
+import { forwardRef } from 'react';
+import { BackgroundColorName } from '../styles/emotion';
 
-interface IIconAtomProps
-  extends Pick<
-    React.DOMAttributes<HTMLDivElement>,
-    'onClick' | 'onMouseOver' | 'onMouseLeave'
-  > {
-  children: ReactElement<HTMLImageElement>;
+interface IIconAtomProps {
+  src: string;
+  alt?: string;
   size?: number;
-  backgroundColor?: keyof typeof designTheme.colors | 'transparent';
+  backgroundColor?: BackgroundColorName | 'transparent';
   className?: string;
+  id?: string;
+  w?: number;
+  h?: number;
 }
 
-const IconAtom = forwardRef<HTMLDivElement, IIconAtomProps>(
-  (
-    { size = 4.455, children, backgroundColor = 'transparent', ...props },
-    ref,
-  ) => {
+const IconAtom = forwardRef<HTMLImageElement, IIconAtomProps>(
+  ({ size = 4.455, backgroundColor = 'transparent', id, ...props }, ref) => {
     return (
       <IconContainer
         backgroundColor={backgroundColor}
         size={size}
-        {...props}
         ref={ref}
-      >
-        {children}
-      </IconContainer>
+        id={id}
+        {...props}
+      />
     );
   },
 );
 
 export default IconAtom;
 
-const IconContainer = styled.div<
-  Pick<IIconAtomProps, 'size' | 'backgroundColor'>
+const IconContainer = styled.img<
+  Pick<IIconAtomProps, 'size' | 'backgroundColor' | 'h' | 'w'>
 >`
-  height: ${({ size }) => (size ? `${size}rem` : `4.455rem`)};
-  width: ${({ size }) => (size ? `${size}rem` : `4.455rem`)};
-  border-radius: ${({ size }) => (size ? `${size * 0.5}rem` : null)};
+  height: ${({ size, h }) =>
+    h ? `${h}rem` : size ? `${size}rem` : `4.455rem`};
+  width: ${({ size, w }) => (w ? `${w}rem` : size ? `${size}rem` : `4.455rem`)};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,7 +42,7 @@ const IconContainer = styled.div<
     backgroundColor === 'transparent'
       ? backgroundColor
       : backgroundColor
-      ? theme.colors[backgroundColor]
+      ? theme.color.backgroundColor[backgroundColor]
       : null};
   cursor: pointer;
 `;

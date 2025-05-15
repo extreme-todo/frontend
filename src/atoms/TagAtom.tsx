@@ -1,135 +1,173 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
-import { designTheme } from '../styles/theme';
+import { BackgroundColorName, FontName, TagColorName } from '../styles/emotion';
+import { css } from '@emotion/react';
 
 export interface ITagAtomProps extends IChildProps {
   title?: string;
-  handler?: () => void;
   styleOption?: ITagSpanProps;
   ariaLabel?: string;
+  className?: string;
 }
 
 interface ITagSpanProps {
-  bg?: keyof typeof designTheme.colors;
-  fontsize?: 'sm' | 'md1' | 'md2' | 'b1' | 'b2';
-  size?: 'sm' | 'md' | 'big' | 'big2';
-  bold?: 'bold' | 'extraBold';
-  shadow?: 'basic_shadow' | 'button_shadow';
-  maxWidth?: number;
+  bg?: TagColorName | 'transparent';
+  fontsize?: FontName;
+  size?: 'normal';
+  borderColor?: BackgroundColorName;
+  isSelected?: boolean;
+  selectable?: boolean;
 }
 
-/**
- * TagAtom 태그 모양의 아톰
- * handler를 넘기면 button, 없을 때는 div
- */
 function TagAtom({
   children,
-  handler,
   styleOption,
   title,
   ariaLabel,
+  className,
 }: ITagAtomProps) {
-  if (handler)
-    return (
-      <button onClick={handler} aria-label={ariaLabel}>
-        <TagSpan {...styleOption} isHandler={!!handler}>
-          {children}
-        </TagSpan>
-      </button>
-    );
-  else
-    return (
-      <div>
-        <TagSpan title={title} {...styleOption}>
-          {children}
-        </TagSpan>
-      </div>
-    );
+  return (
+    <TagSpan
+      title={title}
+      {...styleOption}
+      className={className}
+      aria-label={ariaLabel}
+      bg={styleOption?.bg ?? 'orange'}
+    >
+      {children}
+      {styleOption?.selectable && (
+        <svg
+          className="check-icon"
+          width="10"
+          height="8"
+          viewBox="0 0 10 8"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M1 3.4L4.42857 7L9 1" />
+        </svg>
+      )}
+    </TagSpan>
+  );
 }
 
-const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
-  width: fit-content;
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}rem` : null)};
-  height: fit-content;
+const TagSpan = styled.span<
+  ITagSpanProps & { isHandler?: boolean; bg: TagColorName | 'transparent' }
+>`
+  transition: opacity 0.3s ease-in-out;
+  width: ${({ size }) => {
+    switch (size) {
+      case 'normal':
+      default:
+        return 'fit-content';
+    }
+  }};
+  height: ${({ size }) => {
+    switch (size) {
+      case 'normal':
+        return '1.25rem';
+      default:
+        return 'fit-content';
+    }
+  }};
 
   padding: ${({ size }) => {
     switch (size) {
-      case 'sm':
-        return '0.38rem 1.16rem';
-      case 'md':
-        return '0.5rem 1.76rem';
-      case 'big':
-        return '0.58rem 2rem';
-      case 'big2':
-        return '1rem 2.37rem';
+      case 'normal':
       default:
-        return '0.5rem 1.76rem';
+        return '0 1rem';
     }
   }};
 
   background: ${({ bg, theme }) =>
-    bg ? theme.colors[bg] : theme.colors.white};
-  color: ${({ bg, theme }) =>
-    bg === 'titleColor' || bg === 'subFontColor'
-      ? theme.colors.white
-      : theme.colors.subFontColor};
-
-  border-radius: ${({ size }) => {
-    switch (size) {
-      case 'sm':
-        return '1.45rem';
-      case 'md':
-        return '2.1rem';
-      case 'big':
-        return '2.42rem';
+    bg === 'transparent' ? 'transparent' : theme.color.tag[bg]};
+  color: ${({
+    bg,
+    theme: {
+      color: { fontColor },
+    },
+  }) => {
+    switch (bg) {
+      case 'green':
+      case 'gray':
+      case 'brown':
+      case 'purple':
+      case 'cyan':
+        return fontColor.white;
       default:
-        return '2.1rem';
+        return fontColor.primary1;
     }
   }};
-  box-shadow: ${({ theme, shadow }) =>
-    shadow ? theme.shadows[shadow] : 'none'};
+  border: ${({
+    borderColor,
+    theme: {
+      color: { backgroundColor },
+    },
+  }) =>
+    borderColor ? `${backgroundColor[borderColor]} 1px solid` : 'inherit'};
 
-  font-size: ${({ fontsize }) => {
-    switch (fontsize) {
-      case 'sm':
-        return 1.1;
-      case 'md1':
-        return 1.5;
-      case 'md2':
-        return 1.8;
-      case 'b1':
-        return 2.5;
-      case 'b2':
-        return 3;
-      default:
-        return 1.5;
-    }
-  }}rem;
-  font-weight: ${({ bold }) => {
-    switch (bold) {
-      case 'bold':
-        return 500;
-      case 'extraBold':
-        return 700;
-      default:
-        return 400;
-    }
-  }};
+  border-radius: 50px;
+
+  font-size: ${({ fontsize, theme: { fontSize } }) =>
+    fontsize ? fontSize[fontsize].size : fontSize.b2.size};
+  font-weight: ${({ fontsize, theme: { fontSize } }) =>
+    fontsize ? fontSize[fontsize].weight : fontSize.b2.weight};
   line-height: 120%;
 
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  display: block;
+  display: flex;
+  align-items: center;
 
-  ${({ isHandler, theme }) =>
-    isHandler &&
-    `
-    :hover {
-      background-color: ${theme.colors.bgColor};
-      transition: background-color 0.2s ease-in-out;
-    }
-  `}
+  &:has(.check-icon) {
+    padding-right: 0.25rem;
+    ${({ isSelected }) =>
+      !isSelected &&
+      css`
+        opacity: 0.3;
+      `}
+  }
+  .check-icon {
+    display: inline-flex;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    margin-left: 0.25rem;
+    padding: 0.125rem;
+    box-sizing: border-box;
+    background-color: ${({ bg }) => {
+      switch (bg) {
+        case 'green':
+        case 'gray':
+        case 'brown':
+        case 'purple':
+        case 'cyan':
+          return 'rgba(255, 255, 255, 0.25)';
+        default:
+          return 'rgba(82,62,161, 0.25)';
+      }
+    }};
+    stroke: ${({
+      bg,
+      isSelected,
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => {
+      if (!isSelected) return 'transparent';
+      switch (bg) {
+        case 'green':
+        case 'gray':
+        case 'brown':
+        case 'purple':
+        case 'cyan':
+          return '#ffffff';
+        default:
+          return backgroundColor.primary1;
+      }
+    }};
+  }
 `;
 
 export default TagAtom;

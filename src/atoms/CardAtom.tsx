@@ -1,42 +1,47 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import { BackgroundColorName } from '../styles/emotion';
 
 // TODO: 나중에 일정한 사이즈를 가지게 되면 수정;
 const CardAtom = styled.div<{
   padding?: string;
   margin?: string;
-  bg?: 'default' | 'transparent';
+  bg?: 'default' | 'transparent' | BackgroundColorName;
   w?: string;
   h?: string;
 }>`
   position: relative;
-  font-size: 1rem;
-  background: ${({ theme: { colors }, bg }) => {
+  font-size: ${({ theme: { fontSize } }) => fontSize.body.size};
+  font-weight: ${({ theme: { fontSize } }) => fontSize.body.weight};
+  background: ${({
+    theme: {
+      color: { backgroundColor },
+    },
+    bg,
+  }) => {
     switch (bg) {
       case 'transparent':
-        return `linear-gradient(180deg, rgba(255, 255, 255, 0.71) 0%, rgba(255, 255, 255, 0) 100%);`;
+        return `transparent`;
+      case 'default':
+        return `${backgroundColor.primary2}`;
       default:
-        return `linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.85) 0%,
-      rgba(255, 255, 255, 0) 55.21%
-    ), ${colors.bgYellow}`;
+        return `${bg ? backgroundColor[bg] : backgroundColor.primary2}`;
     }
   }};
-  box-shadow: 0px 4px 62px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme: { shadow } }) => shadow.container};
   border-radius: 30px;
-  padding: ${({ padding }) => padding ?? '3rem'};
+  padding: ${({ padding }) => padding ?? '2rem 2.75rem'};
   margin: ${({ margin }) => margin ?? '0rem'};
-  width: ${({ w }) => w ?? 'fit-content'};
-  height: ${({ h }) => h ?? 'fit-content'};
+  width: ${({ w }) => w ?? '53.75rem'};
+  height: ${({ h }) => h ?? '20rem'};
   max-width: 100%;
   max-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+  z-index: 1;
 `;
 
 export default CardAtom;

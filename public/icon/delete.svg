@@ -1,0 +1,7 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="3" y="4" width="14" height="2" fill="#DBFE77"/>
+<rect x="7.5" y="2.5" width="5" height="1" stroke="#DBFE77"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4 6C4 6.00006 4 6.00012 4 6.00018V15.0002C4 16.657 5.34315 18.0002 7 18.0002H13C14.6569 18.0002 16 16.657 16 15.0002V6.00018C16 6.00012 16 6.00006 16 6H14C14 6.00006 14 6.00012 14 6.00018V15.0002C14 15.5525 13.5523 16.0002 13 16.0002H7C6.44772 16.0002 6 15.5525 6 15.0002V6.00018C6 6.00012 6 6.00006 6 6H4Z" fill="#DBFE77"/>
+<rect x="8.25" y="9.25" width="0.5" height="4.5" stroke="#DBFE77" stroke-width="0.5"/>
+<rect x="11.25" y="9.25" width="0.5" height="4.5" stroke="#DBFE77" stroke-width="0.5"/>
+</svg>

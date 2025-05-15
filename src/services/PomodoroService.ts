@@ -4,6 +4,7 @@ export enum PomodoroStatus {
   NONE,
   FOCUSING,
   RESTING,
+  OVERFOCUSING,
 }
 export const PomodoroStatusSubject = new BehaviorSubject<PomodoroStatus>(
   PomodoroStatus.NONE,

@@ -27,16 +27,17 @@ interface IPomodoroSettings {
   restStep: restStep;
 }
 
-interface IPomodoroData {
+export interface IPomodoroData {
   settings: IPomodoroSettings;
   status?: PomodoroStatus;
   time?: number;
 }
 
-interface IPomodoroActions {
+export interface IPomodoroActions {
   setFocusStep: (step: focusStep) => void;
   setRestStep: (step: restStep) => void;
   startFocusing: () => void;
+  startOverFocusing: () => void;
   startResting: () => void;
   stopTimer: () => void;
 }
@@ -83,6 +84,9 @@ const PomodoroProvider = ({ children }: IChildProps) => {
           settingsRef.current = newData;
           return newData;
         });
+      },
+      startOverFocusing: () => {
+        PomodoroService.setStatus(PomodoroStatus.OVERFOCUSING);
       },
       startFocusing: () => {
         PomodoroService.setStatus(PomodoroStatus.FOCUSING);
@@ -154,5 +158,4 @@ function updatePomodoroData<T>(data: T, type: 'settings' | 'status') {
   localStorage.setItem(localKey, JSON.stringify(data));
 }
 
-export default PomodoroProvider;
-export { usePomodoroValue, usePomodoroActions };
+export { usePomodoroValue, usePomodoroActions, PomodoroProvider };

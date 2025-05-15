@@ -3,12 +3,11 @@ import { useExtremeMode } from '../../hooks';
 import React from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import { EXTREME_MODE, ExtremeModeProvider } from '../../hooks/useExtremeMode';
-import PomodoroProvider, { usePomodoroActions } from '../../hooks/usePomodoro';
+import { PomodoroProvider, usePomodoroActions } from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   todosApi,
   settingsApi,
-  rankingApi,
   EXTREME_EMAIL_STORAGE,
   EXTREME_TOKEN_STORAGE,
 } from '../../shared/apis';
@@ -109,7 +108,6 @@ describe('useExtremeMode', () => {
       ]),
     );
     todosApi.resetTodos = jest.fn();
-    rankingApi.resetRanking = jest.fn();
   });
 
   afterEach(() => jest.clearAllMocks());

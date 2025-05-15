@@ -2,7 +2,6 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { TodoCard } from '../../components';
-import EditUI from '../../components/TodoCard/content/EditUI';
 
 import { EditContextProvider } from '../../hooks';
 
@@ -13,8 +12,9 @@ import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +23,8 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const randomTagColor = RandomTagColorList.getInstance();
 
 const wrapperCreator = ({ children }: IChildProps) => (
   <QueryClientProvider client={queryClient}>
@@ -48,22 +50,37 @@ describe('TodoCard', () => {
     };
   };
 
-  let renderUI = (MainUI: JSX.Element, wrapperUI: typeof wrapperCreator) => {
+  const renderUI = (MainUI: JSX.Element, wrapperUI: typeof wrapperCreator) => {
     return render(MainUI, { wrapper: wrapperUI });
+  };
+
+  const renderTodoUI = (isDragging: boolean, isCurrTodo = false) => {
+    const setEditTodoId = jest.fn();
+    return renderUI(
+      <TodoCard
+        todoData={mockTodo}
+        dragHandleProps={undefined}
+        snapshot={setMockSnapshot(isDragging)}
+        focusStep={1}
+        randomTagColor={randomTagColor}
+        isCurrTodo={isCurrTodo}
+        order={1}
+        isThisEdit={false}
+        setEditTodoId={setEditTodoId}
+      />,
+      wrapperCreator,
+    );
   };
 
   describe('TodoUI', () => {
     describe('TodoUI는', () => {
-      it('Todo는 제목, 핸들 아이콘, 카테고리로 이루어져 있다.', () => {
-        const { getByText, getByRole } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
-
+      it('Todo는 제목이 있다.', () => {
+        const { getByText } = renderTodoUI(false);
+        const title = getByText('Go to grocery store');
+        expect(title).toBeInTheDocument();
+      });
+      it('Todo는 카테고리가 있다.', () => {
+        const { getByText } = renderTodoUI(false);
         const categories1 = getByText('영어');
         const categories2 = getByText('학교공부');
         expect(categories1).toBeInTheDocument();
@@ -72,91 +89,138 @@ describe('TodoCard', () => {
     });
 
     describe('drag 시에는', () => {
-      it('Todo의 카테고리가 숨겨진다.', () => {
-        const { queryByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(true)}
-          />,
-          wrapperCreator,
-        );
+      it('카테고리가 숨겨진다.', () => {
+        const { queryByText } = renderTodoUI(true);
 
         const categories1 = queryByText('영어');
         const categories2 = queryByText('학교공부');
         expect(categories1).not.toBeInTheDocument();
         expect(categories2).not.toBeInTheDocument();
       });
+      it('삭제 버튼이 숨겨진다.', () => {
+        const { queryByAltText } = renderTodoUI(true);
+
+        const deleteBtn = queryByAltText('delete');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('수정 버튼이 숨겨진다.', () => {
+        const { queryByAltText } = renderTodoUI(true);
+
+        const editBtn = queryByAltText('edit');
+        expect(editBtn).not.toBeInTheDocument();
+      });
     });
 
-    describe('TodoUI에', () => {
+    describe('남은 TodoUI에는', () => {
+      it('할 일의 번호가 있다.', () => {
+        const { getByText } = renderTodoUI(false);
+        const num = getByText('1.');
+        expect(num).toBeInTheDocument();
+      });
       it('수정 버튼이 있다.', () => {
-        const { getByText } = renderUI(
-          <TodoCard
-            todoData={mockTodo}
-            dragHandleProps={undefined}
-            snapshot={setMockSnapshot(false)}
-          />,
-          wrapperCreator,
-        );
+        const { getByText } = renderTodoUI(false);
 
-        fireEvent.mouseOver(getByText('Go to grocery store'));
-
-        act(() => {
-          expect(getByText('수정')).toBeInTheDocument();
-        });
+        expect(getByText('수정')).toBeInTheDocument();
       });
       it('삭제 버튼이 있다.', () => {
+        const { getByAltText } = renderTodoUI(false);
+
+        expect(getByAltText('delete')).toBeInTheDocument();
+      });
+      it('소요 시간이 있다.', () => {
+        const { getByText, getByAltText } = renderTodoUI(false);
+        const duration = getByText('3분');
+        const timer = getByAltText('timer');
+        expect(timer).toBeInTheDocument();
+        expect(duration).toBeInTheDocument();
+      });
+      it('핸들러 아이콘이 있다.', () => {
+        const { getByAltText } = renderTodoUI(false);
+        const handler = getByAltText('handler');
+        expect(handler).toBeInTheDocument();
+      });
+    });
+
+    describe('남은 TodoUI의 수정 버튼을 클릭하면', () => {
+      it('setEditTodoId를 호출해 부모 컴포넌트에서 UI를 변경하도록 한다', () => {
+        const setEditTodoIdMock = jest.fn();
         const { getByText } = renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
             snapshot={setMockSnapshot(false)}
+            focusStep={1}
+            randomTagColor={randomTagColor}
+            isCurrTodo={false}
+            order={1}
+            isThisEdit={false}
+            setEditTodoId={setEditTodoIdMock}
           />,
           wrapperCreator,
         );
 
-        fireEvent.mouseOver(getByText('Go to grocery store'));
+        const editBtn = getByText('수정');
+        fireEvent.click(editBtn);
 
-        act(() => {
-          expect(getByText('삭제')).toBeInTheDocument();
-        });
+        // 부모에게 ID를 전달해 isThisEdit이 true가 되도록 요청
+        expect(setEditTodoIdMock).toHaveBeenCalledWith(mockTodo.id);
       });
     });
 
-    describe('수정 버튼을 클릭하면', () => {
-      it('해당 todoCard의 UI가 EditUI로 바뀐다.', async () => {
-        const { getByText, getAllByText, findByRole } = renderUI(
-          <>
-            <TodoCard
-              todoData={mockTodo}
-              dragHandleProps={undefined}
-              snapshot={setMockSnapshot(false)}
-            />
-            <TodoCard
-              todoData={mockFetchTodoList()[1]}
-              dragHandleProps={undefined}
-              snapshot={setMockSnapshot(false)}
-            />
-          </>,
-          wrapperCreator,
-        );
-        // 해당 todoCard UI
-        const titleOne = getByText('Go to grocery store');
-        expect(titleOne).toBeInTheDocument();
-        // 다른 todoCard UI
-        const titleTwo = getByText('Go to Gym');
-        expect(titleTwo).toBeInTheDocument();
+    describe('진행 중인 TodoUI에는', () => {
+      it('수정 버튼이 없다.', () => {
+        const { queryByText } = renderTodoUI(false, true);
+        const editBtn = queryByText('수정');
+        expect(editBtn).not.toBeInTheDocument();
+      });
+      it('삭제 버튼이 없다.', () => {
+        const { queryByAltText } = renderTodoUI(false, true);
+        const deleteBtn = queryByAltText('delete');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('진행중 태그가 있다.', () => {
+        const { getByText } = renderTodoUI(false, true);
+        const inProgressTag = getByText('진행중');
+        expect(inProgressTag).toBeInTheDocument();
+      });
+    });
 
-        fireEvent.mouseOver(titleOne);
-
-        const editBtn = getAllByText('수정');
-        fireEvent.click(editBtn[0]);
-
-        const titleInput = await findByRole('textbox', { name: 'title_input' });
-        expect(titleOne).not.toBeInTheDocument();
-        expect(titleInput).toBeInTheDocument();
-        expect(titleTwo).toBeInTheDocument();
+    describe('완료한 TodoUI에는', () => {
+      const doneTodoUI = renderUI(
+        <TodoCard
+          todoData={mockFetchTodoList()[2]}
+          dragHandleProps={undefined}
+          snapshot={setMockSnapshot(false)}
+          focusStep={1}
+          randomTagColor={randomTagColor}
+          isCurrTodo={false}
+          order={1}
+          isThisEdit={false}
+          setEditTodoId={jest.fn()}
+        />,
+        wrapperCreator,
+      );
+      it('소요 시간이 없다.', () => {
+        const { queryByAltText, queryByText } = doneTodoUI;
+        const timerIcon = queryByAltText('timer');
+        const duration = queryByText('2분');
+        expect(duration).not.toBeInTheDocument();
+        expect(timerIcon).not.toBeInTheDocument();
+      });
+      it('삭제 버튼이 없다.', () => {
+        const { queryByText } = doneTodoUI;
+        const deleteBtn = queryByText('삭제');
+        expect(deleteBtn).not.toBeInTheDocument();
+      });
+      it('수정 버튼이 없다.', () => {
+        const { queryByText } = doneTodoUI;
+        const editBtn = queryByText('수정');
+        expect(editBtn).not.toBeInTheDocument();
+      });
+      it('핸들러 아이콘이 없다.', () => {
+        const { queryByAltText } = doneTodoUI;
+        const handlerIcon = queryByAltText('handler');
+        expect(handlerIcon).not.toBeInTheDocument();
       });
     });
   });
@@ -166,27 +230,27 @@ describe('TodoCard', () => {
 
     beforeEach(() => {
       renderEditUI = () => {
-        const renderResult = renderUI(
+        // 렌더링할 때 isThisEdit을 true로 설정하여 바로 편집 모드로 표시
+        return renderUI(
           <TodoCard
             todoData={mockTodo}
             dragHandleProps={undefined}
             snapshot={setMockSnapshot(false)}
+            focusStep={1}
+            randomTagColor={randomTagColor}
+            isCurrTodo={false}
+            order={1}
+            isThisEdit={true}
+            setEditTodoId={jest.fn()}
           />,
           wrapperCreator,
         );
-
-        const title = renderResult.getByText('Go to grocery store');
-        fireEvent.mouseOver(title);
-
-        const editBtn = renderResult.getByText('수정');
-        fireEvent.click(editBtn);
-        return renderResult;
       };
     });
 
     // 기본UI
     describe('EditUI는', () => {
-      it('title input이 있고, title input에는 기존 title이 입력되어 있습니다.', () => {
+      it('기존 title을 초깃값으로 가지는 title input이 있다.', () => {
         const { getByRole } = renderEditUI();
         const titleInput = getByRole('textbox', {
           name: /title/i,
@@ -208,17 +272,42 @@ describe('TodoCard', () => {
         expect(titleInput.value).toBe('modified title');
       });
 
-      //  TODO : categoryInput
+      it('title이 50자 이상 입력되면 더 이상 입력되지 않는다.', () => {
+        const { getByRole } = renderEditUI();
+        const titleInput = getByRole('textbox', {
+          name: /title/i,
+        }) as HTMLInputElement;
+
+        const longText = 'a'.repeat(51);
+        act(() => userEvent.type(titleInput, longText));
+
+        expect(titleInput.value.length).toBeLessThanOrEqual(50);
+      });
+
+      it('title을 비워두면 제출 버튼이 disabled된다.', async () => {
+        const { getByRole } = renderEditUI();
+        const titleInput = getByRole('textbox', {
+          name: /title/i,
+        }) as HTMLInputElement;
+        const saveBtn = getByRole('button', { name: /저장/i });
+        act(() => userEvent.clear(titleInput));
+        expect(saveBtn).toBeDisabled();
+      });
+
       it('category input에는 유저가 입력값을 입력할 수 있다.', () => {
         const { getByRole } = renderEditUI();
 
+        // CategoryInput 컴포넌트 내부의 실제 input 요소를 직접 선택
         const categoryInput = getByRole('textbox', {
-          name: 'category_input',
+          name: 'category input',
         }) as HTMLInputElement;
 
-        fireEvent.change(categoryInput, {
-          target: { value: 'add new category' },
-        });
+        expect(categoryInput).toBeInTheDocument();
+        waitFor(() =>
+          fireEvent.change(categoryInput, {
+            target: { value: 'add new category' },
+          }),
+        );
 
         expect(categoryInput.value).toBe('add new category');
       });
@@ -229,109 +318,79 @@ describe('TodoCard', () => {
         expect(getByText('학교공부')).toBeInTheDocument();
       });
 
-      it('day input에 기존 date가 설정되어 있다.', () => {
-        const { getByRole } = renderEditUI();
-        const calendar = getByRole('textbox', {
-          name: 'calendar_input',
-        }) as HTMLInputElement;
-
-        expect(calendar.value).toBe('2023-08-08');
+      it('소요시간이 있다.', () => {
+        const { queryByAltText, queryByText } = renderEditUI();
+        const timerIcon = queryByAltText('timer');
+        const duration = queryByText('3분');
+        expect(duration).toBeInTheDocument();
+        expect(timerIcon).toBeInTheDocument();
       });
 
-      // 토마토 아이콘, 토마토 드랍다운 버튼
-      it('Tomato 텍스트와 select 태그가 있다.', () => {
-        const { getByText, getByRole } = renderEditUI();
-
-        const tomato = getByText('🍅');
-        const select = getByRole('combobox', { name: 'tomato_select' });
-
-        expect(tomato).toBeInTheDocument();
-        expect(select).toBeInTheDocument();
-      });
-
-      it('default 값과 1부터 10까지의 option, 총 11개의 option 태그가 있다.', () => {
-        const { getAllByRole } = renderEditUI();
-        const options = getAllByRole('option', { name: 'tomato_option' });
-
-        expect(options).toBeDefined();
-        expect(options.length).toBe(11);
-      });
-
-      // 취소 버튼
-      it('취소 버튼이 있다.', () => {
-        const { getByAltText } = renderEditUI();
-
-        const cancelBtn = getByAltText('cancel_edit');
-
+      it('취소 svg가 있다.', () => {
+        const { queryByAltText } = renderEditUI();
+        const cancelBtn = queryByAltText('cancel');
         expect(cancelBtn).toBeInTheDocument();
       });
 
-      // 수정 버튼
-      it('제출 버튼이 있다.', () => {
-        const { getByAltText } = renderEditUI();
-
-        const submitBtn = getByAltText('submit_edit');
-
-        expect(submitBtn).toBeInTheDocument();
+      it('저장 버튼이 있다.', () => {
+        const { queryByText } = renderEditUI();
+        const saveBtn = queryByText('저장');
+        expect(saveBtn).toBeInTheDocument();
       });
     });
 
     describe('Category', () => {
-      let spyAlert: jest.SpyInstance<void, [message?: any]>;
-      beforeEach(() =>
-        (spyAlert = jest.spyOn(window, 'alert')).mockImplementation(),
-      );
-
       it('category input창에 카테고리를 입력하고 enter를 치면 새로운 카테고리가 추가된다.', () => {
         const { getByRole, queryAllByRole } = renderEditUI();
 
-        const categoryInput = getByRole('textbox', { name: 'category_input' });
-        let prevCategories = queryAllByRole('button', { name: 'category_tag' });
+        const categoryInput = getByRole('textbox', { name: 'category input' });
+        let prevCategories = queryAllByRole('button', { name: /category/i });
 
         act(() => userEvent.type(categoryInput, '새 카테고리{enter}'));
 
         const nextCategories = queryAllByRole('button', {
-          name: 'category_tag',
+          name: /category/i,
         });
         expect(nextCategories.length).toBe(prevCategories.length + 1);
       });
 
-      it('input된 값이 카테고리에 이미 존재하면 추가되지 않고 alert창을 띄워준다.', () => {
+      it('input된 값이 카테고리에 이미 존재하면 추가되지 않는다.', () => {
         const { queryAllByRole, getByRole } = renderEditUI();
 
-        const categoryInput = getByRole('textbox', { name: 'category_input' });
+        const categoryInput = getByRole('textbox', { name: 'category input' });
         act(() => userEvent.type(categoryInput, '영어{enter}'));
 
         const categories = queryAllByRole('button', {
-          name: 'category_tag',
+          name: /category/i,
         });
         const tagsContent = categories.map((tag) => tag.textContent);
         const filtered = tagsContent.filter((tag) => tag == '영어');
 
         expect(filtered.length).toBe(1);
-        expect(spyAlert).toBeCalledTimes(1);
       });
 
-      it('태그가 5개를 초과하면 category_input 태그을 없앤다.', () => {
-        const { getByRole, queryAllByRole, queryByRole } = renderEditUI();
+      it('태그가 5개를 초과하면 category input 태그를 없앤다.', () => {
+        const { getByRole, queryByRole } = renderEditUI();
 
-        const categoryInput = getByRole('textbox', { name: 'category_input' });
+        const categoryInput = getByRole('textbox', { name: 'category input' });
 
         act(() => userEvent.type(categoryInput, '첫 번째 카테고리{enter}'));
         act(() => userEvent.type(categoryInput, '두 번째 카테고리{enter}'));
         act(() => userEvent.type(categoryInput, '세 번째 카테고리{enter}'));
 
-        const removedInput = queryByRole('textbox', { name: 'category_input' });
+        const removedInput = queryByRole('textbox', { name: 'category input' });
 
         expect(removedInput).toBe(null);
       });
 
-      it('category를 입력하면 유효성 검사를 해서 alert창을 띄워준다.', () => {
+      it('카테고리가 20자를 초과하면, 유효성 검사에 실패하여 추가되지 않는다.', () => {
         const { getByRole, queryAllByRole } = renderEditUI();
 
-        const categoryInput = getByRole('textbox', { name: 'category_input' });
+        const categoryInput = getByRole('textbox', {
+          name: 'category input',
+        }) as HTMLInputElement;
 
-        let prevCategories = queryAllByRole('button', { name: 'category_tag' });
+        let prevCategories = queryAllByRole('button', { name: /category/i });
 
         act(() =>
           userEvent.type(
@@ -341,97 +400,140 @@ describe('TodoCard', () => {
         );
 
         const nextCategories = queryAllByRole('button', {
-          name: 'category_tag',
+          name: /category/i,
         });
 
         expect(nextCategories.length).toBe(prevCategories.length);
-        expect(spyAlert).toBeCalledTimes(1);
+        expect(categoryInput.value).toBe(
+          'I really psyched up starting new 2024!!!',
+        );
+      });
+
+      it('카테고리에 특수문자나 이모지가 있으면 유효성 검사 오류 메시지가 표시된다.', () => {
+        const { getByRole, queryAllByRole, queryByText } = renderEditUI();
+
+        const categoryInput = getByRole('textbox', { name: 'category input' });
+        let prevCategories = queryAllByRole('button', { name: /category/i });
+
+        act(() => userEvent.type(categoryInput, '🍅 토마토 스터디{enter}'));
+
+        const nextCategories = queryAllByRole('button', {
+          name: /category/i,
+        });
+
+        const errorMessage = queryByText(/숫자,특수문자/i);
+        expect(nextCategories.length).toBe(prevCategories.length);
+        expect(errorMessage).toBeInTheDocument();
+      });
+
+      it('카테고리 입력 시 앞뒤 공백은 제거되고 연속된 공백은 하나로 처리된다.', () => {
+        const { getByRole, getByText } = renderEditUI();
+
+        const categoryInput = getByRole('textbox', { name: 'category input' });
+
+        act(() => userEvent.type(categoryInput, '   공부   시간   {enter}'));
+
+        const cleanedCategory = getByText('공부 시간');
+        expect(cleanedCategory).toBeInTheDocument();
       });
 
       it('존재하는 category를 클릭하면 삭제된다.', () => {
         const { queryAllByRole, getByRole, getByText } = renderEditUI();
 
         const categoryInput = getByRole('textbox', {
-          name: 'category_input',
+          name: 'category input',
         });
         act(() => userEvent.type(categoryInput, '수학공부{enter}'));
 
         const firstCheckPointCategories = queryAllByRole('button', {
-          name: 'category_tag',
+          name: /category/i,
         });
         expect(firstCheckPointCategories.length).toBe(3);
 
         const thirdTag = getByText('수학공부');
         act(() => userEvent.click(thirdTag));
         const secondCheckPointCategories = queryAllByRole('button', {
-          name: 'category_tag',
+          name: /category/i,
         });
         expect(secondCheckPointCategories.length).toBe(2);
 
         const firstTag = getByText('영어');
         act(() => userEvent.click(firstTag));
         const lastCheckPointCategories = queryAllByRole('button', {
-          name: 'category_tag',
+          name: /category/i,
         });
         expect(lastCheckPointCategories.length).toBe(1);
       });
     });
 
-    // 토마토 수정 (토마토 수정, 토마토 토글, 수정, 수정 취소)
-    describe('Tomato', () => {
-      it('option 태그를 클릭하면 select 값이 바뀐다.', () => {
-        const { getByRole, getAllByRole } = renderEditUI();
+    describe('소요시간을 누르면', () => {
+      it('TomatoInput이 렌더링 된다.', () => {
+        const { getByLabelText, getByText } = renderEditUI();
+        const duration = getByText('3분');
+        act(() => userEvent.click(duration));
+        const tomatoInput = getByLabelText('tomatoInput');
+        expect(tomatoInput).toBeInTheDocument();
+      });
+      it('TomatoInput 외부를 클릭하면 TomatoInput이 언마운트 된다.', () => {
+        const setEditTodoIdMock = jest.fn();
+        const { getByLabelText, queryByLabelText, getByText } = renderUI(
+          <div id="root">
+            <TodoCard
+              todoData={mockTodo}
+              dragHandleProps={undefined}
+              snapshot={setMockSnapshot(false)}
+              focusStep={1}
+              randomTagColor={randomTagColor}
+              isCurrTodo={false}
+              order={1}
+              isThisEdit={true} // 직접 편집 모드로 설정
+              setEditTodoId={setEditTodoIdMock}
+            />
+          </div>,
+          wrapperCreator,
+        );
 
-        let select = getByRole('combobox', {
-          name: 'tomato_select',
-        }) as HTMLSelectElement;
+        // 수정 모드에서 tomatoInput 렌더링
+        const duration = getByText('3분');
+        const titleInput = getByLabelText('title_input');
+        act(() => userEvent.click(duration));
 
-        expect(select.selectedIndex).toBe(3);
+        // 렌더링 되었는지 확인
+        let tomatoInput = queryByLabelText('tomatoInput');
+        expect(tomatoInput).toBeInTheDocument();
 
-        const options = getAllByRole('option', { name: 'tomato_option' });
-
-        act(() => userEvent.selectOptions(select, options[1]));
-
-        select = getByRole('combobox', {
-          name: 'tomato_select',
-        }) as HTMLSelectElement;
-
-        expect(select.selectedIndex).toBe(1);
+        // 외부 요소 클릭해서 언마운트 확인
+        act(() => userEvent.click(titleInput));
+        tomatoInput = queryByLabelText('tomatoInput');
+        expect(tomatoInput).not.toBeInTheDocument();
       });
     });
 
-    // 취소버튼 눌렀을 때 그대로인 UI
-    // 확인버튼 눌렀을 때 추가된 UI
     describe('Button', () => {
-      it('수정 버튼을 누르면 handleEditSubmit 메소드가 호출된다.', () => {
-        const mockHandleEditSubmit = jest.fn();
+      it('취소 svg를 누르면 setEditTodoId가 호출된다', () => {
+        const setEditTodoIdMock = jest.fn();
+
         const { getByAltText } = renderUI(
-          <EditUI
-            todoData={mockFetchTodoList()[0]}
-            handleEditCancel={jest.fn()}
-            handleEditSubmit={mockHandleEditSubmit}
+          <TodoCard
+            todoData={mockTodo}
+            dragHandleProps={undefined}
+            snapshot={setMockSnapshot(false)}
+            focusStep={1}
+            randomTagColor={randomTagColor}
+            isCurrTodo={false}
+            order={1}
+            isThisEdit={true}
+            setEditTodoId={setEditTodoIdMock}
           />,
-          ({ children }: IChildProps) => (
-            <>
-              <ThemeProvider theme={designTheme}>{children}</ThemeProvider>
-            </>
-          ),
+          wrapperCreator,
         );
-        const submitBtn = getByAltText('submit_edit');
-        act(() => userEvent.click(submitBtn));
 
-        expect(mockHandleEditSubmit).toHaveBeenCalled();
-      });
-
-      it('취소 버튼을 누르면 TodoUI가 렌더링 된다.', () => {
-        const { getByAltText, getByText } = renderEditUI();
-
-        const cancelBtn = getByAltText('cancel_edit');
+        const cancelBtn = getByAltText('cancel');
+        expect(cancelBtn).toBeInTheDocument();
 
         act(() => userEvent.click(cancelBtn));
 
-        const title = getByText('Go to grocery store');
-        expect(title).toBeInTheDocument();
+        expect(setEditTodoIdMock).toHaveBeenCalledWith(undefined);
       });
     });
   });

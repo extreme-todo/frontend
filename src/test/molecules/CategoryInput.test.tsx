@@ -30,6 +30,7 @@ describe('CategoryInput', () => {
           handleSubmit={mockHandleSubmit}
           handleClick={mockHandleClick}
           handleChangeCategory={mockHandleChangeCategory}
+          tagColorList={{ 영어: 'green', 학교공부: 'purple' }}
         />,
         {
           wrapper: ({ children }: IChildProps) => (
@@ -56,7 +57,7 @@ describe('CategoryInput', () => {
       }) as HTMLInputElement;
 
       expect(categoryInput).toBeInTheDocument();
-      expect(categoryInput.placeholder).toBe('카테고리를 입력하세요');
+      expect(categoryInput.placeholder).toBe('태그 추가하기');
       expect(categoryInput.value.length).toBe(0);
     });
 
@@ -66,6 +67,13 @@ describe('CategoryInput', () => {
       const categories = getAllByRole('button', { name: 'category_tag' });
 
       expect(categories.length).toBe(2);
+    });
+
+    it('삭제할 수 있는 것을 알려주기 위한 delete svg가 있다.', () => {
+      const { getAllByLabelText } = renderUI();
+      const deleteSvg = getAllByLabelText('delete');
+
+      expect(deleteSvg[0]).toBeInTheDocument();
     });
   });
 });
