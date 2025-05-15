@@ -1,26 +1,6 @@
-import { ICategory, IRanking, IRecords } from './interfaces';
+import { ICategory } from './interfaces';
 
 export const ONE_SECOND = 60000;
-
-export const initialRecords: IRecords = {
-  daily: 0,
-  weekly: 0,
-  monthly: 0,
-};
-
-export const dummyRecords: IRecords = {
-  daily: 305,
-  weekly: 2433,
-  monthly: -5034,
-};
-
-export const initialRanking: IRanking = {
-  group: [{ '0': 0 }],
-  user: {
-    id: 0,
-    time: 0,
-  },
-};
 
 export const responsiveBreakpoints = {
   mobile: {
@@ -38,27 +18,6 @@ export const responsiveBreakpoints = {
   desktop: {
     min: 1024,
     max: 1279,
-  },
-};
-
-export const dummyRanking: IRanking = {
-  group: [
-    {
-      '0~600': 1,
-      '600~1200': 3,
-      '1200~1800': 2,
-      '1800~2400': 5,
-      '2400~3000': 3,
-      '3000~3600': 1,
-      '3600~4200': 1,
-      '4200~4800': 2,
-      '4800~5400': 3,
-      '5400~6000': 6,
-    },
-  ],
-  user: {
-    id: 123,
-    time: 5612,
   },
 };
 

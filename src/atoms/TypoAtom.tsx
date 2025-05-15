@@ -45,4 +45,8 @@ const Typo = styled.span<ITypoProps>`
     fontSize ? theme.fontSize[fontSize].weight : theme.fontSize.body.weight};
   ${({ rainbow }) => rainbow && rainbowStyle};
   padding: ${({ padding }) => padding || 0};
+  line-height: ${({ theme, fontSize }) =>
+    fontSize
+      ? (theme.fontSize[fontSize].lineHeight as string)
+      : (theme.fontSize.body.lineHeight as string)};
 `;

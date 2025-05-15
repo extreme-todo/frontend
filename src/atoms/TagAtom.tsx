@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
 import { BackgroundColorName, FontName, TagColorName } from '../styles/emotion';
+import { css } from '@emotion/react';
 
 export interface ITagAtomProps extends IChildProps {
   title?: string;
@@ -14,6 +15,8 @@ interface ITagSpanProps {
   fontsize?: FontName;
   size?: 'normal';
   borderColor?: BackgroundColorName;
+  isSelected?: boolean;
+  selectable?: boolean;
 }
 
 function TagAtom({
@@ -29,13 +32,29 @@ function TagAtom({
       {...styleOption}
       className={className}
       aria-label={ariaLabel}
+      bg={styleOption?.bg ?? 'orange'}
     >
       {children}
+      {styleOption?.selectable && (
+        <svg
+          className="check-icon"
+          width="10"
+          height="8"
+          viewBox="0 0 10 8"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M1 3.4L4.42857 7L9 1" />
+        </svg>
+      )}
     </TagSpan>
   );
 }
 
-const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
+const TagSpan = styled.span<
+  ITagSpanProps & { isHandler?: boolean; bg: TagColorName | 'transparent' }
+>`
+  transition: opacity 0.3s ease-in-out;
   width: ${({ size }) => {
     switch (size) {
       case 'normal':
@@ -61,11 +80,7 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
   }};
 
   background: ${({ bg, theme }) =>
-    bg
-      ? bg === 'transparent'
-        ? 'transparent'
-        : theme.color.tag[bg]
-      : theme.color.tag['orange']};
+    bg === 'transparent' ? 'transparent' : theme.color.tag[bg]};
   color: ${({
     bg,
     theme: {
@@ -73,10 +88,11 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
     },
   }) => {
     switch (bg) {
-      case 'mint':
-      case 'orange':
-      case 'pink':
+      case 'green':
+      case 'gray':
+      case 'brown':
       case 'purple':
+      case 'cyan':
         return fontColor.white;
       default:
         return fontColor.primary1;
@@ -103,6 +119,55 @@ const TagSpan = styled.span<ITagSpanProps & { isHandler?: boolean }>`
   white-space: nowrap;
   display: flex;
   align-items: center;
+
+  &:has(.check-icon) {
+    padding-right: 0.25rem;
+    ${({ isSelected }) =>
+      !isSelected &&
+      css`
+        opacity: 0.3;
+      `}
+  }
+  .check-icon {
+    display: inline-flex;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    margin-left: 0.25rem;
+    padding: 0.125rem;
+    box-sizing: border-box;
+    background-color: ${({ bg }) => {
+      switch (bg) {
+        case 'green':
+        case 'gray':
+        case 'brown':
+        case 'purple':
+        case 'cyan':
+          return 'rgba(255, 255, 255, 0.25)';
+        default:
+          return 'rgba(82,62,161, 0.25)';
+      }
+    }};
+    stroke: ${({
+      bg,
+      isSelected,
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => {
+      if (!isSelected) return 'transparent';
+      switch (bg) {
+        case 'green':
+        case 'gray':
+        case 'brown':
+        case 'purple':
+        case 'cyan':
+          return '#ffffff';
+        default:
+          return backgroundColor.primary1;
+      }
+    }};
+  }
 `;
 
 export default TagAtom;

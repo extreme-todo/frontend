@@ -7,7 +7,7 @@ import axios, {
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
-import { ICategory, IRanking, ISettings } from './interfaces';
+import { ICategory, IFocusTime, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
 import { RandomTagColorList } from './RandomTagColorList';
 import { queryClient } from '../App';
@@ -165,23 +165,24 @@ export const todosApi = {
 };
 export const timerApi = {
   _route: 'timer',
-  getRecords: async (currentDate: string, offset: number) => {
-    return baseApi.get('timer/progress', {
-      params: { currentDate, offset },
+  // duration in minutes
+  recordFocusTime: async (category: string, duration: number) => {
+    return baseApi.post(`${timerApi._route}/focused-time`, {
+      category,
+      duration,
     });
   },
-};
-
-export const rankingApi = {
-  _route: 'ranking',
-  getRanking: async (categoryName: string) => {
-    const { data: ranking }: AxiosResponse<IRanking> = await baseApi.get(
-      `${rankingApi._route}?category=${categoryName}`,
-    );
-    return ranking;
+  getRecords: async (
+    timezoneOffset: number,
+    unit: 'week' | 'month' | 'day',
+    categoryId?: number,
+  ) => {
+    return baseApi.get<IFocusTime>(`${timerApi._route}/focused-time`, {
+      params: { timezoneOffset, unit, categoryId },
+    });
   },
-  resetRanking: async () => {
-    return baseApi.delete(`${rankingApi._route}/reset`);
+  resetRecords: async () => {
+    return baseApi.delete(`${timerApi._route}/focused-time`);
   },
 };
 

@@ -14,8 +14,9 @@ type FontWeight = 700 | 600 | 400;
 interface FontAttribute {
   size: RemType<FontRemSize>;
   weight: FontWeight;
+  lineHeight: LengthType;
 }
-type FontName = 'clock' | 'h1' | 'h2' | 'h3' | 'body' | 'b1' | 'b2';
+type FontName = 'clock' | 'h1' | 'h2' | 'h3' | 'body' | 'b1' | 'b2' | 'tag';
 type FontSize = Record<FontName, FontAttribute>;
 
 /* color */

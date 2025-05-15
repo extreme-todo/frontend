@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { IChildProps } from '../shared/interfaces';
 
 type EditTodoType = string | undefined;
@@ -13,7 +7,7 @@ type IEditContext = [
   React.Dispatch<React.SetStateAction<EditTodoType>>,
 ];
 
-const EditContext = createContext<IEditContext | null>(null);
+const EditContext = createContext<IEditContext>([undefined, () => {}]);
 
 const EditContextProvider = ({ children }: IChildProps): JSX.Element => {
   const editTodoId = useState<EditTodoType>(undefined);
@@ -25,10 +19,6 @@ const EditContextProvider = ({ children }: IChildProps): JSX.Element => {
 
 const useEdit = () => {
   const value = useContext(EditContext);
-  if (value === null)
-    throw new Error('value is undefined', {
-      cause: 'useEdit',
-    });
   return value;
 };
 

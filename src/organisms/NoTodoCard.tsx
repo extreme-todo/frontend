@@ -32,6 +32,7 @@ const StyledNoTodoCard = styled.div`
   .no-todo-card {
     display: flex;
     flex-direction: column;
+    z-index: 1;
     .tomato {
       margin-bottom: 8px;
     }
