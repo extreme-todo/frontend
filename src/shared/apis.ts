@@ -176,6 +176,9 @@ export const timerApi = {
       params: { timezoneOffset, unit, categoryId },
     });
   },
+  resetRecords: async () => {
+    return baseApi.delete(`${timerApi._route}/focused-time`);
+  },
 };
 
 export const categoryApi = {
