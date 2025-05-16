@@ -16,7 +16,7 @@ import {
   TopRightCornerIcon,
 } from './content';
 
-import { focusStep } from '../../hooks/usePomodoro';
+import { focusStep } from '../../hooks';
 
 import { todosApi } from '../../shared/apis';
 import {

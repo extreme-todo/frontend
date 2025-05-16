@@ -11,9 +11,9 @@ interface ITodoFocusedTime {
   focusTime: number;
 }
 const TODO_FOCUS_TIME_KEY = 'ExtremeTodoFocusTime';
-type TodoResponseDto = TodoEntity;
+export type TodoResponseDto = TodoEntity;
 
-const useCurrentTodo = ({
+export const useCurrentTodo = ({
   value: { settings: pomodoroSettings, status, time },
   actions,
 }: {
@@ -213,5 +213,3 @@ const useCurrentTodo = ({
 
   return useCurrentTodoResult;
 };
-export default useCurrentTodo;
-export { type TodoResponseDto };

@@ -22,9 +22,12 @@ import {
 } from 'react-beautiful-dnd';
 
 /* hooks */
-import { useDraggableInPortal, useEdit } from '../../hooks';
-import { type focusStep } from '../../hooks/usePomodoro';
-import useTouchSensor from '../../hooks/useTouchSensor';
+import {
+  useDraggableInPortal,
+  useEdit,
+  type focusStep,
+  useTouchSensor,
+} from '../../hooks';
 
 /* etc */
 import styled from '@emotion/styled';
