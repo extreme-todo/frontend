@@ -49,9 +49,9 @@ function ExtremeModeIndicator() {
         </div>
       )}
       {isExtreme ? (
-        <img src="/icons/bolt-red.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icon/bolt-red.svg" onClick={toggleExtremeMode}></img>
       ) : (
-        <img src="/icons/bolt.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icon/bolt.svg" onClick={toggleExtremeMode}></img>
       )}
       {popperOpen && (
         <PopperAtom
@@ -74,11 +74,11 @@ function ExtremeModeIndicator() {
               >
                 <IconAtom
                   className="close-icon"
-                  src="icons/close-red.svg"
+                  src="icon/close-red.svg"
                 ></IconAtom>
               </BtnAtom>
             </div>
-            <img src="/icons/tooltip-arrow.svg" className="tooltip-arrow"></img>
+            <img src="/icon/tooltip-arrow.svg" className="tooltip-arrow"></img>
           </div>
         </PopperAtom>
       )}

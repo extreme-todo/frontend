@@ -79,7 +79,7 @@ function CurrentTodo({
             btnStyle="darkBtn"
             handleOnClick={() => startResting()}
           >
-            <IconAtom src="icons/pause-dark.svg" size={1} />
+            <IconAtom src="icon/pause-dark.svg" size={1} />
           </BtnAtom>
           <BtnAtom
             className="do-todo"

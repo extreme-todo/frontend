@@ -19,7 +19,7 @@ function LogInToUnlock({
   return (
     <UnlockContainer>
       <div className="labels">
-        <img className="lock-icon" src={icon ?? '/icons/icon-lock.svg'} />
+        <img className="lock-icon" src={icon ?? '/icon/icon-lock.svg'} />
         <div>
           <LogInToUnlock.typo
             fontSize={'h2'}

@@ -207,9 +207,9 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               onClick={() => handleClickSideButton('timeModal')}
             >
               {isExtreme ? (
-                <img src="icons/clock-red.svg" />
+                <img src="icon/clock-red.svg" />
               ) : (
-                <img src="icons/clock.svg" />
+                <img src="icon/clock.svg" />
               )}
               <TypoAtom
                 fontSize="body"
@@ -224,9 +224,9 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               onClick={() => handleClickSideButton('todolistModal')}
             >
               {isExtreme ? (
-                <img src="icons/list-red.svg" />
+                <img src="icon/list-red.svg" />
               ) : (
-                <img src="icons/list.svg" />
+                <img src="icon/list.svg" />
               )}
               {/* TODO: 남은 할 일 계산 로직 추가 */}
               <TypoAtom
