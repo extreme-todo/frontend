@@ -20,7 +20,10 @@ export function CategoryList({ categories }: ICategoryListProps) {
   return (
     <StyledCategoryList>
       {categories?.map((category) => (
-        <TagAtom styleOption={{ ...tagSize, bg: tagColorList[category] }}>
+        <TagAtom
+          key={category}
+          styleOption={{ ...tagSize, bg: tagColorList[category] }}
+        >
           {category}
         </TagAtom>
       ))}
