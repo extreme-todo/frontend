@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import React from 'react';
 import { designTheme } from '../styles/theme';
 
 /**
@@ -8,7 +7,7 @@ import { designTheme } from '../styles/theme';
  * @param {number} progress (1~100)% 값
  * @param {keyof typeof designTheme.color} bgColor progress 색 지정
  */
-const ProgressButtonAtom = styled.button<{
+export const ProgressButtonAtom = styled.button<{
   progress: number;
   bgColor?: keyof typeof designTheme.color;
 }>`
@@ -41,5 +40,3 @@ const ProgressButtonAtom = styled.button<{
     font-size: 2.5rem;
   }
 `;
-
-export default ProgressButtonAtom;
