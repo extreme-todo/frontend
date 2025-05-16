@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { TodoEntity } from '../../DB/indexedAction';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
-import { CurrentTodo } from '../../molecules';
+import { CurrentTodo } from '../../organisms';
 import React from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';

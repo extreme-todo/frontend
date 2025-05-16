@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { TodoCard } from '../../components';
@@ -12,7 +12,7 @@ import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
