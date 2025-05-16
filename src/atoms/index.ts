@@ -9,7 +9,6 @@ export { IconAtom } from './IconAtom';
 export { InputAtom } from './InputAtom';
 export { ListAtom } from './ListAtom';
 export { PopperAtom } from './PopperAtom';
-export { ProgressButtonAtom } from './ProgressButtonAtom';
 export { TagAtom, type ITagSpanProps } from './TagAtom';
 export { TodoProgressBarAtom } from './TodoProgressBarAtom';
 export { TomatoInputAtom } from './TomatoInputAtom';
