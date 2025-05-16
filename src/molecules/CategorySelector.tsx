@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import React from 'react';
 import { BtnAtom, TagAtom } from '../atoms';
 import { ICategory } from '../shared/interfaces';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
@@ -11,7 +10,7 @@ interface ICategorySelectorProps {
   isMobile?: boolean;
 }
 
-function CartegorySelector({
+export function CategorySelector({
   categories,
   selected,
   selectHandler,
@@ -128,5 +127,3 @@ const CSContainer = styled.div<{ isMobile: boolean }>`
   }
   ${({ isMobile }) => isMobile && ``}
 `;
-
-export default CartegorySelector;

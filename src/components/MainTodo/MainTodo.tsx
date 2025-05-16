@@ -24,9 +24,10 @@ import PomodoroTimeSetting from '../PomodoroTimeSetting';
 import { PomodoroStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
 import { CardAtom, TypoAtom } from '../../atoms';
-import CardAnimationPlayer, {
+import {
   CardAnimationPlayerAnimationType,
-} from '../../atoms/CardAnimationPlayer';
+  CardAnimationPlayerAtom,
+} from '../../atoms/CardAnimationPlayerAtom';
 import { BackgroundColorName } from '../../styles/emotion';
 import NoTodoCard from '../../organisms/NoTodoCard';
 import {
@@ -245,18 +246,20 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
             </SideButtons.SideButton>
           </SideButtons>
           <div className="center">
-            <CardAnimationPlayer trigger={currentCardAnimationTrigger$.current}>
+            <CardAnimationPlayerAtom
+              trigger={currentCardAnimationTrigger$.current}
+            >
               <CurrentMainCard type="current" />
-            </CardAnimationPlayer>
+            </CardAnimationPlayerAtom>
             {prevCard && (
-              <CardAnimationPlayer animation={'HIDE_UP'}>
+              <CardAnimationPlayerAtom animation={'HIDE_UP'}>
                 <CurrentMainCard type="prev" />
-              </CardAnimationPlayer>
+              </CardAnimationPlayerAtom>
             )}
             {!prevCard && (
-              <CardAnimationPlayer animation={'NEXT_UP'}>
+              <CardAnimationPlayerAtom animation={'NEXT_UP'}>
                 <CardAtom bg={getDummyCardColor()} style={{ zIndex: -1 }} />
-              </CardAnimationPlayer>
+              </CardAnimationPlayerAtom>
             )}
           </div>
         </MainTodoCenter>

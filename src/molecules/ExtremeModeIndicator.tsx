@@ -1,11 +1,11 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LoginContext, useExtremeMode, usePomodoroValue } from '../hooks';
 import styled from '@emotion/styled';
 import { BtnAtom, IconAtom, PopperAtom, TypoAtom } from '../atoms';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
 
-function ExtremeModeIndicator() {
+export function ExtremeModeIndicator() {
   const { isLogin } = useContext(LoginContext);
   const { status } = usePomodoroValue();
   const { isExtreme, leftTime, handleExtremeMode } = useExtremeMode();
@@ -85,8 +85,6 @@ function ExtremeModeIndicator() {
     </ExtremeModeContainer>
   );
 }
-
-export default ExtremeModeIndicator;
 
 const ExtremeModeContainer = styled.div`
   position: absolute;

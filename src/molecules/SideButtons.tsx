@@ -1,11 +1,9 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
 import { BtnAtom } from '../atoms';
 
-export type ISideButtonsProps = IChildProps;
-
-function SideButtonsMain({ children }: ISideButtonsProps) {
+function SideButtonsMain({ children }: IChildProps) {
   return <SideButtonsWrapper>{children}</SideButtonsWrapper>;
 }
 
@@ -50,8 +48,6 @@ const SideButton = ({
   );
 };
 
-const SideButtons = Object.assign(SideButtonsMain, {
+export const SideButtons = Object.assign(SideButtonsMain, {
   SideButton,
 });
-
-export default SideButtons;

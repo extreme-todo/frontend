@@ -4,8 +4,8 @@ import { TodoEntity } from '../DB/indexedAction';
 import styled from '@emotion/styled';
 import { BtnAtom, IconAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
-import Clock from './Clock';
-import CategoryList from './CategoryList';
+import Clock from '../molecules/Clock';
+import CategoryList from '../molecules/CategoryList';
 import { useExtremeMode } from '../hooks';
 
 export interface ICurrentTodoProps extends IChildProps {

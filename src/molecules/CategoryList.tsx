@@ -9,7 +9,7 @@ export interface ICategoryListProps extends IChildProps {
   categories: TodoEntity['categories'];
 }
 
-function CategoryList({ categories }: ICategoryListProps) {
+export function CategoryList({ categories }: ICategoryListProps) {
   const tagSize: ITagSpanProps = useMemo(() => {
     return {
       fontsize: 'b2',
@@ -35,5 +35,3 @@ const StyledCategoryList = styled.div`
   gap: 0.5rem;
   flex-wrap: wrap;
 `;
-
-export default CategoryList;

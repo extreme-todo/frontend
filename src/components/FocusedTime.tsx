@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import { categoryApi, timerApi } from '../shared/apis';
-import CartegorySelector from '../molecules/CartegorySelector';
+import { CategorySelector } from '../molecules/CategorySelector';
 import {
   ICategory,
   IDayFocusedTime,

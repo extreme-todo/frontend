@@ -22,7 +22,7 @@ const START_SIZE = [ACTIVE_SIZE, ACTIVE_OPACITY];
 const MIDDLE_SIZE = [ACTIVE_OPACITY, ACTIVE_SIZE, ACTIVE_OPACITY];
 const END_SIZE = [ACTIVE_OPACITY, ACTIVE_SIZE];
 
-const Navigation = ({
+export const Navigation = ({
   navigationLists,
   scrollYProgress,
   isLabelVisible,
@@ -77,5 +77,3 @@ const Navigation = ({
     </nav>
   );
 };
-
-export { Navigation };
