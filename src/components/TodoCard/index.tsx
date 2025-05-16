@@ -211,10 +211,10 @@ const TodoCard = ({
       event.preventDefault();
       const formData = new FormData(event.currentTarget as HTMLFormElement);
       const newTodo: UpdateDto = {
+        date: todoData.date,
         todo: formData.get('title') as string,
         duration,
         categories: categoryArray.length === 0 ? null : categoryArray,
-        date: setTimeInFormat(new Date()).toISOString(),
       };
       const { success, error } = UpdateSchema.safeParse(newTodo);
 
