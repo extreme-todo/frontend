@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from 'react';
 
 /* component */
-import TodoCard from '../TodoCard';
+import { TodoCard } from '../';
 import { BtnAtom, CardAtom, TypoAtom } from '../../atoms';
 
 /* indexed DB */
@@ -32,7 +32,7 @@ import { getDateInFormat, setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
-import { ModalType } from '../MainTodo/MainTodo';
+import { ModalType } from '../MainTodo';
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
@@ -68,7 +68,7 @@ interface ITodoListProps {
   focusStep: focusStep;
 }
 
-const TodoList = memo(
+export const TodoList = memo(
   ({ openAddTodoModal, currentTodo, focusStep }: ITodoListProps) => {
     /* api 호출 */
     const queryClient = useQueryClient();
@@ -143,13 +143,6 @@ const TodoList = memo(
 
     return (
       <>
-        {/* <Modal
-        title={'todolist'}
-        handleClose={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-      > */}
-        {/* <CardAtom> */}
         {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
         <TodoListContainer padding="2rem 1.5rem" className="card">
           <ListSection>
@@ -269,14 +262,10 @@ const TodoList = memo(
             )}
           </ListSection>
         </TodoListContainer>
-        {/* </CardAtom> */}
-        {/* </Modal> */}
       </>
     );
   },
 );
-
-export default TodoList;
 
 const TodoListContainer = styled(CardAtom)`
   /* &,

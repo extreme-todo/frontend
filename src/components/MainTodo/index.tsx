@@ -8,9 +8,13 @@ import {
   useState,
 } from 'react';
 import { SideButtons } from '../../molecules';
-import { CurrentTodoCard } from '../../organisms';
-import AddTodo from '../AddTodo';
-import TodoList from '../TodoList';
+import { CurrentTodoCard, NoTodoCard, RestCard } from '../../organisms';
+import { TodoList, AddTodo, PomodoroTimeSetting } from '..';
+import {
+  MainTodoCenter,
+  MainTodoContainer,
+  MainTodoContentWrapper,
+} from './MainTodoStyles';
 import {
   EditContextProvider,
   LoginContext,
@@ -20,29 +24,22 @@ import {
   usePomodoroValue,
   useTimeMarker,
 } from '../../hooks';
-import PomodoroTimeSetting from '../PomodoroTimeSetting';
 import { PomodoroStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
-import { CardAtom, TypoAtom } from '../../atoms';
 import {
+  CardAtom,
+  TypoAtom,
   CardAnimationPlayerAnimationType,
   CardAnimationPlayerAtom,
-} from '../../atoms/CardAnimationPlayerAtom';
+} from '../../atoms';
 import { BackgroundColorName } from '../../styles/emotion';
-import NoTodoCard from '../../organisms/NoTodoCard';
-import {
-  MainTodoCenter,
-  MainTodoContainer,
-  MainTodoContentWrapper,
-} from './MainTodoStyles';
 import { Subject } from 'rxjs';
-import RestCard from '../../organisms/RestCard';
 
 export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
 export type CardType = ModalType | 'noTodo' | 'currentTodo' | 'rest';
 
-const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
+export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
   const [currentCard, setCurrentCard] = useState<CardType>('currentTodo');
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
@@ -267,5 +264,3 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     </MainTodoContainer>
   );
 });
-
-export default MainTodo;

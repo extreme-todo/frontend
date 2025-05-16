@@ -2,6 +2,7 @@ export { BtnAtom } from './BtnAtom';
 export {
   type CardAnimationPlayerAnimationType,
   type ICardAnimationPlayerProps,
+  CardAnimationPlayerAtom,
 } from './CardAnimationPlayerAtom';
 export { CardAtom } from './CardAtom';
 export { IconAtom } from './IconAtom';

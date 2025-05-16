@@ -6,13 +6,15 @@ import {
   useState,
 } from 'react';
 
-import { IconAtom, PopperAtom, TomatoInput, TypoAtom } from '../../atoms';
+import { IconAtom, PopperAtom, TomatoInputAtom, TypoAtom } from '../../atoms';
 
-import FooterContent from './content/FooterContent';
-import CategoryContent from './content/CategoryContent';
-import HandlerIconAndOrder from './content/HandleIconAndOrder';
-import TitleOrInput from './content/TitleOrInput';
-import TopRightCornerIcon from './content/TopRightCornerIcon';
+import {
+  FooterContent,
+  CategoryContent,
+  HandlerIconAndOrder,
+  TitleOrInput,
+  TopRightCornerIcon,
+} from './content';
 
 import { focusStep } from '../../hooks/usePomodoro';
 
@@ -31,7 +33,7 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 
-import { formatTime, setTimeInFormat } from '../../shared/timeUtils';
+import { formatTime } from '../../shared/timeUtils';
 import {
   categoryValidation,
   titleValidation,
@@ -55,7 +57,7 @@ interface ITodoCardProps {
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
-const TodoCard = ({
+export const TodoCard = ({
   todoData,
   dragHandleProps,
   snapshot,
@@ -446,7 +448,7 @@ const TodoCard = ({
               <TypoAtom>{formatTime(durationValue * focusStep)}</TypoAtom>
               <TypoAtom>{durationValue}round</TypoAtom>
             </TomatoInfo>
-            <TomatoInput
+            <TomatoInputAtom
               max={10}
               min={0}
               period={focusStep}
@@ -469,9 +471,6 @@ const TodoCard = ({
     </TodoCardContainer>
   );
 };
-
-export default TodoCard;
-export type { ITodoCardProps };
 
 const TodoCardContainer = styled.div<{
   done: boolean;

@@ -17,7 +17,7 @@ interface ITimeCounterProps {
   handleTimeDown: () => void;
 }
 
-const TimeSetter = ({
+export const TimeSetter = ({
   timeTitle,
   time,
   handleTimeUp,
@@ -103,7 +103,11 @@ const TimeSetter = ({
   );
 };
 
-const PomodoroTimeSetting = ({ handleClose }: { handleClose: () => void }) => {
+export const PomodoroTimeSetting = ({
+  handleClose,
+}: {
+  handleClose: () => void;
+}) => {
   /* pomodoro context */
   const {
     settings: { focusStep, restStep },
@@ -202,9 +206,6 @@ const PomodoroTimeSetting = ({ handleClose }: { handleClose: () => void }) => {
     </PomodoroCardAtom>
   );
 };
-
-export default PomodoroTimeSetting;
-export { TimeSetter };
 
 const PomodoroCardAtom = styled(CardAtom)`
   display: flex;

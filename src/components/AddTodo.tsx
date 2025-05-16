@@ -4,12 +4,17 @@ import {
   KeyboardEventHandler,
   ReactEventHandler,
   useCallback,
-  useMemo,
   useState,
 } from 'react';
 
 /* atomics */
-import { BtnAtom, CardAtom, IconAtom, InputAtom, TomatoInput } from '../atoms';
+import {
+  BtnAtom,
+  CardAtom,
+  IconAtom,
+  InputAtom,
+  TomatoInputAtom,
+} from '../atoms';
 import { CategoryInput } from '../molecules';
 
 /* custom hooks */
@@ -41,7 +46,7 @@ interface IAddTodoProps {
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
-const AddTodo = ({ handleClose }: IAddTodoProps) => {
+export const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [category, setCategory] = useState('');
@@ -249,7 +254,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
         </MainWrapper>
         <FooterWrapper>
           <TomatoContainer>
-            <TomatoInput
+            <TomatoInputAtom
               max={10}
               min={0}
               period={focusStep}
@@ -275,8 +280,6 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     </FocusTrap>
   );
 };
-
-export default AddTodo;
 
 const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
   overflow: visible;

@@ -1,21 +1,20 @@
-import React, { ForwardedRef, forwardRef, useContext, useState } from 'react';
+import { ForwardedRef, forwardRef, useContext, useState } from 'react';
 import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import { categoryApi, timerApi } from '../shared/apis';
-import { CategorySelector } from '../molecules/CategorySelector';
 import {
   ICategory,
   IDayFocusedTime,
   IMonthFocusedTime,
   IWeekFocusedTime,
 } from '../shared/interfaces';
-import { RankingChart } from '../molecules';
+import { CategorySelector, RankingChart } from '../molecules';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
 import { formatTime } from '../shared/timeUtils';
 
-const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
+export const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const tagColorList = RandomTagColorList.getInstance().getColorList;
 
   const [unit, setUnit] = useState<'day' | 'week' | 'month'>('day');
@@ -151,7 +150,7 @@ const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 </TypoAtom>
               )}
               {categories && (
-                <CartegorySelector
+                <CategorySelector
                   categories={categories}
                   selected={selectedCategory}
                   selectHandler={(category) => {
@@ -161,7 +160,7 @@ const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                       setSelectedCategory(category);
                     }
                   }}
-                ></CartegorySelector>
+                ></CategorySelector>
               )}
             </div>
           </div>
@@ -276,4 +275,3 @@ const FocusedTimeStyled = styled.main`
 Object.assign(FocusedTime, {
   CardAtom,
 });
-export default FocusedTime;

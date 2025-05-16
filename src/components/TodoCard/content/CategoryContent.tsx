@@ -18,7 +18,7 @@ interface ICategoryContentProps {
   categoryError?: string;
 }
 
-const CategoryContent = memo(
+export const CategoryContent = memo(
   ({
     categories,
     categoryArray,
@@ -91,5 +91,3 @@ export const CategoryContainer = styled.div<{
     overflow: hidden;
   }
 `;
-
-export default CategoryContent;
