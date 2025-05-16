@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
-import React from 'react';
-import { BtnAtom, CardAtom, TagAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 
-export interface INoTodoCardProps {
+interface INoTodoCardProps {
   addTodoHandler: () => void;
 }
 
-function NoTodoCard({ addTodoHandler }: INoTodoCardProps) {
+export function NoTodoCard({ addTodoHandler }: INoTodoCardProps) {
   return (
     <StyledNoTodoCard>
       <CardAtom bg="primary1" className="no-todo-card">
@@ -44,5 +43,3 @@ const StyledNoTodoCard = styled.div`
     }
   }
 `;
-
-export default NoTodoCard;
