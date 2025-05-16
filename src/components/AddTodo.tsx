@@ -33,6 +33,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 import { ZodError } from 'zod';
 import FocusTrap from 'focus-trap-react';
+import { startOfYesterday } from 'date-fns';
 
 interface IAddTodoProps {
   handleClose: () => void;
@@ -168,7 +169,10 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
         todo: formData.get('title') as string,
         duration: tomato,
         categories: categoryArray.length === 0 ? null : categoryArray,
-        date: setTimeInFormat(new Date()).toISOString(),
+        date:
+          new Date().getHours() >= 5
+            ? setTimeInFormat(new Date()).toISOString()
+            : setTimeInFormat(startOfYesterday()).toISOString(),
       };
       const { success, error } = AddTodoSchema.safeParse(newTodo);
 
