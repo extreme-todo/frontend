@@ -88,18 +88,18 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     [isLogin],
   );
 
-  const handleClose = () => {
+  const changeCard = useCallback((curr: CardType, next: CardType) => {
+    setPrevCard(curr);
+    setCurrentCard(next);
+    currentCardAnimationTriggerSubject.current.next('SHOW_UP');
+  }, []);
+
+  const handleClose = useCallback(() => {
     changeCard(
       currentCard,
       pomodoroStatus === PomodoroStatus.RESTING ? 'rest' : 'currentTodo',
     );
-  };
-
-  const changeCard = (curr: CardType, next: CardType) => {
-    setPrevCard(curr);
-    setCurrentCard(next);
-    currentCardAnimationTriggerSubject.current.next('SHOW_UP');
-  };
+  }, [currentCard, pomodoroStatus, changeCard]);
 
   const getDummyCardColor = (): BackgroundColorName => {
     switch (currentCardColor) {
