@@ -1,9 +1,8 @@
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { Clock } from '../../molecules';
-import { IClockProps } from '../../molecules/Clock';
+import { Clock, IClockProps } from '../../molecules';
 
 describe('Clock', () => {
   function renderClock(props: IClockProps) {

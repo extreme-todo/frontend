@@ -47,7 +47,7 @@ const PomodoroActionsContext = createContext<IPomodoroActions>(
   {} as IPomodoroActions,
 );
 
-const PomodoroProvider = ({ children }: IChildProps) => {
+export const PomodoroProvider = ({ children }: IChildProps) => {
   const [settings, setSetting] = useState<IPomodoroSettings>(
     getPomodoroData<IPomodoroSettings>('settings'),
   );
@@ -124,12 +124,12 @@ const PomodoroProvider = ({ children }: IChildProps) => {
   );
 };
 
-function usePomodoroValue() {
+export function usePomodoroValue() {
   const value = useContext(PomodoroValueContext);
   return value;
 }
 
-function usePomodoroActions() {
+export function usePomodoroActions() {
   const value = useContext(PomodoroActionsContext);
   return value;
 }
@@ -157,5 +157,3 @@ function updatePomodoroData<T>(data: T, type: 'settings' | 'status') {
   const localKey = 'pomodoro-' + type;
   localStorage.setItem(localKey, JSON.stringify(data));
 }
-
-export { usePomodoroValue, usePomodoroActions, PomodoroProvider };

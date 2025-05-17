@@ -1,5 +1,5 @@
 import { act } from 'react';
-import { Welcome } from '../../components/index';
+import { Welcome } from '../../components';
 
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';

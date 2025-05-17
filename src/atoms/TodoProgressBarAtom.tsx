@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const TodoProgressBarAtom = styled.div<{
+export const TodoProgressBarAtom = styled.div<{
   progress: number;
   type: 'primary1' | 'primary2' | 'extreme1' | 'extreme2';
 }>`
@@ -48,5 +48,3 @@ const TodoProgressBarAtom = styled.div<{
     }
   }
 `;
-
-export default TodoProgressBarAtom;

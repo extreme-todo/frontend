@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { useIsOnline } from '../../hooks/useIsOnline';
+import { useIsOnline } from '../../hooks';
 
 describe('useIsOnline', () => {
   describe('window.navigator.onLine이 true이면', () => {

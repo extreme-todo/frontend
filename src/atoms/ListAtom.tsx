@@ -8,7 +8,7 @@ interface IListAtomProps {
   dotOpacity: MotionValue<number>;
 }
 
-const ListAtom = ({
+export const ListAtom = ({
   children,
   labelOpacity,
   handleClick,
@@ -33,5 +33,3 @@ const ListAtom = ({
     </li>
   );
 };
-
-export { ListAtom };

@@ -16,7 +16,7 @@ interface IWelcomeProps {
   mainLogoFillForScroll: MotionValue<string>;
 }
 
-const Welcome = forwardRef(
+export const Welcome = forwardRef(
   (
     {
       buttonOpacityForScroll,
@@ -238,8 +238,6 @@ const Welcome = forwardRef(
     );
   },
 );
-
-export default Welcome;
 
 const WelcomeContainer = styled.main`
   width: 100dvw;

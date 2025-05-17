@@ -43,7 +43,7 @@ baseApi.interceptors.request.use((config) => {
     !email &&
     !accessToken
   ) {
-    throw new axios.Cancel(DIDNT_LOGIN_USER);
+    queryClient.cancelQueries();
   }
   if (config.headers) {
     config.headers[EXTREME_TOKEN_HEADER] = accessToken

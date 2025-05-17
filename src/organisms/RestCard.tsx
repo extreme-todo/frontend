@@ -5,7 +5,7 @@ import { PomodoroStatus } from '../services/PomodoroService';
 import { usePomodoroActions, usePomodoroValue } from '../hooks/usePomodoro';
 import { useCurrentTodo, useExtremeMode } from '../hooks';
 
-function RestCard() {
+export function RestCard() {
   const pomodoro = usePomodoroValue();
   const actions = usePomodoroActions();
   const { isExtreme } = useExtremeMode();
@@ -132,5 +132,3 @@ const RestCardWrapper = styled.div`
     gap: 8px;
   }
 `;
-
-export default RestCard;

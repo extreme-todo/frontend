@@ -6,7 +6,7 @@ import {
 } from 'react-beautiful-dnd';
 import { createPortal } from 'react-dom';
 
-const useDraggableInPortal = () => {
+export const useDraggableInPortal = () => {
   const element = useRef<HTMLDivElement>(
     document.getElementById('draggable') as HTMLDivElement,
   ).current;
@@ -29,5 +29,3 @@ const useDraggableInPortal = () => {
   );
   return dragHelperFunction;
 };
-
-export default useDraggableInPortal;

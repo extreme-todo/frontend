@@ -18,5 +18,5 @@
     "removeComments": true
   },
   "include": ["src/**/*"],
-  "exclude": ["src/test", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["src/__test__", "**/*.test.ts", "**/*.test.tsx"]
 }

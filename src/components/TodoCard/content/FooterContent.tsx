@@ -19,7 +19,7 @@ interface IFooterContentProps {
   isSubmitting: boolean;
 }
 
-const FooterContent = memo(
+export const FooterContent = memo(
   ({
     isDragging,
     done,
@@ -163,5 +163,3 @@ const TimeWrapper = styled.div`
   align-items: center;
   column-gap: 0.25rem;
 `;
-
-export default FooterContent;

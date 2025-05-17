@@ -1,14 +1,15 @@
 import { CardAtom } from '../atoms';
+import { ExtremeModeIndicator } from '../molecules';
+import { CurrentTodo } from '../organisms';
 import {
   useCurrentTodo,
   useExtremeMode,
   usePomodoroActions,
   usePomodoroValue,
 } from '../hooks';
-import { CurrentTodo, ExtremeModeIndicator } from '../molecules';
 import styled from '@emotion/styled';
 
-function CurrentTodoCard() {
+export function CurrentTodoCard() {
   const { settings: pomodoroSettings, status, time } = usePomodoroValue();
   const { isExtreme } = useExtremeMode();
   const actions = usePomodoroActions();
@@ -61,5 +62,3 @@ const TransparentAbsoluteCardsParent = styled.div`
     }
   }
 `;
-
-export default CurrentTodoCard;

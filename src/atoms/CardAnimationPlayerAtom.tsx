@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import { Observable } from 'rxjs';
 
 export type CardAnimationPlayerAnimationType =
@@ -17,7 +17,7 @@ export interface ICardAnimationPlayerProps {
   trigger?: Observable<any>;
 }
 
-const CardAnimationPlayer = ({
+export const CardAnimationPlayerAtom = ({
   children,
   animation,
   duration = 0.3,
@@ -100,5 +100,3 @@ const StyledCardAnimationPlayerWrapper = styled.div`
   position: absolute;
   transform-origin: bottom left;
 `;
-
-export default CardAnimationPlayer;

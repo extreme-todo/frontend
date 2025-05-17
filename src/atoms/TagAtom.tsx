@@ -3,14 +3,14 @@ import { IChildProps } from '../shared/interfaces';
 import { BackgroundColorName, FontName, TagColorName } from '../styles/emotion';
 import { css } from '@emotion/react';
 
-export interface ITagAtomProps extends IChildProps {
+interface ITagAtomProps extends IChildProps {
   title?: string;
   styleOption?: ITagSpanProps;
   ariaLabel?: string;
   className?: string;
 }
 
-interface ITagSpanProps {
+export interface ITagSpanProps {
   bg?: TagColorName | 'transparent';
   fontsize?: FontName;
   size?: 'normal';
@@ -19,7 +19,7 @@ interface ITagSpanProps {
   selectable?: boolean;
 }
 
-function TagAtom({
+export function TagAtom({
   children,
   styleOption,
   title,
@@ -169,6 +169,3 @@ const TagSpan = styled.span<
     }};
   }
 `;
-
-export default TagAtom;
-export { type ITagSpanProps };

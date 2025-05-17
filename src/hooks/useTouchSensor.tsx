@@ -94,8 +94,8 @@ const supportedPageVisibilityEventName: string = ((): string => {
 const idle: Idle = { type: 'IDLE' };
 // Decreased from 150 as a work around for an issue for forcepress on iOS
 // https://github.com/atlassian/react-beautiful-dnd/issues/1401
-export const timeForLongPress = 120;
-export const forcePressThreshold = 0.15;
+const timeForLongPress = 120;
+const forcePressThreshold = 0.15;
 
 type GetBindingArgs = {
   cancel: () => void;
@@ -375,7 +375,7 @@ function bindEvents(
  * @param api RBD는 dnd에 사용되는 sensor의 콜백 api를 커스텀 할 수 있다.
  *
  */
-export default function useTouchSensor(api: SensorAPI) {
+export function useTouchSensor(api: SensorAPI) {
   const phaseRef = React.useRef<Phase>(idle);
   /**
    * bindEvents 함수를 호출하고서 반환되는 이벤트 해제 콜백을 담는 ref

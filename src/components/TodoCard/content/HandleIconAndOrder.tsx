@@ -10,7 +10,7 @@ interface IHandleIconAndOrderProps {
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
 
-const HandlerIconAndOrder = memo(
+export const HandlerIconAndOrder = memo(
   ({
     isCurrTodo,
     isThisEdit,
@@ -56,5 +56,3 @@ const HandlerIconAndOrder = memo(
     }
   },
 );
-
-export default HandlerIconAndOrder;

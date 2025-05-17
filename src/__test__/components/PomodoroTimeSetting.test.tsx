@@ -1,10 +1,9 @@
-import React from 'react';
-import { act, render } from '@testing-library/react';
+import React, { act } from 'react';
+import { render } from '@testing-library/react';
 import { TimeSetter } from '../../components';
 import { ThemeProvider } from '@emotion/react';
 
 import { IChildProps } from '../../shared/interfaces';
-import { focusStepList } from '../../hooks/usePomodoro';
 import { designTheme } from '../../styles/theme';
 import userEvent from '@testing-library/user-event';
 

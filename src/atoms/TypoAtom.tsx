@@ -11,7 +11,7 @@ interface ITypoProps extends IChildProps {
   padding?: `${number}rem ${number}rem`;
 }
 
-const TypoAtom = ({
+export const TypoAtom = ({
   children,
   fontColor,
   fontSize,
@@ -31,8 +31,6 @@ const TypoAtom = ({
     </Typo>
   );
 };
-
-export default TypoAtom;
 
 const Typo = styled.span<ITypoProps>`
   color: ${({ theme, fontColor }) =>

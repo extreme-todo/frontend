@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { BtnAtom, IconAtom } from '../../../atoms';
 
-const TopRightCorner = memo(
+export const TopRightCornerIcon = memo(
   ({
     isCurrTodo,
     done,
@@ -33,5 +33,3 @@ const TopRightCorner = memo(
     }
   },
 );
-
-export default TopRightCorner;

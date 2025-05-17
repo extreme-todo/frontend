@@ -10,7 +10,7 @@ interface ITitleOrInputProps {
   titleError: boolean;
 }
 
-const TitleOrInput = memo(
+export const TitleOrInput = memo(
   ({
     todo,
     titleValue,
@@ -53,5 +53,3 @@ const TitleOrInput = memo(
     }
   },
 );
-
-export default TitleOrInput;

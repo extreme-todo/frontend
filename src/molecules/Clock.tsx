@@ -13,7 +13,7 @@ export interface IClockProps {
   };
 }
 
-function Clock({
+export function Clock({
   ms,
   fontColor = 'primary1',
   show = {
@@ -86,5 +86,3 @@ const ClockContainer = styled.div<IClockProps>`
     }
   }
 `;
-
-export default Clock;
