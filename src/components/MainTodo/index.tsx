@@ -130,6 +130,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 openAddTodoModal={handleClickSideButton}
                 currentTodo={currentTodo}
                 focusStep={focusStep}
+                handleClose={handleClose}
               />
             </EditContextProvider>
           );
