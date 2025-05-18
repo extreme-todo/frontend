@@ -1,9 +1,4 @@
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse,
-  Cancel,
-} from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
@@ -35,7 +30,7 @@ const baseApi = axios.create({
   timeout: 7000,
 });
 
-baseApi.interceptors.request.use((config) => {
+baseApi.interceptors.request.use(async (config) => {
   const accessToken = localStorage.getItem(EXTREME_TOKEN_STORAGE);
   const email = localStorage.getItem(EXTREME_EMAIL_STORAGE);
   if (
@@ -43,7 +38,7 @@ baseApi.interceptors.request.use((config) => {
     !email &&
     !accessToken
   ) {
-    queryClient.cancelQueries();
+    await queryClient.cancelQueries();
   }
   if (config.headers) {
     config.headers[EXTREME_TOKEN_HEADER] = accessToken
@@ -64,7 +59,7 @@ baseApi.interceptors.response.use(
       );
     return config;
   },
-  (err: AxiosError) => {
+  async (err: AxiosError) => {
     if (err.message === DIDNT_LOGIN_USER) return Promise.reject(err);
     const config = err.config as AxiosCustomRequest;
     config.retryCount = config.retryCount ?? 0;
@@ -77,7 +72,7 @@ baseApi.interceptors.response.use(
     if (err.response?.status === 401) {
       if (IS_INVALID_TOKEN === false) {
         IS_INVALID_TOKEN = true;
-        queryClient.cancelQueries();
+        await queryClient.cancelQueries();
         localStorage.removeItem(EXTREME_EMAIL_STORAGE);
         localStorage.removeItem(EXTREME_TOKEN_STORAGE);
         window.alert('토큰이 만료됐습니다!\n 다시 로그인 해주세요.');
