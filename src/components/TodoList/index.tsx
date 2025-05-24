@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo } from 'react';
 
 /* component */
 import { TodoCard } from '../';
-import { BtnAtom, CardAtom, TypoAtom } from '../../atoms';
+import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../../atoms';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../../DB/indexed';
@@ -69,10 +69,16 @@ interface ITodoListProps {
   openAddTodoModal: (type: ModalType) => Window | null | undefined;
   currentTodo: TodoEntity | undefined;
   focusStep: focusStep;
+  handleClose: () => void;
 }
 
 export const TodoList = memo(
-  ({ openAddTodoModal, currentTodo, focusStep }: ITodoListProps) => {
+  ({
+    openAddTodoModal,
+    currentTodo,
+    focusStep,
+    handleClose,
+  }: ITodoListProps) => {
     /* api 호출 */
     const queryClient = useQueryClient();
 
@@ -147,11 +153,13 @@ export const TodoList = memo(
     return (
       <>
         {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
-        <TodoListContainer padding="2rem 1.5rem" className="card">
+        <TodoListContainer padding="1rem 1.5rem" className="card">
           <ListSection>
-            <TypoAtom fontSize="body" fontColor="primary2">
-              완료한 TODO
-            </TypoAtom>
+            <div className="header__todo">
+              <TypoAtom fontSize="body" fontColor="primary2">
+                완료한 TODO
+              </TypoAtom>
+            </div>
             {doneTodoList ? (
               <List>
                 {doneTodoList.map((doneTodo, idx) => (
@@ -178,9 +186,19 @@ export const TodoList = memo(
             )}
           </ListSection>
           <ListSection>
-            <TypoAtom fontSize="body" fontColor="primary2">
-              남은 TODO
-            </TypoAtom>
+            <div className="header__todo">
+              <TypoAtom fontSize="body" fontColor="primary2">
+                남은 TODO
+              </TypoAtom>
+              <BtnAtom
+                handleOnClick={handleClose}
+                ariaLabel="close"
+                className="close__btn"
+                tabIndex={3}
+              >
+                <IconAtom size={1.5} alt="close" src="icon/closeYellow.svg" />
+              </BtnAtom>
+            </div>
             {todoList ? (
               <List>
                 {currentTodo && (
@@ -292,6 +310,12 @@ const ListSection = styled.section`
   height: 100%;
   display: grid;
   grid-template-rows: 1fr 9fr;
+
+  .header__todo {
+    justify-content: space-between;
+    height: 1.5rem;
+    display: flex;
+  }
 `;
 
 const List = styled.ul`

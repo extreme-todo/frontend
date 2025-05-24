@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState, createContext } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  createContext,
+  useLayoutEffect,
+} from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { EXTREME_EMAIL_STORAGE, EXTREME_TOKEN_STORAGE } from '../shared/apis';
 
@@ -37,7 +43,7 @@ export const LoginProvider = ({ children }: IChildProps) => {
     checkLogin();
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     checkLogin();
   }, []);
 
