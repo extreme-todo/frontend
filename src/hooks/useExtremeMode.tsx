@@ -10,8 +10,7 @@ import { IChildProps } from '../shared/interfaces';
 import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
 import { settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
-import { useIsOnline } from './useIsOnline';
-import useCurrentTodo from './useCurrentTodo';
+import { useCurrentTodo, useIsOnline } from './';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -24,7 +23,7 @@ interface ExtremeModeContextType {
 
 export const EXTREME_MODE = 'extremeMode';
 
-export const ExtremeModeContext = createContext<ExtremeModeContextType>({
+const ExtremeModeContext = createContext<ExtremeModeContextType>({
   isExtreme: true,
   leftTime: '',
   handleExtremeMode: (extremeMode: boolean) => {
@@ -182,7 +181,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   );
 };
 
-export default function useExtremeMode() {
+export function useExtremeMode() {
   const value = useContext(ExtremeModeContext);
   return value;
 }

@@ -18,7 +18,7 @@ interface IPopperAtom extends IChildProps {
   offset?: [number, number];
 }
 
-const PopperAtom = ({
+export const PopperAtom = ({
   popperElement,
   setPopperElement,
   triggerElement,
@@ -111,8 +111,6 @@ const PopperAtom = ({
     </PopperElement>
   );
 };
-
-export default PopperAtom;
 
 const PopperElement = styled.div<{
   arrowOffset: [number, number] | undefined;

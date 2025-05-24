@@ -114,9 +114,7 @@ export const checkTimeOverFromTimeMarker = (
   } else {
     const parsingMarker = (JSON.parse(timeMarker) as ITimeMarkerObject)[key];
     if (!parsingMarker) return true; // api 실행 및 setItem
-    else if (new Date().getTime() - parsingMarker >= conditionalMilliSec)
-      return true; // api 실행 및 setItem
-    else return false; // api 실행 X
+    return new Date().getTime() - parsingMarker >= conditionalMilliSec;
   }
 };
 

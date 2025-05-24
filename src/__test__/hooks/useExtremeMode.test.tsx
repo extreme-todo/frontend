@@ -1,9 +1,13 @@
 import { screen, fireEvent, render, waitFor } from '@testing-library/react';
-import { useExtremeMode } from '../../hooks';
+import {
+  useExtremeMode,
+  EXTREME_MODE,
+  ExtremeModeProvider,
+  PomodoroProvider,
+  usePomodoroActions,
+} from '../../hooks';
 import React from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
-import { EXTREME_MODE, ExtremeModeProvider } from '../../hooks/useExtremeMode';
-import { PomodoroProvider, usePomodoroActions } from '../../hooks/usePomodoro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   todosApi,
@@ -11,7 +15,6 @@ import {
   EXTREME_EMAIL_STORAGE,
   EXTREME_TOKEN_STORAGE,
 } from '../../shared/apis';
-import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
 
 const queryClient = new QueryClient({

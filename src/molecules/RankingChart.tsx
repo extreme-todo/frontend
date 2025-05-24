@@ -2,14 +2,14 @@ import Chart from 'react-apexcharts';
 import { designTheme } from '../styles/theme';
 import { formatTime } from '../shared/timeUtils';
 import { TagColorName } from '../styles/emotion';
-import { LegacyRef, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface IRankingChartProps {
   options: string[];
   series: number[];
   color?: TagColorName;
 }
-function RankingChart({ options, series, color }: IRankingChartProps) {
+export function RankingChart({ options, series, color }: IRankingChartProps) {
   const chartRef = useRef<Chart>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   return (
@@ -150,5 +150,3 @@ function RankingChart({ options, series, color }: IRankingChartProps) {
     />
   );
 }
-
-export default RankingChart;

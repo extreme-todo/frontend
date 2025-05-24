@@ -8,9 +8,13 @@ import {
   useState,
 } from 'react';
 import { SideButtons } from '../../molecules';
-import { CurrentTodoCard } from '../../organisms';
-import AddTodo from '../AddTodo';
-import TodoList from '../TodoList';
+import { CurrentTodoCard, NoTodoCard, RestCard } from '../../organisms';
+import { TodoList, AddTodo, PomodoroTimeSetting } from '..';
+import {
+  MainTodoCenter,
+  MainTodoContainer,
+  MainTodoContentWrapper,
+} from './MainTodoStyles';
 import {
   EditContextProvider,
   LoginContext,
@@ -20,28 +24,22 @@ import {
   usePomodoroValue,
   useTimeMarker,
 } from '../../hooks';
-import PomodoroTimeSetting from '../PomodoroTimeSetting';
 import { PomodoroStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
-import { CardAtom, TypoAtom } from '../../atoms';
-import CardAnimationPlayer, {
-  CardAnimationPlayerAnimationType,
-} from '../../atoms/CardAnimationPlayer';
-import { BackgroundColorName } from '../../styles/emotion';
-import NoTodoCard from '../../organisms/NoTodoCard';
 import {
-  MainTodoCenter,
-  MainTodoContainer,
-  MainTodoContentWrapper,
-} from './MainTodoStyles';
+  CardAtom,
+  TypoAtom,
+  CardAnimationPlayerAnimationType,
+  CardAnimationPlayerAtom,
+} from '../../atoms';
+import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
-import RestCard from '../../organisms/RestCard';
 
 export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
 export type CardType = ModalType | 'noTodo' | 'currentTodo' | 'rest';
 
-const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
+export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
   const [currentCard, setCurrentCard] = useState<CardType>('currentTodo');
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
@@ -207,9 +205,9 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               onClick={() => handleClickSideButton('timeModal')}
             >
               {isExtreme ? (
-                <img src="icons/clock-red.svg" />
+                <img src="icon/clock-red.svg" />
               ) : (
-                <img src="icons/clock.svg" />
+                <img src="icon/clock.svg" />
               )}
               <TypoAtom
                 fontSize="body"
@@ -224,9 +222,9 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               onClick={() => handleClickSideButton('todolistModal')}
             >
               {isExtreme ? (
-                <img src="icons/list-red.svg" />
+                <img src="icon/list-red.svg" />
               ) : (
-                <img src="icons/list.svg" />
+                <img src="icon/list.svg" />
               )}
               {/* TODO: 남은 할 일 계산 로직 추가 */}
               <TypoAtom
@@ -245,18 +243,20 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
             </SideButtons.SideButton>
           </SideButtons>
           <div className="center">
-            <CardAnimationPlayer trigger={currentCardAnimationTrigger$.current}>
+            <CardAnimationPlayerAtom
+              trigger={currentCardAnimationTrigger$.current}
+            >
               <CurrentMainCard type="current" />
-            </CardAnimationPlayer>
+            </CardAnimationPlayerAtom>
             {prevCard && (
-              <CardAnimationPlayer animation={'HIDE_UP'}>
+              <CardAnimationPlayerAtom animation={'HIDE_UP'}>
                 <CurrentMainCard type="prev" />
-              </CardAnimationPlayer>
+              </CardAnimationPlayerAtom>
             )}
             {!prevCard && (
-              <CardAnimationPlayer animation={'NEXT_UP'}>
+              <CardAnimationPlayerAtom animation={'NEXT_UP'}>
                 <CardAtom bg={getDummyCardColor()} style={{ zIndex: -1 }} />
-              </CardAnimationPlayer>
+              </CardAnimationPlayerAtom>
             )}
           </div>
         </MainTodoCenter>
@@ -264,5 +264,3 @@ const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     </MainTodoContainer>
   );
 });
-
-export default MainTodo;

@@ -40,6 +40,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --detectOpenHandles",
+    "coverage": "react-scripts test --coverage --watchAll",
     "eject": "react-scripts eject",
     "clear-cache": "jest --clearCache",
     "prepare": "husky install"

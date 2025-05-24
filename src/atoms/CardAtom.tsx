@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { BackgroundColorName } from '../styles/emotion';
 
 // TODO: 나중에 일정한 사이즈를 가지게 되면 수정;
-const CardAtom = styled.div<{
+export const CardAtom = styled.div<{
   padding?: string;
   margin?: string;
   bg?: 'default' | 'transparent' | BackgroundColorName;
@@ -43,5 +43,3 @@ const CardAtom = styled.div<{
   transition: all 0.3s ease-in-out;
   z-index: 1;
 `;
-
-export default CardAtom;

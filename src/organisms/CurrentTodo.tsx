@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
-import { IChildProps } from '../shared/interfaces';
-import { TodoEntity } from '../DB/indexedAction';
-import styled from '@emotion/styled';
 import { BtnAtom, IconAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
-import { getPomodoroStepPercent } from '../shared/timeUtils';
-import Clock from './Clock';
-import CategoryList from './CategoryList';
+import { Clock, CategoryList } from '../molecules';
+import { TodoEntity } from '../DB/indexedAction';
 import { useExtremeMode } from '../hooks';
+import { IChildProps } from '../shared/interfaces';
+import { getPomodoroStepPercent } from '../shared/timeUtils';
+import styled from '@emotion/styled';
 
-export interface ICurrentTodoProps extends IChildProps {
+interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
   doTodo: (focusTime: number) => void;
   focusStep: number;
@@ -16,7 +15,7 @@ export interface ICurrentTodoProps extends IChildProps {
   startResting: () => void;
 }
 
-function CurrentTodo({
+export function CurrentTodo({
   todo,
   focusStep,
   focusedOnTodo,
@@ -79,7 +78,7 @@ function CurrentTodo({
             btnStyle="darkBtn"
             handleOnClick={() => startResting()}
           >
-            <IconAtom src="icons/pause-dark.svg" size={1} />
+            <IconAtom src="icon/pause-dark.svg" size={1} />
           </BtnAtom>
           <BtnAtom
             className="do-todo"
@@ -103,8 +102,6 @@ function CurrentTodo({
     </CurrentTodoContainer>
   );
 }
-
-export default CurrentTodo;
 
 const CurrentTodoContainer = styled.div`
   display: flex;
