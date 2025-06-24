@@ -163,9 +163,17 @@ describe('useExtremeMode', () => {
       const { getByTestId } = render(<TestExtremeMode />, {
         wrapper: WrapperComponent,
       });
+      // 포모도로 상태가 초기화될 때까지 기다림
+      await waitFor(() => {
+        expect(screen.getByText(/isExtreme:/)).toBeInTheDocument();
+      });
+
       const mutationBtn = getByTestId('handleExtremeMode');
-      await waitFor(() => fireEvent.click(mutationBtn));
-      expect(settingsApi.setSettings).toBeCalled();
+      fireEvent.click(mutationBtn);
+
+      await waitFor(() => {
+        expect(settingsApi.setSettings).toBeCalled();
+      });
     });
 
     it('집중모드일 때는  settingsApi의 setSettings 메서드가 호출되지 않는다.', async () => {

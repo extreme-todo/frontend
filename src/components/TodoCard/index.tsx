@@ -319,11 +319,8 @@ export const TodoCard = ({
   const handleChangeCategory = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setCategoryValue(event.target.value);
-      if (
-        event.currentTarget.value.length === 0 &&
-        categoryError !== undefined
-      ) {
-        return setCategoryError(undefined);
+      if (event.currentTarget.value.length === 0) {
+        return categoryError !== undefined && setCategoryError(undefined);
       }
       const trimmed = categoryValidation(event.currentTarget.value);
       if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
