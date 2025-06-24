@@ -1,8 +1,8 @@
 import { memo, useCallback, useMemo } from 'react';
 
 /* component */
-import TodoCard from '../TodoCard';
-import { BtnAtom, CardAtom, TypoAtom } from '../../atoms';
+import { TodoCard } from '../';
+import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../../atoms';
 
 /* indexed DB */
 import { AddTodoDto, ETIndexed } from '../../DB/indexed';
@@ -22,9 +22,12 @@ import {
 } from 'react-beautiful-dnd';
 
 /* hooks */
-import { useDraggableInPortal, useEdit } from '../../hooks';
-import { type focusStep } from '../../hooks/usePomodoro';
-import useTouchSensor from '../../hooks/useTouchSensor';
+import {
+  useDraggableInPortal,
+  useEdit,
+  type focusStep,
+  useTouchSensor,
+} from '../../hooks';
 
 /* etc */
 import styled from '@emotion/styled';
@@ -32,7 +35,7 @@ import { getDateInFormat, setTimeInFormat } from '../../shared/timeUtils';
 import { onDragDropHandler } from './dragHelper';
 import { addTodoMocks } from './mockAddTodos';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
-import { ModalType } from '../MainTodo/MainTodo';
+import { ModalType } from '../MainTodo';
 
 interface orderMutationHandlerArgs {
   prevOrder: number;
@@ -66,10 +69,16 @@ interface ITodoListProps {
   openAddTodoModal: (type: ModalType) => Window | null | undefined;
   currentTodo: TodoEntity | undefined;
   focusStep: focusStep;
+  handleClose: () => void;
 }
 
-const TodoList = memo(
-  ({ openAddTodoModal, currentTodo, focusStep }: ITodoListProps) => {
+export const TodoList = memo(
+  ({
+    openAddTodoModal,
+    currentTodo,
+    focusStep,
+    handleClose,
+  }: ITodoListProps) => {
     /* api 호출 */
     const queryClient = useQueryClient();
 
@@ -143,19 +152,14 @@ const TodoList = memo(
 
     return (
       <>
-        {/* <Modal
-        title={'todolist'}
-        handleClose={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-      > */}
-        {/* <CardAtom> */}
         {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
-        <TodoListContainer padding="2rem 1.5rem" className="card">
+        <TodoListContainer padding="1rem 1.5rem" className="card">
           <ListSection>
-            <TypoAtom fontSize="body" fontColor="primary2">
-              완료한 TODO
-            </TypoAtom>
+            <div className="header__todo">
+              <TypoAtom fontSize="body" fontColor="primary2">
+                완료한 TODO
+              </TypoAtom>
+            </div>
             {doneTodoList ? (
               <List>
                 {doneTodoList.map((doneTodo, idx) => (
@@ -182,9 +186,19 @@ const TodoList = memo(
             )}
           </ListSection>
           <ListSection>
-            <TypoAtom fontSize="body" fontColor="primary2">
-              남은 TODO
-            </TypoAtom>
+            <div className="header__todo">
+              <TypoAtom fontSize="body" fontColor="primary2">
+                남은 TODO
+              </TypoAtom>
+              <BtnAtom
+                handleOnClick={handleClose}
+                ariaLabel="close"
+                className="close__btn"
+                tabIndex={3}
+              >
+                <IconAtom size={1.5} alt="close" src="icon/closeYellow.svg" />
+              </BtnAtom>
+            </div>
             {todoList ? (
               <List>
                 {currentTodo && (
@@ -269,14 +283,10 @@ const TodoList = memo(
             )}
           </ListSection>
         </TodoListContainer>
-        {/* </CardAtom> */}
-        {/* </Modal> */}
       </>
     );
   },
 );
-
-export default TodoList;
 
 const TodoListContainer = styled(CardAtom)`
   /* &,
@@ -300,6 +310,12 @@ const ListSection = styled.section`
   height: 100%;
   display: grid;
   grid-template-rows: 1fr 9fr;
+
+  .header__todo {
+    justify-content: space-between;
+    height: 1.5rem;
+    display: flex;
+  }
 `;
 
 const List = styled.ul`

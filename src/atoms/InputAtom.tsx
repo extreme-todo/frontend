@@ -99,12 +99,10 @@ const Underline = memo(
   },
 );
 
-const InputAtom = {
+export const InputAtom = {
   Usual,
   Underline,
 };
-
-export default InputAtom;
 
 const CommonInput = withTheme(
   styled.input<

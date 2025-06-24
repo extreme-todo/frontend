@@ -4,12 +4,17 @@ import {
   KeyboardEventHandler,
   ReactEventHandler,
   useCallback,
-  useMemo,
   useState,
 } from 'react';
 
 /* atomics */
-import { BtnAtom, CardAtom, IconAtom, InputAtom, TomatoInput } from '../atoms';
+import {
+  BtnAtom,
+  CardAtom,
+  IconAtom,
+  InputAtom,
+  TomatoInputAtom,
+} from '../atoms';
 import { CategoryInput } from '../molecules';
 
 /* custom hooks */
@@ -33,6 +38,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from '@emotion/styled';
 import { ZodError } from 'zod';
 import FocusTrap from 'focus-trap-react';
+import { startOfYesterday } from 'date-fns';
 
 interface IAddTodoProps {
   handleClose: () => void;
@@ -40,7 +46,7 @@ interface IAddTodoProps {
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
-const AddTodo = ({ handleClose }: IAddTodoProps) => {
+export const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [category, setCategory] = useState('');
@@ -109,11 +115,8 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
   const handleCategoryInput: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
       setCategory(event.currentTarget.value);
-      if (
-        event.currentTarget.value.length === 0 &&
-        categoryError !== undefined
-      ) {
-        return setCategoryError(undefined);
+      if (event.currentTarget.value.length === 0) {
+        return categoryError !== undefined && setCategoryError(undefined);
       }
       const trimmed = categoryValidation(event.currentTarget.value);
       if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
@@ -168,7 +171,10 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
         todo: formData.get('title') as string,
         duration: tomato,
         categories: categoryArray.length === 0 ? null : categoryArray,
-        date: setTimeInFormat(new Date()).toISOString(),
+        date:
+          new Date().getHours() >= 5
+            ? setTimeInFormat(new Date()).toISOString()
+            : setTimeInFormat(startOfYesterday()).toISOString(),
       };
       const { success, error } = AddTodoSchema.safeParse(newTodo);
 
@@ -245,7 +251,7 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
         </MainWrapper>
         <FooterWrapper>
           <TomatoContainer>
-            <TomatoInput
+            <TomatoInputAtom
               max={10}
               min={0}
               period={focusStep}
@@ -271,8 +277,6 @@ const AddTodo = ({ handleClose }: IAddTodoProps) => {
     </FocusTrap>
   );
 };
-
-export default AddTodo;
 
 const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
   overflow: visible;

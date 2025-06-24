@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import TypoAtom from '../atoms/TypoAtom';
+import { TypoAtom } from '../atoms';
 import { IChildProps } from '../shared/interfaces';
 
 interface IFlipperProps {
@@ -27,12 +27,11 @@ const Flipper = ({ className, isPlus, flipNumber }: IFlipperProps) => {
   );
 };
 
-const FlipCounter = ({ children }: IFlipCounterProps) => {
+export const FlipCounter = ({ children }: IFlipCounterProps) => {
   return <FlipContainer>{children}</FlipContainer>;
 };
 
 FlipCounter.Flipper = Flipper;
-export default FlipCounter;
 
 const FlipContainer = styled.ul`
   position: relative;

@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
-import CategoryList, { ICategoryListProps } from '../../molecules/CategoryList';
+import { CategoryList, ICategoryListProps } from '../../molecules';
 import { render } from '@testing-library/react';
 import React from 'react';
 

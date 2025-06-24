@@ -1,4 +1,3 @@
-import { ButtonHTMLAttributes } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { RemType, ButtonName } from '../styles/emotion';
 import styled from '@emotion/styled';
@@ -16,7 +15,7 @@ interface IBtnAtomProps extends IChildProps {
   tabIndex?: number;
 }
 
-function BtnAtom({
+export function BtnAtom({
   children,
   handleOnClick,
   btnStyle,
@@ -103,5 +102,3 @@ const ButtonWrapper = styled.button<{
   }
   transition: all 0.2s ease-in-out;
 `;
-
-export default BtnAtom;

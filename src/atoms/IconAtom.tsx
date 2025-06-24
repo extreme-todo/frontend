@@ -13,7 +13,7 @@ interface IIconAtomProps {
   h?: number;
 }
 
-const IconAtom = forwardRef<HTMLImageElement, IIconAtomProps>(
+export const IconAtom = forwardRef<HTMLImageElement, IIconAtomProps>(
   ({ size = 4.455, backgroundColor = 'transparent', id, ...props }, ref) => {
     return (
       <IconContainer
@@ -26,8 +26,6 @@ const IconAtom = forwardRef<HTMLImageElement, IIconAtomProps>(
     );
   },
 );
-
-export default IconAtom;
 
 const IconContainer = styled.img<
   Pick<IIconAtomProps, 'size' | 'backgroundColor' | 'h' | 'w'>

@@ -1,7 +1,11 @@
-import { RenderResult, act, fireEvent, render } from '@testing-library/react';
-import { usePomodoroValue, usePomodoroActions } from '../../hooks';
-import { PomodoroProvider, initialPomodoroData } from '../../hooks/usePomodoro';
-import React from 'react';
+import { RenderResult, fireEvent, render } from '@testing-library/react';
+import {
+  usePomodoroValue,
+  usePomodoroActions,
+  PomodoroProvider,
+  initialPomodoroData,
+} from '../../hooks';
+import React, { act } from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import { PomodoroStatus } from '../../services/PomodoroService';
 

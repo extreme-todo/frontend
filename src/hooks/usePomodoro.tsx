@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -47,7 +48,7 @@ const PomodoroActionsContext = createContext<IPomodoroActions>(
   {} as IPomodoroActions,
 );
 
-const PomodoroProvider = ({ children }: IChildProps) => {
+export const PomodoroProvider = ({ children }: IChildProps) => {
   const [settings, setSetting] = useState<IPomodoroSettings>(
     getPomodoroData<IPomodoroSettings>('settings'),
   );
@@ -57,16 +58,16 @@ const PomodoroProvider = ({ children }: IChildProps) => {
   const settingsRef = useRef<IPomodoroSettings>(settings);
 
   useEffect(() => {
-    PomodoroService.startTimer();
-  }, []);
-
-  useEffect(() => {
-    PomodoroService.pomodoroStatus$.subscribe((res) => {
+    const subStatus = PomodoroService.pomodoroStatus$.subscribe((res) => {
       setStatus(res);
     });
-    PomodoroService.pomodoroTime$.subscribe((res) => {
+    const subTime = PomodoroService.pomodoroTime$.subscribe((res) => {
       setTime(res);
     });
+    return () => {
+      subStatus.unsubscribe();
+      subTime.unsubscribe();
+    };
   }, []);
 
   const actions = useMemo<IPomodoroActions>(
@@ -124,12 +125,12 @@ const PomodoroProvider = ({ children }: IChildProps) => {
   );
 };
 
-function usePomodoroValue() {
+export function usePomodoroValue() {
   const value = useContext(PomodoroValueContext);
   return value;
 }
 
-function usePomodoroActions() {
+export function usePomodoroActions() {
   const value = useContext(PomodoroActionsContext);
   return value;
 }
@@ -157,5 +158,3 @@ function updatePomodoroData<T>(data: T, type: 'settings' | 'status') {
   const localKey = 'pomodoro-' + type;
   localStorage.setItem(localKey, JSON.stringify(data));
 }
-
-export { usePomodoroValue, usePomodoroActions, PomodoroProvider };

@@ -1,11 +1,11 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LoginContext, useExtremeMode, usePomodoroValue } from '../hooks';
 import styled from '@emotion/styled';
 import { BtnAtom, IconAtom, PopperAtom, TypoAtom } from '../atoms';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
 
-function ExtremeModeIndicator() {
+export function ExtremeModeIndicator() {
   const { isLogin } = useContext(LoginContext);
   const { status } = usePomodoroValue();
   const { isExtreme, leftTime, handleExtremeMode } = useExtremeMode();
@@ -49,9 +49,9 @@ function ExtremeModeIndicator() {
         </div>
       )}
       {isExtreme ? (
-        <img src="/icons/bolt-red.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icon/bolt-red.svg" onClick={toggleExtremeMode}></img>
       ) : (
-        <img src="/icons/bolt.svg" onClick={toggleExtremeMode}></img>
+        <img src="/icon/bolt.svg" onClick={toggleExtremeMode}></img>
       )}
       {popperOpen && (
         <PopperAtom
@@ -74,19 +74,17 @@ function ExtremeModeIndicator() {
               >
                 <IconAtom
                   className="close-icon"
-                  src="icons/close-red.svg"
+                  src="icon/close-red.svg"
                 ></IconAtom>
               </BtnAtom>
             </div>
-            <img src="/icons/tooltip-arrow.svg" className="tooltip-arrow"></img>
+            <img src="/icon/tooltip-arrow.svg" className="tooltip-arrow"></img>
           </div>
         </PopperAtom>
       )}
     </ExtremeModeContainer>
   );
 }
-
-export default ExtremeModeIndicator;
 
 const ExtremeModeContainer = styled.div`
   position: absolute;

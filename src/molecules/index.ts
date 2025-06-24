@@ -1,13 +1,9 @@
-export { default as RankingChart } from './RankingChart';
-export {
-  default as LogInToUnlock,
-  type ILogInToUnlockProps,
-} from './LogInToUnlock';
-export { default as Clock } from './Clock';
-export { default as SideButtons } from './SideButtons';
-export { default as FlipCounter } from './FlipCounter';
-export { default as CurrentTodo } from './CurrentTodo';
-export { default as ExtremeModeIndicator } from './ExtremeModeIndicator';
-export { default as CategoryInput } from './CategoryInput';
-export { default as DayPickerUI, type IDayPickerUIProps } from './DayPickerUI';
+export { CategoryInput } from './CategoryInput';
+export { CategoryList, type ICategoryListProps } from './CategoryList';
+export { CategorySelector } from './CategorySelector';
+export { Clock, type IClockProps } from './Clock';
+export { ExtremeModeIndicator } from './ExtremeModeIndicator';
+export { FlipCounter } from './FlipCounter';
 export { Navigation } from './Navigation';
+export { RankingChart } from './RankingChart';
+export { SideButtons } from './SideButtons';

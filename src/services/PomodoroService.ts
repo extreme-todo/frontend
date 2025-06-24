@@ -19,12 +19,10 @@ export const PomodoroService = {
     PomodoroTimeSubject.next(0);
   },
   startTimer: () => {
-    interval(1000)
-      .pipe(
-        tap(() => {
-          PomodoroTimeSubject.next(PomodoroTimeSubject.value + 1000);
-        }),
-      )
-      .subscribe();
+    return interval(1000).pipe(
+      tap(() => {
+        PomodoroTimeSubject.next(PomodoroTimeSubject.value + 1000);
+      }),
+    );
   },
 };

@@ -6,15 +6,17 @@ import {
   useState,
 } from 'react';
 
-import { IconAtom, PopperAtom, TomatoInput, TypoAtom } from '../../atoms';
+import { IconAtom, PopperAtom, TomatoInputAtom, TypoAtom } from '../../atoms';
 
-import FooterContent from './content/FooterContent';
-import CategoryContent from './content/CategoryContent';
-import HandlerIconAndOrder from './content/HandleIconAndOrder';
-import TitleOrInput from './content/TitleOrInput';
-import TopRightCornerIcon from './content/TopRightCornerIcon';
+import {
+  FooterContent,
+  CategoryContent,
+  HandlerIconAndOrder,
+  TitleOrInput,
+  TopRightCornerIcon,
+} from './content';
 
-import { focusStep } from '../../hooks/usePomodoro';
+import { focusStep } from '../../hooks';
 
 import { todosApi } from '../../shared/apis';
 import {
@@ -31,7 +33,7 @@ import {
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd';
 
-import { formatTime, setTimeInFormat } from '../../shared/timeUtils';
+import { formatTime } from '../../shared/timeUtils';
 import {
   categoryValidation,
   titleValidation,
@@ -55,7 +57,7 @@ interface ITodoCardProps {
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
-const TodoCard = ({
+export const TodoCard = ({
   todoData,
   dragHandleProps,
   snapshot,
@@ -211,10 +213,10 @@ const TodoCard = ({
       event.preventDefault();
       const formData = new FormData(event.currentTarget as HTMLFormElement);
       const newTodo: UpdateDto = {
+        date: todoData.date,
         todo: formData.get('title') as string,
         duration,
         categories: categoryArray.length === 0 ? null : categoryArray,
-        date: setTimeInFormat(new Date()).toISOString(),
       };
       const { success, error } = UpdateSchema.safeParse(newTodo);
 
@@ -317,11 +319,8 @@ const TodoCard = ({
   const handleChangeCategory = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setCategoryValue(event.target.value);
-      if (
-        event.currentTarget.value.length === 0 &&
-        categoryError !== undefined
-      ) {
-        return setCategoryError(undefined);
+      if (event.currentTarget.value.length === 0) {
+        return categoryError !== undefined && setCategoryError(undefined);
       }
       const trimmed = categoryValidation(event.currentTarget.value);
       if (typeof trimmed === 'object' && trimmed.errorMessage !== categoryError)
@@ -446,7 +445,7 @@ const TodoCard = ({
               <TypoAtom>{formatTime(durationValue * focusStep)}</TypoAtom>
               <TypoAtom>{durationValue}round</TypoAtom>
             </TomatoInfo>
-            <TomatoInput
+            <TomatoInputAtom
               max={10}
               min={0}
               period={focusStep}
@@ -469,9 +468,6 @@ const TodoCard = ({
     </TodoCardContainer>
   );
 };
-
-export default TodoCard;
-export type { ITodoCardProps };
 
 const TodoCardContainer = styled.div<{
   done: boolean;
