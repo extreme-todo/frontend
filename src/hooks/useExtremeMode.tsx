@@ -74,11 +74,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
         });
         return previousData;
       },
-      onSuccess(data) {
-        console.debug(
-          '\n\n\n ✅ data in useExtremeMode‘s useMutation ✅ \n\n',
-          data,
-        );
+      onSuccess() {
         queryClient.invalidateQueries({ queryKey: ['settings'] });
       },
       onError(error: AxiosError, _, context) {
