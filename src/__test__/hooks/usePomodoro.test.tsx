@@ -5,9 +5,12 @@ import {
   PomodoroProvider,
   initialPomodoroData,
 } from '../../hooks';
-import React, { act } from 'react';
+import React, { act, useEffect } from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
-import { PomodoroStatus } from '../../services/PomodoroService';
+import {
+  PomodoroService,
+  PomodoroStatus,
+} from '../../services/PomodoroService';
 
 jest.useFakeTimers();
 describe('usePomodoro', () => {
@@ -19,6 +22,15 @@ describe('usePomodoro', () => {
     const { settings, status, time } = usePomodoroValue();
     const { startFocusing, startResting, setFocusStep, setRestStep } =
       usePomodoroActions();
+
+    // Start the Pomodoro timer when the app loads
+    useEffect(() => {
+      const startTimer = PomodoroService.startTimer().subscribe();
+      return () => {
+        startTimer.unsubscribe();
+      };
+    }, []);
+
     return (
       <>
         focusStep:{settings.focusStep} <br />

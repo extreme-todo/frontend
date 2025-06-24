@@ -18,14 +18,14 @@ import { AxiosError } from 'axios';
 interface ExtremeModeContextType {
   handleExtremeMode: (extremeMode: boolean) => void;
   isExtreme: boolean;
-  leftTime: string;
+  warningText: string;
 }
 
 export const EXTREME_MODE = 'extremeMode';
 
 const ExtremeModeContext = createContext<ExtremeModeContextType>({
   isExtreme: true,
-  leftTime: '',
+  warningText: '',
   handleExtremeMode: (extremeMode: boolean) => {
     console.debug();
   },
@@ -34,7 +34,7 @@ const ExtremeModeContext = createContext<ExtremeModeContextType>({
 export const ExtremeModeProvider = ({ children }: IChildProps) => {
   // state
   const [resetFlag, setResetFlag] = useState<boolean>(false); // true 면 reset 완료
-  const [leftTime, setLeftTime] = useState('');
+  const [warningText, setWarningText] = useState('');
 
   // hooks
   const { status, settings, time } = usePomodoroValue();
@@ -116,20 +116,14 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   );
 
   const handleLeftTime = (value: string) => {
-    setLeftTime(value);
+    setWarningText(value);
   };
 
   const getLeftTime = () => {
     if (status === PomodoroStatus.RESTING) {
       const leftMs = settings.restStep * 60000 - (time ?? 0);
-      const minutes = (leftMs % 3600000) / 60000;
       if (leftMs >= 0) {
-        handleLeftTime(
-          Math.floor(minutes) +
-            '분 ' +
-            Math.floor((leftMs % 60000) / 1000) +
-            '초 뒤에 모든 기록이 삭제됩니다.',
-        );
+        handleLeftTime('휴식 시간이 끝나면 기록이 삭제됩니다!');
       }
       return leftMs;
     }
@@ -170,7 +164,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       setResetFlag(false);
       prevStatus.current = status;
     }
-  }, [time]);
+  }, [time, status]);
 
   useEffect(() => {
     const localExtreme: string | null | boolean =
@@ -187,7 +181,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
     <ExtremeModeContext.Provider
       value={{
         isExtreme,
-        leftTime: leftTime,
+        warningText,
         handleExtremeMode,
       }}
     >
