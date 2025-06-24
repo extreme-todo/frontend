@@ -4,7 +4,7 @@
 echo "Running tests before push..."
 
 # Run your test command
-CI=true npm test
+npm test
 
 # Check if the test command failed
 if [ $? -ne 0 ]; then
