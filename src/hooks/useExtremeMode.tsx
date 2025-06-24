@@ -60,18 +60,10 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { mutate: handleExtremeMutation } = useMutation(
     settingsApi.setSettings,
     {
-      onSuccess(data) {
-        console.debug(
-          '\n\n\n ✅ data in useExtremeMode‘s useMutation ✅ \n\n',
-          data,
-        );
+      onSuccess() {
         queryClient.invalidateQueries({ queryKey: ['settings'] });
       },
       onError(error: AxiosError) {
-        console.debug(
-          '\n\n\n 🚨 error in useExtremeMode‘s useMutation 🚨 \n\n',
-          error,
-        );
         const errorString = '에러 발생 ' + error.code + ' ' + error.message;
         console.error(errorString);
       },
