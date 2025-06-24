@@ -24,17 +24,6 @@ export const useCurrentTodo = ({
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
-  const subscription = useMemo(
-    () =>
-      PomodoroService.pomodoroStatus$.subscribe((changedStatus) => {
-        if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
-          currentTodo?.categories?.forEach((cantegory) => {
-            timerApi.recordFocusTime(cantegory, time ?? 0);
-          });
-        }
-      }),
-    [],
-  );
 
   const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
     ['todos', currentTodo],
@@ -80,6 +69,15 @@ export const useCurrentTodo = ({
   }, [todos]);
 
   useEffect(() => {
+    const subscription = PomodoroService.pomodoroStatus$.subscribe(
+      (changedStatus) => {
+        if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
+          currentTodo?.categories?.forEach((cantegory) => {
+            timerApi.recordFocusTime(cantegory, time ?? 0);
+          });
+        }
+      },
+    );
     return () => {
       subscription.unsubscribe();
     };
