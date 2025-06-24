@@ -56,10 +56,8 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
   const [status, setStatus] = useState<PomodoroStatus>();
 
   const settingsRef = useRef<IPomodoroSettings>(settings);
-  const startTimer = useCallback(PomodoroService.startTimer, []);
 
   useEffect(() => {
-    startTimer();
     const subStatus = PomodoroService.pomodoroStatus$.subscribe((res) => {
       setStatus(res);
     });
