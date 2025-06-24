@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -57,16 +58,16 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
   const settingsRef = useRef<IPomodoroSettings>(settings);
 
   useEffect(() => {
-    PomodoroService.startTimer();
-  }, []);
-
-  useEffect(() => {
-    PomodoroService.pomodoroStatus$.subscribe((res) => {
+    const subStatus = PomodoroService.pomodoroStatus$.subscribe((res) => {
       setStatus(res);
     });
-    PomodoroService.pomodoroTime$.subscribe((res) => {
+    const subTime = PomodoroService.pomodoroTime$.subscribe((res) => {
       setTime(res);
     });
+    return () => {
+      subStatus.unsubscribe();
+      subTime.unsubscribe();
+    };
   }, []);
 
   const actions = useMemo<IPomodoroActions>(

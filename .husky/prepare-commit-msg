@@ -1,0 +1,37 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Don't run for merge, squash or rebase
+if [ "$2" = "merge" ] || [ "$2" = "squash" ] || [ "$2" = "rebase" ]; then
+  exit 0
+fi
+
+# Get current branch name
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+# Extract issue number (e.g., 123 from feature/123-todo)
+issue_number=$(echo "$branch_name" | grep -oE '[0-9]+' | head -1)
+
+# If no issue number found, do nothing
+if [ -z "$issue_number" ]; then
+  exit 0
+fi
+
+# Read the current commit message
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+
+# If issue number is already in commit message, skip
+echo "$commit_msg" | grep -q "#$issue_number" && exit 0
+
+# Prepend "#123 " after colon if colon exists
+if echo "$commit_msg" | grep -q ":"; then
+  # Insert #123 after the first colon
+  updated_msg=$(echo "$commit_msg" | sed -E "s/(:)( *)/: #$issue_number\2/")
+else
+  # No colon, just prepend
+  updated_msg="#$issue_number $commit_msg"
+fi
+
+# Write back updated message
+echo "$updated_msg" > "$commit_msg_file"

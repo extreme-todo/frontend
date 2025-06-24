@@ -135,7 +135,7 @@ export const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                     recordData.data.total.prevFocused >=
                   0
                     ? '+'
-                    : '-'}
+                    : ''}
                   {formatTime(
                     Math.floor(
                       (recordData.data.total.focused -
@@ -146,7 +146,7 @@ export const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 </TypoAtom>
               ) : (
                 <TypoAtom fontSize="h1" fontColor="primary2">
-                  '+0시간 0분'
+                  {'0분'}
                 </TypoAtom>
               )}
               {categories && (

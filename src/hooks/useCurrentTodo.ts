@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TodoEntity } from '../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { timerApi, todosApi } from '../shared/apis';
@@ -27,7 +27,9 @@ export const useCurrentTodo = ({
 
   const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
     ['todos'],
-    () => todosApi.getList(false),
+    () => {
+      return todosApi.getList(false);
+    },
     {
       staleTime: Infinity,
     },
@@ -53,30 +55,33 @@ export const useCurrentTodo = ({
   });
 
   useEffect(() => {
-    PomodoroService.pomodoroStatus$.subscribe((changedStatus) => {
-      if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
-        currentTodo?.categories?.forEach((cantegory) => {
-          timerApi.recordFocusTime(cantegory, time ?? 0);
-        });
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     const nextTodo = getNextTodo();
-    setCurrentTodo(() => {
-      return nextTodo;
-    });
-    // TODO : 추후 오프라인일 경우 indexed db에서 현재 투두를 가져와야 할 듯
+    if (currentTodo == null) {
+      if (nextTodo) {
+        setCurrentTodo(nextTodo);
+        setFocusedOnTodo(checkLocalStorageAndGetFocusTime(nextTodo) ?? 0);
+        if (status == null) actions.startFocusing();
+      } else {
+        setFocusedOnTodo(0);
+      }
+    } else {
+    }
   }, [todos]);
 
   useEffect(() => {
-    if (status !== PomodoroStatus.NONE && currentTodo == null) {
-      // actions.stopTimer();
-    } else if (status === PomodoroStatus.NONE && currentTodo != null) {
-      actions.startResting();
-    }
-  }, [currentTodo]);
+    const subscription = PomodoroService.pomodoroStatus$.subscribe(
+      (changedStatus) => {
+        if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
+          currentTodo?.categories?.forEach((cantegory) => {
+            timerApi.recordFocusTime(cantegory, time ?? 0);
+          });
+        }
+      },
+    );
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     status !== PomodoroStatus.OVERFOCUSING && checkIfCanRest();
@@ -134,7 +139,7 @@ export const useCurrentTodo = ({
     }
   };
 
-  const checkLocalStorageAndGetFocusTime = (todo: TodoEntity) => {
+  const checkLocalStorageAndGetFocusTime = useCallback((todo: TodoEntity) => {
     const storageFocusTime = localStorage.getItem(TODO_FOCUS_TIME_KEY);
     if (storageFocusTime) {
       const originalTime: ITodoFocusedTime = JSON.parse(
@@ -145,38 +150,37 @@ export const useCurrentTodo = ({
       }
     }
     return 0;
-  };
+  }, []);
 
-  const updateFocus = (focusedTime: number) => {
-    if (currentTodo != null)
-      setFocusedOnTodo((prev) => {
-        const newtime = prev + focusedTime;
-        localStorage.setItem(
-          TODO_FOCUS_TIME_KEY,
-          JSON.stringify({
-            id: currentTodo?.id,
-            focusTime: newtime,
-          }),
-        );
-        return newtime;
-      });
-  };
+  const updateFocus = useCallback(
+    (focusedTime: number) => {
+      if (currentTodo != null)
+        setFocusedOnTodo((prev) => {
+          const newtime = prev + focusedTime;
+          localStorage.setItem(
+            TODO_FOCUS_TIME_KEY,
+            JSON.stringify({
+              id: currentTodo?.id,
+              focusTime: newtime,
+            }),
+          );
+          return newtime;
+        });
+    },
+    [currentTodo],
+  );
 
   const doTodo = () => {
     if (currentTodo)
       doTodoMutate({ id: currentTodo.id, focusTime: focusedOnTodo });
-    getNextTodo();
-    setFocusedOnTodo(0);
-    actions.startFocusing();
+
     setCanRest(false);
   };
 
-  const getNextTodo = (): TodoEntity | undefined => {
+  const getNextTodo = useCallback((): TodoEntity | undefined => {
     if (todos) {
       const todayTodos = todos.get(getDateInFormat(new Date()));
       if (todayTodos != null) {
-        setFocusedOnTodo(checkLocalStorageAndGetFocusTime(todayTodos[0]));
-        setCurrentTodo(todayTodos[0]);
         return todayTodos[0];
       } else {
         setCurrentTodo(undefined);
@@ -188,7 +192,7 @@ export const useCurrentTodo = ({
       actions.stopTimer();
       return undefined;
     }
-  };
+  }, [todos]);
 
   const useCurrentTodoResult = useMemo(
     () => ({
@@ -196,19 +200,10 @@ export const useCurrentTodo = ({
       updateFocus,
       currentTodo,
       focusedOnTodo,
-      checkLocalStorageAndGetFocusTime,
       canRest,
       shouldFocus,
     }),
-    [
-      doTodo,
-      updateFocus,
-      currentTodo,
-      focusedOnTodo,
-      checkLocalStorageAndGetFocusTime,
-      canRest,
-      shouldFocus,
-    ],
+    [doTodo, updateFocus, currentTodo, focusedOnTodo, canRest, shouldFocus],
   );
 
   return useCurrentTodoResult;
