@@ -60,12 +60,31 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { mutate: handleExtremeMutation } = useMutation(
     settingsApi.setSettings,
     {
+      onMutate: async () => {
+        await queryClient.cancelQueries({ queryKey: ['settings'] });
+        const previousData = queryClient.getQueryData(['settings']);
+        queryClient.setQueryData(['settings'], (oldData: any) => {
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              extremeMode: !oldData.data.extremeMode,
+            },
+          };
+        });
+        return previousData;
+      },
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: ['settings'] });
       },
-      onError(error: AxiosError) {
+      onError(error: AxiosError, _, context) {
+        console.debug(
+          '\n\n\n 🚨 error in useExtremeMode‘s useMutation 🚨 \n\n',
+          error,
+        );
         const errorString = '에러 발생 ' + error.code + ' ' + error.message;
         console.error(errorString);
+        queryClient.setQueryData(['settings'], context);
       },
     },
   );
