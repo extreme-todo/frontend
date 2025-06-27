@@ -6,14 +6,14 @@ import {
   useCallback,
   useRef,
 } from 'react';
-import { IChildProps } from '../shared/interfaces';
+import { IChildProps, ISettings } from '../shared/interfaces';
 import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
 import { settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useCurrentTodo, useIsOnline } from './';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 
 interface ExtremeModeContextType {
   handleExtremeMode: (extremeMode: boolean) => void;
@@ -63,15 +63,20 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       onMutate: async () => {
         await queryClient.cancelQueries({ queryKey: ['settings'] });
         const previousData = queryClient.getQueryData(['settings']);
-        queryClient.setQueryData(['settings'], (oldData: any) => {
-          return {
-            ...oldData,
-            data: {
-              ...oldData.data,
-              extremeMode: !oldData.data.extremeMode,
-            },
-          };
-        });
+        queryClient.setQueryData(
+          ['settings'],
+          (oldData: AxiosResponse<ISettings> | undefined) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              data: {
+                ...oldData.data,
+                extremeMode: !oldData.data.extremeMode,
+              },
+              // colorMode is not a property of AxiosResponse, so we do not set it here
+            };
+          },
+        );
         return previousData;
       },
       onSuccess() {
