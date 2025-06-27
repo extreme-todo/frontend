@@ -219,12 +219,16 @@ describe('useExtremeMode', () => {
         wrapper: WrapperComponent,
       });
       const startResting = getByTestId('startResting');
-      await waitFor(() => fireEvent.click(startResting));
-      await waitFor(async () => {
-        const resetNotice1 = await findByText(/초기화가 진행됩니다\.\.\./i);
-        // screen.logTestingPlaygroundURL();
-        expect(resetNotice1).toBeInTheDocument();
+
+      await waitFor(() => {
+        fireEvent.click(startResting);
       });
+
+      const resetNotice1 = await findByText(
+        /휴식시간이 초과되었습니다\. 초기화가 진행됩니다\.\.\./i,
+      );
+      // screen.logTestingPlaygroundURL();
+      expect(resetNotice1).toBeInTheDocument();
     });
   });
 });
