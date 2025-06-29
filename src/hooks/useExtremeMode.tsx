@@ -138,7 +138,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
     }
     if (
       isExtreme === true &&
-      prevStatus.current === status &&
+      status === PomodoroStatus.RESTING &&
       resetFlag === false &&
       currentTodo !== null &&
       Number(leftMs) < 0
@@ -153,18 +153,20 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
           handleLeftTime('휴식시간 초과로 모든 기록이 초기화되었습니다.');
           pomodoroActions.stopTimer();
           queryClient.invalidateQueries(['todos']);
+          queryClient.invalidateQueries(['doneTodos']);
           queryClient.invalidateQueries(['category']);
           queryClient.invalidateQueries(['focusedTime']);
+          setResetFlag(true);
         })
         .catch(() => {
           handleLeftTime('초기화가 실패했습니다. 운 좋은 줄 아십시오...');
+          setResetFlag(true);
         });
-      setResetFlag(true);
     }
     if (prevStatus.current != status) {
       setResetFlag(false);
-      prevStatus.current = status;
     }
+    prevStatus.current = status;
   }, [time, status]);
 
   useEffect(() => {
@@ -176,7 +178,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
       else if (!localExtreme)
         localStorage.setItem(EXTREME_MODE, JSON.stringify(isExtreme));
     }
-  }, [isExtreme, isLoading]);
+  }, [isExtreme, isLoading, prevStatus, status]);
 
   return (
     <ExtremeModeContext.Provider
