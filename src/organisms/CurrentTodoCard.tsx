@@ -8,6 +8,8 @@ import {
   usePomodoroValue,
 } from '../hooks';
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
+import { PomodoroStatus } from '../services/PomodoroService';
 
 export function CurrentTodoCard() {
   const { settings: pomodoroSettings, status, time } = usePomodoroValue();
@@ -21,6 +23,12 @@ export function CurrentTodoCard() {
     },
     actions,
   });
+
+  useEffect(() => {
+    if (status === PomodoroStatus.NONE) {
+      actions.startFocusing();
+    }
+  }, [status, actions]);
 
   return (
     <TransparentAbsoluteCardsParent>
