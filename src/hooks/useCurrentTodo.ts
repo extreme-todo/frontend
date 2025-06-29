@@ -62,6 +62,7 @@ export const useCurrentTodo = ({
         setFocusedOnTodo(checkLocalStorageAndGetFocusTime(nextTodo) ?? 0);
         if (status == null) actions.startFocusing();
       } else {
+        actions.stopTimer();
         setFocusedOnTodo(0);
       }
     } else {
