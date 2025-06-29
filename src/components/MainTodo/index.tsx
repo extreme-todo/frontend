@@ -135,9 +135,17 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
             </EditContextProvider>
           );
         case 'rest':
-          return <RestCard />;
+          return currentTodo?.todo ? (
+            <RestCard />
+          ) : (
+            <NoTodoCard
+              addTodoHandler={() => {
+                handleClickSideButton('addTodoModal');
+              }}
+            />
+          );
         case 'currentTodo':
-          return currentTodo ? (
+          return currentTodo?.todo ? (
             <CurrentTodoCard />
           ) : (
             <NoTodoCard

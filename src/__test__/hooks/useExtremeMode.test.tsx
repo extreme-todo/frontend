@@ -1,10 +1,4 @@
-import {
-  screen,
-  fireEvent,
-  render,
-  waitFor,
-  act,
-} from '@testing-library/react';
+import { screen, fireEvent, render, waitFor } from '@testing-library/react';
 import {
   useExtremeMode,
   EXTREME_MODE,
@@ -215,20 +209,23 @@ describe('useExtremeMode', () => {
         }),
         jest.fn((key: string) => JSON.stringify('true')),
       );
-      const { getByTestId, findByText } = render(<TestExtremeMode />, {
+      const { findByText, findByTestId } = render(<TestExtremeMode />, {
         wrapper: WrapperComponent,
       });
-      const startResting = getByTestId('startResting');
+      const startResting = await findByTestId('startResting');
 
+      jest.useFakeTimers();
       await waitFor(() => {
         fireEvent.click(startResting);
       });
+      jest.advanceTimersByTime(1000);
 
       const resetNotice1 = await findByText(
         /휴식시간이 초과되었습니다\. 초기화가 진행됩니다\.\.\./i,
       );
       // screen.logTestingPlaygroundURL();
       expect(resetNotice1).toBeInTheDocument();
+      jest.clearAllTimers();
     });
   });
 });
