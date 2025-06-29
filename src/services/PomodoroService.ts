@@ -6,10 +6,10 @@ export enum PomodoroStatus {
   RESTING,
   OVERFOCUSING,
 }
-export const PomodoroStatusSubject = new BehaviorSubject<PomodoroStatus>(
+const PomodoroStatusSubject = new BehaviorSubject<PomodoroStatus>(
   PomodoroStatus.NONE,
 );
-export const PomodoroTimeSubject = new BehaviorSubject<number>(0);
+const PomodoroTimeSubject = new BehaviorSubject<number>(0);
 
 export const PomodoroService = {
   pomodoroStatus$: PomodoroStatusSubject.asObservable().pipe(share()),
