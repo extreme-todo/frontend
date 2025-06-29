@@ -1,4 +1,10 @@
-import { screen, fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  render,
+  waitFor,
+  act,
+} from '@testing-library/react';
 import {
   useExtremeMode,
   EXTREME_MODE,
@@ -6,7 +12,7 @@ import {
   PomodoroProvider,
   usePomodoroActions,
 } from '../../hooks';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
@@ -16,6 +22,7 @@ import {
   EXTREME_TOKEN_STORAGE,
 } from '../../shared/apis';
 import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
+import { PomodoroService } from '../../services/PomodoroService';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,13 +42,20 @@ describe('useExtremeMode', () => {
     </QueryClientProvider>
   );
   const TestExtremeMode = () => {
-    const { isExtreme, handleExtremeMode, leftTime } = useExtremeMode();
+    const { isExtreme, handleExtremeMode, warningText } = useExtremeMode();
     const { startFocusing, startResting } = usePomodoroActions();
+    // Start the Pomodoro timer when the app loads
+    useEffect(() => {
+      const startTimer = PomodoroService.startTimer().subscribe();
+      return () => {
+        startTimer.unsubscribe();
+      };
+    }, []);
     return (
       <>
         isExtreme:{String(isExtreme)}
         <hr />
-        leftTime:{leftTime}
+        warningText:{warningText}
         <hr />
         <button
           data-testid="handleExtremeMode"
@@ -101,7 +115,7 @@ describe('useExtremeMode', () => {
           id: '1719637016087-a58bpkm1230',
           date: getDateInFormat(new Date()),
           todo: 'Go to grocery store',
-          createdAt: new Date('Dec 26, 2022 18:00:30'),
+          createdAt: new Date(),
           duration: 10,
           done: false,
           categories: ['영어', '학교공부'],
@@ -149,9 +163,17 @@ describe('useExtremeMode', () => {
       const { getByTestId } = render(<TestExtremeMode />, {
         wrapper: WrapperComponent,
       });
+      // 포모도로 상태가 초기화될 때까지 기다림
+      await waitFor(() => {
+        expect(screen.getByText(/isExtreme:/)).toBeInTheDocument();
+      });
+
       const mutationBtn = getByTestId('handleExtremeMode');
-      await waitFor(() => fireEvent.click(mutationBtn));
-      expect(settingsApi.setSettings).toBeCalled();
+      fireEvent.click(mutationBtn);
+
+      await waitFor(() => {
+        expect(settingsApi.setSettings).toBeCalled();
+      });
     });
 
     it('집중모드일 때는  settingsApi의 setSettings 메서드가 호출되지 않는다.', async () => {
@@ -169,14 +191,16 @@ describe('useExtremeMode', () => {
   });
 
   describe('leftTime은', () => {
-    it('휴식 시간이 남아 있을 때는 해당 시간 뒤에 기록이 삭제된다는 안내가 렌더링 된다.', async () => {
+    it('휴식 시간이 남아 있을 때는 기록이 삭제된다는 안내가 렌더링 된다.', async () => {
       wrapMockLocalStorage(mockExtremeTodo);
       const { getByText, getByTestId } = render(<TestExtremeMode />, {
         wrapper: WrapperComponent,
       });
       const startResting = getByTestId('startResting');
-      await waitFor(() => fireEvent.click(startResting));
-      const resetNotice = getByText(/모든 기록이 삭제됩니다\./i);
+      await waitFor(() => {
+        fireEvent.click(startResting);
+      });
+      const resetNotice = getByText(/휴식 시간이 끝나면 기록이 삭제됩니다\!/i);
       expect(resetNotice).toBeInTheDocument();
     });
 
@@ -195,12 +219,16 @@ describe('useExtremeMode', () => {
         wrapper: WrapperComponent,
       });
       const startResting = getByTestId('startResting');
-      await waitFor(() => fireEvent.click(startResting));
-      await waitFor(async () => {
-        const resetNotice1 = await findByText(/초기화가 진행됩니다\.\.\./i);
-        // screen.logTestingPlaygroundURL();
-        expect(resetNotice1).toBeInTheDocument();
+
+      await waitFor(() => {
+        fireEvent.click(startResting);
       });
+
+      const resetNotice1 = await findByText(
+        /휴식시간이 초과되었습니다\. 초기화가 진행됩니다\.\.\./i,
+      );
+      // screen.logTestingPlaygroundURL();
+      expect(resetNotice1).toBeInTheDocument();
     });
   });
 });

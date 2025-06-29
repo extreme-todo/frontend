@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { IconAtom } from './atoms';
 import { Navigation } from './molecules';
@@ -15,6 +15,7 @@ import { PomodoroProvider, ExtremeModeProvider } from './hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
+import { PomodoroService } from './services/PomodoroService';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -101,6 +102,14 @@ function App() {
       timeoutRef.current = setTimeout(() => setIsLabelVisible(false), 1000);
     }
   });
+
+  // Start the Pomodoro timer when the app loads
+  useEffect(() => {
+    const startTimer = PomodoroService.startTimer().subscribe();
+    return () => {
+      startTimer.unsubscribe();
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

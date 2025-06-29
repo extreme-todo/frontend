@@ -26,7 +26,7 @@ export const useCurrentTodo = ({
   const [shouldFocus, setShouldFocus] = useState(false);
 
   const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
-    ['todos', currentTodo],
+    ['todos'],
     () => {
       return todosApi.getList(false);
     },

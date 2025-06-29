@@ -8,7 +8,7 @@ import { usersApi } from '../shared/apis';
 export function ExtremeModeIndicator() {
   const { isLogin } = useContext(LoginContext);
   const { status } = usePomodoroValue();
-  const { isExtreme, leftTime, handleExtremeMode } = useExtremeMode();
+  const { isExtreme, handleExtremeMode } = useExtremeMode();
   const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null);
   const [popperOpen, setPopperOpen] = useState<boolean>(true);
   const [popperTriggerElement, setPopperTriggerElement] =
