@@ -22,7 +22,7 @@ import {
   useExtremeMode,
   usePomodoroActions,
   usePomodoroValue,
-  useTimeMarker,
+  useHandleDidntDo,
 } from '../../hooks';
 import { PomodoroStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
@@ -62,7 +62,6 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     currentCardAnimationTriggerSubject.current.asObservable(),
   );
 
-  useTimeMarker();
   const { currentTodo, canRest, doTodo } = useCurrentTodo({
     value: {
       status: pomodoroStatus,
@@ -152,6 +151,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     },
     [currentCard, prevCard, currentTodo, isLogin],
   );
+
+  useHandleDidntDo();
 
   useEffect(() => {
     setTimeout(() => {

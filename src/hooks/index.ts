@@ -22,5 +22,5 @@ export {
   usePomodoroValue,
   usePomodoroActions,
 } from './usePomodoro';
-export { useTimeMarker } from './useTimeMarker';
+export { useHandleDidntDo } from './useHandleDidntDo';
 export { useTouchSensor } from './useTouchSensor';
