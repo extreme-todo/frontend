@@ -51,22 +51,7 @@ export function CurrentTodoCard() {
 }
 
 const TransparentAbsoluteCardsParent = styled.div`
-  width: 53.75rem;
-  height: 20rem;
+  width: 100%;
+  height: 100%;
   position: relative;
-  .no-todo {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    button {
-      min-width: 101px;
-    }
-    > :first-child {
-      margin-bottom: 8px;
-    }
-    > :nth-child(2) {
-      margin-bottom: 12px;
-    }
-  }
 `;

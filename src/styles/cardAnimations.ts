@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { designTheme } from './theme';
 
 export const CardAnimationStyle = css`
   @keyframes hideUp {
@@ -25,12 +26,17 @@ export const CardAnimationStyle = css`
 
   @keyframes showUp {
     0% {
-      transform: rotateZ(-3.65deg);
-      left: 34px;
-      top: 40px;
+      transform: rotateZ(-3deg);
+      left: 0px;
+      top: 2.27rem;
       z-index: 0;
       opacity: 1;
       pointer-events: none;
+      @media ${designTheme.responsiveDevice.tablet_v},
+        ${designTheme.responsiveDevice.mobile} {
+        top: 3.75rem;
+        transform: rotateZ(-3.65deg);
+      }
     }
     100% {
       transform: rotateZ(0);
@@ -52,12 +58,17 @@ export const CardAnimationStyle = css`
       pointer-events: none;
     }
     100% {
-      transform: rotateZ(3.65deg);
-      left: 17px;
-      top: 40px;
+      transform: rotateZ(3deg);
+      left: 0px;
+      top: 2.27rem;
       z-index: 0;
       opacity: 1;
       pointer-events: none;
+      @media ${designTheme.responsiveDevice.tablet_v},
+        ${designTheme.responsiveDevice.mobile} {
+        top: 3.75rem;
+        transform: rotateZ(3.65deg);
+      }
     }
   }
 `;

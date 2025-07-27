@@ -198,8 +198,6 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
       }}
     >
       <AddTodoWrapper
-        w="53.75rem"
-        h="20rem"
         padding="1.5rem"
         className="card"
         onSubmit={handleAddSubmit}
