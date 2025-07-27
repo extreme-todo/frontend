@@ -13,6 +13,7 @@ interface ITodoFocusedTime {
 const TODO_FOCUS_TIME_KEY = 'ExtremeTodoFocusTime';
 export type TodoResponseDto = TodoEntity;
 
+// usePomodoro에서 제공하는 status나 action
 export const useCurrentTodo = ({
   value: { settings: pomodoroSettings, status, time },
   actions,

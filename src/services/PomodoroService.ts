@@ -6,14 +6,15 @@ export enum PomodoroStatus {
   RESTING,
   OVERFOCUSING,
 }
+
 const PomodoroStatusSubject = new BehaviorSubject<PomodoroStatus>(
   PomodoroStatus.NONE,
 );
 const PomodoroTimeSubject = new BehaviorSubject<number>(0);
 
 export const PomodoroService = {
-  pomodoroStatus$: PomodoroStatusSubject.asObservable().pipe(share()),
-  pomodoroTime$: PomodoroTimeSubject.asObservable().pipe(share()),
+  pomodoroStatus$: PomodoroStatusSubject.asObservable().pipe(share()), // setStatus가 업데이트
+  pomodoroTime$: PomodoroTimeSubject.asObservable().pipe(share()), // startTimer가 업데이트
   setStatus: (status: PomodoroStatus) => {
     PomodoroStatusSubject.next(status);
     PomodoroTimeSubject.next(0);
