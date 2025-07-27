@@ -74,6 +74,12 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     settings: { focusStep },
   } = usePomodoroValue();
 
+  const changeCard = (curr: CardType, next: CardType) => {
+    setPrevCard(curr);
+    setCurrentCard(next);
+    currentCardAnimationTriggerSubject.current.next('SHOW_UP');
+  };
+
   const handleClickSideButton = useCallback(
     (type: ModalType) => {
       if (!isLogin) {
@@ -84,14 +90,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         changeCard(currentCard, type);
       }
     },
-    [isLogin],
+    [isLogin, currentCard, changeCard],
   );
-
-  const changeCard = useCallback((curr: CardType, next: CardType) => {
-    setPrevCard(curr);
-    setCurrentCard(next);
-    currentCardAnimationTriggerSubject.current.next('SHOW_UP');
-  }, []);
 
   const handleClose = useCallback(() => {
     changeCard(
