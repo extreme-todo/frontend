@@ -5,7 +5,7 @@ const TodoProgressBarContainer = styled.div<{
   type: 'primary1' | 'primary2' | 'extreme1' | 'extreme2';
 }>`
   width: 44.99rem;
-  height: 10.02rem;
+  height: 11rem;
   pointer-events: none;
   position: relative;
 

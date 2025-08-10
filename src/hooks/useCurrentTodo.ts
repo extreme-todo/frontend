@@ -24,6 +24,7 @@ export const useCurrentTodo = ({
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
+  const [currentRound, setCurrentRound] = useState(1);
 
   const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
     ['todos'],
@@ -53,6 +54,12 @@ export const useCurrentTodo = ({
       queryClient.invalidateQueries({ queryKey: ['doneTodos'] });
     },
   });
+
+  useEffect(() => {
+    setCurrentRound(
+      Math.ceil(focusedOnTodo / (pomodoroSettings.focusStep * pomodoroUnit)),
+    );
+  }, [focusedOnTodo, status]);
 
   useEffect(() => {
     const nextTodo = getNextTodo();
@@ -203,8 +210,17 @@ export const useCurrentTodo = ({
       focusedOnTodo,
       canRest,
       shouldFocus,
+      currentRound,
     }),
-    [doTodo, updateFocus, currentTodo, focusedOnTodo, canRest, shouldFocus],
+    [
+      doTodo,
+      updateFocus,
+      currentTodo,
+      focusedOnTodo,
+      canRest,
+      shouldFocus,
+      currentRound,
+    ],
   );
 
   return useCurrentTodoResult;

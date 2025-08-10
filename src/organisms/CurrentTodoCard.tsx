@@ -43,6 +43,7 @@ export function CurrentTodoCard() {
             focusStep={pomodoroSettings.focusStep}
             focusedOnTodo={currentTodo.focusedOnTodo}
             startResting={actions.startResting}
+            currentRound={currentTodo.currentRound}
           ></CurrentTodo>
         )}
       </CardAtom>
