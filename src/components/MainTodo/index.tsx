@@ -209,48 +209,67 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     <MainTodoContainer ref={ref}>
       <MainTodoContentWrapper>
         <MainTodoCenter>
-          <SideButtons>
-            <SideButtons.SideButton
-              onClick={() => handleClickSideButton('timeModal')}
-            >
-              {isExtreme ? (
-                <img src="icon/clock-red.svg" />
-              ) : (
-                <img src="icon/clock.svg" />
-              )}
-              <TypoAtom
-                fontSize="body"
-                fontColor={isExtreme ? 'extreme_orange' : 'primary1'}
+          <div
+            className="side-buttons"
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <SideButtons>
+              <SideButtons.SideButton
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                onClick={() => handleClickSideButton('timeModal')}
               >
+                {isExtreme ? (
+                  <img src="icon/clock-red.svg" />
+                ) : (
+                  <img src="icon/clock.svg" />
+                )}
                 {pomodoroSettings.focusStep}분 집중 |{' '}
                 {pomodoroSettings.restStep}분 휴식
-              </TypoAtom>
-            </SideButtons.SideButton>
-
-            <SideButtons.SideButton
-              onClick={() => handleClickSideButton('todolistModal')}
-            >
-              {isExtreme ? (
-                <img src="icon/list-red.svg" />
-              ) : (
-                <img src="icon/list.svg" />
-              )}
-              {/* TODO: 남은 할 일 계산 로직 추가 */}
-              <TypoAtom
-                fontSize="body"
-                fontColor={isExtreme ? 'extreme_orange' : 'primary1'}
+              </SideButtons.SideButton>
+              <SideButtons.SideButton
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                onClick={() => handleClickSideButton('addTodoModal')}
               >
-                남은 할일
-              </TypoAtom>
-            </SideButtons.SideButton>
-            <SideButtons.SideButton
-              onClick={() => handleClickSideButton('addTodoModal')}
-            >
-              <div className={'tag-button' + (isExtreme ? ' extreme' : '')}>
                 Todo +
-              </div>
-            </SideButtons.SideButton>
-          </SideButtons>
+              </SideButtons.SideButton>
+              <SideButtons.SideButton
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                onClick={() => handleClickSideButton('todolistModal')}
+              >
+                {/* TODO: 남은 할 일 계산 로직 추가 */}
+                {isExtreme ? (
+                  <img src="icon/list-red.svg" />
+                ) : (
+                  <img src="icon/list.svg" />
+                )}
+                남은 할일
+              </SideButtons.SideButton>
+            </SideButtons>
+            <SideButtons>
+              <SideButtons.SideButton
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                onClick={handleClose}
+              >
+                랭킹
+              </SideButtons.SideButton>
+              <SideButtons.SideButton
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                onClick={handleClose}
+                style={{
+                  width: '1.75rem',
+                  height: '1.75rem',
+                  padding: 0,
+                  textAlign: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                ?
+              </SideButtons.SideButton>
+            </SideButtons>
+          </div>
           <div className="center">
             <CardAnimationPlayerAtom
               trigger={currentCardAnimationTrigger$.current}

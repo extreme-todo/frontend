@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import styled from '@emotion/styled';
 import { BtnAtom } from '../atoms';
+import { SideBtnAtom } from '../atoms/SideBtnAtom';
+import { ButtonName } from '../styles/emotion';
 
 function SideButtonsMain({ children }: IChildProps) {
   return <SideButtonsWrapper>{children}</SideButtonsWrapper>;
@@ -11,7 +13,7 @@ const SideButtonsWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   button {
     gap: 0.25rem;
   }
@@ -37,14 +39,18 @@ const SideButtonsWrapper = styled.div`
 const SideButton = ({
   onClick,
   children,
+  btnStyle = 'darkBtn',
+  style,
 }: {
   onClick: () => void;
   children?: ReactNode;
+  btnStyle?: ButtonName;
+  style?: React.CSSProperties;
 }) => {
   return (
-    <BtnAtom btnStyle="textBtn" handleOnClick={onClick}>
+    <SideBtnAtom onClick={onClick} btnStyle={btnStyle} style={style}>
       {children}
-    </BtnAtom>
+    </SideBtnAtom>
   );
 };
 

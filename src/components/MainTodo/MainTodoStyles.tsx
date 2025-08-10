@@ -31,6 +31,9 @@ export const MainTodoCenter = styled.div`
   align-items: center;
   gap: 0.75rem;
   width: 100%;
+  .side-buttons {
+    width: 59rem;
+  }
   .center {
     width: 59rem;
     height: 28.75rem;
@@ -62,6 +65,9 @@ export const MainTodoCenter = styled.div`
     .center {
       width: 89.9%;
       height: calc(100vh - 13.25rem);
+    }
+    .side-buttons {
+      width: 89.9%;
     }
   }
 `;
