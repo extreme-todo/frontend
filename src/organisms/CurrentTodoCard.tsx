@@ -4,6 +4,7 @@ import { CurrentTodo } from '../organisms';
 import {
   useCurrentTodo,
   useExtremeMode,
+  useIsMobile,
   usePomodoroActions,
   usePomodoroValue,
 } from '../hooks';
@@ -12,6 +13,7 @@ import { useEffect } from 'react';
 import { PomodoroStatus } from '../services/PomodoroService';
 
 export function CurrentTodoCard() {
+  const isMobile = useIsMobile();
   const { settings: pomodoroSettings, status, time } = usePomodoroValue();
   const { isExtreme } = useExtremeMode();
   const actions = usePomodoroActions();
@@ -32,7 +34,11 @@ export function CurrentTodoCard() {
 
   return (
     <TransparentAbsoluteCardsParent>
-      <CardAtom className="card" bg={isExtreme ? 'extreme_dark' : 'primary1'}>
+      <CardAtom
+        className="card"
+        padding={isMobile ? '0' : undefined}
+        bg={isExtreme ? 'extreme_dark' : 'primary1'}
+      >
         <ExtremeModeIndicator />
         {currentTodo.currentTodo && (
           <CurrentTodo

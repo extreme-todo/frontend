@@ -47,4 +47,14 @@ const Typo = styled.span<ITypoProps>`
     fontSize
       ? (theme.fontSize[fontSize].lineHeight as string)
       : (theme.fontSize.body.lineHeight as string)};
+
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    ${({ fontSize, theme }) =>
+      fontSize === 'clock'
+        ? 'font-size: 5.25rem;'
+        : fontSize
+        ? theme.fontSize[fontSize].size
+        : theme.fontSize.body.size}
+  }
 `;

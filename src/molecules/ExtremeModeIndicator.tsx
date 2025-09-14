@@ -125,16 +125,4 @@ const ExtremeModeContainer = styled.div`
     width: 20px;
     height: 20px;
   }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    margin-right: 8rem;
-    img {
-      width: 8rem;
-      height: 8rem;
-    }
-    .extreme-status {
-      width: fit-content;
-      word-break: break-all;
-    }
-  }
 `;

@@ -3,9 +3,10 @@ import { BtnAtom, CardAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { Clock, ExtremeModeIndicator } from '../molecules';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usePomodoroActions, usePomodoroValue } from '../hooks/usePomodoro';
-import { useCurrentTodo, useExtremeMode } from '../hooks';
+import { useCurrentTodo, useExtremeMode, useIsMobile } from '../hooks';
 
 export function RestCard() {
+  const isMobile = useIsMobile();
   const pomodoro = usePomodoroValue();
   const actions = usePomodoroActions();
   const { isExtreme } = useExtremeMode();
@@ -21,7 +22,11 @@ export function RestCard() {
     return pomodoro.settings.restStep * 60000 - (pomodoro.time ?? 0);
   };
   return (
-    <CardAtom className="card" bg={'primary2'}>
+    <CardAtom
+      className="card"
+      bg={'primary2'}
+      padding={isMobile ? '0' : undefined}
+    >
       {pomodoro.status === PomodoroStatus.RESTING && (
         <RestCardWrapper>
           <ExtremeModeIndicator />
@@ -130,5 +135,9 @@ const RestCardWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+  .progress-container {
+    width: 100%;
+    height: 11rem;
   }
 `;

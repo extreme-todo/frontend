@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BtnAtom, IconAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { Clock, CategoryList } from '../molecules';
 import { TodoEntity } from '../DB/indexedAction';
-import { useExtremeMode } from '../hooks';
+import { useExtremeMode, useIsMobile } from '../hooks';
 import { IChildProps } from '../shared/interfaces';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import styled from '@emotion/styled';
@@ -26,6 +26,7 @@ export function CurrentTodo({
 }: ICurrentTodoProps) {
   const [todoProgress, setTodoProgress] = useState<number>(0);
   const { isExtreme } = useExtremeMode();
+  const isMobile = useIsMobile();
   useEffect(() => {
     setTodoProgress(
       Number(
@@ -46,34 +47,37 @@ export function CurrentTodo({
     return todo.duration * focusStep * 60000 - focusedOnTodo;
   };
 
+  const getButtonContainer = useMemo(
+    () => (
+      <div className="button-container">
+        <BtnAtom
+          className="rest"
+          btnStyle="darkBtn"
+          handleOnClick={() => startResting()}
+        >
+          <IconAtom src="icon/pause-dark.svg" size={1.5} />
+        </BtnAtom>
+        <BtnAtom
+          className="do-todo"
+          aria-label="do todo"
+          btnStyle="darkBtn"
+          handleOnClick={() => doAndRest()}
+        >
+          <IconAtom src="icon/stop-dark.svg" size={1} />
+        </BtnAtom>
+      </div>
+    ),
+    [todo],
+  );
+
   return (
     <CurrentTodoContainer>
       <div className="center-container">
-        <TypoAtom
-          fontSize={'body'}
-          fontColor={'primary2'}
-          className="left-time"
-        >
+        <TypoAtom fontSize={'h3'} fontColor={'primary2'} className="left-time">
           남은 시간
         </TypoAtom>
         <Clock ms={getLeftMs()} fontColor={'primary2'}></Clock>
-        <div className="button-container">
-          <BtnAtom
-            className="rest"
-            btnStyle="darkBtn"
-            handleOnClick={() => startResting()}
-          >
-            <IconAtom src="icon/pause-dark.svg" size={1.5} />
-          </BtnAtom>
-          <BtnAtom
-            className="do-todo"
-            aria-label="do todo"
-            btnStyle="darkBtn"
-            handleOnClick={() => doAndRest()}
-          >
-            <IconAtom src="icon/stop-dark.svg" size={1} />
-          </BtnAtom>
-        </div>
+        {!isMobile && getButtonContainer}
       </div>
 
       <div className="progress-container">
@@ -89,13 +93,14 @@ export function CurrentTodo({
           <div>
             <TypoAtom fontSize="h3">{`🍅 `.repeat(currentRound)}</TypoAtom>
             <TypoAtom fontSize="h3" className="left-round">
-              {`🍅 `.repeat(todo.duration - currentRound)}
+              {`🍅 `.repeat(Math.max(todo.duration - currentRound, 0))}
             </TypoAtom>
           </div>
         </div>
         <TypoAtom fontSize={'h2'} fontColor="primary2">
           {todo.todo}
         </TypoAtom>
+        {isMobile && getButtonContainer}
       </div>
     </CurrentTodoContainer>
   );
@@ -106,7 +111,8 @@ const CurrentTodoContainer = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  width: 100%;
+  width: 90%;
+  max-width: 90%;
   height: 100%;
   position: relative;
   gap: 2.56rem;
@@ -114,7 +120,7 @@ const CurrentTodoContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
-    max-width: 20ch;
+    max-width: 40ch;
     position: absolute;
     margin-bottom: 1.1428571429rem;
     justify-content: flex-end;
@@ -123,11 +129,16 @@ const CurrentTodoContainer = styled.div`
   .center-container {
     display: flex;
     width: 100%;
+    margin-top: 1.125rem;
     justify-content: space-between;
     align-items: center;
     > :first-child {
       padding-left: 4.75rem;
     }
+  }
+  .progress-container {
+    width: 100%;
+    height: 11rem;
   }
   .indicator-container {
     width: 100%;
@@ -169,6 +180,9 @@ const CurrentTodoContainer = styled.div`
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+    > :first-child {
+      flex-shrink: 0;
+    }
     span {
       color: ${({ theme }) => theme.color.primary.primary2};
     }
@@ -182,62 +196,29 @@ const CurrentTodoContainer = styled.div`
     ${({ theme }) => theme.responsiveDevice.mobile} {
     height: 100%;
     position: relative;
-    .title {
-      font-size: ${({ theme: { fontSize } }) => fontSize.b1.size};
-      font-weight: ${({ theme: { fontSize } }) => fontSize.b1.weight};
-      text-align: right;
+    gap: 0rem;
+    justify-content: center;
+    .progress-container {
+      margin-top: 1.25rem;
+      height: 5.5rem;
+      margin-bottom: 0.625rem;
+    }
+    .center-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      > :first-child {
+        padding-left: 0;
+      }
     }
     .todo-title {
-      overflow: auto;
-      padding-right: 16rem;
-      box-sizing: border-box;
-      max-height: 50%;
-      text-align: right;
-
-      span {
-        vertical-align: middle;
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-        white-space: normal;
-        overflow: initial;
-        text-align: right;
+      position: relative;
+      > :first-child {
+        margin-bottom: 1rem;
       }
     }
-    .categories {
-      margin: 4rem 0 4rem 0;
-      span {
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-        border-radius: 6rem;
-        padding: 1rem 3rem 1rem 3rem;
-      }
-    }
-    .todo-duration {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2rem;
-      span {
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-      }
-      div > span {
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-        border-radius: 6rem;
-        padding: 0.5rem 3rem 0.5rem 3rem;
-      }
-    }
-    .progress-container {
-      position: absolute;
-      height: calc(100% - 12rem);
-      width: 6rem;
-      top: 0;
-      right: 0;
-      flex-direction: row-reverse;
-      box-sizing: border-box;
-      .do-todo {
-        position: absolute;
-        right: 8rem;
-        background-position: center;
-      }
+    .button-container {
+      margin-top: 3.75rem;
     }
   }
 `;
