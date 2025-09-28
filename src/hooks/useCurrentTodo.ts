@@ -5,6 +5,7 @@ import { timerApi, todosApi } from '../shared/apis';
 import { getDateInFormat } from '../shared/timeUtils';
 import { PomodoroService, PomodoroStatus } from '../services/PomodoroService';
 import { IPomodoroActions, IPomodoroData, pomodoroUnit } from './usePomodoro';
+import useAlarm from './useAlert';
 
 interface ITodoFocusedTime {
   id: TodoEntity['id'];
@@ -25,6 +26,7 @@ export const useCurrentTodo = ({
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
+  const { callNotification } = useAlarm();
 
   const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
     ['todos'],
@@ -106,6 +108,7 @@ export const useCurrentTodo = ({
     ) {
       setCanRest((prev) => {
         if (!prev) actions.startResting();
+        callNotification();
         return true;
       });
       return true;
@@ -124,6 +127,7 @@ export const useCurrentTodo = ({
       time === pomodoroSettings.focusStep * pomodoroUnit
     ) {
       actions.startResting();
+      callNotification();
       return true;
     }
     return false;
@@ -135,6 +139,7 @@ export const useCurrentTodo = ({
       (time ?? 0) >= pomodoroSettings.restStep * pomodoroUnit
     ) {
       setShouldFocus(true);
+      callNotification();
     } else {
       setShouldFocus(false);
     }
