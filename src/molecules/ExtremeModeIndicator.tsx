@@ -87,14 +87,11 @@ export function ExtremeModeIndicator() {
 }
 
 const ExtremeModeContainer = styled.div`
-  position: absolute;
   z-index: 1;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  top: 2rem;
-  right: 2.0625rem;
-  gap: 9px;
+  width: fit-content;
   img {
     width: 1.5625rem;
     height: 2.5rem;

@@ -4,8 +4,13 @@ import { Clock, ExtremeModeIndicator } from '../molecules';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usePomodoroActions, usePomodoroValue } from '../hooks/usePomodoro';
 import { useCurrentTodo, useExtremeMode, useIsMobile } from '../hooks';
+import { ReactNode } from 'react';
 
-export function RestCard() {
+export function RestCard({
+  mobileTopButtonSlot,
+}: {
+  mobileTopButtonSlot?: ReactNode;
+}) {
   const isMobile = useIsMobile();
   const pomodoro = usePomodoroValue();
   const actions = usePomodoroActions();
@@ -29,7 +34,19 @@ export function RestCard() {
     >
       {pomodoro.status === PomodoroStatus.RESTING && (
         <RestCardWrapper>
-          <ExtremeModeIndicator />
+          {isMobile && (
+            <div className="mobile-header-wrapper">
+              <div className="mobile-top-button-slot">
+                {mobileTopButtonSlot}
+              </div>
+              <ExtremeModeIndicator />
+            </div>
+          )}
+          {!isMobile && (
+            <div className="desktop-extreme-wrapper">
+              <ExtremeModeIndicator />
+            </div>
+          )}
           <div className="center-container">
             <TypoAtom
               fontSize={'h3'}
@@ -111,6 +128,17 @@ const RestCardWrapper = styled.div`
   justify-content: flex-end;
   width: 100%;
   height: 100%;
+  .mobile-header-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .desktop-extreme-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    box-sizing: border-box;
+  }
   .center-container {
     display: flex;
     align-items: center;

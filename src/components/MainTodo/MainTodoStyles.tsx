@@ -33,6 +33,10 @@ export const MainTodoCenter = styled.div`
   width: 100%;
   .side-buttons {
     width: 59rem;
+    > div {
+      display: flex;
+      gap: 0.75rem;
+    }
   }
   .center {
     width: 59rem;
@@ -62,12 +66,26 @@ export const MainTodoCenter = styled.div`
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
+    gap: 0.5rem;
     .center {
       width: 89.9%;
       height: calc(100vh - 13.25rem);
     }
     .side-buttons {
       width: 89.9%;
+      position: relative;
+    }
+    .time-setting {
+      position: absolute;
+      left: 1.25rem;
+      top: 3.5rem;
+      z-index: 5;
     }
   }
+`;
+
+export const CardWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
 `;

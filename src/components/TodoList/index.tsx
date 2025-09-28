@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import { memo, ReactNode, useCallback, useMemo } from 'react';
 
 /* component */
 import { TodoCard } from '../';
@@ -27,6 +27,7 @@ import {
   useEdit,
   type focusStep,
   useTouchSensor,
+  useIsMobile,
 } from '../../hooks';
 
 /* etc */
@@ -70,6 +71,7 @@ interface ITodoListProps {
   currentTodo: TodoEntity | undefined;
   focusStep: focusStep;
   handleClose: () => void;
+  mobileTopButtonSlot?: ReactNode;
 }
 
 export const TodoList = memo(
@@ -78,9 +80,12 @@ export const TodoList = memo(
     currentTodo,
     focusStep,
     handleClose,
+    mobileTopButtonSlot,
   }: ITodoListProps) => {
     /* api 호출 */
     const queryClient = useQueryClient();
+
+    const isMobile = useIsMobile();
 
     const { data: todos, isLoading: isTodoLoading } = useQuery(
       ['todos'],
@@ -154,42 +159,11 @@ export const TodoList = memo(
       <>
         {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
         <TodoListContainer padding="1rem 1.5rem" className="card">
-          <ListSection>
-            <div className="header__todo">
-              <TypoAtom fontSize="body" fontColor="primary2">
-                완료한 TODO
-              </TypoAtom>
-            </div>
-            {doneTodoList ? (
-              <List>
-                {doneTodoList.map((doneTodo, idx) => (
-                  <MemoTodoCard
-                    isThisEdit={editTodoId === doneTodo.id}
-                    setEditTodoId={setEditTodoId}
-                    todoData={doneTodo}
-                    focusStep={focusStep}
-                    randomTagColor={randomTagColor}
-                    isCurrTodo={false}
-                    order={idx + 1}
-                  />
-                ))}
-              </List>
-            ) : (
-              <EmptyList>
-                <TypoAtom fontSize="body" fontColor="primary2">
-                  🍅
-                </TypoAtom>
-                <TypoAtom fontSize="body" fontColor="primary2">
-                  힘차게 시작해볼까요?
-                </TypoAtom>
-              </EmptyList>
-            )}
-          </ListSection>
-          <ListSection>
-            <div className="header__todo">
-              <TypoAtom fontSize="body" fontColor="primary2">
-                남은 TODO
-              </TypoAtom>
+          {isMobile && (
+            <div className="mobile-header-wrapper">
+              <div className="mobile-top-button-slot">
+                {mobileTopButtonSlot}
+              </div>
               <BtnAtom
                 handleOnClick={handleClose}
                 ariaLabel="close"
@@ -199,89 +173,145 @@ export const TodoList = memo(
                 <IconAtom size={1.5} alt="close" src="icon/closeYellow.svg" />
               </BtnAtom>
             </div>
-            {todoList ? (
-              <List>
-                {currentTodo && (
-                  <MemoTodoCard
-                    isThisEdit={editTodoId === currentTodo.id}
-                    setEditTodoId={setEditTodoId}
-                    todoData={currentTodo}
-                    focusStep={focusStep}
-                    randomTagColor={randomTagColor}
-                    isCurrTodo={true}
-                    order={(doneTodoList?.length ?? 0) + 1}
-                  />
+          )}
+          <div className="todo-list-wrapper">
+            <ListSection>
+              <div className="header__todo">
+                <TypoAtom fontSize="body" fontColor="primary2">
+                  완료한 TODO
+                </TypoAtom>
+              </div>
+              {doneTodoList ? (
+                <List>
+                  {doneTodoList.map((doneTodo, idx) => (
+                    <MemoTodoCard
+                      isThisEdit={editTodoId === doneTodo.id}
+                      setEditTodoId={setEditTodoId}
+                      todoData={doneTodo}
+                      focusStep={focusStep}
+                      randomTagColor={randomTagColor}
+                      isCurrTodo={false}
+                      order={idx + 1}
+                    />
+                  ))}
+                </List>
+              ) : (
+                <EmptyList>
+                  <TypoAtom fontSize="body" fontColor="primary2">
+                    🍅
+                  </TypoAtom>
+                  <TypoAtom fontSize="body" fontColor="primary2">
+                    힘차게 시작해볼까요?
+                  </TypoAtom>
+                </EmptyList>
+              )}
+            </ListSection>
+            <ListSection>
+              <div className="header__todo">
+                <TypoAtom fontSize="body" fontColor="primary2">
+                  남은 TODO
+                </TypoAtom>
+                {!isMobile && (
+                  <BtnAtom
+                    handleOnClick={handleClose}
+                    ariaLabel="close"
+                    className="close__btn"
+                    tabIndex={3}
+                  >
+                    <IconAtom
+                      size={1.5}
+                      alt="close"
+                      src="icon/closeYellow.svg"
+                    />
+                  </BtnAtom>
                 )}
-                <DragDropContext
-                  onDragEnd={handleDragEnd}
-                  enableDefaultSensors={false}
-                  sensors={[useMouseSensor, useTouchSensor]}
-                >
-                  <Droppable droppableId={droppableId}>
-                    {(provided) => (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        className="innerList"
-                      >
-                        {todoList.map(
-                          (todo, idx) =>
-                            todo.id !== currentTodo?.id && (
-                              <Draggable
-                                draggableId={String(todo.id)}
-                                index={idx}
-                                key={todo.id}
-                              >
-                                {optionalPortal((provided, snapshot) => (
-                                  <li
-                                    {...provided.draggableProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    <MemoTodoCard
-                                      isThisEdit={editTodoId === todo.id}
-                                      setEditTodoId={setEditTodoId}
-                                      dragHandleProps={provided.dragHandleProps}
-                                      todoData={todo}
-                                      snapshot={snapshot}
-                                      focusStep={focusStep}
-                                      randomTagColor={randomTagColor}
-                                      isCurrTodo={
-                                        currentTodo
-                                          ? currentTodo.id === todo.id
-                                          : false
-                                      }
-                                      order={
-                                        idx +
-                                        1 +
-                                        (doneTodos ? doneTodos.size : 0)
-                                      }
-                                    />
-                                  </li>
-                                ))}
-                              </Draggable>
-                            ),
-                        )}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-              </List>
-            ) : (
-              <EmptyList>
-                <BtnAtom
-                  handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
-                  btnStyle="extremeDarkBtn"
-                >
-                  <div style={{ padding: '0.375rem 1.28125rem' }}>
-                    <TypoAtom fontSize="b1" fontColor="primary2">
-                      Todo+
-                    </TypoAtom>
-                  </div>
-                </BtnAtom>
-              </EmptyList>
-            )}
-          </ListSection>
+              </div>
+              {todoList ? (
+                <List>
+                  {currentTodo && (
+                    <MemoTodoCard
+                      isThisEdit={editTodoId === currentTodo.id}
+                      setEditTodoId={setEditTodoId}
+                      todoData={currentTodo}
+                      focusStep={focusStep}
+                      randomTagColor={randomTagColor}
+                      isCurrTodo={true}
+                      order={(doneTodoList?.length ?? 0) + 1}
+                    />
+                  )}
+                  <DragDropContext
+                    onDragEnd={handleDragEnd}
+                    enableDefaultSensors={false}
+                    sensors={[useMouseSensor, useTouchSensor]}
+                  >
+                    <Droppable droppableId={droppableId}>
+                      {(provided) => (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          className="innerList"
+                        >
+                          {todoList.map(
+                            (todo, idx) =>
+                              todo.id !== currentTodo?.id && (
+                                <Draggable
+                                  draggableId={String(todo.id)}
+                                  index={idx}
+                                  key={todo.id}
+                                >
+                                  {optionalPortal((provided, snapshot) => (
+                                    <li
+                                      {...provided.draggableProps}
+                                      ref={provided.innerRef}
+                                    >
+                                      <MemoTodoCard
+                                        isThisEdit={editTodoId === todo.id}
+                                        setEditTodoId={setEditTodoId}
+                                        dragHandleProps={
+                                          provided.dragHandleProps
+                                        }
+                                        todoData={todo}
+                                        snapshot={snapshot}
+                                        focusStep={focusStep}
+                                        randomTagColor={randomTagColor}
+                                        isCurrTodo={
+                                          currentTodo
+                                            ? currentTodo.id === todo.id
+                                            : false
+                                        }
+                                        order={
+                                          idx +
+                                          1 +
+                                          (doneTodos ? doneTodos.size : 0)
+                                        }
+                                      />
+                                    </li>
+                                  ))}
+                                </Draggable>
+                              ),
+                          )}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                </List>
+              ) : (
+                <EmptyList>
+                  <BtnAtom
+                    handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
+                    btnStyle="extremeDarkBtn"
+                  >
+                    <div style={{ padding: '0.375rem 1.28125rem' }}>
+                      <TypoAtom fontSize="b1" fontColor="primary2">
+                        Todo+
+                      </TypoAtom>
+                    </div>
+                  </BtnAtom>
+                </EmptyList>
+              )}
+            </ListSection>
+          </div>
         </TodoListContainer>
       </>
     );
@@ -295,8 +325,26 @@ const TodoListContainer = styled(CardAtom)`
   } */
   overflow: hidden;
   display: flex;
-  flex-direction: row;
-  column-gap: 1rem;
+  flex-direction: column;
+
+  .mobile-header-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .mobile-top-button-slot {
+    flex-shrink: 0;
+    text-align: left;
+  }
+
+  .todo-list-wrapper {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem;
+  }
 
   background-color: ${({
     theme: {

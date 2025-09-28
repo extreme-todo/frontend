@@ -40,11 +40,13 @@ export const CardAtom = styled.div<{
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  transition: all 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out, height 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
   z-index: 1;
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
     height: calc(100vh - 13.25rem);
+    padding: ${({ padding }) => padding ?? '1.25rem'};
   }
 `;

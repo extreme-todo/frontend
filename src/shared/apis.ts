@@ -160,13 +160,6 @@ export const todosApi = {
 };
 export const timerApi = {
   _route: 'timer',
-  // duration in minutes
-  recordFocusTime: async (category: string, duration: number) => {
-    return baseApi.post(`${timerApi._route}/focused-time`, {
-      category,
-      duration,
-    });
-  },
   getRecords: async (
     timezoneOffset: number,
     unit: 'week' | 'month' | 'day',

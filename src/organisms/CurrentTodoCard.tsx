@@ -9,10 +9,14 @@ import {
   usePomodoroValue,
 } from '../hooks';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { PomodoroStatus } from '../services/PomodoroService';
 
-export function CurrentTodoCard() {
+export function CurrentTodoCard({
+  mobileTopButtonSlot,
+}: {
+  mobileTopButtonSlot?: ReactNode;
+}) {
   const isMobile = useIsMobile();
   const { settings: pomodoroSettings, status, time } = usePomodoroValue();
   const { isExtreme } = useExtremeMode();
@@ -39,7 +43,17 @@ export function CurrentTodoCard() {
         padding={isMobile ? '0' : undefined}
         bg={isExtreme ? 'extreme_dark' : 'primary1'}
       >
-        <ExtremeModeIndicator />
+        {isMobile && (
+          <div className="mobile-header-wrapper">
+            <div className="mobile-top-button-slot">{mobileTopButtonSlot}</div>
+            <ExtremeModeIndicator />
+          </div>
+        )}
+        {!isMobile && (
+          <div className="desktop-extreme-wrapper">
+            <ExtremeModeIndicator />
+          </div>
+        )}
         {currentTodo.currentTodo && (
           <CurrentTodo
             todo={currentTodo.currentTodo}
@@ -61,4 +75,24 @@ const TransparentAbsoluteCardsParent = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  .desktop-extreme-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    box-sizing: border-box;
+  }
+  .mobile-header-wrapper {
+    width: 100%;
+    padding: 1.25rem;
+    height: 1.75rem;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    align-items: flex-start;
+  }
+  .mobile-top-button-slot {
+    display: flex;
+    justify-content: flex-start;
+    height: fit-content;
+  }
 `;

@@ -1,9 +1,11 @@
 import {
   ForwardedRef,
   forwardRef,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -11,6 +13,7 @@ import { SideButtons } from '../../molecules';
 import { CurrentTodoCard, NoTodoCard, RestCard } from '../../organisms';
 import { TodoList, AddTodo, PomodoroTimeSetting } from '..';
 import {
+  CardWrapper,
   MainTodoCenter,
   MainTodoContainer,
   MainTodoContentWrapper,
@@ -20,6 +23,7 @@ import {
   LoginContext,
   useCurrentTodo,
   useExtremeMode,
+  useIsMobile,
   usePomodoroActions,
   usePomodoroValue,
   useTimeMarker,
@@ -52,6 +56,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   } = usePomodoroValue();
   const actions = usePomodoroActions();
   const { isLogin } = useContext(LoginContext);
+  const isMobile = useIsMobile();
   const { isExtreme } = useExtremeMode();
   const currentCardAnimationTriggerSubject = useRef(
     new Subject<
@@ -116,13 +121,36 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     }
   };
 
+  const currentFocusedSideButton = useMemo(() => {
+    switch (currentCard) {
+      case 'addTodoModal':
+        return 'addTodo';
+      case 'timeModal':
+        return 'timer';
+      case 'todolistModal':
+        return 'list';
+      default:
+        return undefined;
+    }
+  }, [currentCard]);
+
   const CurrentMainCard = useCallback(
-    (props: { type: 'current' | 'prev' }) => {
+    (props: { type: 'current' | 'prev'; children?: ReactNode }) => {
       switch (props.type === 'current' ? currentCard : prevCard) {
         case 'addTodoModal':
-          return <AddTodo handleClose={handleClose} />;
+          return (
+            <AddTodo
+              mobileTopButtonSlot={props.children}
+              handleClose={handleClose}
+            />
+          );
         case 'timeModal':
-          return <PomodoroTimeSetting handleClose={handleClose} />;
+          return (
+            <PomodoroTimeSetting
+              mobileTopButtonSlot={props.children}
+              handleClose={handleClose}
+            />
+          );
         case 'todolistModal':
           return (
             <EditContextProvider>
@@ -131,27 +159,30 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 currentTodo={currentTodo}
                 focusStep={focusStep}
                 handleClose={handleClose}
+                mobileTopButtonSlot={props.children}
               />
             </EditContextProvider>
           );
         case 'rest':
           return currentTodo?.todo ? (
-            <RestCard />
+            <RestCard mobileTopButtonSlot={props.children} />
           ) : (
             <NoTodoCard
               addTodoHandler={() => {
                 handleClickSideButton('addTodoModal');
               }}
+              mobileTopButtonSlot={props.children}
             />
           );
         case 'currentTodo':
           return currentTodo?.todo ? (
-            <CurrentTodoCard />
+            <CurrentTodoCard mobileTopButtonSlot={props.children} />
           ) : (
             <NoTodoCard
               addTodoHandler={() => {
                 handleClickSideButton('addTodoModal');
               }}
+              mobileTopButtonSlot={props.children}
             />
           );
         default:
@@ -160,6 +191,39 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     },
     [currentCard, prevCard, currentTodo, isLogin],
   );
+
+  const MainCard = useCallback(() => {
+    return (
+      <CardWrapper>
+        <CurrentMainCard type="current">
+          {isMobile && (
+            <SideButtons.ShowTimerButton
+              className="timer-mobile-btn"
+              focusStep={pomodoroSettings.focusStep}
+              restStep={pomodoroSettings.restStep}
+              theme={(() => {
+                if (isExtreme) {
+                  return 'extremeDarkBtn';
+                }
+                switch (currentCardColor) {
+                  case 'primary1':
+                    return 'darkBtn';
+                  case 'primary2':
+                    return 'lightBtn';
+                  case 'extreme_dark':
+                    return 'extremeLightBtn';
+                  case 'extreme_orange':
+                    return 'extremeDarkBtn';
+                  default:
+                    return 'darkBtn';
+                }
+              })()}
+            />
+          )}
+        </CurrentMainCard>
+      </CardWrapper>
+    );
+  }, [currentCard, prevCard, isMobile, currentTodo, isLogin]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -206,89 +270,84 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   }, [currentCard, pomodoroStatus, isExtreme]);
 
   return (
-    <MainTodoContainer ref={ref}>
-      <MainTodoContentWrapper>
-        <MainTodoCenter>
-          <div
-            className="side-buttons"
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <SideButtons>
-              <SideButtons.SideButton
-                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                onClick={() => handleClickSideButton('timeModal')}
-              >
-                {isExtreme ? (
-                  <img src="icon/clock-red.svg" />
-                ) : (
-                  <img src="icon/clock.svg" />
-                )}
-                {pomodoroSettings.focusStep}분 집중 |{' '}
-                {pomodoroSettings.restStep}분 휴식
-              </SideButtons.SideButton>
-              <SideButtons.SideButton
-                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                onClick={() => handleClickSideButton('addTodoModal')}
-              >
-                Todo +
-              </SideButtons.SideButton>
-              <SideButtons.SideButton
-                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                onClick={() => handleClickSideButton('todolistModal')}
-              >
-                {/* TODO: 남은 할 일 계산 로직 추가 */}
-                {isExtreme ? (
-                  <img src="icon/list-red.svg" />
-                ) : (
-                  <img src="icon/list.svg" />
-                )}
-                남은 할일
-              </SideButtons.SideButton>
-            </SideButtons>
-            <SideButtons>
-              <SideButtons.SideButton
-                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                onClick={handleClose}
-              >
-                랭킹
-              </SideButtons.SideButton>
-              <SideButtons.SideButton
-                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                onClick={handleClose}
-                style={{
-                  width: '1.75rem',
-                  height: '1.75rem',
-                  padding: 0,
-                  textAlign: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                ?
-              </SideButtons.SideButton>
-            </SideButtons>
-          </div>
-          <div className="center">
-            <CardAnimationPlayerAtom
-              trigger={currentCardAnimationTrigger$.current}
+    <SideButtons
+      focusedButton={currentFocusedSideButton}
+      onClickHandlers={{
+        ranking: () => {
+          // handleClickSideButton('ranking');
+          throw new Error('Not implemented yet');
+        },
+        help: () => {
+          // handleClickSideButton('help');
+          throw new Error('Not implemented yet');
+        },
+        addTodo: () => {
+          handleClickSideButton('addTodoModal');
+        },
+        list: () => {
+          handleClickSideButton('todolistModal');
+        },
+        timer: () => {
+          handleClickSideButton('timeModal');
+        },
+        doAll: () => {
+          // handleClickSideButton('doAll');
+          throw new Error('Not implemented yet');
+        },
+      }}
+    >
+      <MainTodoContainer ref={ref}>
+        <MainTodoContentWrapper>
+          <MainTodoCenter>
+            <div
+              className="side-buttons"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
             >
-              <CurrentMainCard type="current" />
-            </CardAnimationPlayerAtom>
-            {prevCard && (
-              <CardAnimationPlayerAtom animation={'HIDE_UP'}>
-                <CurrentMainCard type="prev" />
+              <div>
+                {!isMobile && (
+                  <SideButtons.ShowTimerButton
+                    focusStep={pomodoroSettings.focusStep}
+                    restStep={pomodoroSettings.restStep}
+                    theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                  />
+                )}
+                <SideButtons.ShowAddTodoButton
+                  theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                />
+                <SideButtons.ShowListButton
+                  theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                />
+              </div>
+              <div>
+                <SideButtons.ShowHelpButton
+                  theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                />
+              </div>
+            </div>
+            <div className="center">
+              <CardAnimationPlayerAtom
+                trigger={currentCardAnimationTrigger$.current}
+              >
+                <MainCard />
+                {/* <CurrentMainCard type="current" /> */}
               </CardAnimationPlayerAtom>
-            )}
-            {!prevCard && (
-              <CardAnimationPlayerAtom animation={'NEXT_UP'}>
-                <CardAtom bg={getDummyCardColor()} style={{ zIndex: -1 }} />
-              </CardAnimationPlayerAtom>
-            )}
-          </div>
-        </MainTodoCenter>
-      </MainTodoContentWrapper>
-    </MainTodoContainer>
+              {prevCard && (
+                <CardAnimationPlayerAtom animation={'HIDE_UP'}>
+                  <CurrentMainCard type="prev" />
+                </CardAnimationPlayerAtom>
+              )}
+              {!prevCard && (
+                <CardAnimationPlayerAtom animation={'NEXT_UP'}>
+                  <CardAtom bg={getDummyCardColor()} style={{ zIndex: -1 }} />
+                </CardAnimationPlayerAtom>
+              )}
+            </div>
+          </MainTodoCenter>
+        </MainTodoContentWrapper>
+      </MainTodoContainer>
+    </SideButtons>
   );
 });

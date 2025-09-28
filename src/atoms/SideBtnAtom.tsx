@@ -8,6 +8,7 @@ export interface SideBtnAtomProps {
   ariaLabel?: string;
   type?: 'submit' | 'reset' | 'button';
   disabled?: boolean;
+  focused?: boolean;
 }
 
 export const SideBtnAtom = styled.button<SideBtnAtomProps>`
@@ -41,4 +42,11 @@ export const SideBtnAtom = styled.button<SideBtnAtomProps>`
     color: ${({ theme, btnStyle }) => theme.button[btnStyle].default.color};
     cursor: not-allowed;
   }
+
+  ${({ focused, theme, btnStyle: btnType }) =>
+    focused &&
+    `
+    background-color: ${theme.button[btnType].click.backgroundColor} !important;
+    color: ${theme.button[btnType].click.color} !important;
+  `}
 `;

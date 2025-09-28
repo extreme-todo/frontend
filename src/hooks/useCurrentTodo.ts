@@ -79,11 +79,12 @@ export const useCurrentTodo = ({
   useEffect(() => {
     const subscription = PomodoroService.pomodoroStatus$.subscribe(
       (changedStatus) => {
-        if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
-          currentTodo?.categories?.forEach((cantegory) => {
-            timerApi.recordFocusTime(cantegory, time ?? 0);
-          });
-        }
+        // 필요없어 보여서 주석처리
+        // if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
+        //   currentTodo?.categories?.forEach((cantegory) => {
+        //     // timerApi.recordFocusTime(cantegory, time ?? 0);
+        //   });
+        // }
       },
     );
     return () => {
