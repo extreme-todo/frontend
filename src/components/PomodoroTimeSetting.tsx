@@ -309,7 +309,9 @@ const Rectangle = styled.div`
   margin-right: 0.375rem;
 `;
 
-const ClockTypo = styled(TypoAtom)`
+const ClockTypo = styled((props: React.ComponentProps<typeof TypoAtom>) => (
+  <TypoAtom {...props} />
+))`
   font-weight: 700;
   font-size: 8.75rem;
   line-height: 6.25rem;
