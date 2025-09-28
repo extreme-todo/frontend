@@ -9,9 +9,9 @@ import { PomodoroService } from '../services/PomodoroService';
 export const useHandleDidntDo = () => {
   const queryClient = useQueryClient();
   let storageCriterion: number;
-  const { mutate } = useMutation({
-    mutationFn: todosApi.removeDidntDo,
-    onSuccess(data: any) {
+  const { mutate, isLoading } = useMutation({
+    mutationFn: (currentDate: string) => todosApi.removeDidntDo(currentDate),
+    onSuccess(data) {
       console.debug(
         '\n\n\n ✅ data in useTimeMarker‘s useMutation ✅ \n\n',
         data,
@@ -35,7 +35,7 @@ export const useHandleDidntDo = () => {
       if (!lastRemoveTime) {
         return true;
       } else {
-        parsingLastRemoveTime = JSON.parse(lastRemoveTime);
+        parsingLastRemoveTime = Number(JSON.parse(lastRemoveTime));
         return (
           new Date().getTime() - parsingLastRemoveTime >=
           milliseconds({ days: 1 })
@@ -63,7 +63,8 @@ export const useHandleDidntDo = () => {
       return [setTimeInFormatParam.toISOString(), setTimeMakerParam.getTime()];
     };
     const subTime = PomodoroService.pomodoroTime$.subscribe(() => {
-      if (checkTimeOver()) {
+      const isAfterFiveAM = checkTimeOver();
+      if (isAfterFiveAM && !isLoading) {
         const criteria = getCriterion();
         storageCriterion = criteria[1];
         mutate(criteria[0]);
