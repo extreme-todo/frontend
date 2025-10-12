@@ -57,9 +57,12 @@ export const useCurrentTodo = ({
 
   useEffect(() => {
     setCurrentRound(
-      Math.ceil(focusedOnTodo / (pomodoroSettings.focusStep * pomodoroUnit)),
+      Math.max(
+        Math.ceil(focusedOnTodo / (pomodoroSettings.focusStep * pomodoroUnit)),
+        1,
+      ),
     );
-  }, [focusedOnTodo, status]);
+  }, [focusedOnTodo, status, pomodoroSettings.focusStep]);
 
   useEffect(() => {
     const nextTodo = getNextTodo();
