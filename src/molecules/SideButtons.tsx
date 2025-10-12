@@ -196,13 +196,7 @@ const ShowHelpButton = ({
       focused={context.focusedButton === 'help'}
       btnStyle={theme}
       className={className}
-      style={{
-        width: '1.75rem',
-        height: '1.75rem',
-        padding: 0,
-        textAlign: 'center',
-        justifyContent: 'center',
-      }}
+      btnType="icon"
     >
       ?
     </SideBtnAtom>
