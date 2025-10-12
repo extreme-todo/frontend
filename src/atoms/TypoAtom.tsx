@@ -50,11 +50,11 @@ const Typo = styled.span<ITypoProps>`
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
-    ${({ fontSize, theme }) =>
+    font-size: ${({ fontSize, theme }) =>
       fontSize === 'clock'
-        ? 'font-size: 5.25rem;'
+        ? '5.25rem;'
         : fontSize
         ? theme.fontSize[fontSize].size
-        : theme.fontSize.body.size}
+        : theme.fontSize.body.size};
   }
 `;
