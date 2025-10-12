@@ -54,6 +54,7 @@ export function CurrentTodo({
           className="rest"
           btnStyle="darkBtn"
           handleOnClick={() => startResting()}
+          ariaLabel="쉬기"
         >
           <IconAtom src="icon/pause-dark.svg" size={1.5} />
         </BtnAtom>
@@ -62,6 +63,7 @@ export function CurrentTodo({
           aria-label="do todo"
           btnStyle="darkBtn"
           handleOnClick={() => doAndRest()}
+          ariaLabel="할일완료"
         >
           <IconAtom src="icon/stop-dark.svg" size={1} />
         </BtnAtom>
