@@ -1,16 +1,19 @@
 import { milliseconds, startOfYesterday } from 'date-fns';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { setTimeInFormat } from '../shared/timeUtils';
 import { todosApi } from '../shared/apis';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { PomodoroService } from '../services/PomodoroService';
+import { LoginContext } from './LoginContext';
 
 export const useHandleDidntDo = () => {
+  const { isLogin } = useContext(LoginContext);
   const queryClient = useQueryClient();
   let storageCriterion: number;
   const { mutate, isLoading } = useMutation({
     mutationFn: (currentDate: string) => todosApi.removeDidntDo(currentDate),
+    retry: false,
     onSuccess(data) {
       console.debug(
         '\n\n\n ✅ data in useTimeMarker‘s useMutation ✅ \n\n',
@@ -18,7 +21,8 @@ export const useHandleDidntDo = () => {
       );
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       queryClient.invalidateQueries({ queryKey: ['category'] });
-      localStorage.setItem('removeDidntDo', JSON.stringify(storageCriterion));
+      if (storageCriterion)
+        localStorage.setItem('removeDidntDo', JSON.stringify(storageCriterion));
     },
     onError(error: AxiosError) {
       console.debug(
@@ -29,13 +33,14 @@ export const useHandleDidntDo = () => {
   });
   useEffect(() => {
     const checkTimeOver = () => {
-      const lastRemoveTime = localStorage.getItem('removeDidntDo');
+      const lastRemoveTime = JSON.parse(
+        localStorage.getItem('removeDidntDo') ?? 'null',
+      );
       let parsingLastRemoveTime: number;
-
-      if (!lastRemoveTime) {
+      if (lastRemoveTime === undefined || lastRemoveTime === null) {
         return true;
       } else {
-        parsingLastRemoveTime = Number(JSON.parse(lastRemoveTime));
+        parsingLastRemoveTime = Number(lastRemoveTime);
         return (
           new Date().getTime() - parsingLastRemoveTime >=
           milliseconds({ days: 1 })
@@ -63,6 +68,7 @@ export const useHandleDidntDo = () => {
       return [setTimeInFormatParam.toISOString(), setTimeMakerParam.getTime()];
     };
     const subTime = PomodoroService.pomodoroTime$.subscribe(() => {
+      if (!isLogin) return;
       const isAfterFiveAM = checkTimeOver();
       if (isAfterFiveAM && !isLoading) {
         const criteria = getCriterion();
