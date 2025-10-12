@@ -2,7 +2,11 @@ import styled from '@emotion/styled';
 import { useIsMobile } from '../hooks';
 
 const TodoProgressBarContainer = styled('div', {
-  shouldForwardProp: (prop) => !['progress', 'type'].includes(prop as string),
+  shouldForwardProp: (prop) =>
+    // 아래 aria-* 속성들은 div 요소에 전달되어야 하므로 필터링하지 않습니다.
+    ['aria-valuemin', 'aria-valuemax', 'aria-valuenow', 'children'].includes(
+      prop,
+    ),
 })<{
   progress: number;
   type: 'primary1' | 'primary2' | 'extreme1' | 'extreme2';
@@ -90,8 +94,15 @@ export const TodoProgressBarAtom = (props: {
   children?: React.ReactNode;
 }) => {
   const isMobile = useIsMobile();
+  const clamped = Math.max(0, Math.min(100, props.progress));
   return (
-    <TodoProgressBarContainer progress={props.progress} type={props.type}>
+    <TodoProgressBarContainer
+      type={props.type}
+      progress={clamped}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(clamped)}
+    >
       {isMobile ? (
         <svg
           id="progress-bar-background"
