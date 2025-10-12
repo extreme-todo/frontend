@@ -185,6 +185,7 @@ export const TodoList = memo(
                 <List>
                   {doneTodoList.map((doneTodo, idx) => (
                     <MemoTodoCard
+                      key={doneTodo.id}
                       isThisEdit={editTodoId === doneTodo.id}
                       setEditTodoId={setEditTodoId}
                       todoData={doneTodo}
