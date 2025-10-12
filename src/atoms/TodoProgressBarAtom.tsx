@@ -99,9 +99,11 @@ export const TodoProgressBarAtom = (props: {
     <TodoProgressBarContainer
       type={props.type}
       progress={clamped}
+      aria-label="진행률"
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(clamped)}
+      aria-valuetext={`${Math.round(clamped)}% 완료`}
     >
       {isMobile ? (
         <svg
