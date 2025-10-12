@@ -223,7 +223,15 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         </CurrentMainCard>
       </CardWrapper>
     );
-  }, [currentCard, prevCard, isMobile, currentTodo, isLogin]);
+  }, [
+    currentCard,
+    prevCard,
+    isMobile,
+    currentTodo,
+    isLogin,
+    pomodoroSettings.focusStep,
+    pomodoroSettings.restStep,
+  ]);
 
   useEffect(() => {
     setTimeout(() => {
