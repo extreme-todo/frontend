@@ -80,22 +80,6 @@ export const useCurrentTodo = ({
   }, [todos]);
 
   useEffect(() => {
-    const subscription = PomodoroService.pomodoroStatus$.subscribe(
-      (changedStatus) => {
-        // 필요없어 보여서 주석처리
-        // if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
-        //   currentTodo?.categories?.forEach((cantegory) => {
-        //     // timerApi.recordFocusTime(cantegory, time ?? 0);
-        //   });
-        // }
-      },
-    );
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
     status !== PomodoroStatus.OVERFOCUSING && checkIfCanRest();
     checkIfShouldFocus();
     const ifShouldRest = checkIfShouldRest();
