@@ -282,7 +282,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
       focusedButton={currentFocusedSideButton}
       onClickHandlers={{
         ranking: () => alert('기능 준비 중입니다.'),
-        help:() => alert('기능 준비 중입니다.'),
+        help: () => alert('기능 준비 중입니다.'),
         addTodo: () => {
           handleClickSideButton('addTodoModal');
         },
@@ -292,7 +292,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         timer: () => {
           handleClickSideButton('timeModal');
         },
-        doAll: () => alert('기능 준비 중입니다.'),,
+        doAll: () => alert('기능 준비 중입니다.'),
       }}
     >
       <MainTodoContainer ref={ref}>
