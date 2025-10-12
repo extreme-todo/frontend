@@ -24,6 +24,7 @@ export const useCurrentTodo = ({
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
   const [canRest, setCanRest] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
+  const [currentRound, setCurrentRound] = useState(1);
 
   const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
     ['todos'],
@@ -55,6 +56,15 @@ export const useCurrentTodo = ({
   });
 
   useEffect(() => {
+    setCurrentRound(
+      Math.max(
+        Math.ceil(focusedOnTodo / (pomodoroSettings.focusStep * pomodoroUnit)),
+        1,
+      ),
+    );
+  }, [focusedOnTodo, status, pomodoroSettings.focusStep]);
+
+  useEffect(() => {
     const nextTodo = getNextTodo();
     if (currentTodo == null) {
       if (nextTodo) {
@@ -68,21 +78,6 @@ export const useCurrentTodo = ({
     } else {
     }
   }, [todos]);
-
-  useEffect(() => {
-    const subscription = PomodoroService.pomodoroStatus$.subscribe(
-      (changedStatus) => {
-        if (currentTodo && changedStatus === PomodoroStatus.RESTING) {
-          currentTodo?.categories?.forEach((cantegory) => {
-            timerApi.recordFocusTime(cantegory, time ?? 0);
-          });
-        }
-      },
-    );
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     status !== PomodoroStatus.OVERFOCUSING && checkIfCanRest();
@@ -203,8 +198,17 @@ export const useCurrentTodo = ({
       focusedOnTodo,
       canRest,
       shouldFocus,
+      currentRound,
     }),
-    [doTodo, updateFocus, currentTodo, focusedOnTodo, canRest, shouldFocus],
+    [
+      doTodo,
+      updateFocus,
+      currentTodo,
+      focusedOnTodo,
+      canRest,
+      shouldFocus,
+      currentRound,
+    ],
   );
 
   return useCurrentTodoResult;

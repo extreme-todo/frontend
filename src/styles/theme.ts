@@ -131,7 +131,7 @@ export const designTheme: Theme = {
       },
       click: {
         backgroundColor: color.backgroundColor.extreme_dark,
-        color: color.fontColor.extreme_dark,
+        color: color.fontColor.extreme_orange,
       },
     },
     extremeDarkBtn: {

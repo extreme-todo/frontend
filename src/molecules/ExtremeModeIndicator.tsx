@@ -87,14 +87,11 @@ export function ExtremeModeIndicator() {
 }
 
 const ExtremeModeContainer = styled.div`
-  position: absolute;
   z-index: 1;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  top: 2rem;
-  right: 2.0625rem;
-  gap: 9px;
+  width: fit-content;
   img {
     width: 1.5625rem;
     height: 2.5rem;
@@ -124,17 +121,5 @@ const ExtremeModeContainer = styled.div`
   .close-icon {
     width: 20px;
     height: 20px;
-  }
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    margin-right: 8rem;
-    img {
-      width: 8rem;
-      height: 8rem;
-    }
-    .extreme-status {
-      width: fit-content;
-      word-break: break-all;
-    }
   }
 `;

@@ -19,6 +19,7 @@ describe('CurrentTodo', () => {
           focusStep={10}
           focusedOnTodo={10}
           startResting={jest.fn()}
+          currentRound={0}
         ></CurrentTodo>
         ,
       </ThemeProvider>,
@@ -35,17 +36,12 @@ describe('CurrentTodo', () => {
       expect(getByText(mockCurrentTodo.todo)).toBeDefined();
     });
 
-    it('카테고리를 렌더링한다', () => {
-      const { getByText } = component;
-      mockCurrentTodo.categories?.forEach((category) => {
-        expect(getByText(category)).toBeDefined();
-      });
-    });
-
     it('시간(뽀모도로 단위)를 렌더링한다', () => {
       const { getByText } = component;
       expect(
-        getByText(mockCurrentTodo.duration, { exact: false }),
+        getByText(`🍅 `.repeat(mockCurrentTodo.duration).trim(), {
+          exact: false,
+        }),
       ).toBeDefined();
     });
   });

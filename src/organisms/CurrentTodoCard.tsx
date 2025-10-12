@@ -4,14 +4,20 @@ import { CurrentTodo } from '../organisms';
 import {
   useCurrentTodo,
   useExtremeMode,
+  useIsMobile,
   usePomodoroActions,
   usePomodoroValue,
 } from '../hooks';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { PomodoroStatus } from '../services/PomodoroService';
 
-export function CurrentTodoCard() {
+export function CurrentTodoCard({
+  mobileTopButtonSlot,
+}: {
+  mobileTopButtonSlot?: ReactNode;
+}) {
+  const isMobile = useIsMobile();
   const { settings: pomodoroSettings, status, time } = usePomodoroValue();
   const { isExtreme } = useExtremeMode();
   const actions = usePomodoroActions();
@@ -32,8 +38,22 @@ export function CurrentTodoCard() {
 
   return (
     <TransparentAbsoluteCardsParent>
-      <CardAtom className="card" bg={isExtreme ? 'extreme_dark' : 'primary1'}>
-        <ExtremeModeIndicator />
+      <CardAtom
+        className="card"
+        padding={isMobile ? '0' : undefined}
+        bg={isExtreme ? 'extreme_dark' : 'primary1'}
+      >
+        {isMobile && (
+          <div className="mobile-header-wrapper">
+            <div className="mobile-top-button-slot">{mobileTopButtonSlot}</div>
+            <ExtremeModeIndicator />
+          </div>
+        )}
+        {!isMobile && (
+          <div className="desktop-extreme-wrapper">
+            <ExtremeModeIndicator />
+          </div>
+        )}
         {currentTodo.currentTodo && (
           <CurrentTodo
             todo={currentTodo.currentTodo}
@@ -43,6 +63,7 @@ export function CurrentTodoCard() {
             focusStep={pomodoroSettings.focusStep}
             focusedOnTodo={currentTodo.focusedOnTodo}
             startResting={actions.startResting}
+            currentRound={currentTodo.currentRound}
           ></CurrentTodo>
         )}
       </CardAtom>
@@ -51,22 +72,27 @@ export function CurrentTodoCard() {
 }
 
 const TransparentAbsoluteCardsParent = styled.div`
-  width: 53.75rem;
-  height: 20rem;
+  width: 100%;
+  height: 100%;
   position: relative;
-  .no-todo {
+  .desktop-extreme-wrapper {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    button {
-      min-width: 101px;
-    }
-    > :first-child {
-      margin-bottom: 8px;
-    }
-    > :nth-child(2) {
-      margin-bottom: 12px;
-    }
+    justify-content: flex-end;
+    box-sizing: border-box;
+  }
+  .mobile-header-wrapper {
+    width: 100%;
+    padding: 1.25rem;
+    height: 1.75rem;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    align-items: flex-start;
+  }
+  .mobile-top-button-slot {
+    display: flex;
+    justify-content: flex-start;
+    height: fit-content;
   }
 `;
