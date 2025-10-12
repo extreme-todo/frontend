@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const useAlarm = () => {
   const alarmSound = useRef<HTMLAudioElement>(new Audio('/alarm.mp3'));
