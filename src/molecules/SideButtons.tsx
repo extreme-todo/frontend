@@ -197,6 +197,8 @@ const ShowHelpButton = ({
       btnStyle={theme}
       className={className}
       btnType="icon"
+      type="button"
+      aria-label="도움말"
     >
       ?
     </SideBtnAtom>
