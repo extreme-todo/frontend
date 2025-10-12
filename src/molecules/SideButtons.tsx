@@ -58,9 +58,7 @@ function SideButtonsMain({
 
 const ShowAddTodoButton = ({ theme }: { theme: ButtonName }) => {
   const context = useContext(SideButtonContext);
-  useEffect(() => {
-    console.log(context.focusedButton);
-  }, [context]);
+
   return (
     <SideBtnAtom
       focused={context.focusedButton === 'addTodo'}
