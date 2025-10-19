@@ -4,7 +4,7 @@ import { Clock, ExtremeModeIndicator } from '../molecules';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { usePomodoroActions, usePomodoroValue } from '../hooks/usePomodoro';
 import { useCurrentTodo, useExtremeMode, useIsMobile } from '../hooks';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 export function RestCard({
   mobileTopButtonSlot,
@@ -19,6 +19,7 @@ export function RestCard({
     canRest,
     currentTodo: todo,
     doTodo,
+    currentRound,
   } = useCurrentTodo({
     value: { ...pomodoro },
     actions,
@@ -26,6 +27,30 @@ export function RestCard({
   const getLeftMs = () => {
     return pomodoro.settings.restStep * 60000 - (pomodoro.time ?? 0);
   };
+  const getButtonContainer = useMemo(
+    () => (
+      <div className="button-container">
+        <BtnAtom
+          className="focus"
+          btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+          handleOnClick={() => {
+            canRest ? doTodo() : actions.startFocusing();
+          }}
+        >
+          {canRest ? '다음 할 일 하기' : '끝내기'}
+        </BtnAtom>
+        {canRest && (
+          <BtnAtom
+            className="focusMore"
+            handleOnClick={() => actions.startOverFocusing()}
+          >
+            조금 더 집중하기
+          </BtnAtom>
+        )}
+      </div>
+    ),
+    [isExtreme, canRest, doTodo, actions],
+  );
   return (
     <CardAtom
       className="card"
@@ -64,45 +89,7 @@ export function RestCard({
               }}
               fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
             ></Clock>
-            <div className="button-container">
-              <BtnAtom
-                className="focus"
-                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                handleOnClick={() => {
-                  canRest ? doTodo() : actions.startFocusing();
-                }}
-              >
-                {canRest ? '다음 할 일 하기' : '끝내기'}
-              </BtnAtom>
-              {canRest && (
-                <BtnAtom
-                  className="focusMore"
-                  handleOnClick={() => actions.startOverFocusing()}
-                >
-                  조금 더 집중하기
-                </BtnAtom>
-              )}
-            </div>
-          </div>
-          <div className="indicator-container">
-            {todo && (
-              <div className="todo-duration">
-                <TypoAtom
-                  fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
-                  fontSize={'h3'}
-                >
-                  {todo.duration + ' Round'}
-                </TypoAtom>
-                <TypoAtom
-                  fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
-                  fontSize="h3"
-                >
-                  {todo.duration < 20
-                    ? `🍅 `.repeat(todo.duration)
-                    : `🍅 ` + todo.duration}
-                </TypoAtom>
-              </div>
-            )}
+            {!isMobile && getButtonContainer}
           </div>
 
           <div className="progress-container">
@@ -112,9 +99,25 @@ export function RestCard({
                 ((pomodoro.time ?? 0) / (pomodoro.settings.restStep * 60000)) *
                   100,
               )}
-            >
-              <div className="progress"></div>
-            </TodoProgressBarAtom>
+            ></TodoProgressBarAtom>
+          </div>
+
+          <div className="todo-title">
+            <div className="todo-duration">
+              <TypoAtom fontSize={'h3'}>{currentRound + ' Round'}</TypoAtom>
+              <div>
+                <TypoAtom fontSize="h3">{`🍅 `.repeat(currentRound)}</TypoAtom>
+                <TypoAtom fontSize="h3" className="left-round">
+                  {`🍅 `.repeat(
+                    Math.max(todo?.duration ?? 0 - currentRound, 0),
+                  )}
+                </TypoAtom>
+              </div>
+            </div>
+            <TypoAtom fontSize={'h2'} fontColor="primary1">
+              {todo?.todo}
+            </TypoAtom>
+            {isMobile && getButtonContainer}
           </div>
         </RestCardWrapper>
       )}
@@ -126,8 +129,12 @@ const RestCardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  width: 100%;
+  align-items: center;
+  width: 90%;
+  max-width: 90%;
   height: 100%;
+  position: relative;
+  gap: 2.56rem;
   .mobile-header-wrapper {
     width: 100%;
     display: flex;
@@ -141,9 +148,27 @@ const RestCardWrapper = styled.div`
   }
   .center-container {
     display: flex;
-    align-items: center;
+    width: 100%;
+    margin-top: 1.125rem;
     justify-content: space-between;
-    margin-bottom: 2.875rem;
+    align-items: center;
+    > :first-child {
+      padding-left: 2.75rem;
+    }
+  }
+  .progress-container {
+    width: 100%;
+    height: 11rem;
+  }
+  .todo-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    max-width: 40ch;
+    position: absolute;
+    margin-bottom: 1.1428571429rem;
+    justify-content: flex-end;
+    align-items: center;
   }
   .button-container {
     display: flex;
@@ -164,8 +189,33 @@ const RestCardWrapper = styled.div`
     align-items: center;
     gap: 8px;
   }
-  .progress-container {
-    width: 100%;
-    height: 11rem;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    height: 100%;
+    position: relative;
+    gap: 0rem;
+    justify-content: center;
+    .progress-container {
+      margin-top: 1.25rem;
+      height: 5.5rem;
+      margin-bottom: 0.625rem;
+    }
+    .center-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      > :first-child {
+        padding-left: 0;
+      }
+    }
+    .todo-title {
+      position: relative;
+      > :first-child {
+        margin-bottom: 1rem;
+      }
+    }
+    .button-container {
+      margin-top: 3.75rem;
+    }
   }
 `;
