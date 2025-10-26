@@ -202,18 +202,15 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               focusStep={pomodoroSettings.focusStep}
               restStep={pomodoroSettings.restStep}
               theme={(() => {
-                if (isExtreme) {
-                  return 'extremeDarkBtn';
-                }
                 switch (currentCardColor) {
                   case 'primary1':
-                    return 'darkBtn';
+                    return isExtreme ? 'extremeDarkBtn' : 'darkBtn';
                   case 'primary2':
-                    return 'lightBtn';
+                    return isExtreme ? 'extremeLightBtn' : 'lightBtn';
                   case 'extreme_dark':
-                    return 'extremeLightBtn';
-                  case 'extreme_orange':
                     return 'extremeDarkBtn';
+                  case 'extreme_orange':
+                    return 'extremeLightBtn';
                   default:
                     return 'darkBtn';
                 }
@@ -231,6 +228,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     isLogin,
     pomodoroSettings.focusStep,
     pomodoroSettings.restStep,
+    currentCardColor,
   ]);
 
   useEffect(() => {

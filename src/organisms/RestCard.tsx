@@ -104,19 +104,34 @@ export function RestCard({
 
             <div className="todo-title">
               <div className="todo-duration">
-                <TypoAtom fontSize={'h3'}>{currentRound + ' Round'}</TypoAtom>
+                <TypoAtom
+                  fontSize={'h3'}
+                  fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                >
+                  {currentRound + ' Round'}
+                </TypoAtom>
                 <div>
-                  <TypoAtom fontSize="h3">
+                  <TypoAtom
+                    fontSize="h3"
+                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                  >
                     {`🍅 `.repeat(currentRound)}
                   </TypoAtom>
-                  <TypoAtom fontSize="h3" className="left-round">
+                  <TypoAtom
+                    fontSize="h3"
+                    className="left-round"
+                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                  >
                     {`🍅 `.repeat(
                       Math.max(todo?.duration ?? 0 - currentRound, 0),
                     )}
                   </TypoAtom>
                 </div>
               </div>
-              <TypoAtom fontSize={'h2'} fontColor="primary1">
+              <TypoAtom
+                fontSize={'h2'}
+                fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+              >
                 {todo?.todo}
               </TypoAtom>
               {isMobile && getButtonContainer}

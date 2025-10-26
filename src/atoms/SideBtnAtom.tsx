@@ -59,7 +59,7 @@ const BaseBtnAtom = styled.button<
 
   &:hover {
     background-color: ${({ theme, btnStyle }) =>
-      theme.button[btnStyle].default.backgroundColor};
+      theme.button[btnStyle].hover.backgroundColor};
     color: ${({ theme, btnStyle }) => theme.button[btnStyle].hover.color};
   }
   &:active {

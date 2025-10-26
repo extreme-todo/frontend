@@ -25,7 +25,6 @@ export function CurrentTodo({
   currentRound,
 }: ICurrentTodoProps) {
   const [todoProgress, setTodoProgress] = useState<number>(0);
-  const { isExtreme } = useExtremeMode();
   const isMobile = useIsMobile();
   useEffect(() => {
     setTodoProgress(

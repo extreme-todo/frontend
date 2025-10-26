@@ -122,32 +122,32 @@ export const designTheme: Theme = {
       height: '2.25rem',
       fontSize: fontSize.b1,
       default: {
-        backgroundColor: '#00000033',
+        backgroundColor: '#00000000',
         color: color.fontColor.extreme_dark,
       },
       hover: {
-        backgroundColor: '#0000004D',
+        backgroundColor: '#1c1c1d33',
         color: color.fontColor.extreme_dark,
       },
       click: {
         backgroundColor: color.backgroundColor.extreme_dark,
-        color: color.fontColor.extreme_orange,
+        color: color.fontColor.primary2,
       },
     },
     extremeDarkBtn: {
       height: '2.25rem',
       fontSize: fontSize.b1,
       default: {
-        backgroundColor: '#DBFE7733',
+        backgroundColor: '#DBFE7700',
         color: color.fontColor.primary2,
       },
       hover: {
-        backgroundColor: '#DBFE774D',
+        backgroundColor: '#DBFE7733',
         color: color.fontColor.primary2,
       },
       click: {
         backgroundColor: color.backgroundColor.primary2,
-        color: color.fontColor.primary1,
+        color: color.fontColor.extreme_dark,
       },
     },
     textBtn: {
