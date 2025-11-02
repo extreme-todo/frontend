@@ -52,6 +52,7 @@ type BackgroundColorName =
   | 'white'
   | 'extreme_orange'
   | 'dark_primary1'
+  | 'light_extreme_dark'
   | PrimaryColorName;
 type BackgroundColor = ColorRecord<BackgroundColorName>;
 

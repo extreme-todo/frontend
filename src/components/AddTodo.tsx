@@ -19,7 +19,7 @@ import {
 import { CategoryInput } from '../molecules';
 
 /* custom hooks */
-import { useIsMobile, usePomodoroValue } from '../hooks';
+import { useExtremeMode, useIsMobile, usePomodoroValue } from '../hooks';
 
 /* custom functions or methods */
 import { todosApi } from '../shared/apis';
@@ -61,6 +61,7 @@ export const AddTodo = ({
   );
   const [tomato, setTomato] = useState(1);
   const isMobile = useIsMobile();
+  const { isExtreme } = useExtremeMode();
 
   const queryClient = useQueryClient();
 
@@ -242,7 +243,12 @@ export const AddTodo = ({
                   width: '100%',
                   height: '3rem',
                   font: 'h1',
-                  borderColor: titleError ? 'extreme_orange' : 'primary1',
+                  fontColor: isExtreme ? 'extreme_dark' : 'primary1',
+                  borderColor: titleError
+                    ? 'extreme_orange'
+                    : isExtreme
+                    ? 'extreme_dark'
+                    : 'primary1',
                 }}
                 tabIndex={0}
               />
@@ -253,12 +259,21 @@ export const AddTodo = ({
                 ariaLabel="close"
                 tabIndex={3}
               >
-                <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
+                <IconAtom
+                  size={2}
+                  alt="close"
+                  src={
+                    isExtreme
+                      ? 'icon/closeExtremeDark.svg'
+                      : 'icon/closeDark.svg'
+                  }
+                />
               </BtnAtom>
             )}
           </TitleWrapper>
           <CategoryWrapper>
             <CategoryInput
+              isExtreme={isExtreme}
               categories={categoryArray}
               category={category}
               handleSubmit={handleSubmitCategory}
@@ -281,12 +296,13 @@ export const AddTodo = ({
               period={focusStep}
               handleTomato={handleTomato}
               tomato={tomato}
+              isExtreme={isExtreme}
             />
           </TomatoContainer>
           <BtnAtom
             paddingHorizontal="2.0625rem"
             paddingVertical="0.375rem"
-            btnStyle="lightBtn"
+            btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
             ariaLabel="submit"
             type="submit"
             disabled={title.length === 0 || titleError || isLoading}

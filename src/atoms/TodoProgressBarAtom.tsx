@@ -24,10 +24,18 @@ const TodoProgressBarContainer = styled('div', {
     width: 100%;
     height: 100%;
     > path {
-      stroke: ${({ theme, type }) =>
-        type !== 'primary2' && type !== 'extreme2'
-          ? theme.color.backgroundColor.primary1
-          : theme.color.backgroundColor.primary2};
+      stroke: ${({ theme, type }) => {
+        switch (type) {
+          case 'primary1':
+            return theme.color.backgroundColor.primary1;
+          case 'primary2':
+            return theme.color.backgroundColor.primary2;
+          case 'extreme1':
+            return theme.color.backgroundColor.extreme_dark;
+          case 'extreme2':
+            return theme.color.backgroundColor.extreme_orange;
+        }
+      }};
       stroke-width: 12px;
       stroke-linecap: round;
       fill: none;

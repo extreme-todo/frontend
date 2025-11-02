@@ -261,10 +261,10 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           setCurrentCardColor('primary2');
           break;
         case 'timeModal':
-          setCurrentCardColor('primary1');
+          setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
           break;
         case 'todolistModal':
-          setCurrentCardColor('primary1');
+          setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
           break;
         case 'currentTodo':
           setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
