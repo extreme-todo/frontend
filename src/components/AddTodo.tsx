@@ -3,6 +3,7 @@ import {
   FormEvent,
   KeyboardEventHandler,
   ReactEventHandler,
+  ReactNode,
   useCallback,
   useState,
 } from 'react';
@@ -18,7 +19,7 @@ import {
 import { CategoryInput } from '../molecules';
 
 /* custom hooks */
-import { usePomodoroValue } from '../hooks';
+import { useIsMobile, usePomodoroValue } from '../hooks';
 
 /* custom functions or methods */
 import { todosApi } from '../shared/apis';
@@ -42,11 +43,15 @@ import { startOfYesterday } from 'date-fns';
 
 interface IAddTodoProps {
   handleClose: () => void;
+  mobileTopButtonSlot?: ReactNode;
 }
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
-export const AddTodo = ({ handleClose }: IAddTodoProps) => {
+export const AddTodo = ({
+  handleClose,
+  mobileTopButtonSlot,
+}: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [category, setCategory] = useState('');
@@ -55,6 +60,7 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
     undefined,
   );
   const [tomato, setTomato] = useState(1);
+  const isMobile = useIsMobile();
 
   const queryClient = useQueryClient();
 
@@ -198,13 +204,25 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
       }}
     >
       <AddTodoWrapper
-        w="53.75rem"
-        h="20rem"
         padding="1.5rem"
         className="card"
         onSubmit={handleAddSubmit}
       >
         <MainWrapper>
+          {isMobile && (
+            <div className="mobile-header-wrapper">
+              <div className="mobile-top-button-wrapper">
+                {mobileTopButtonSlot}
+              </div>
+              <BtnAtom
+                handleOnClick={handleClose}
+                ariaLabel="close"
+                tabIndex={3}
+              >
+                <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
+              </BtnAtom>
+            </div>
+          )}
           <TitleWrapper>
             <label htmlFor="title">
               <InputAtom.Underline
@@ -229,9 +247,15 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
                 tabIndex={0}
               />
             </label>
-            <BtnAtom handleOnClick={handleClose} ariaLabel="close" tabIndex={3}>
-              <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
-            </BtnAtom>
+            {!isMobile && (
+              <BtnAtom
+                handleOnClick={handleClose}
+                ariaLabel="close"
+                tabIndex={3}
+              >
+                <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
+              </BtnAtom>
+            )}
           </TitleWrapper>
           <CategoryWrapper>
             <CategoryInput
@@ -303,6 +327,14 @@ const MainWrapper = styled.div`
   flex-direction: column;
   row-gap: 1rem;
   width: 100%;
+  .mobile-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    .mobile-top-button-wrapper {
+      flex-shrink: 0;
+    }
+  }
 `;
 
 const TitleWrapper = styled.div`

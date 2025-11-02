@@ -16,6 +16,7 @@ export const MainTodoContentWrapper = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 4rem;
+  width: 100%;
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     width: 100%;
@@ -27,10 +28,19 @@ export const MainTodoCenter = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   gap: 0.75rem;
+  width: 100%;
+  .side-buttons {
+    width: 59rem;
+    > div {
+      display: flex;
+      gap: 0.75rem;
+    }
+  }
   .center {
-    width: 53.75rem;
-    height: 20rem;
+    width: 59rem;
+    height: 28.75rem;
     position: relative;
     > * {
       position: absolute;
@@ -56,29 +66,26 @@ export const MainTodoCenter = styled.div`
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
-    width: 100%;
-    height: 100%;
-    padding: 24rem 4rem 4rem 4rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 0px;
-    box-sizing: border-box;
-    row-gap: 0;
-    > :nth-child(2) {
-      grid-column: 1 / span 2;
+    gap: 0.5rem;
+    .center {
+      width: 89.9%;
+      height: calc(100vh - 13.25rem);
     }
-    > :nth-child(1),
-    > :nth-child(3) {
-      margin-top: -12rem;
+    .side-buttons {
+      width: 89.9%;
+      position: relative;
+    }
+    .time-setting {
+      position: absolute;
+      left: 1.25rem;
+      top: 3.5rem;
       z-index: 5;
-      /* position: absolute;
-      bottom: 0; */
-    }
-    > :nth-child(1) {
-      justify-content: flex-start;
-    }
-    > :nth-child(3) {
-      justify-content: flex-end;
     }
   }
+`;
+
+export const CardWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
 `;

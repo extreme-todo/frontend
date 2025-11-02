@@ -28,11 +28,11 @@ export const CardAtom = styled.div<{
     }
   }};
   box-shadow: ${({ theme: { shadow } }) => shadow.container};
-  border-radius: 30px;
+  border-radius: 28px;
   padding: ${({ padding }) => padding ?? '2rem 2.75rem'};
   margin: ${({ margin }) => margin ?? '0rem'};
-  width: ${({ w }) => w ?? '53.75rem'};
-  height: ${({ h }) => h ?? '20rem'};
+  width: ${({ w }) => w ?? '59rem'};
+  height: ${({ h }) => h ?? '28.75rem'};
   max-width: 100%;
   max-height: 100%;
   display: flex;
@@ -40,6 +40,13 @@ export const CardAtom = styled.div<{
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  transition: all 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out, height 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
   z-index: 1;
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 100%;
+    height: calc(100vh - 13.25rem);
+    padding: ${({ padding }) => padding ?? '1.25rem'};
+  }
 `;
