@@ -34,6 +34,7 @@ import {
 } from '../../atoms';
 import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
+import useAlarm from '../../hooks/useAlert';
 
 export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
 
@@ -62,7 +63,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     currentCardAnimationTriggerSubject.current.asObservable(),
   );
 
-  const { currentTodo, canRest, doTodo } = useCurrentTodo({
+  const { currentTodo } = useCurrentTodo({
     value: {
       status: pomodoroStatus,
       settings: pomodoroSettings,
@@ -73,6 +74,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const {
     settings: { focusStep },
   } = usePomodoroValue();
+
+  const { callNotification } = useAlarm();
 
   const changeCard = (curr: CardType, next: CardType) => {
     setPrevCard(curr);
@@ -241,6 +244,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
             >
               <div className={'tag-button' + (isExtreme ? ' extreme' : '')}>
                 Todo +
+              </div>
+            </SideButtons.SideButton>
+            <SideButtons.SideButton onClick={() => callNotification()}>
+              <div className={'tag-button' + (isExtreme ? ' extreme' : '')}>
+                🔔 테스트
               </div>
             </SideButtons.SideButton>
           </SideButtons>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { IconAtom } from './atoms';
-import { Navigation } from './molecules';
+import { Navigation, Noti } from './molecules';
 import { FocusedTime, MainTodo, Welcome } from './components';
 import {
   motion,
@@ -10,12 +10,19 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import { PomodoroProvider, ExtremeModeProvider } from './hooks';
+import {
+  PomodoroProvider,
+  ExtremeModeProvider,
+  useCurrentTodo,
+  usePomodoroValue,
+  usePomodoroActions,
+} from './hooks';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
 import { PomodoroService } from './services/PomodoroService';
+import useAlarm from './hooks/useAlert';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -111,6 +118,19 @@ function App() {
     };
   }, []);
 
+  const { initSoundPlayer } = useAlarm();
+  useEffect(() => {
+    window.addEventListener('click', initSoundPlayer);
+    return () => {
+      window.removeEventListener('click', initSoundPlayer);
+    };
+  }, [initSoundPlayer]);
+
+  // useEffect(() => {
+  //   // callNotification(); TODO : 이걸 noti ui 렌더링 될 때 호출해주고 클린업에서 꺼버리는 것도 방법일지도?
+  //   handleVisibleNoti(true);
+  // }, [shouldFocus, canRest]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <PomodoroProvider>
@@ -145,6 +165,7 @@ function App() {
                 alt="An icon indicating to scroll down"
               />
             </motion.div>
+            <Noti />
           </MainContainer>
         </ExtremeModeProvider>
       </PomodoroProvider>
