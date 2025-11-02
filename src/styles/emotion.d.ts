@@ -104,5 +104,6 @@ declare module '@emotion/react' {
     shadow: Shadow;
     responsiveDevice: Responsive;
     button: Button;
+    sideButton: Button;
   }
 }

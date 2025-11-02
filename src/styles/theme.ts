@@ -72,6 +72,89 @@ const fontSize: FontSize = {
   },
 };
 
+const buttonTheme: Theme['button'] = {
+  lightBtn: {
+    height: '2.25rem',
+    fontSize: fontSize.b1,
+    default: {
+      backgroundColor: '#523EA133',
+      color: color.fontColor.primary1,
+    },
+    hover: {
+      backgroundColor: '#523EA14D',
+      color: color.fontColor.primary1,
+    },
+    click: {
+      backgroundColor: color.backgroundColor.primary1,
+      color: color.fontColor.primary2,
+    },
+  },
+  darkBtn: {
+    height: '2.25rem',
+    fontSize: fontSize.b1,
+    default: {
+      backgroundColor: '#DBFE7733',
+      color: color.fontColor.primary2,
+    },
+    hover: {
+      backgroundColor: '#DBFE774D',
+      color: color.fontColor.primary2,
+    },
+    click: {
+      backgroundColor: color.backgroundColor.primary2,
+      color: color.fontColor.primary1,
+    },
+  },
+  extremeLightBtn: {
+    height: '2.25rem',
+    fontSize: fontSize.b1,
+    default: {
+      backgroundColor: '#1b1b1d33',
+      color: color.fontColor.extreme_dark,
+    },
+    hover: {
+      backgroundColor: '#1c1c1d4d',
+      color: color.fontColor.extreme_dark,
+    },
+    click: {
+      backgroundColor: color.backgroundColor.extreme_dark,
+      color: color.fontColor.primary2,
+    },
+  },
+  extremeDarkBtn: {
+    height: '2.25rem',
+    fontSize: fontSize.b1,
+    default: {
+      backgroundColor: '#dafe7733',
+      color: color.fontColor.primary2,
+    },
+    hover: {
+      backgroundColor: '#dbfe774d',
+      color: color.fontColor.primary2,
+    },
+    click: {
+      backgroundColor: color.backgroundColor.primary2,
+      color: color.fontColor.extreme_dark,
+    },
+  },
+  textBtn: {
+    height: '1.25rem',
+    fontSize: fontSize.b2,
+    default: {
+      backgroundColor: '#00000000',
+      color: color.fontColor.primary1,
+    },
+    hover: {
+      backgroundColor: color.backgroundColor.gray,
+      color: color.fontColor.primary1,
+    },
+    click: {
+      backgroundColor: color.backgroundColor.primary1,
+      color: color.fontColor.gray,
+    },
+  },
+};
+
 export const designTheme: Theme = {
   color,
   fontSize,
@@ -85,85 +168,29 @@ export const designTheme: Theme = {
     tablet_v: `all and (min-width: ${responsiveBreakpoints.tablet_v.min}px) and (max-width: ${responsiveBreakpoints.tablet_v.max}px)`,
     mobile: `all and (max-width: ${responsiveBreakpoints.mobile.max}px)`,
   },
-  button: {
-    lightBtn: {
-      height: '2.25rem',
-      fontSize: fontSize.b1,
-      default: {
-        backgroundColor: '#523EA133',
-        color: color.fontColor.primary1,
-      },
-      hover: {
-        backgroundColor: '#523EA14D',
-        color: color.fontColor.primary1,
-      },
-      click: {
-        backgroundColor: color.backgroundColor.primary1,
-        color: color.fontColor.primary2,
-      },
-    },
-    darkBtn: {
-      height: '2.25rem',
-      fontSize: fontSize.b1,
-      default: {
-        backgroundColor: '#DBFE7733',
-        color: color.fontColor.primary2,
-      },
-      hover: {
-        backgroundColor: '#DBFE774D',
-        color: color.fontColor.primary2,
-      },
-      click: {
-        backgroundColor: color.backgroundColor.primary2,
-        color: color.fontColor.primary1,
-      },
-    },
+  button: buttonTheme,
+  sideButton: {
+    ...buttonTheme,
     extremeLightBtn: {
-      height: '2.25rem',
-      fontSize: fontSize.b1,
+      ...buttonTheme.extremeLightBtn,
       default: {
         backgroundColor: '#00000000',
         color: color.fontColor.extreme_dark,
       },
       hover: {
-        backgroundColor: '#1c1c1d33',
+        backgroundColor: '#1b1b1d33',
         color: color.fontColor.extreme_dark,
-      },
-      click: {
-        backgroundColor: color.backgroundColor.extreme_dark,
-        color: color.fontColor.primary2,
       },
     },
     extremeDarkBtn: {
-      height: '2.25rem',
-      fontSize: fontSize.b1,
+      ...buttonTheme.extremeDarkBtn,
       default: {
-        backgroundColor: '#DBFE7700',
+        backgroundColor: '#00000000',
         color: color.fontColor.primary2,
       },
       hover: {
-        backgroundColor: '#DBFE7733',
+        backgroundColor: '#dafe7733',
         color: color.fontColor.primary2,
-      },
-      click: {
-        backgroundColor: color.backgroundColor.primary2,
-        color: color.fontColor.extreme_dark,
-      },
-    },
-    textBtn: {
-      height: '1.25rem',
-      fontSize: fontSize.b2,
-      default: {
-        backgroundColor: 'transparent',
-        color: color.fontColor.primary1,
-      },
-      hover: {
-        backgroundColor: color.backgroundColor.gray,
-        color: color.fontColor.primary1,
-      },
-      click: {
-        backgroundColor: color.backgroundColor.primary1,
-        color: color.fontColor.gray,
       },
     },
   },
