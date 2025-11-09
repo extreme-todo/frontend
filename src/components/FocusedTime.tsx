@@ -285,6 +285,7 @@ const FocusedTimeStyled = styled.main`
         gap: 2.5rem;
       }
       .chart-wrapper {
+        width: 100%;
         flex: 1;
       }
       .close-btn {

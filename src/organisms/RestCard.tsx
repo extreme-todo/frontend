@@ -24,6 +24,7 @@ export function RestCard({
     value: { ...pomodoro },
     actions,
   });
+
   const getLeftMs = () => {
     return pomodoro.settings.restStep * 60000 - (pomodoro.time ?? 0);
   };
@@ -104,27 +105,14 @@ export function RestCard({
 
             <div className="todo-title">
               <div className="todo-duration">
-                <TypoAtom
-                  fontSize={'h3'}
-                  fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
-                >
-                  {currentRound + ' Round'}
-                </TypoAtom>
+                <TypoAtom fontSize={'h3'}>{currentRound + ' Round'}</TypoAtom>
                 <div>
-                  <TypoAtom
-                    fontSize="h3"
-                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
-                  >
+                  <TypoAtom fontSize="h3">
                     {`🍅 `.repeat(currentRound)}
                   </TypoAtom>
-                  <TypoAtom
-                    fontSize="h3"
-                    className="left-round"
-                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
-                  >
-                    {`🍅 `.repeat(
-                      Math.max(todo?.duration ?? 0 - currentRound, 0),
-                    )}
+                  <TypoAtom fontSize="h3" className="left-round">
+                    {todo?.duration &&
+                      `🍅 `.repeat(Math.max(todo.duration - currentRound, 0))}
                   </TypoAtom>
                 </div>
               </div>
@@ -184,6 +172,9 @@ const RestCardWrapper = styled.div`
   .progress-container {
     width: 100%;
     height: 11rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .todo-title {
     display: flex;
@@ -194,6 +185,9 @@ const RestCardWrapper = styled.div`
     margin-bottom: 1.1428571429rem;
     justify-content: flex-end;
     align-items: center;
+    .left-round {
+      opacity: 0.5;
+    }
   }
   .button-container {
     display: flex;

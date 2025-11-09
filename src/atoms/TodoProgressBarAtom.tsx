@@ -21,8 +21,8 @@ const TodoProgressBarContainer = styled('div', {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
-    height: 100%;
+    width: 46.0625rem;
+    height: 10rem;
     > path {
       stroke: ${({ theme, type }) => {
         switch (type) {
@@ -46,16 +46,16 @@ const TodoProgressBarContainer = styled('div', {
     top: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    width: 92.75%;
-    height: 89.58%;
+    width: 42.375rem;
+    height: 8rem;
   }
   #progress-bar-foreground {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
-    height: 100%;
+    width: 46.0625rem;
+    height: 10rem;
     > path {
       stroke: ${({ theme }) => theme.color.backgroundColor.extreme_orange};
       stroke-width: 12px;
@@ -83,15 +83,19 @@ const TodoProgressBarContainer = styled('div', {
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
-    width: 100%;
+    width: 19.3125rem;
+    height: 5.4375rem;
+    text-align: center;
     #progress-bar-background,
     #progress-bar-foreground {
+      height: 4.625rem;
       > path {
         stroke-width: 0.5rem;
       }
     }
     #progress-bar-ticks {
       top: 1.25rem;
+      height: 4.143125rem;
     }
   }
 `;
