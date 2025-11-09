@@ -36,7 +36,6 @@ function App() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const welcomeRef = useRef<HTMLElement>(null);
   const mainTodoRef = useRef<HTMLElement>(null);
-  const focusedRef = useRef<HTMLElement>(null);
 
   const NAVIGATION_LIST: NavigationListType[] = useMemo(
     () => [
@@ -48,12 +47,7 @@ function App() {
       {
         componentName: 'Main',
         componentRef: mainTodoRef,
-        dotActivePos: [0.3, 0.5, 0.7],
-      },
-      {
-        componentName: 'Focused',
-        componentRef: focusedRef,
-        dotActivePos: [0.7, 1],
+        dotActivePos: [0.3, 0.5],
       },
     ],
     [],
@@ -129,7 +123,6 @@ function App() {
               ref={welcomeRef}
             />
             <MainTodo ref={mainTodoRef} />
-            <FocusedTime ref={focusedRef} />
             <motion.div
               className="scroll__guide"
               style={{

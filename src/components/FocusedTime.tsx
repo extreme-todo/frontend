@@ -13,14 +13,17 @@ import {
 import { CategorySelector, RankingChart } from '../molecules';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
 import { formatTime } from '../shared/timeUtils';
+import { useExtremeMode } from '../hooks';
+import { SideBtnAtom } from '../atoms/SideBtnAtom';
 
-export const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
+export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
   const tagColorList = RandomTagColorList.getInstance().getColorList;
 
   const [unit, setUnit] = useState<'day' | 'week' | 'month'>('day');
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null,
   );
+  const { isExtreme } = useExtremeMode();
 
   const getRecord = () =>
     selectedCategory
@@ -57,38 +60,12 @@ export const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   );
 
   return (
-    <FocusedTimeStyled ref={ref}>
-      <div className="focused-header">
-        <TypoAtom fontSize="h1">나의 집중 기록</TypoAtom>
-        <div className="button-wrapper">
-          <BtnAtom
-            handleOnClick={function (): void {
-              setUnit('day');
-            }}
-            className={'tag-button' + (unit === 'day' ? ' active' : '')}
-          >
-            Day
-          </BtnAtom>
-          <BtnAtom
-            handleOnClick={function (): void {
-              setUnit('week');
-            }}
-            className={'tag-button' + (unit === 'week' ? ' active' : '')}
-          >
-            Week
-          </BtnAtom>
-          <BtnAtom
-            handleOnClick={function (): void {
-              setUnit('month');
-            }}
-            className={'tag-button' + (unit === 'month' ? ' active' : '')}
-          >
-            Month
-          </BtnAtom>
-        </div>
-      </div>
+    <FocusedTimeStyled>
       <div className="card-wrapper">
-        <CardAtom bg="primary1" className="focused-time-card">
+        <CardAtom
+          bg={isExtreme ? 'extreme_dark' : 'primary1'}
+          className="focused-time-card"
+        >
           <div className="left-side">
             <div className="top-side">
               <TypoAtom fontSize="body" fontColor="primary2">
@@ -165,45 +142,69 @@ export const FocusedTime = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
             </div>
           </div>
           <div className="right-side">
+            <div className="right-header">
+              <div className="focused-header">
+                <div className="button-wrapper">
+                  <SideBtnAtom
+                    onClick={function (): void {
+                      setUnit('day');
+                    }}
+                    focused={unit === 'day'}
+                    btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+                  >
+                    Day
+                  </SideBtnAtom>
+                  <SideBtnAtom
+                    onClick={function (): void {
+                      setUnit('week');
+                    }}
+                    focused={unit === 'week'}
+                    btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+                  >
+                    Week
+                  </SideBtnAtom>
+                  <SideBtnAtom
+                    onClick={function (): void {
+                      setUnit('month');
+                    }}
+                    focused={unit === 'month'}
+                    btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+                  >
+                    Month
+                  </SideBtnAtom>
+                </div>
+              </div>
+              <BtnAtom handleOnClick={handleClose} className="close-btn">
+                <img src="icon/closeYellow.svg" alt="close" />
+              </BtnAtom>
+            </div>
             {recordData && (
-              <RankingChart
-                color={
-                  selectedCategory
-                    ? tagColorList[selectedCategory.name]
-                    : undefined
-                }
-                options={[
-                  ...recordData?.data.values.map((value) =>
-                    getUnitSeriesLabel(value),
-                  ),
-                ]}
-                series={[
-                  ...recordData?.data.values.map((value) => value.focused),
-                ]}
-              ></RankingChart>
+              <div className="chart-wrapper">
+                <RankingChart
+                  color={
+                    selectedCategory
+                      ? tagColorList[selectedCategory.name]
+                      : undefined
+                  }
+                  options={[
+                    ...recordData?.data.values.map((value) =>
+                      getUnitSeriesLabel(value),
+                    ),
+                  ]}
+                  series={[
+                    ...recordData?.data.values.map((value) => value.focused),
+                  ]}
+                ></RankingChart>
+              </div>
             )}
           </div>
         </CardAtom>
-        <CardAtom
-          style={{
-            position: 'absolute',
-            left: '17px',
-            top: '40px',
-            transform: `rotateZ(3.65deg)`,
-            zIndex: 0,
-            opacity: 1,
-            pointerEvents: 'none',
-            transformOrigin: 'bottom left',
-          }}
-        ></CardAtom>
       </div>
     </FocusedTimeStyled>
   );
-});
+};
 
 const FocusedTimeStyled = styled.main`
-  width: 100dvw;
-  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -211,22 +212,19 @@ const FocusedTimeStyled = styled.main`
   .focused-header {
     display: flex;
     justify-content: space-between;
-    width: 53.75rem;
     align-items: flex-end;
-    margin-bottom: 0.5rem;
     > .button-wrapper {
       display: flex;
       gap: 0.5rem;
       margin-right: 1.25rem;
     }
   }
+
   .card-wrapper {
     position: relative;
-    width: 53.75rem;
-    height: 20rem;
   }
   .focused-time-card {
-    padding: 2rem 2.5rem 1.25rem 2.5rem;
+    padding: 1.75rem;
     display: flex;
     flex-direction: row;
     .left-side {
@@ -234,6 +232,7 @@ const FocusedTimeStyled = styled.main`
       flex-direction: column;
       justify-content: space-between;
       height: 100%;
+      width: 15rem;
     }
     .top-side {
       display: flex;
@@ -252,6 +251,20 @@ const FocusedTimeStyled = styled.main`
       min-width: 33.75rem;
       flex-shrink: 0;
       height: 100%;
+      .right-header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-shrink: 0;
+        gap: 2.5rem;
+      }
+      .chart-wrapper {
+        flex: 1;
+      }
+      .close-btn {
+        width: 2rem;
+        height: 2rem;
+      }
     }
   }
   .tag-button {

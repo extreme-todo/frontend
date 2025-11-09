@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { SideButtons } from '../../molecules';
 import { CurrentTodoCard, NoTodoCard, RestCard } from '../../organisms';
-import { TodoList, AddTodo, PomodoroTimeSetting } from '..';
+import { TodoList, AddTodo, PomodoroTimeSetting, FocusedTime } from '..';
 import {
   CardWrapper,
   MainTodoCenter,
@@ -39,9 +39,18 @@ import {
 import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
 
-export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
+export type ModalType =
+  | 'todolistModal'
+  | 'addTodoModal'
+  | 'timeModal'
+  | 'ranking';
 
-export type CardType = ModalType | 'noTodo' | 'currentTodo' | 'rest';
+export type CardType =
+  | ModalType
+  | 'noTodo'
+  | 'currentTodo'
+  | 'rest'
+  | 'ranking';
 
 export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
@@ -129,6 +138,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         return 'timer';
       case 'todolistModal':
         return 'list';
+      case 'ranking':
+        return 'ranking';
       default:
         return undefined;
     }
@@ -185,6 +196,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               mobileTopButtonSlot={props.children}
             />
           );
+        case 'ranking':
+          return <FocusedTime handleClose={handleClose} />;
         default:
           return <></>;
       }
@@ -269,6 +282,9 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         case 'currentTodo':
           setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
           break;
+        case 'ranking':
+          setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
+          break;
         case 'rest':
           setCurrentCardColor('primary2');
       }
@@ -279,7 +295,9 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     <SideButtons
       focusedButton={currentFocusedSideButton}
       onClickHandlers={{
-        ranking: () => alert('기능 준비 중입니다.'),
+        ranking: () => {
+          handleClickSideButton('ranking');
+        },
         help: () => alert('기능 준비 중입니다.'),
         addTodo: () => {
           handleClickSideButton('addTodoModal');
@@ -301,6 +319,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
+                width: '57rem',
               }}
             >
               <div>
@@ -319,6 +338,9 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 />
               </div>
               <div>
+                <SideButtons.ShowRankingButton
+                  theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                />
                 <SideButtons.ShowHelpButton
                   theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
                 />
