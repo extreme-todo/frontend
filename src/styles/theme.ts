@@ -67,7 +67,7 @@ const fontSize: FontSize = {
     lineHeight: '1.25rem',
   },
   tag: {
-    size: '0.875rem',
+    size: '1.0625rem',
     weight: 600,
     lineHeight: '1.25rem',
   },

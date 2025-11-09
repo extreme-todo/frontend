@@ -75,7 +75,7 @@ const TagSpan = styled.span<
     switch (size) {
       case 'normal':
       default:
-        return '0 1rem';
+        return '0.375rem 0.75rem';
     }
   }};
 
@@ -121,7 +121,7 @@ const TagSpan = styled.span<
   align-items: center;
 
   &:has(.check-icon) {
-    padding-right: 0.25rem;
+    padding-right: 0.375rem;
     ${({ isSelected }) =>
       !isSelected &&
       css`
@@ -130,8 +130,8 @@ const TagSpan = styled.span<
   }
   .check-icon {
     display: inline-flex;
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 1.25rem;
+    height: 1.25rem;
     border-radius: 50%;
     margin-left: 0.25rem;
     padding: 0.125rem;

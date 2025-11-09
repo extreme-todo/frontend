@@ -7,8 +7,8 @@ type PaddingType =
 type LengthType = `${number}rem` | `${number}%` | `${number}px` | `${number}ch`;
 /* font */
 // 16px
-// 140, 36, 30, 20, 16, 14
-type FontRemSize = 8.75 | 2.25 | 1.875 | 1.25 | 1 | 0.875;
+// 140, 36, 30, 20, 16, 14, 17
+type FontRemSize = 8.75 | 2.25 | 1.875 | 1.25 | 1 | 0.875 | 1.0625;
 // bold, semibold, regular
 type FontWeight = 700 | 600 | 400;
 interface FontAttribute {

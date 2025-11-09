@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useContext, useState } from 'react';
+import { ForwardedRef, forwardRef, useContext, useMemo, useState } from 'react';
 import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
@@ -13,7 +13,7 @@ import {
 import { CategorySelector, RankingChart } from '../molecules';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
 import { formatTime } from '../shared/timeUtils';
-import { useExtremeMode } from '../hooks';
+import { useExtremeMode, useIsMobile } from '../hooks';
 import { SideBtnAtom } from '../atoms/SideBtnAtom';
 
 export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
@@ -24,6 +24,7 @@ export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
     null,
   );
   const { isExtreme } = useExtremeMode();
+  const isMobile = useIsMobile();
 
   const getRecord = () =>
     selectedCategory
@@ -51,6 +52,52 @@ export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
     }
   };
 
+  const UnitButtons = useMemo(
+    () => (
+      <div className="focused-header">
+        <div className="button-wrapper">
+          <SideBtnAtom
+            onClick={function (): void {
+              setUnit('day');
+            }}
+            focused={unit === 'day'}
+            btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+          >
+            Day
+          </SideBtnAtom>
+          <SideBtnAtom
+            onClick={function (): void {
+              setUnit('week');
+            }}
+            focused={unit === 'week'}
+            btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+          >
+            Week
+          </SideBtnAtom>
+          <SideBtnAtom
+            onClick={function (): void {
+              setUnit('month');
+            }}
+            focused={unit === 'month'}
+            btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+          >
+            Month
+          </SideBtnAtom>
+        </div>
+      </div>
+    ),
+    [unit, isExtreme],
+  );
+
+  const CloseButton = useMemo(
+    () => (
+      <BtnAtom handleOnClick={handleClose} className="close-btn">
+        <img src="icon/closeYellow.svg" alt="close" />
+      </BtnAtom>
+    ),
+    [handleClose],
+  );
+
   const { data: recordData } = useQuery(
     ['category', selectedCategory, unit, 'focusedTime'],
     getRecord,
@@ -61,13 +108,13 @@ export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
 
   return (
     <FocusedTimeStyled>
-      <div className="card-wrapper">
-        <CardAtom
-          bg={isExtreme ? 'extreme_dark' : 'primary1'}
-          className="focused-time-card"
-        >
-          <div className="left-side">
-            <div className="top-side">
+      <CardAtom
+        bg={isExtreme ? 'extreme_dark' : 'primary1'}
+        className="focused-time-card"
+      >
+        <div className="left-side">
+          <div className="top-side">
+            <div className="current-record">
               <TypoAtom fontSize="body" fontColor="primary2">
                 {unit === 'day'
                   ? format(
@@ -98,108 +145,82 @@ export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
                 </TypoAtom>
               )}
             </div>
-            <div className="bottom-side">
-              <TypoAtom fontSize="body" fontColor="primary2">
-                {unit === 'day'
-                  ? '전 일 대비'
-                  : unit === 'week'
-                  ? '전 주 대비'
-                  : '전 달 대비'}
-              </TypoAtom>
-              {recordData?.data.total.focused != null ? (
-                <TypoAtom fontSize="h1" fontColor="primary2">
-                  {recordData.data.total.focused -
-                    recordData.data.total.prevFocused >=
-                  0
-                    ? '+'
-                    : ''}
-                  {formatTime(
-                    Math.floor(
-                      (recordData.data.total.focused -
-                        recordData.data.total.prevFocused) /
-                        60000,
-                    ),
-                  )}
-                </TypoAtom>
-              ) : (
-                <TypoAtom fontSize="h1" fontColor="primary2">
-                  {'0분'}
-                </TypoAtom>
-              )}
-              {categories && (
-                <CategorySelector
-                  categories={categories}
-                  selected={selectedCategory}
-                  selectHandler={(category) => {
-                    if (category.id === selectedCategory?.id) {
-                      setSelectedCategory(null);
-                    } else {
-                      setSelectedCategory(category);
-                    }
-                  }}
-                ></CategorySelector>
-              )}
-            </div>
+            {isMobile && CloseButton}
           </div>
-          <div className="right-side">
-            <div className="right-header">
-              <div className="focused-header">
-                <div className="button-wrapper">
-                  <SideBtnAtom
-                    onClick={function (): void {
-                      setUnit('day');
-                    }}
-                    focused={unit === 'day'}
-                    btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
-                  >
-                    Day
-                  </SideBtnAtom>
-                  <SideBtnAtom
-                    onClick={function (): void {
-                      setUnit('week');
-                    }}
-                    focused={unit === 'week'}
-                    btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
-                  >
-                    Week
-                  </SideBtnAtom>
-                  <SideBtnAtom
-                    onClick={function (): void {
-                      setUnit('month');
-                    }}
-                    focused={unit === 'month'}
-                    btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
-                  >
-                    Month
-                  </SideBtnAtom>
-                </div>
-              </div>
-              <BtnAtom handleOnClick={handleClose} className="close-btn">
-                <img src="icon/closeYellow.svg" alt="close" />
-              </BtnAtom>
-            </div>
-            {recordData && (
-              <div className="chart-wrapper">
-                <RankingChart
-                  color={
-                    selectedCategory
-                      ? tagColorList[selectedCategory.name]
-                      : undefined
+          <div className="bottom-side">
+            <TypoAtom fontSize="body" fontColor="primary2">
+              {unit === 'day'
+                ? '전 일 대비'
+                : unit === 'week'
+                ? '전 주 대비'
+                : '전 달 대비'}
+            </TypoAtom>
+            {recordData?.data.total.focused != null ? (
+              <TypoAtom fontSize="h1" fontColor="primary2">
+                {recordData.data.total.focused -
+                  recordData.data.total.prevFocused >=
+                0
+                  ? '+'
+                  : ''}
+                {formatTime(
+                  Math.floor(
+                    (recordData.data.total.focused -
+                      recordData.data.total.prevFocused) /
+                      60000,
+                  ),
+                )}
+              </TypoAtom>
+            ) : (
+              <TypoAtom fontSize="h1" fontColor="primary2">
+                {'0분'}
+              </TypoAtom>
+            )}
+            {categories && (
+              <CategorySelector
+                isMobile={isMobile}
+                categories={categories}
+                selected={selectedCategory}
+                selectHandler={(category) => {
+                  if (category.id === selectedCategory?.id) {
+                    setSelectedCategory(null);
+                  } else {
+                    setSelectedCategory(category);
                   }
-                  options={[
-                    ...recordData?.data.values.map((value) =>
-                      getUnitSeriesLabel(value),
-                    ),
-                  ]}
-                  series={[
-                    ...recordData?.data.values.map((value) => value.focused),
-                  ]}
-                ></RankingChart>
-              </div>
+                }}
+              ></CategorySelector>
             )}
           </div>
-        </CardAtom>
-      </div>
+        </div>
+        <div className="right-side">
+          {!isMobile && (
+            <div className="right-header">
+              {UnitButtons}
+              {CloseButton}
+            </div>
+          )}
+          {recordData && (
+            <div className="chart-wrapper">
+              <RankingChart
+                isMobile={isMobile}
+                color={
+                  selectedCategory
+                    ? tagColorList[selectedCategory.name]
+                    : undefined
+                }
+                options={[
+                  ...recordData?.data.values.map((value) =>
+                    getUnitSeriesLabel(value),
+                  ),
+                ]}
+                series={[
+                  ...recordData?.data.values.map((value) => value.focused),
+                ]}
+              ></RankingChart>
+            </div>
+          )}
+          {isMobile && UnitButtons}
+        </div>
+      </CardAtom>
     </FocusedTimeStyled>
   );
 };
@@ -216,7 +237,6 @@ const FocusedTimeStyled = styled.main`
     > .button-wrapper {
       display: flex;
       gap: 0.5rem;
-      margin-right: 1.25rem;
     }
   }
 
@@ -230,14 +250,20 @@ const FocusedTimeStyled = styled.main`
     .left-side {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 3rem;
       height: 100%;
       width: 15rem;
     }
     .top-side {
       display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .current-record {
+      display: flex;
       flex-direction: column;
-      flex: 1;
+      flex-shrink: 0;
     }
     .bottom-side {
       display: flex;
@@ -267,21 +293,24 @@ const FocusedTimeStyled = styled.main`
       }
     }
   }
-  .tag-button {
-    border: 1px solid ${({ theme }) => theme.color.primary.primary1};
-    border-radius: 1.25rem;
-    height: 1.25rem;
-    padding: 0 1rem;
-    display: flex;
-    width: 4.875rem;
-    justify-content: center;
-    align-items: center;
-    color: ${({ theme }) => theme.color.primary.primary1};
-    &.active {
-      background-color: ${({ theme }) => theme.color.primary.primary1};
-      color: ${({ theme }) => {
-        return theme.color.fontColor.gray;
-      }};
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    .focused-time-card {
+      flex-direction: column;
+      padding: 1.25rem 1.5rem 1.25rem 1.25rem;
+      .left-side {
+        width: 100%;
+        gap: 0.75rem;
+        height: auto;
+        flex-shrink: 0;
+      }
+      .right-side {
+        width: 100%;
+        min-width: unset;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+      }
     }
   }
 `;

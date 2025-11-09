@@ -19,38 +19,7 @@ export function CategorySelector({
   const tagColorList = RandomTagColorList.getInstance().getColorList;
   return (
     <CSContainer isMobile={isMobile ?? false}>
-      {isMobile && categories && (
-        <TagAtom
-          styleOption={{
-            bg: 'mint',
-          }}
-        >
-          <select
-            className="category-select-mobile"
-            value={selected?.id}
-            onChange={(e) => {
-              const category: ICategory | undefined = categories.find(
-                (v) => v.id === Number(e.target.value),
-              );
-              if (category) {
-                selectHandler(category);
-              }
-            }}
-          >
-            {categories.map((category) => {
-              return (
-                <option
-                  value={category.id}
-                  key={category.id}
-                  label={category.name}
-                />
-              );
-            })}
-          </select>
-        </TagAtom>
-      )}
-      {!isMobile &&
-        categories &&
+      {categories &&
         categories.map((category) => {
           return (
             <BtnAtom
@@ -95,7 +64,6 @@ const CSContainer = styled.div<{ isMobile: boolean }>`
   align-content: flex-start;
   flex-grow: 1;
   flex-shrink: 0;
-  max-height: 4.75rem;
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
   /* mask-image: linear-gradient(to bottom, black 50%, transparent 100%); */
@@ -125,5 +93,9 @@ const CSContainer = styled.div<{ isMobile: boolean }>`
     /* appearance: unset; */
     width: fit-content;
   }
-  ${({ isMobile }) => isMobile && ``}
+  ${({ isMobile }) =>
+    isMobile &&
+    `
+    max-height: 4.5rem;
+  `}
 `;

@@ -319,7 +319,6 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                width: '57rem',
               }}
             >
               <div>
@@ -338,9 +337,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 />
               </div>
               <div>
-                <SideButtons.ShowRankingButton
-                  theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-                />
+                {!isMobile && (
+                  <SideButtons.ShowRankingButton
+                    theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                  />
+                )}
                 <SideButtons.ShowHelpButton
                   theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
                 />
@@ -363,6 +364,13 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                   <CardAtom bg={getDummyCardColor()} style={{ zIndex: -1 }} />
                 </CardAnimationPlayerAtom>
               )}
+              <div className="bottom-side-buttons">
+                {isMobile && (
+                  <SideButtons.ShowRankingButton
+                    theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                  />
+                )}
+              </div>
             </div>
           </MainTodoCenter>
         </MainTodoContentWrapper>
