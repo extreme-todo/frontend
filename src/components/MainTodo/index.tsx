@@ -367,7 +367,20 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               <div className="bottom-side-buttons">
                 {isMobile && (
                   <SideButtons.ShowRankingButton
-                    theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                    theme={(() => {
+                      switch (getDummyCardColor()) {
+                        case 'primary1':
+                          return 'darkBtn';
+                        case 'primary2':
+                          return isExtreme ? 'extremeLightBtn' : 'lightBtn';
+                        case 'extreme_dark':
+                          return 'extremeDarkBtn';
+                        case 'extreme_orange':
+                          return 'extremeLightBtn';
+                        default:
+                          return 'darkBtn';
+                      }
+                    })()}
                   />
                 )}
               </div>
