@@ -217,12 +217,12 @@ export const useCurrentTodo = ({
   useEffect(() => {
     // TODO 목록이 변경되었을 때 초기화
     init();
-  }, [todos]);
+  }, [todos, init]);
 
   useEffect(() => {
     restWhenPomodoroEnd();
     isFocusing && updateFocus(time === 0 ? 0 : 1000);
-  }, [time]);
+  }, [time, restWhenPomodoroEnd, isFocusing, updateFocus]);
 
   const useCurrentTodoResult = useMemo(
     () => ({
