@@ -5,7 +5,6 @@ import { todosApi } from '../shared/apis';
 import { getDateInFormat } from '../shared/timeUtils';
 import { PomodoroStatus } from '../services/PomodoroService';
 import { IPomodoroActions, IPomodoroData, pomodoroUnit } from './usePomodoro';
-import { get } from 'http';
 
 interface ITodoFocusedTime {
   id: TodoEntity['id'];
