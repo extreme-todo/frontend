@@ -42,10 +42,17 @@ export const useCurrentTodo = ({
     id: string;
     focusTime: number;
   }) {
-    if (currentTodo) await todosApi.doTodo(id, focusTime);
+    if (currentTodo) {
+      await todosApi.doTodo(id, focusTime);
+    }
   }
 
   const { mutate: doTodoMutate } = useMutation(doTodoMutateHandler, {
+    onSuccess: () => {
+      setCurrentTodo(undefined);
+      setFocusedOnTodo(0);
+      localStorage.removeItem(TODO_FOCUS_TIME_KEY);
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       queryClient.invalidateQueries({ queryKey: ['doneTodos'] });
@@ -152,8 +159,10 @@ export const useCurrentTodo = ({
    * 현재 할 일을 완료 처리한다.
    */
   const doTodo = useCallback(() => {
-    if (currentTodo)
+    if (currentTodo) {
       doTodoMutate({ id: currentTodo.id, focusTime: focusedOnTodo });
+      actions.startFocusing();
+    }
   }, [currentTodo, focusedOnTodo, doTodoMutate]);
 
   /**
