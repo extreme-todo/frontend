@@ -86,6 +86,14 @@ export const useCurrentTodo = ({
     );
   }, [currentTodo, focusedOnTodo, pomodoroSettings.focusStep, pomodoroUnit]);
 
+  // 포모도로 상태가 휴식중이고, 휴식 단위시간이 다 되었는지
+  const canFocus = useMemo(() => {
+    return (
+      status === PomodoroStatus.RESTING &&
+      (time ?? 0) > pomodoroSettings.restStep * pomodoroUnit
+    );
+  }, [fullyFocused, status, time, pomodoroSettings.restStep, pomodoroUnit]);
+
   /**
    * -----------------------callback (memoized)---------------------
    */
