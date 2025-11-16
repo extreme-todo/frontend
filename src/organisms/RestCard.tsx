@@ -16,7 +16,7 @@ export function RestCard({
   const actions = usePomodoroActions();
   const { isExtreme } = useExtremeMode();
   const {
-    canRest,
+    fullyFocused,
     currentTodo: todo,
     doTodo,
     currentRound,
@@ -35,22 +35,22 @@ export function RestCard({
           className="focus"
           btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
           handleOnClick={() => {
-            canRest ? doTodo() : actions.startFocusing();
+            fullyFocused ? doTodo() : actions.startFocusing();
           }}
         >
-          {canRest ? '다음 할 일 하기' : '끝내기'}
+          {fullyFocused ? '다음 할 일 하기' : '끝내기'}
         </BtnAtom>
-        {canRest && (
+        {fullyFocused && (
           <BtnAtom
             className="focusMore"
-            handleOnClick={() => actions.startOverFocusing()}
+            handleOnClick={() => actions.startFocusing()}
           >
             조금 더 집중하기
           </BtnAtom>
         )}
       </div>
     ),
-    [isExtreme, canRest, doTodo, actions],
+    [isExtreme, fullyFocused, doTodo, actions],
   );
   return (
     <RestCardContainer>

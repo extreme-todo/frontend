@@ -251,7 +251,6 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           console.log('🍅', pomodoroStatus);
           changeCard(currentCard, 'rest');
           break;
-        case PomodoroStatus.OVERFOCUSING:
         case PomodoroStatus.FOCUSING:
           console.log('🥔', pomodoroStatus);
           changeCard(currentCard, 'currentTodo');
