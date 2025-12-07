@@ -28,6 +28,7 @@ import {
   type focusStep,
   useTouchSensor,
   useIsMobile,
+  useExtremeMode,
 } from '../../hooks';
 
 /* etc */
@@ -86,6 +87,7 @@ export const TodoList = memo(
     const queryClient = useQueryClient();
 
     const isMobile = useIsMobile();
+    const { isExtreme } = useExtremeMode();
 
     const { data: todos, isLoading: isTodoLoading } = useQuery(
       ['todos'],
@@ -158,7 +160,11 @@ export const TodoList = memo(
     return (
       <>
         {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
-        <TodoListContainer padding="1rem 1.5rem" className="card">
+        <TodoListContainer
+          bg={isExtreme ? 'extreme_dark' : 'primary1'}
+          padding="1rem 1.5rem"
+          className="card"
+        >
           {isMobile && (
             <div className="mobile-header-wrapper">
               <div className="mobile-top-button-slot">
@@ -193,6 +199,7 @@ export const TodoList = memo(
                       randomTagColor={randomTagColor}
                       isCurrTodo={false}
                       order={idx + 1}
+                      isExtreme={isExtreme}
                     />
                   ))}
                 </List>
@@ -238,6 +245,7 @@ export const TodoList = memo(
                       randomTagColor={randomTagColor}
                       isCurrTodo={true}
                       order={(doneTodoList?.length ?? 0) + 1}
+                      isExtreme={isExtreme}
                     />
                   )}
                   <DragDropContext
@@ -285,6 +293,7 @@ export const TodoList = memo(
                                           1 +
                                           (doneTodos ? doneTodos.size : 0)
                                         }
+                                        isExtreme={isExtreme}
                                       />
                                     </li>
                                   ))}
@@ -346,12 +355,6 @@ const TodoListContainer = styled(CardAtom)`
     flex-direction: row;
     column-gap: 1rem;
   }
-
-  background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.primary1};
 `;
 
 const ListSection = styled.section`

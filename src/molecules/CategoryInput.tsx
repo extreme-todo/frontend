@@ -11,6 +11,7 @@ interface ICategoryInputProps {
   handleClick: (category: string) => void;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
   tagColorList: Record<string, TagColorName>;
+  isExtreme?: boolean;
 }
 
 const getSvgColor = (bg: string) => {
@@ -33,6 +34,7 @@ export const CategoryInput = memo(
     category,
     handleChangeCategory,
     tagColorList,
+    isExtreme,
   }: ICategoryInputProps) => {
     const [isFocus, setIsFocus] = useState(false);
     return (
@@ -97,9 +99,10 @@ export const CategoryInput = memo(
                 textAlign: 'center',
                 font: 'b2',
                 placeholderOpacity: isFocus ? 0.3 : 1,
-                placeholderColor: 'primary1',
+                placeholderColor: isExtreme ? 'extreme_dark' : 'primary1',
                 width: isFocus ? '17ch' : '15ch',
                 height: '1.25rem',
+                fontColor: isExtreme ? 'extreme_dark' : 'primary1',
               }}
               tabIndex={0}
             />

@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { SideButtons } from '../../molecules';
 import { CurrentTodoCard, NoTodoCard, RestCard } from '../../organisms';
-import { TodoList, AddTodo, PomodoroTimeSetting } from '..';
+import { TodoList, AddTodo, PomodoroTimeSetting, FocusedTime } from '..';
 import {
   CardWrapper,
   MainTodoCenter,
@@ -40,9 +40,18 @@ import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
 import useAlarm from '../../hooks/useAlert';
 
-export type ModalType = 'todolistModal' | 'addTodoModal' | 'timeModal';
+export type ModalType =
+  | 'todolistModal'
+  | 'addTodoModal'
+  | 'timeModal'
+  | 'ranking';
 
-export type CardType = ModalType | 'noTodo' | 'currentTodo' | 'rest';
+export type CardType =
+  | ModalType
+  | 'noTodo'
+  | 'currentTodo'
+  | 'rest'
+  | 'ranking';
 
 export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
@@ -131,6 +140,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         return 'timer';
       case 'todolistModal':
         return 'list';
+      case 'ranking':
+        return 'ranking';
       default:
         return undefined;
     }
@@ -187,6 +198,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               mobileTopButtonSlot={props.children}
             />
           );
+        case 'ranking':
+          return <FocusedTime handleClose={handleClose} />;
         default:
           return <></>;
       }
@@ -204,18 +217,15 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
               focusStep={pomodoroSettings.focusStep}
               restStep={pomodoroSettings.restStep}
               theme={(() => {
-                if (isExtreme) {
-                  return 'extremeDarkBtn';
-                }
                 switch (currentCardColor) {
                   case 'primary1':
-                    return 'darkBtn';
+                    return isExtreme ? 'extremeDarkBtn' : 'darkBtn';
                   case 'primary2':
-                    return 'lightBtn';
+                    return isExtreme ? 'extremeLightBtn' : 'lightBtn';
                   case 'extreme_dark':
-                    return 'extremeLightBtn';
-                  case 'extreme_orange':
                     return 'extremeDarkBtn';
+                  case 'extreme_orange':
+                    return 'extremeLightBtn';
                   default:
                     return 'darkBtn';
                 }
@@ -233,6 +243,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     isLogin,
     pomodoroSettings.focusStep,
     pomodoroSettings.restStep,
+    currentCardColor,
   ]);
 
   useHandleDidntDo();
@@ -244,7 +255,6 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           console.log('🍅', pomodoroStatus);
           changeCard(currentCard, 'rest');
           break;
-        case PomodoroStatus.OVERFOCUSING:
         case PomodoroStatus.FOCUSING:
           console.log('🥔', pomodoroStatus);
           changeCard(currentCard, 'currentTodo');
@@ -267,12 +277,15 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           setCurrentCardColor('primary2');
           break;
         case 'timeModal':
-          setCurrentCardColor('primary1');
+          setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
           break;
         case 'todolistModal':
-          setCurrentCardColor('primary1');
+          setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
           break;
         case 'currentTodo':
+          setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
+          break;
+        case 'ranking':
           setCurrentCardColor(isExtreme ? 'extreme_dark' : 'primary1');
           break;
         case 'rest':
@@ -285,7 +298,9 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     <SideButtons
       focusedButton={currentFocusedSideButton}
       onClickHandlers={{
-        ranking: () => alert('기능 준비 중입니다.'),
+        ranking: () => {
+          handleClickSideButton('ranking');
+        },
         help: () => alert('기능 준비 중입니다.'),
         addTodo: () => {
           handleClickSideButton('addTodoModal');
@@ -325,6 +340,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 />
               </div>
               <div>
+                {!isMobile && (
+                  <SideButtons.ShowRankingButton
+                    theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                  />
+                )}
                 <SideButtons.ShowHelpButton
                   theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
                 />
@@ -352,6 +372,26 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                   <CardAtom bg={getDummyCardColor()} style={{ zIndex: -1 }} />
                 </CardAnimationPlayerAtom>
               )}
+              <div className="bottom-side-buttons">
+                {isMobile && (
+                  <SideButtons.ShowRankingButton
+                    theme={(() => {
+                      switch (getDummyCardColor()) {
+                        case 'primary1':
+                          return 'darkBtn';
+                        case 'primary2':
+                          return isExtreme ? 'extremeLightBtn' : 'lightBtn';
+                        case 'extreme_dark':
+                          return 'extremeDarkBtn';
+                        case 'extreme_orange':
+                          return 'extremeLightBtn';
+                        default:
+                          return 'darkBtn';
+                      }
+                    })()}
+                  />
+                )}
+              </div>
             </div>
           </MainTodoCenter>
         </MainTodoContentWrapper>

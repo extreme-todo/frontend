@@ -25,7 +25,7 @@ import {
   TITLE_EMPTY_MESSAGE,
   TodoEntity,
 } from '../../DB/indexedAction';
-import { ETIndexed, UpdateDto, UpdateSchema } from '../../DB/indexed';
+import { UpdateDto, UpdateSchema } from '../../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -49,6 +49,7 @@ interface ITodoCardProps {
   snapshot?: DraggableStateSnapshot;
   focusStep: focusStep;
   randomTagColor: RandomTagColorList;
+  isExtreme: boolean;
   isCurrTodo: boolean;
   order: number;
   isThisEdit: boolean;
@@ -67,6 +68,7 @@ export const TodoCard = ({
   order,
   isThisEdit,
   setEditTodoId,
+  isExtreme,
 }: ITodoCardProps) => {
   const { id, date: prevDate, todo, categories, done, duration } = todoData;
 
@@ -374,6 +376,7 @@ export const TodoCard = ({
 
   return (
     <TodoCardContainer
+      isExtreme={isExtreme}
       as={isThisEdit ? 'form' : 'div'}
       done={done}
       isCurrTodo={isCurrTodo}
@@ -471,6 +474,7 @@ export const TodoCard = ({
 
 const TodoCardContainer = styled.div<{
   done: boolean;
+  isExtreme: boolean;
   isCurrTodo: boolean;
   isThisEdit: boolean;
 }>`
@@ -486,11 +490,16 @@ const TodoCardContainer = styled.div<{
 
   background-color: ${({
     isThisEdit,
+    isExtreme,
     theme: {
       color: { backgroundColor },
     },
   }) =>
-    isThisEdit ? backgroundColor.primary2 : backgroundColor.dark_primary1};
+    isThisEdit
+      ? backgroundColor.primary2
+      : isExtreme
+      ? backgroundColor.light_extreme_dark
+      : backgroundColor.dark_primary1};
 
   color: ${({
     isThisEdit,

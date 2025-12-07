@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
 import { ReactNode } from 'react';
-import { useIsMobile } from '../hooks';
+import { useExtremeMode, useIsMobile } from '../hooks';
 
 interface INoTodoCardProps {
   addTodoHandler: () => void;
@@ -13,9 +13,13 @@ export function NoTodoCard({
   mobileTopButtonSlot,
 }: INoTodoCardProps) {
   const isMobile = useIsMobile();
+  const { isExtreme } = useExtremeMode();
   return (
     <StyledNoTodoCard>
-      <CardAtom bg="primary1" padding={'0'} className="no-todo-card">
+      <CardAtom
+        bg={isExtreme ? 'extreme_dark' : 'primary1'}
+        className="no-todo-card"
+      >
         {isMobile && (
           <div className="mobile-top-button-wrapper">{mobileTopButtonSlot}</div>
         )}

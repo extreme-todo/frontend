@@ -3,15 +3,21 @@ import { designTheme } from '../styles/theme';
 import { formatTime } from '../shared/timeUtils';
 import { TagColorName } from '../styles/emotion';
 import { useRef, useState } from 'react';
+import { useIsMobile } from '../hooks';
 
 interface IRankingChartProps {
   options: string[];
   series: number[];
   color?: TagColorName;
+  isMobile?: boolean;
 }
-export function RankingChart({ options, series, color }: IRankingChartProps) {
+export function RankingChart({
+  options,
+  series,
+  color,
+  isMobile,
+}: IRankingChartProps) {
   const chartRef = useRef<Chart>(null);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
   return (
     <Chart
       ref={chartRef}
@@ -29,6 +35,7 @@ export function RankingChart({ options, series, color }: IRankingChartProps) {
             show: false,
           },
           labels: {
+            show: isMobile ? false : true,
             style: {
               colors: color
                 ? designTheme.color.tag[color]
@@ -44,12 +51,34 @@ export function RankingChart({ options, series, color }: IRankingChartProps) {
             : designTheme.color.primary.primary2,
         ],
         yaxis: {
-          show: false,
+          show: isMobile ? true : false,
+          axisBorder: {
+            show: false,
+            width: 1,
+            color: color
+              ? designTheme.color.tag[color]
+              : designTheme.color.primary.primary2,
+          },
+          axisTicks: {
+            show: false,
+          },
+          labels: {
+            style: {
+              colors: color
+                ? designTheme.color.tag[color]
+                : designTheme.color.primary.primary2,
+              fontSize: designTheme.fontSize.b2.size,
+              fontFamily: 'Pretendard',
+            },
+          },
         },
         grid: {
           position: 'back',
           padding: {
-            top: 10,
+            top: -20,
+            right: 0,
+            bottom: 0,
+            left: 10,
           },
           show: false,
         },
@@ -81,6 +110,7 @@ export function RankingChart({ options, series, color }: IRankingChartProps) {
             borderRadius: 2,
             borderRadiusApplication: 'end',
             columnWidth: '60%',
+            horizontal: isMobile ? true : false,
           },
         },
         tooltip: {
@@ -138,6 +168,11 @@ export function RankingChart({ options, series, color }: IRankingChartProps) {
             },
           },
         },
+        series: [
+          {
+            data: series,
+          },
+        ],
       }}
       series={[
         {
