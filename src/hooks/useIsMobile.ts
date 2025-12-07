@@ -10,6 +10,7 @@ export const useIsMobile = () => {
     setResponsiveMobile(responsiveMobileRef.current);
   };
 
+
   useEffect(() => {
     if (window.ResizeObserver)
       new ResizeObserver((entries) => {
@@ -19,7 +20,6 @@ export const useIsMobile = () => {
             updateResponsiveMobile(true);
           }
         } else {
-          console.log(responsiveMobileRef.current, 'is desktop');
           if (responsiveMobileRef.current !== false) {
             updateResponsiveMobile(false);
           }
