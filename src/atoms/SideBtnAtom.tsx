@@ -44,9 +44,9 @@ const BaseBtnAtom = styled.button<
   Pick<SideBtnAtomProps, 'btnStyle' | 'focused' | 'btnType'>
 >`
   background-color: transparent;
-  color: ${({ theme, btnStyle }) => theme.button[btnStyle].default.color};
+  color: ${({ theme, btnStyle }) => theme.sideButton[btnStyle].default.color};
   border: 1px solid
-    ${({ theme, btnStyle }) => theme.button[btnStyle].default.color};
+    ${({ theme, btnStyle }) => theme.sideButton[btnStyle].default.color};
   padding: 0.25rem 1.5rem;
   border-radius: 1.25rem;
   display: flex;
@@ -59,18 +59,18 @@ const BaseBtnAtom = styled.button<
 
   &:hover {
     background-color: ${({ theme, btnStyle }) =>
-      theme.button[btnStyle].default.backgroundColor};
-    color: ${({ theme, btnStyle }) => theme.button[btnStyle].hover.color};
+      theme.sideButton[btnStyle].hover.backgroundColor};
+    color: ${({ theme, btnStyle }) => theme.sideButton[btnStyle].hover.color};
   }
   &:active {
     background-color: ${({ theme, btnStyle }) =>
-      theme.button[btnStyle].click.backgroundColor};
-    color: ${({ theme, btnStyle }) => theme.button[btnStyle].click.color};
+      theme.sideButton[btnStyle].click.backgroundColor};
+    color: ${({ theme, btnStyle }) => theme.sideButton[btnStyle].click.color};
   }
   &:disabled {
     background-color: ${({ theme, btnStyle }) =>
-      theme.button[btnStyle].default.backgroundColor};
-    color: ${({ theme, btnStyle }) => theme.button[btnStyle].default.color};
+      theme.sideButton[btnStyle].default.backgroundColor};
+    color: ${({ theme, btnStyle }) => theme.sideButton[btnStyle].default.color};
     cursor: not-allowed;
   }
 
@@ -87,7 +87,7 @@ const BaseBtnAtom = styled.button<
   ${({ focused, theme, btnStyle: btnType }) =>
     focused &&
     `
-    background-color: ${theme.button[btnType].click.backgroundColor} !important;
-    color: ${theme.button[btnType].click.color} !important;
+    background-color: ${theme.sideButton[btnType].click.backgroundColor} !important;
+    color: ${theme.sideButton[btnType].click.color} !important;
   `}
 `;

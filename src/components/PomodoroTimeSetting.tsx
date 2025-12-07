@@ -9,13 +9,14 @@ import {
   usePomodoroValue,
 } from '../hooks/usePomodoro';
 import styled from '@emotion/styled';
-import { useIsMobile } from '../hooks';
+import { useExtremeMode, useIsMobile } from '../hooks';
 
 interface ITimeCounterProps {
   timeTitle: string;
   time: number;
   handleTimeUp: () => void;
   handleTimeDown: () => void;
+  isExtreme?: boolean;
 }
 
 export const TimeSetter = ({
@@ -23,6 +24,7 @@ export const TimeSetter = ({
   time,
   handleTimeUp,
   handleTimeDown,
+  isExtreme,
 }: ITimeCounterProps) => {
   return (
     <div
@@ -58,7 +60,7 @@ export const TimeSetter = ({
           >
             <BtnAtom
               handleOnClick={handleTimeUp}
-              btnStyle="lightBtn"
+              btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
               ariaLabel="timeup"
             >
               <svg
@@ -77,7 +79,11 @@ export const TimeSetter = ({
                 />
               </svg>
             </BtnAtom>
-            <BtnAtom handleOnClick={handleTimeDown} ariaLabel="timedown">
+            <BtnAtom
+              handleOnClick={handleTimeDown}
+              btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+              ariaLabel="timedown"
+            >
               <svg
                 width="2.5rem"
                 height="2.5rem"
@@ -126,6 +132,7 @@ export const PomodoroTimeSetting = ({
   );
 
   const isMobile = useIsMobile();
+  const { isExtreme } = useExtremeMode();
 
   /* local variable */
   const newTime = {
@@ -158,7 +165,7 @@ export const PomodoroTimeSetting = ({
   };
 
   return (
-    <PomodoroCardAtom bg="primary1">
+    <PomodoroCardAtom bg={isExtreme ? 'extreme_dark' : 'primary1'}>
       {isMobile && (
         <div className="mobile-header-wrapper">
           <div className="mobile-top-button-wrapper">{mobileTopButtonSlot}</div>
@@ -196,12 +203,14 @@ export const PomodoroTimeSetting = ({
             time={focusStepList[focusTimeIndex]}
             handleTimeUp={handleFocusUp}
             handleTimeDown={handleFocusDown}
+            isExtreme={isExtreme}
           />
           <TimeSetter
             timeTitle={'휴식시간'}
             time={restStepList[restTimeIndex]}
             handleTimeUp={handleRestUp}
             handleTimeDown={handleRestDown}
+            isExtreme={isExtreme}
           />
         </div>
 

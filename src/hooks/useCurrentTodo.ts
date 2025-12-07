@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TodoEntity } from '../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { timerApi, todosApi } from '../shared/apis';
+import { todosApi } from '../shared/apis';
 import { getDateInFormat } from '../shared/timeUtils';
-import { PomodoroService, PomodoroStatus } from '../services/PomodoroService';
+import { PomodoroStatus } from '../services/PomodoroService';
 import { IPomodoroActions, IPomodoroData, pomodoroUnit } from './usePomodoro';
 
 interface ITodoFocusedTime {
@@ -22,9 +22,6 @@ export const useCurrentTodo = ({
 }) => {
   const [currentTodo, setCurrentTodo] = useState<TodoResponseDto>();
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
-  const [canRest, setCanRest] = useState(false);
-  const [shouldFocus, setShouldFocus] = useState(false);
-  const [currentRound, setCurrentRound] = useState(1);
 
   const { data: todos } = useQuery<Map<string, TodoEntity[]>>(
     ['todos'],
@@ -45,96 +42,84 @@ export const useCurrentTodo = ({
     id: string;
     focusTime: number;
   }) {
-    if (currentTodo) await todosApi.doTodo(id, focusTime);
+    if (currentTodo) {
+      await todosApi.doTodo(id, focusTime);
+    }
   }
 
   const { mutate: doTodoMutate } = useMutation(doTodoMutateHandler, {
+    onSuccess: () => {
+      setCurrentTodo(undefined);
+      setFocusedOnTodo(0);
+      localStorage.removeItem(TODO_FOCUS_TIME_KEY);
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       queryClient.invalidateQueries({ queryKey: ['doneTodos'] });
     },
   });
 
-  useEffect(() => {
-    setCurrentRound(
-      Math.max(
-        Math.ceil(focusedOnTodo / (pomodoroSettings.focusStep * pomodoroUnit)),
-        1,
-      ),
+  /**
+   * -----------------------합성 state (memoized)---------------------
+   */
+
+  // 현재 진행중인 라운드
+  const currentRound = useMemo(() => {
+    return Math.max(
+      Math.ceil(focusedOnTodo / (pomodoroSettings.focusStep * pomodoroUnit)),
+      1,
     );
   }, [focusedOnTodo, status, pomodoroSettings.focusStep]);
 
-  useEffect(() => {
-    const nextTodo = getNextTodo();
-    if (currentTodo == null) {
-      if (nextTodo) {
-        setCurrentTodo(nextTodo);
-        setFocusedOnTodo(checkLocalStorageAndGetFocusTime(nextTodo) ?? 0);
-        if (status == null) actions.startFocusing();
-      } else {
-        actions.stopTimer();
-        setFocusedOnTodo(0);
-      }
-    } else {
-    }
-  }, [todos]);
+  // 현재 포모도로 상태가 집중중인지
+  const isFocusing = useMemo(() => {
+    return status === PomodoroStatus.FOCUSING;
+  }, [status]);
 
-  useEffect(() => {
-    status !== PomodoroStatus.OVERFOCUSING && checkIfCanRest();
-    checkIfShouldFocus();
-    const ifShouldRest = checkIfShouldRest();
-    (status === PomodoroStatus.FOCUSING ||
-      status === PomodoroStatus.OVERFOCUSING) &&
-      !ifShouldRest &&
-      updateFocus(time === 0 ? 0 : 1000);
-  }, [time]);
+  // 집중 단위시간동안 집중했는지
+  const canRest = useMemo(() => {
+    return (
+      focusedOnTodo > 0 &&
+      focusedOnTodo % (pomodoroSettings.focusStep * pomodoroUnit) === 0
+    );
+  }, [focusedOnTodo, pomodoroSettings.focusStep, pomodoroUnit]);
 
-  /**
-   * 쉴 수 있는 상황인지(투두에 기록된 duration을 초과했을 때)
-   * @returns boolean
-   */
-  const checkIfCanRest = () => {
-    if (
+  // todo에 지정한 모든 라운드를 달성했는지
+  const fullyFocused = useMemo(() => {
+    return (
       currentTodo?.duration &&
       focusedOnTodo >=
         currentTodo?.duration * pomodoroSettings.focusStep * pomodoroUnit
-    ) {
-      setCanRest((prev) => {
-        if (!prev) actions.startResting();
-        return true;
-      });
-      return true;
-    } else {
-      return canRest;
-    }
-  };
+    );
+  }, [currentTodo, focusedOnTodo, pomodoroSettings.focusStep, pomodoroUnit]);
+
+  // 포모도로 상태가 휴식중이고, 휴식 단위시간이 다 되었는지
+  const canFocus = useMemo(() => {
+    return (
+      status === PomodoroStatus.RESTING &&
+      (time ?? 0) > pomodoroSettings.restStep * pomodoroUnit
+    );
+  }, [fullyFocused, status, time, pomodoroSettings.restStep, pomodoroUnit]);
 
   /**
-   * 쉬어야 하는 상황인지(집중 단위시간이 다 되었을 때)
+   * -----------------------callback (memoized)---------------------
+   */
+
+  /**
+   * 집중 단위시간이 다 되었을 때 휴식
    * @returns boolean
    */
-  const checkIfShouldRest = () => {
-    if (
-      status === PomodoroStatus.FOCUSING &&
-      time === pomodoroSettings.focusStep * pomodoroUnit
-    ) {
+  const restWhenPomodoroEnd = useCallback(() => {
+    if (isFocusing && canRest) {
       actions.startResting();
-      return true;
     }
-    return false;
-  };
+  }, [isFocusing, canRest, actions]);
 
-  const checkIfShouldFocus = () => {
-    if (
-      status === PomodoroStatus.RESTING &&
-      (time ?? 0) >= pomodoroSettings.restStep * pomodoroUnit
-    ) {
-      setShouldFocus(true);
-    } else {
-      setShouldFocus(false);
-    }
-  };
-
+  /**
+   * 로컬스토리지에 저장된 집중시간을 확인하고 반환한다.
+   * @param todo
+   * @returns 집중시간 (ms)
+   */
   const checkLocalStorageAndGetFocusTime = useCallback((todo: TodoEntity) => {
     const storageFocusTime = localStorage.getItem(TODO_FOCUS_TIME_KEY);
     if (storageFocusTime) {
@@ -148,6 +133,10 @@ export const useCurrentTodo = ({
     return 0;
   }, []);
 
+  /**
+   * 현재 할 일의 집중시간을 업데이트한다.
+   * @param focusedTime 집중시간 (ms)
+   */
   const updateFocus = useCallback(
     (focusedTime: number) => {
       if (currentTodo != null)
@@ -166,13 +155,21 @@ export const useCurrentTodo = ({
     [currentTodo],
   );
 
-  const doTodo = () => {
-    if (currentTodo)
+  /**
+   * 현재 할 일을 완료 처리한다.
+   */
+  const doTodo = useCallback(() => {
+    if (currentTodo) {
       doTodoMutate({ id: currentTodo.id, focusTime: focusedOnTodo });
+      actions.startFocusing();
+    }
+  }, [currentTodo, focusedOnTodo, doTodoMutate]);
 
-    setCanRest(false);
-  };
-
+  /**
+   * 다음 할 일을 가져온다.
+   * 없으면 undefined를 반환한다.
+   * @returns TodoEntity | undefined
+   */
   const getNextTodo = useCallback((): TodoEntity | undefined => {
     if (todos) {
       const todayTodos = todos.get(getDateInFormat(new Date()));
@@ -190,24 +187,61 @@ export const useCurrentTodo = ({
     }
   }, [todos]);
 
+  /**
+   * 초기화
+   */
+  const init = useCallback(() => {
+    const nextTodo = getNextTodo();
+    if (currentTodo == null) {
+      if (nextTodo) {
+        setCurrentTodo(nextTodo);
+        setFocusedOnTodo(checkLocalStorageAndGetFocusTime(nextTodo) ?? 0);
+        if (status == null) actions.startFocusing();
+      } else {
+        actions.stopTimer();
+        setFocusedOnTodo(0);
+      }
+    }
+  }, [
+    getNextTodo,
+    currentTodo,
+    checkLocalStorageAndGetFocusTime,
+    status,
+    actions,
+  ]);
+
+  /**
+   * -----------------------useEffect---------------------
+   */
+
+  useEffect(() => {
+    // TODO 목록이 변경되었을 때 초기화
+    init();
+  }, [todos, init]);
+
+  useEffect(() => {
+    restWhenPomodoroEnd();
+    isFocusing && updateFocus(time === 0 ? 0 : 1000);
+  }, [time, restWhenPomodoroEnd, isFocusing, updateFocus]);
+
   const useCurrentTodoResult = useMemo(
     () => ({
       doTodo,
       updateFocus,
       currentTodo,
       focusedOnTodo,
-      canRest,
-      shouldFocus,
+      fullyFocused,
       currentRound,
+      canRest,
     }),
     [
       doTodo,
       updateFocus,
       currentTodo,
       focusedOnTodo,
-      canRest,
-      shouldFocus,
+      fullyFocused,
       currentRound,
+      canRest,
     ],
   );
 

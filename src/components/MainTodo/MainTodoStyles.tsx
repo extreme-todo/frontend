@@ -32,7 +32,7 @@ export const MainTodoCenter = styled.div`
   gap: 0.75rem;
   width: 100%;
   .side-buttons {
-    width: 59rem;
+    width: 57rem;
     > div {
       display: flex;
       gap: 0.75rem;
@@ -64,6 +64,20 @@ export const MainTodoCenter = styled.div`
       }};
     }
   }
+  .bottom-side-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    bottom: -2.25rem;
+    padding-left: 1.25rem;
+    padding-right: 2.125rem;
+    text-align: right;
+    box-sizing: border-box;
+    z-index: 1;
+    & > *:only-child {
+      margin-left: auto;
+    }
+  }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     gap: 0.5rem;
@@ -72,7 +86,7 @@ export const MainTodoCenter = styled.div`
       height: calc(100vh - 13.25rem);
     }
     .side-buttons {
-      width: 89.9%;
+      width: calc(100vw - 3.5rem);
       position: relative;
     }
     .time-setting {

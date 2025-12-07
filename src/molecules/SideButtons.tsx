@@ -150,8 +150,8 @@ const ShowRankingButton = ({
   const context = useContext(SideButtonContext);
   return (
     <SideBtnAtom
-      onClick={context.onClickHandlers?.ranking}
       focused={context.focusedButton === 'ranking'}
+      onClick={context.onClickHandlers?.ranking}
       btnStyle={theme}
       className={className}
     >

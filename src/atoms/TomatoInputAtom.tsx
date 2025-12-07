@@ -18,6 +18,7 @@ interface ITomatoInputProps {
   tomato: number;
   isBalloon?: boolean;
   isLabel?: boolean;
+  isExtreme?: boolean;
 }
 
 export const TomatoInputAtom = memo(
@@ -29,6 +30,7 @@ export const TomatoInputAtom = memo(
     handleTomato,
     isBalloon = true,
     isLabel = true,
+    isExtreme,
   }: ITomatoInputProps) => {
     const [isDragging, setIsDragging] = useState(false);
     const thumbRef = useRef<HTMLDivElement>(null);
@@ -129,7 +131,7 @@ export const TomatoInputAtom = memo(
           >
             🍅
           </Thumb>
-          <AssistantLine />
+          <AssistantLine isExtreme={isExtreme} />
           <InputTickWrapper>
             {Array.from({ length: tickCount }).map((_, index) => (
               <TickWrapper key={index} ref={tickRef} aria-label="tick">
@@ -140,6 +142,7 @@ export const TomatoInputAtom = memo(
                       handleTomato(index + 1);
                     }
                   }}
+                  isExtreme={isExtreme}
                 />
               </TickWrapper>
             ))}
@@ -165,12 +168,13 @@ const RangeInputWrapper = styled.div`
   cursor: pointer;
   height: 20px;
 `;
-const AssistantLine = styled.div`
+const AssistantLine = styled.div<{ isExtreme?: boolean }>`
   background-color: ${({
     theme: {
       color: { backgroundColor },
     },
-  }) => backgroundColor.primary1};
+    isExtreme,
+  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   height: 0.25rem;
   border-radius: 50px;
   width: 100%;
@@ -196,14 +200,15 @@ const TickWrapper = styled.div`
   font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
 `;
 
-const InputTick = styled.div`
+const InputTick = styled.div<{ isExtreme?: boolean }>`
   width: 0.625rem;
   height: 0.625rem;
   background-color: ${({
     theme: {
       color: { backgroundColor },
     },
-  }) => backgroundColor.primary1};
+    isExtreme,
+  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   border-radius: 50%;
 `;
 

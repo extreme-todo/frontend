@@ -25,7 +25,6 @@ export function CurrentTodo({
   currentRound,
 }: ICurrentTodoProps) {
   const [todoProgress, setTodoProgress] = useState<number>(0);
-  const { isExtreme } = useExtremeMode();
   const isMobile = useIsMobile();
   useEffect(() => {
     setTodoProgress(
@@ -141,6 +140,9 @@ const CurrentTodoContainer = styled.div`
   .progress-container {
     width: 100%;
     height: 11rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .indicator-container {
     width: 100%;
