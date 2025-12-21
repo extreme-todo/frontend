@@ -10,13 +10,7 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import {
-  PomodoroProvider,
-  ExtremeModeProvider,
-  useCurrentTodo,
-  usePomodoroValue,
-  usePomodoroActions,
-} from './hooks';
+import { PomodoroProvider, ExtremeModeProvider } from './hooks';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -119,11 +113,6 @@ function App() {
       window.removeEventListener('click', initSoundPlayer);
     };
   }, [initSoundPlayer]);
-
-  // useEffect(() => {
-  //   // callNotification(); TODO : 이걸 noti ui 렌더링 될 때 호출해주고 클린업에서 꺼버리는 것도 방법일지도?
-  //   handleVisibleNoti(true);
-  // }, [shouldFocus, canRest]);
 
   return (
     <QueryClientProvider client={queryClient}>
