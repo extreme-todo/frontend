@@ -33,11 +33,11 @@ export const useHandleDidntDo = () => {
   });
   useEffect(() => {
     const checkTimeOver = () => {
-      const lastRemoveTime = JSON.parse(
-        localStorage.getItem('removeDidntDo') ?? 'null',
-      );
+      const lastRemoveTimeStr = localStorage.getItem('removeDidntDo');
+      if (!lastRemoveTimeStr) return true;
+      const lastRemoveTime = JSON.parse(lastRemoveTimeStr) as number | null;
       let parsingLastRemoveTime: number;
-      if (lastRemoveTime === undefined || lastRemoveTime === null) {
+      if (!lastRemoveTime) {
         return true;
       } else {
         parsingLastRemoveTime = Number(lastRemoveTime);
