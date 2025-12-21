@@ -5,20 +5,25 @@ const useAlarm = () => {
   alarmSound.current.loop = true;
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  const callNotification = useCallback(() => {
+  const callNotification = useCallback(async () => {
+    alarmSound.current.currentTime = 0;
     alarmSound.current.muted = false;
-    alarmSound.current.play();
+    alarmSound.current.volume = 1;
+    await alarmSound.current.play();
   }, []);
 
   const cancelNotification = useCallback(() => {
     alarmSound.current.pause();
+    alarmSound.current.currentTime = 0;
   }, []);
 
-  const initSoundPlayer = useCallback(() => {
+  const initSoundPlayer = useCallback(async () => {
     if (isMounted) return;
     alarmSound.current.muted = true;
-    alarmSound.current.play();
+    await alarmSound.current.play();
     alarmSound.current.pause();
+    alarmSound.current.muted = false;
+    alarmSound.current.currentTime = 0;
     setIsMounted(true);
   }, [isMounted]);
 

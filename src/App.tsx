@@ -108,9 +108,12 @@ function App() {
 
   const { initSoundPlayer } = useAlarm();
   useEffect(() => {
-    window.addEventListener('click', initSoundPlayer);
+    const handleClick = () => {
+      void initSoundPlayer();
+    };
+    window.addEventListener('click', handleClick);
     return () => {
-      window.removeEventListener('click', initSoundPlayer);
+      window.removeEventListener('click', handleClick);
     };
   }, [initSoundPlayer]);
 
