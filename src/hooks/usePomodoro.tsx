@@ -103,12 +103,15 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
       },
       startFocusing: () => {
         PomodoroService.setStatus(PomodoroFocusingStatus.FOCUSING);
+        PomodoroService.resumeTimer();
       },
       startResting: () => {
         PomodoroService.setStatus(PomodoroFocusingStatus.RESTING);
+        PomodoroService.resumeTimer();
       },
       stopTimer: () => {
         PomodoroService.setStatus(PomodoroFocusingStatus.NONE);
+        PomodoroService.pauseTimer();
       },
       pauseTimer: () => {
         PomodoroService.pauseTimer();
@@ -175,6 +178,7 @@ const PomodoroDevKit = () => {
           border: 'none',
           cursor: 'pointer',
           backgroundColor: '#ffffff80',
+          height: 'fit-content',
         }}
         onClick={() => setCollapse(!collapse)}
       >
