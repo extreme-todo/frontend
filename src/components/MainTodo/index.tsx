@@ -349,11 +349,6 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                   theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
                 />
               </div>
-              <button onClick={() => callNotification()}>
-                <div className={'tag-button' + (isExtreme ? ' extreme' : '')}>
-                  🔔 테스트
-                </div>
-              </button>
             </div>
             <div className="center">
               <CardAnimationPlayerAtom
