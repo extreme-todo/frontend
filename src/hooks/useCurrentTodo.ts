@@ -173,9 +173,8 @@ export const useCurrentTodo = ({
    */
   const getNextTodo = useCallback((): TodoEntity | undefined => {
     if (todos) {
-      const todayTodos = todos.get(getDateInFormat(new Date()));
-      if (todayTodos != null) {
-        return todayTodos[0];
+      if (todos.size > 0) {
+        return Array.from(todos.values())[0][0];
       } else {
         setCurrentTodo(undefined);
         actions.stopTimer();
@@ -234,6 +233,7 @@ export const useCurrentTodo = ({
       fullyFocused,
       currentRound,
       canRest,
+      canFocus,
     }),
     [
       doTodo,
@@ -243,6 +243,7 @@ export const useCurrentTodo = ({
       fullyFocused,
       currentRound,
       canRest,
+      canFocus,
     ],
   );
 
