@@ -109,11 +109,14 @@ export const useCurrentTodo = ({
    * 집중 단위시간이 다 되었을 때 휴식
    * @returns boolean
    */
-  const restWhenPomodoroEnd = useCallback(() => {
+  const focusOrRestWhenPomodoroEnd = useCallback(() => {
     if (isFocusing && canRest) {
       actions.startResting();
     }
-  }, [isFocusing, canRest, actions]);
+    if (!isFocusing && canFocus) {
+      actions.startFocusing();
+    }
+  }, [isFocusing, canRest, canFocus, actions]);
 
   /**
    * 로컬스토리지에 저장된 집중시간을 확인하고 반환한다.
@@ -220,9 +223,9 @@ export const useCurrentTodo = ({
   }, [todos, init]);
 
   useEffect(() => {
-    restWhenPomodoroEnd();
+    focusOrRestWhenPomodoroEnd();
     isFocusing && updateFocus(time === 0 ? 0 : 1000);
-  }, [time, restWhenPomodoroEnd, isFocusing, updateFocus]);
+  }, [time, focusOrRestWhenPomodoroEnd, isFocusing, updateFocus]);
 
   const useCurrentTodoResult = useMemo(
     () => ({

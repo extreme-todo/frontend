@@ -1,14 +1,14 @@
 import { BehaviorSubject, interval, share, tap } from 'rxjs';
 
 export enum PomodoroFocusingStatus {
-  NONE,
-  FOCUSING,
-  RESTING,
+  NONE = 'NONE',
+  FOCUSING = 'FOCUSING',
+  RESTING = 'RESTING',
 }
 
 export enum PomodoroTimerStatus {
-  RUNNING,
-  PAUSED,
+  RUNNING = 'RUNNING',
+  PAUSED = 'PAUSED',
 }
 
 export class PomodoroServiceClass {
