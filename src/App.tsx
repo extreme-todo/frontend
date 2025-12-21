@@ -97,14 +97,6 @@ function App() {
     }
   });
 
-  // Start the Pomodoro timer when the app loads
-  useEffect(() => {
-    const startTimer = PomodoroService.startTimer().subscribe();
-    return () => {
-      startTimer.unsubscribe();
-    };
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <PomodoroProvider>
