@@ -10,7 +10,7 @@ import {
 } from '../hooks';
 import styled from '@emotion/styled';
 import { ReactNode, useEffect } from 'react';
-import { PomodoroStatus } from '../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../services/PomodoroService';
 
 export function CurrentTodoCard({
   mobileTopButtonSlot,
@@ -31,7 +31,7 @@ export function CurrentTodoCard({
   });
 
   useEffect(() => {
-    if (status === PomodoroStatus.NONE) {
+    if (status === PomodoroFocusingStatus.NONE) {
       actions.startFocusing();
     }
   }, [status, actions]);

@@ -3,7 +3,7 @@ import { TodoEntity } from '../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { todosApi } from '../shared/apis';
 import { getDateInFormat } from '../shared/timeUtils';
-import { PomodoroStatus } from '../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../services/PomodoroService';
 import { IPomodoroActions, IPomodoroData, pomodoroUnit } from './usePomodoro';
 
 interface ITodoFocusedTime {
@@ -73,7 +73,7 @@ export const useCurrentTodo = ({
 
   // 현재 포모도로 상태가 집중중인지
   const isFocusing = useMemo(() => {
-    return status === PomodoroStatus.FOCUSING;
+    return status === PomodoroFocusingStatus.FOCUSING;
   }, [status]);
 
   // 집중 단위시간동안 집중했는지
@@ -96,7 +96,7 @@ export const useCurrentTodo = ({
   // 포모도로 상태가 휴식중이고, 휴식 단위시간이 다 되었는지
   const canFocus = useMemo(() => {
     return (
-      status === PomodoroStatus.RESTING &&
+      status === PomodoroFocusingStatus.RESTING &&
       (time ?? 0) > pomodoroSettings.restStep * pomodoroUnit
     );
   }, [fullyFocused, status, time, pomodoroSettings.restStep, pomodoroUnit]);

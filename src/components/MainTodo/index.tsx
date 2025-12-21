@@ -28,7 +28,7 @@ import {
   usePomodoroValue,
   useTimeMarker,
 } from '../../hooks';
-import { PomodoroStatus } from '../../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
 import {
   CardAtom,
@@ -111,7 +111,9 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const handleClose = useCallback(() => {
     changeCard(
       currentCard,
-      pomodoroStatus === PomodoroStatus.RESTING ? 'rest' : 'currentTodo',
+      pomodoroStatus === PomodoroFocusingStatus.RESTING
+        ? 'rest'
+        : 'currentTodo',
     );
   }, [currentCard, pomodoroStatus, changeCard]);
 
@@ -247,11 +249,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   useEffect(() => {
     setTimeout(() => {
       switch (pomodoroStatus) {
-        case PomodoroStatus.RESTING:
+        case PomodoroFocusingStatus.RESTING:
           console.log('🍅', pomodoroStatus);
           changeCard(currentCard, 'rest');
           break;
-        case PomodoroStatus.FOCUSING:
+        case PomodoroFocusingStatus.FOCUSING:
           console.log('🥔', pomodoroStatus);
           changeCard(currentCard, 'currentTodo');
           break;

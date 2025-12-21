@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { BtnAtom, CardAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { Clock, ExtremeModeIndicator } from '../molecules';
-import { PomodoroStatus } from '../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../services/PomodoroService';
 import { usePomodoroActions, usePomodoroValue } from '../hooks/usePomodoro';
 import { useCurrentTodo, useExtremeMode, useIsMobile } from '../hooks';
 import { ReactNode, useMemo } from 'react';
@@ -70,7 +70,7 @@ export function RestCard({
             <ExtremeModeIndicator />
           </div>
         )}
-        {pomodoro.status === PomodoroStatus.RESTING && (
+        {pomodoro.status === PomodoroFocusingStatus.RESTING && (
           <RestCardWrapper>
             <div className="center-container">
               <TypoAtom

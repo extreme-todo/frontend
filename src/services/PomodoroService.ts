@@ -1,34 +1,40 @@
 import { BehaviorSubject, interval, share, tap } from 'rxjs';
 
-export enum PomodoroStatus {
+export enum PomodoroFocusingStatus {
   NONE,
   FOCUSING,
   RESTING,
 }
 
+export enum PomodoroTimerStatus {
+  RUNNING,
+  PAUSED,
+}
+
 export class PomodoroServiceClass {
-  private PomodoroStatusSubject = new BehaviorSubject<PomodoroStatus>(
-    PomodoroStatus.NONE,
-  );
+  private PomodoroFocusingStatusSubject =
+    new BehaviorSubject<PomodoroFocusingStatus>(PomodoroFocusingStatus.NONE);
   private PomodoroTimeSubject = new BehaviorSubject<number>(0);
+  private PomodoroTimerStatusSubject = new BehaviorSubject<PomodoroTimerStatus>(
+    PomodoroTimerStatus.RUNNING,
+  );
   private static instance: PomodoroServiceClass;
 
-  pomodoroStatus$ = this.PomodoroStatusSubject.asObservable().pipe(share());
+  pomodoroFocusingStatus$ =
+    this.PomodoroFocusingStatusSubject.asObservable().pipe(share());
   pomodoroTime$ = this.PomodoroTimeSubject.asObservable().pipe(share());
+  pomodoroTimerStatus$ = this.PomodoroTimerStatusSubject.asObservable().pipe(
+    share(),
+  );
 
   constructor() {
     this.init();
   }
 
   private init() {
-    this.PomodoroStatusSubject.next(PomodoroStatus.NONE);
+    this.PomodoroFocusingStatusSubject.next(PomodoroFocusingStatus.NONE);
     this.PomodoroTimeSubject.next(0);
     this.startTimer().subscribe();
-  }
-
-  setStatus(status: PomodoroStatus) {
-    this.PomodoroStatusSubject.next(status);
-    this.PomodoroTimeSubject.next(0);
   }
 
   public static getInstance(): PomodoroServiceClass {
@@ -38,12 +44,29 @@ export class PomodoroServiceClass {
     return PomodoroServiceClass.instance;
   }
 
+  setStatus(status: PomodoroFocusingStatus) {
+    this.PomodoroFocusingStatusSubject.next(status);
+    this.PomodoroTimeSubject.next(0);
+  }
+
+  pauseTimer() {
+    this.PomodoroTimerStatusSubject.next(PomodoroTimerStatus.PAUSED);
+  }
+
+  resumeTimer() {
+    this.PomodoroTimerStatusSubject.next(PomodoroTimerStatus.RUNNING);
+  }
+
   private startTimer() {
-    return interval(1000).pipe(
-      tap(() => {
-        this.PomodoroTimeSubject.next(this.PomodoroTimeSubject.value + 1000);
-      }),
-    );
+    const processTimer = () => {
+      if (
+        this.PomodoroTimerStatusSubject.value === PomodoroTimerStatus.PAUSED
+      ) {
+        return;
+      }
+      this.PomodoroTimeSubject.next(this.PomodoroTimeSubject.value + 1000);
+    };
+    return interval(1000).pipe(tap(processTimer));
   }
 }
 

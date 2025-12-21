@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { LoginContext, useExtremeMode, usePomodoroValue } from '../hooks';
 import styled from '@emotion/styled';
 import { BtnAtom, IconAtom, PopperAtom, TypoAtom } from '../atoms';
-import { PomodoroStatus } from '../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../services/PomodoroService';
 import { usersApi } from '../shared/apis';
 
 export function ExtremeModeIndicator() {
@@ -31,7 +31,8 @@ export function ExtremeModeIndicator() {
   };
 
   useEffect(() => {
-    if (isExtreme && status === PomodoroStatus.RESTING) setPopperOpen(true);
+    if (isExtreme && status === PomodoroFocusingStatus.RESTING)
+      setPopperOpen(true);
     else setPopperOpen(false);
   }, [isExtreme, status]);
 
