@@ -139,9 +139,77 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
       <PomodoroValueContext.Provider
         value={{ settings, time, status, timerStatus }}
       >
+        {process.env.NODE_ENV === 'development' && <PomodoroDevKit />}
         {children}
       </PomodoroValueContext.Provider>
     </PomodoroActionsContext.Provider>
+  );
+};
+
+const PomodoroDevKit = () => {
+  const [collapse, setCollapse] = useState(false);
+  const pomodoroValue = usePomodoroValue();
+  const pomodoroActions = usePomodoroActions();
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: '8px',
+        left: '8px',
+        color: '#FFF',
+        background: '#00000052',
+        boxShadow: '0 0 10px #00000060',
+        borderRadius: '8px',
+        padding: '8px',
+        fontSize: '12px',
+        gap: '8px',
+        zIndex: 9999,
+        display: 'flex',
+      }}
+    >
+      <button
+        style={{
+          fontSize: '12px',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          border: 'none',
+          cursor: 'pointer',
+          backgroundColor: '#ffffff80',
+        }}
+        onClick={() => setCollapse(!collapse)}
+      >
+        {collapse ? 'Show' : 'Hide'} 🍅Devkit
+      </button>
+      {collapse ? null : (
+        <>
+          <pre>{JSON.stringify(pomodoroValue, null, 2)}</pre>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {Object.entries(pomodoroActions)
+              .filter(
+                ([key]) => key !== 'setFocusStep' && key !== 'setRestStep',
+              )
+              .map(([key, action]) => (
+                <button
+                  key={key}
+                  style={{
+                    fontSize: '12px',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    backgroundColor: '#ffffff80',
+                  }}
+                  onClick={() => {
+                    (action as () => void)();
+                  }}
+                >
+                  {key}
+                </button>
+              ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
