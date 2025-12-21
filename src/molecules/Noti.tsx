@@ -8,10 +8,10 @@ import styled from '@emotion/styled';
 
 const Noti = () => {
   const { callNotification, cancelNotification } = useAlarm();
-  const [isVisible, setIsVisible] = useState(false);
+  const [notiType, setNotiType] = useState<'rest' | 'focus' | null>(null);
 
   const handleClose = () => {
-    setIsVisible(false);
+    setNotiType(null);
     cancelNotification();
   };
 
@@ -21,7 +21,7 @@ const Noti = () => {
     time: pomodoroTime,
   } = usePomodoroValue();
   const actions = usePomodoroActions();
-  const { canRest, shouldFocus } = useCurrentTodo({
+  const { canRest, currentRound, canFocus } = useCurrentTodo({
     value: {
       status: pomodoroStatus,
       settings: pomodoroSettings,
@@ -31,11 +31,34 @@ const Noti = () => {
   });
 
   useEffect(() => {
-    // callNotification();
-    return () => {
-      cancelNotification();
-    };
-  }, [canRest, shouldFocus]);
+    if (canRest === true) {
+      setNotiType('rest');
+      void callNotification();
+    }
+    if (canFocus === true) {
+      setNotiType('focus');
+      void callNotification();
+    }
+  }, [canFocus, canRest, callNotification]);
+
+  const NotiComment = () => {
+    if (notiType === 'rest') {
+      return (
+        <TypoAtom fontColor="primary1" fontSize="h2">
+          휴식시간 종료
+        </TypoAtom>
+      );
+    } else if (notiType === 'focus') {
+      return (
+        <TypoAtom fontColor="primary1" fontSize="h2">
+          {currentRound} 라운드 종료!
+        </TypoAtom>
+      );
+    }
+    return null;
+  };
+
+  if (!notiType) return null;
 
   return (
     <Backdrop>
@@ -50,9 +73,7 @@ const Noti = () => {
           </BtnAtom>
           <img src="/icon/noti_clock.svg" className="noti-clock" />
         </div>
-        <TypoAtom fontColor="primary1" fontSize="h2">
-          라운드 종료!
-        </TypoAtom>
+        <NotiComment />
       </NotiContainer>
     </Backdrop>
   );
