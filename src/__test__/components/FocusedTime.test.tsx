@@ -52,7 +52,11 @@ describe('FocusedTime Component', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={designTheme}>
-          <FocusedTime />
+          <FocusedTime
+            handleClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
         </ThemeProvider>
       </QueryClientProvider>,
     );
@@ -83,14 +87,20 @@ describe('FocusedTime Component', () => {
     const monthButton = screen.getByText('Month');
 
     fireEvent.click(weekButton);
-    expect(weekButton).toHaveClass('active');
-    expect(timerApi.getRecords).toHaveBeenCalled();
+    expect(timerApi.getRecords).toHaveBeenCalledWith(
+      -new Date().getTimezoneOffset(),
+      'week',
+    );
     fireEvent.click(monthButton);
-    expect(monthButton).toHaveClass('active');
-    expect(timerApi.getRecords).toHaveBeenCalled();
+    expect(timerApi.getRecords).toHaveBeenCalledWith(
+      -new Date().getTimezoneOffset(),
+      'month',
+    );
     fireEvent.click(dayButton);
-    expect(dayButton).toHaveClass('active');
-    expect(timerApi.getRecords).toHaveBeenCalled();
+    expect(timerApi.getRecords).toHaveBeenCalledWith(
+      -new Date().getTimezoneOffset(),
+      'day',
+    );
   });
 
   it('모든 카테고리를 렌더하고, 각 버튼을 클릭하면 데이터를 요청한다', () => {
