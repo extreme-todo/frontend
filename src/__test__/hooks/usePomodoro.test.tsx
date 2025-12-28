@@ -9,7 +9,7 @@ import React, { act, useEffect } from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import {
   PomodoroService,
-  PomodoroStatus,
+  PomodoroFocusingStatus,
 } from '../../services/PomodoroService';
 
 jest.useFakeTimers();
@@ -35,8 +35,14 @@ describe('usePomodoro', () => {
       <>
         focusStep:{settings.focusStep} <br />
         restStep:{settings.restStep} <br />
-        isFocusing:{status === PomodoroStatus.FOCUSING ? time : 'false'} <br />
-        isResting:{status === PomodoroStatus.RESTING ? time : 'false'} <br />
+        isFocusing:{status === PomodoroFocusingStatus.FOCUSING
+          ? time
+          : 'false'}{' '}
+        <br />
+        isResting:{status === PomodoroFocusingStatus.RESTING
+          ? time
+          : 'false'}{' '}
+        <br />
         <button data-testid="startFocusButton" onClick={startFocusing}></button>
         <button data-testid="startRestButton" onClick={startResting}></button>
         <button
