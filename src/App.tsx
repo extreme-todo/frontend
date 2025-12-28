@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { IconAtom } from './atoms';
 import { Navigation } from './molecules';
-import { FocusedTime, MainTodo, Welcome } from './components';
+import { DevKit, MainTodo, Welcome } from './components';
 import {
   motion,
   useMotionValueEvent,
@@ -15,7 +15,6 @@ import { PomodoroProvider, ExtremeModeProvider } from './hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
-import { PomodoroService } from './services/PomodoroService';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -101,6 +100,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <PomodoroProvider>
         <ExtremeModeProvider>
+          <DevKit />
           <MainContainer id="main-container" ref={mainRef}>
             <Navigation
               navigationLists={NAVIGATION_LIST}
