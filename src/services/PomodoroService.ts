@@ -1,4 +1,4 @@
-import { BehaviorSubject, interval, share, tap } from 'rxjs';
+import { BehaviorSubject, interval, share, Subscription, tap } from 'rxjs';
 
 export enum PomodoroFocusingStatus {
   NONE = 'NONE',
@@ -18,6 +18,10 @@ export class PomodoroServiceClass {
   private PomodoroTimerStatusSubject = new BehaviorSubject<PomodoroTimerStatus>(
     PomodoroTimerStatus.RUNNING,
   );
+  private PomodoroTimerSubscription: Subscription | null = null;
+  private PomodoroInterval = 1000;
+  private PomodoroSpeed = 1;
+  private isDevelopmentMode = process.env.NODE_ENV === 'development';
   private static instance: PomodoroServiceClass;
 
   pomodoroFocusingStatus$ =
@@ -34,7 +38,7 @@ export class PomodoroServiceClass {
   private init() {
     this.PomodoroFocusingStatusSubject.next(PomodoroFocusingStatus.NONE);
     this.PomodoroTimeSubject.next(0);
-    this.startTimer().subscribe();
+    this.startTimer();
   }
 
   public static getInstance(): PomodoroServiceClass {
@@ -58,15 +62,40 @@ export class PomodoroServiceClass {
   }
 
   private startTimer() {
+    if (this.PomodoroTimerSubscription != null) {
+      this.PomodoroTimerSubscription.unsubscribe();
+      this.PomodoroTimerSubscription = null;
+    }
     const processTimer = () => {
       if (
         this.PomodoroTimerStatusSubject.value === PomodoroTimerStatus.PAUSED
       ) {
         return;
       }
-      this.PomodoroTimeSubject.next(this.PomodoroTimeSubject.value + 1000);
+      this.PomodoroTimeSubject.next(
+        this.PomodoroTimeSubject.value + this.PomodoroInterval,
+      );
     };
-    return interval(1000).pipe(tap(processTimer));
+    this.PomodoroTimerSubscription = interval(
+      this.PomodoroInterval / this.PomodoroSpeed,
+    )
+      .pipe(tap(processTimer))
+      .subscribe();
+  }
+
+  setPomodoroSpeed(speed: number) {
+    if (this.isDevelopmentMode === false) {
+      console.warn(
+        'Pomodoro interval can be changed only in development mode.',
+      );
+      return;
+    }
+    this.PomodoroSpeed = speed;
+    this.startTimer();
+  }
+
+  getPomodoroSpeed() {
+    return this.PomodoroSpeed;
   }
 }
 

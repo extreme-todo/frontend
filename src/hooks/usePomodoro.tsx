@@ -210,6 +210,51 @@ const PomodoroDevKit = () => {
                   {key}
                 </button>
               ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <button
+                style={{
+                  fontSize: '12px',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: '#ffffff80',
+                }}
+                onClick={() => {
+                  PomodoroService.setPomodoroSpeed(
+                    PomodoroService.getPomodoroSpeed() <= 1
+                      ? PomodoroService.getPomodoroSpeed() === 1
+                        ? 0.5
+                        : Math.pow(PomodoroService.getPomodoroSpeed(), 2)
+                      : PomodoroService.getPomodoroSpeed() - 1,
+                  );
+                }}
+              >
+                -
+              </button>
+              Speed x{PomodoroService.getPomodoroSpeed()}
+              <button
+                style={{
+                  fontSize: '12px',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: '#ffffff80',
+                }}
+                onClick={() => {
+                  PomodoroService.setPomodoroSpeed(
+                    PomodoroService.getPomodoroSpeed() < 1
+                      ? PomodoroService.getPomodoroSpeed() < 0.5
+                        ? Math.sqrt(PomodoroService.getPomodoroSpeed())
+                        : 1
+                      : PomodoroService.getPomodoroSpeed() + 1,
+                  );
+                }}
+              >
+                +
+              </button>
+            </div>
           </div>
         </>
       )}
