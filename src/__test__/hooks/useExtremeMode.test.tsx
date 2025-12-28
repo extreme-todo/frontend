@@ -26,6 +26,8 @@ const queryClient = new QueryClient({
   },
 });
 
+window.alert = jest.fn();
+
 describe('useExtremeMode', () => {
   // setting test environment
   const WrapperComponent = ({ children }) => (
@@ -157,10 +159,8 @@ describe('useExtremeMode', () => {
       const { getByTestId } = render(<TestExtremeMode />, {
         wrapper: WrapperComponent,
       });
-      // 포모도로 상태가 초기화될 때까지 기다림
-      await waitFor(() => {
-        expect(screen.getByText(/isExtreme:/)).toBeInTheDocument();
-      });
+      const restBtn = getByTestId('startResting');
+      await waitFor(() => fireEvent.click(restBtn));
 
       const mutationBtn = getByTestId('handleExtremeMode');
       fireEvent.click(mutationBtn);
