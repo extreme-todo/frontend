@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { formatTime } from '../shared/timeUtils';
 import styled from '@emotion/styled';
+import { useIsMobile } from '../hooks';
 
 interface ITomatoInputProps {
   max: number;
@@ -36,6 +37,7 @@ export const TomatoInputAtom = memo(
     const thumbRef = useRef<HTMLDivElement>(null);
     const tickRef = useRef<HTMLDivElement>(null);
     const tickCount = max - min;
+    const isMobile = useIsMobile();
 
     const handleDrag = (
       event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>,
@@ -122,6 +124,7 @@ export const TomatoInputAtom = memo(
           onMouseUp={handleDrapEnd}
           onTouchEnd={handleDrapEnd}
           aria-label="slider"
+          isMobile={isMobile}
         >
           <Thumb
             ref={thumbRef}
@@ -149,7 +152,7 @@ export const TomatoInputAtom = memo(
           </InputTickWrapper>
         </RangeInputWrapper>
         {isLabel ? (
-          <LabelWrapper>
+          <LabelWrapper isMobile={isMobile}>
             {Array.from({ length: tickCount }).map((_, index) => (
               <TickWrapper key={index} aria-label="label">
                 {formatTime((index + 1) * period)}
@@ -162,11 +165,14 @@ export const TomatoInputAtom = memo(
   },
 );
 
-const RangeInputWrapper = styled.div`
+const RangeInputWrapper = styled.div<{ isMobile: boolean }>`
   position: relative;
   width: 100%;
   cursor: pointer;
   height: 20px;
+  & > * {
+    display: ${({ isMobile }) => (isMobile ? 'none' : 'block')};
+  }
 `;
 const AssistantLine = styled.div<{ isExtreme?: boolean }>`
   background-color: ${({
@@ -262,7 +268,8 @@ const Thumb = styled.div<{ useBalloon: boolean }>(({ theme, useBalloon }) => ({
   }),
 }));
 
-const LabelWrapper = styled.div`
+const LabelWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   margin-top: 0.375rem;
+  display: ${({ isMobile }) => (isMobile ? 'none' : 'block')};
 `;
