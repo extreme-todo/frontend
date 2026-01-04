@@ -1,11 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const useAlarm = () => {
-  const alarmSound = useRef<HTMLAudioElement>(new Audio('/alarm.mp3'));
-  alarmSound.current.loop = true;
+  const alarmSound = useRef<HTMLAudioElement | null>(null);
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   const callNotification = useCallback(async () => {
+    if (!alarmSound.current) return;
     alarmSound.current.currentTime = 0;
     alarmSound.current.muted = false;
     alarmSound.current.volume = 1;
@@ -18,12 +18,13 @@ const useAlarm = () => {
   }, []);
 
   const cancelNotification = useCallback(() => {
+    if (!alarmSound.current) return;
     alarmSound.current.pause();
     alarmSound.current.currentTime = 0;
   }, []);
 
   const initSoundPlayer = useCallback(async () => {
-    if (isMounted) return;
+    if (isMounted || !alarmSound.current) return;
     alarmSound.current.muted = true;
     try {
       await alarmSound.current.play();
@@ -36,6 +37,17 @@ const useAlarm = () => {
       alert('알람 초기화에 실패했습니다. 새로고침을 해주세요 :)');
     }
   }, [isMounted]);
+
+  useEffect(() => {
+    alarmSound.current = new Audio('/alarm.mp3');
+    alarmSound.current.loop = true;
+    return () => {
+      if (alarmSound.current) {
+        alarmSound.current.pause();
+        alarmSound.current.src = '';
+      }
+    };
+  }, []);
 
   return { callNotification, cancelNotification, initSoundPlayer };
 };
