@@ -1,5 +1,5 @@
 import { milliseconds, startOfYesterday } from 'date-fns';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { setTimeInFormat } from '../shared/timeUtils';
 import { todosApi } from '../shared/apis';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -10,7 +10,7 @@ import { LoginContext } from './LoginContext';
 export const useHandleDidntDo = () => {
   const { isLogin } = useContext(LoginContext);
   const queryClient = useQueryClient();
-  let storageCriterion: number;
+  const storageCriterion = useRef<number | null>(null);
   const { mutate, isLoading } = useMutation({
     mutationFn: (currentDate: string) => todosApi.removeDidntDo(currentDate),
     retry: false,
@@ -21,8 +21,11 @@ export const useHandleDidntDo = () => {
       );
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       queryClient.invalidateQueries({ queryKey: ['category'] });
-      if (storageCriterion)
-        localStorage.setItem('removeDidntDo', JSON.stringify(storageCriterion));
+      if (storageCriterion.current !== null)
+        localStorage.setItem(
+          'removeDidntDo',
+          JSON.stringify(storageCriterion.current),
+        );
     },
     onError(error: AxiosError) {
       console.debug(
@@ -72,7 +75,7 @@ export const useHandleDidntDo = () => {
       const isAfterFiveAM = checkTimeOver();
       if (isAfterFiveAM && !isLoading) {
         const criteria = getCriterion();
-        storageCriterion = criteria[1];
+        storageCriterion.current = criteria[1];
         mutate(criteria[0]);
       }
     });
