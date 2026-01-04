@@ -9,7 +9,12 @@ const useAlarm = () => {
     alarmSound.current.currentTime = 0;
     alarmSound.current.muted = false;
     alarmSound.current.volume = 1;
-    await alarmSound.current.play();
+    try {
+      await alarmSound.current.play();
+    } catch (err) {
+      console.error(err);
+      alert('알람 소리 재생에 실패했습니다. 새로고침을 해주세요 :)');
+    }
   }, []);
 
   const cancelNotification = useCallback(() => {
@@ -20,11 +25,16 @@ const useAlarm = () => {
   const initSoundPlayer = useCallback(async () => {
     if (isMounted) return;
     alarmSound.current.muted = true;
-    await alarmSound.current.play();
-    alarmSound.current.pause();
-    alarmSound.current.muted = false;
-    alarmSound.current.currentTime = 0;
-    setIsMounted(true);
+    try {
+      await alarmSound.current.play();
+      alarmSound.current.pause();
+      alarmSound.current.muted = false;
+      alarmSound.current.currentTime = 0;
+      setIsMounted(true);
+    } catch (err) {
+      console.error(err);
+      alert('알람 초기화에 실패했습니다. 새로고침을 해주세요 :)');
+    }
   }, [isMounted]);
 
   return { callNotification, cancelNotification, initSoundPlayer };
