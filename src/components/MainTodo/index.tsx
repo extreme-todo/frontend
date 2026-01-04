@@ -32,13 +32,11 @@ import { PomodoroStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
 import {
   CardAtom,
-  TypoAtom,
   CardAnimationPlayerAnimationType,
   CardAnimationPlayerAtom,
 } from '../../atoms';
 import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
-import useAlarm from '../../hooks/useAlert';
 
 export type ModalType =
   | 'todolistModal'
@@ -88,8 +86,6 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const {
     settings: { focusStep },
   } = usePomodoroValue();
-
-  const { callNotification } = useAlarm();
 
   const changeCard = (curr: CardType, next: CardType) => {
     setPrevCard(curr);
