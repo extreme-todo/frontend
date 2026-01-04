@@ -26,13 +26,12 @@ import {
   useIsMobile,
   usePomodoroActions,
   usePomodoroValue,
-  useTimeMarker,
+  useHandleDidntDo,
 } from '../../hooks';
 import { PomodoroStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
 import {
   CardAtom,
-  TypoAtom,
   CardAnimationPlayerAnimationType,
   CardAnimationPlayerAtom,
 } from '../../atoms';
@@ -76,8 +75,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     currentCardAnimationTriggerSubject.current.asObservable(),
   );
 
-  useTimeMarker();
-  const { currentTodo, canRest, doTodo } = useCurrentTodo({
+  const { currentTodo } = useCurrentTodo({
     value: {
       status: pomodoroStatus,
       settings: pomodoroSettings,
@@ -89,6 +87,12 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     settings: { focusStep },
   } = usePomodoroValue();
 
+  const changeCard = (curr: CardType, next: CardType) => {
+    setPrevCard(curr);
+    setCurrentCard(next);
+    currentCardAnimationTriggerSubject.current.next('SHOW_UP');
+  };
+
   const handleClickSideButton = useCallback(
     (type: ModalType) => {
       if (!isLogin) {
@@ -99,14 +103,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         changeCard(currentCard, type);
       }
     },
-    [isLogin],
+    [isLogin, currentCard, changeCard],
   );
-
-  const changeCard = useCallback((curr: CardType, next: CardType) => {
-    setPrevCard(curr);
-    setCurrentCard(next);
-    currentCardAnimationTriggerSubject.current.next('SHOW_UP');
-  }, []);
 
   const handleClose = useCallback(() => {
     changeCard(
@@ -243,6 +241,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     pomodoroSettings.restStep,
     currentCardColor,
   ]);
+
+  useHandleDidntDo();
 
   useEffect(() => {
     setTimeout(() => {

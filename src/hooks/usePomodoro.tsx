@@ -1,6 +1,5 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -57,6 +56,7 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
   const settingsRef = useRef<IPomodoroSettings>(settings);
 
   useEffect(() => {
+    // PomodoroService에서 발행되는 값을 state에 업데이트
     const subStatus = PomodoroService.pomodoroStatus$.subscribe((res) => {
       setStatus(res);
     });
@@ -99,6 +99,7 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
   );
 
   useEffect(() => {
+    // 페이지 unloading 전에 셋팅값 저장
     function updatePomodorBeforeUnload(settings: IPomodoroSettings) {
       updatePomodoroData<IPomodoroSettings>(settings, 'settings');
     }

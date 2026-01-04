@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { IconAtom } from './atoms';
-import { Navigation } from './molecules';
+import { Navigation, Noti } from './molecules';
 import { FocusedTime, MainTodo, Welcome } from './components';
 import {
   motion,
@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
 import { PomodoroService } from './services/PomodoroService';
+import useAlarm from './hooks/useAlert';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -105,6 +106,17 @@ function App() {
     };
   }, []);
 
+  const { initSoundPlayer } = useAlarm();
+  useEffect(() => {
+    const handleClick = () => {
+      void initSoundPlayer();
+    };
+    window.addEventListener('click', handleClick);
+    return () => {
+      window.removeEventListener('click', handleClick);
+    };
+  }, [initSoundPlayer]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <PomodoroProvider>
@@ -138,6 +150,7 @@ function App() {
                 alt="An icon indicating to scroll down"
               />
             </motion.div>
+            <Noti />
           </MainContainer>
         </ExtremeModeProvider>
       </PomodoroProvider>
