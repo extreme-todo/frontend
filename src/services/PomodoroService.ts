@@ -53,6 +53,14 @@ export class PomodoroServiceClass {
     this.PomodoroTimeSubject.next(0);
   }
 
+  getPomodoroTickInterval() {
+    return this.PomodoroInterval;
+  }
+
+  setTime(time: number) {
+    this.PomodoroTimeSubject.next(time);
+  }
+
   pauseTimer() {
     this.PomodoroTimerStatusSubject.next(PomodoroTimerStatus.PAUSED);
   }

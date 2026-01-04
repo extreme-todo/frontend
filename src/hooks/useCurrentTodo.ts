@@ -3,7 +3,10 @@ import { TodoEntity } from '../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { todosApi } from '../shared/apis';
 import { getDateInFormat } from '../shared/timeUtils';
-import { PomodoroFocusingStatus } from '../services/PomodoroService';
+import {
+  PomodoroFocusingStatus,
+  PomodoroService,
+} from '../services/PomodoroService';
 import { IPomodoroActions, IPomodoroData, pomodoroUnit } from './usePomodoro';
 
 interface ITodoFocusedTime {
@@ -76,13 +79,14 @@ export const useCurrentTodo = ({
     return status === PomodoroFocusingStatus.FOCUSING;
   }, [status]);
 
-  // 집중 단위시간동안 집중했는지
+  // 현재 진행중인 라운드만큼 집중했는지
   const canRest = useMemo(() => {
     return (
-      focusedOnTodo > 0 &&
+      focusedOnTodo >=
+        pomodoroSettings.focusStep * pomodoroUnit * currentRound &&
       focusedOnTodo % (pomodoroSettings.focusStep * pomodoroUnit) === 0
     );
-  }, [focusedOnTodo, pomodoroSettings.focusStep, pomodoroUnit]);
+  }, [focusedOnTodo, pomodoroSettings.focusStep, pomodoroUnit, currentRound]);
 
   // todo에 지정한 모든 라운드를 달성했는지
   const fullyFocused = useMemo(() => {
@@ -112,10 +116,13 @@ export const useCurrentTodo = ({
   const focusOrRestWhenPomodoroEnd = useCallback(() => {
     if (isFocusing && canRest) {
       actions.startResting();
+      return PomodoroFocusingStatus.RESTING;
     }
     if (!isFocusing && canFocus) {
       actions.startFocusing();
+      return PomodoroFocusingStatus.FOCUSING;
     }
+    return;
   }, [isFocusing, canRest, canFocus, actions]);
 
   /**
@@ -198,7 +205,11 @@ export const useCurrentTodo = ({
     if (currentTodo == null) {
       if (nextTodo) {
         setCurrentTodo(nextTodo);
-        setFocusedOnTodo(checkLocalStorageAndGetFocusTime(nextTodo) ?? 0);
+        const savedFocusTime = checkLocalStorageAndGetFocusTime(nextTodo) ?? 0;
+        setFocusedOnTodo(savedFocusTime);
+        PomodoroService.setTime(
+          savedFocusTime % (pomodoroSettings.focusStep * pomodoroUnit),
+        );
         if (status == null) actions.startFocusing();
       } else {
         actions.stopTimer();
@@ -211,6 +222,8 @@ export const useCurrentTodo = ({
     checkLocalStorageAndGetFocusTime,
     status,
     actions,
+    pomodoroSettings,
+    pomodoroUnit,
   ]);
 
   /**
@@ -223,9 +236,14 @@ export const useCurrentTodo = ({
   }, [todos, init]);
 
   useEffect(() => {
-    focusOrRestWhenPomodoroEnd();
-    isFocusing && updateFocus(time === 0 ? 0 : 1000);
-  }, [time, focusOrRestWhenPomodoroEnd, isFocusing, updateFocus]);
+    const changedStatus = focusOrRestWhenPomodoroEnd();
+    if (
+      (changedStatus == null && isFocusing) ||
+      changedStatus === PomodoroFocusingStatus.FOCUSING
+    ) {
+      updateFocus(PomodoroService.getPomodoroTickInterval());
+    }
+  }, [time, focusOrRestWhenPomodoroEnd, updateFocus, isFocusing]);
 
   const useCurrentTodoResult = useMemo(
     () => ({
