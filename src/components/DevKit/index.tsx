@@ -60,8 +60,9 @@ const DevKitContainer = styled.div`
   top: 0.5rem;
   left: 0.5rem;
   background-color: #00000010;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3),
+    inset 0 -4px 10px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
   padding: 0.5rem;
   border-radius: 8px;
   color: black;

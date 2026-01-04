@@ -54,7 +54,7 @@ export function CurrentTodo({
           ariaLabel="일시정지"
         >
           {paused ? (
-            <div>PLAY</div>
+            <IconAtom src="icon/play-dark.svg" className="play" size={2.25} />
           ) : (
             <IconAtom src="icon/pause-dark.svg" size={1.5} />
           )}
@@ -66,7 +66,7 @@ export function CurrentTodo({
           handleOnClick={() => doTodo()}
           ariaLabel="할일완료"
         >
-          <IconAtom src="icon/stop-dark.svg" size={1} />
+          <IconAtom src="icon/stop-dark.svg" size={1.625} />
         </BtnAtom>
       </div>
     ),
@@ -165,10 +165,6 @@ const CurrentTodoContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    img {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
   }
   .left-round {
     opacity: 0.5;

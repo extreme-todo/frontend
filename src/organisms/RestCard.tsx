@@ -55,7 +55,7 @@ export function RestCard({
           ariaLabel="일시정지"
         >
           {pomodoro.timerStatus === PomodoroTimerStatus.PAUSED ? (
-            <div>PLAY</div>
+            <IconAtom src="icon/play-light.svg" size={2.25} />
           ) : (
             <IconAtom src="icon/pause-light.svg" size={1.5} />
           )}
@@ -67,7 +67,7 @@ export function RestCard({
           handleOnClick={() => doTodo()}
           ariaLabel="할일완료"
         >
-          <IconAtom src="icon/stop-light.svg" size={1} />
+          <IconAtom src="icon/stop-light.svg" size={1.625} />
         </BtnAtom>
       </div>
     ),
@@ -225,10 +225,6 @@ const RestCardWrapper = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      img {
-        width: 1.5rem;
-        height: 1.5rem;
-      }
     }
   }
   .todo-duration {
