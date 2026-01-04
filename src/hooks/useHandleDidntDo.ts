@@ -16,7 +16,7 @@ export const useHandleDidntDo = () => {
     retry: false,
     onSuccess(data) {
       console.debug(
-        '\n\n\n ✅ data in useTimeMarker‘s useMutation ✅ \n\n',
+        '\n\n\n ✅ data in useHandleDidntDo‘s useMutation ✅ \n\n',
         data,
       );
       queryClient.invalidateQueries({ queryKey: ['todos'] });
@@ -29,7 +29,7 @@ export const useHandleDidntDo = () => {
     },
     onError(error: AxiosError) {
       console.debug(
-        '\n\n\n 🚨 error in useTimeMarker‘s useMutation 🚨 \n\n',
+        '\n\n\n 🚨 error in useHandleDidntDo‘s useMutation 🚨 \n\n',
         error,
       );
     },
