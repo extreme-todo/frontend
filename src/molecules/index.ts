@@ -7,3 +7,4 @@ export { FlipCounter } from './FlipCounter';
 export { Navigation } from './Navigation';
 export { RankingChart } from './RankingChart';
 export { SideButtons } from './SideButtons';
+export { Noti } from './Noti';

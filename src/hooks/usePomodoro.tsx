@@ -123,6 +123,7 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
   );
 
   useEffect(() => {
+    // 페이지 unloading 전에 셋팅값 저장
     function updatePomodorBeforeUnload(settings: IPomodoroSettings) {
       updatePomodoroData<IPomodoroSettings>(settings, 'settings');
     }
