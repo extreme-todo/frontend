@@ -53,7 +53,7 @@ const TomatoSelectorAtom = ({
         <SelectedValue>
           {tomato}회 ({formatTime(tomato * period)})
         </SelectedValue>
-        <ArrowIcon isOpen={isOpen}>▼</ArrowIcon>
+        <ArrowIcon isOpen={isOpen}>▲</ArrowIcon>
       </SelectedDisplay>
       {isOpen && (
         <OptionList isExtreme={isExtreme}>
@@ -112,7 +112,7 @@ const TomatoIcon = styled.span`
 const SelectedValue = styled.span`
   flex: 1;
   margin-left: 0.75rem;
-  font-size: ${({ theme }) => theme.fontSize.b1.size};
+  font-size: ${({ theme }) => theme.fontSize.body.size};
   font-weight: ${({ theme }) => theme.fontSize.b1.weight};
   color: ${({ theme }) => theme.color.fontColor.white};
 `;
