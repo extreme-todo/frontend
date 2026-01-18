@@ -24,14 +24,7 @@ export function RestCard({
   const pomodoro = usePomodoroValue();
   const actions = usePomodoroActions();
   const { isExtreme } = useExtremeMode();
-  const {
-    currentTodo: todo,
-    doTodo,
-    currentRound,
-  } = useCurrentTodo({
-    value: { ...pomodoro },
-    actions,
-  });
+  const { currentTodo: todo, doTodo, currentRound } = useCurrentTodo();
 
   const getLeftMs = () => {
     return pomodoro.settings.restStep * 60000 - (pomodoro.time ?? 0);

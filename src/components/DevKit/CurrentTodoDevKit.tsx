@@ -1,16 +1,7 @@
-import {
-  useCurrentTodo,
-  usePomodoroActions,
-  usePomodoroValue,
-} from '../../hooks';
+import { useCurrentTodo } from '../../hooks';
 
 export const CurrentTodoDevKit = () => {
-  const pomodoroValue = usePomodoroValue();
-  const pomodoroActions = usePomodoroActions();
-  const currentTodo = useCurrentTodo({
-    value: pomodoroValue,
-    actions: pomodoroActions,
-  });
+  const currentTodo = useCurrentTodo();
   return (
     <div
       style={{

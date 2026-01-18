@@ -24,7 +24,6 @@ import {
   useCurrentTodo,
   useExtremeMode,
   useIsMobile,
-  usePomodoroActions,
   usePomodoroValue,
   useHandleDidntDo,
 } from '../../hooks';
@@ -57,12 +56,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
   const [currentCardColor, setCurrentCardColor] =
     useState<BackgroundColorName>('primary1');
-  const {
-    status: pomodoroStatus,
-    settings: pomodoroSettings,
-    time: pomodoroTime,
-  } = usePomodoroValue();
-  const actions = usePomodoroActions();
+  const { status: pomodoroStatus, settings: pomodoroSettings } =
+    usePomodoroValue();
   const { isLogin } = useContext(LoginContext);
   const isMobile = useIsMobile();
   const { isExtreme } = useExtremeMode();
@@ -75,14 +70,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     currentCardAnimationTriggerSubject.current.asObservable(),
   );
 
-  const { currentTodo } = useCurrentTodo({
-    value: {
-      status: pomodoroStatus,
-      settings: pomodoroSettings,
-      time: pomodoroTime,
-    },
-    actions,
-  });
+  const { currentTodo } = useCurrentTodo();
   const {
     settings: { focusStep },
   } = usePomodoroValue();

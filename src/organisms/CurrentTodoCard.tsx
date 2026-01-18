@@ -24,19 +24,11 @@ export function CurrentTodoCard({
   const {
     settings: pomodoroSettings,
     status,
-    time,
     timerStatus,
   } = usePomodoroValue();
   const { isExtreme } = useExtremeMode();
   const actions = usePomodoroActions();
-  const currentTodo = useCurrentTodo({
-    value: {
-      settings: pomodoroSettings,
-      status,
-      time,
-    },
-    actions,
-  });
+  const currentTodo = useCurrentTodo();
 
   const toggleTimerPlay = useCallback(() => {
     if (timerStatus === PomodoroTimerStatus.PAUSED) {

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 
 import { IconAtom } from './atoms';
 import { Navigation, Noti } from './molecules';
@@ -10,12 +10,15 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import { PomodoroProvider, ExtremeModeProvider } from './hooks';
+import {
+  PomodoroProvider,
+  ExtremeModeProvider,
+  CurrentTodoProvider,
+} from './hooks';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
-import { PomodoroService } from './services/PomodoroService';
 import useAlarm from './hooks/useAlert';
 
 export const queryClient = new QueryClient({
@@ -98,14 +101,6 @@ function App() {
     }
   });
 
-  // Start the Pomodoro timer when the app loads
-  useEffect(() => {
-    const startTimer = PomodoroService.startTimer().subscribe();
-    return () => {
-      startTimer.unsubscribe();
-    };
-  }, []);
-
   const { initSoundPlayer } = useAlarm();
   useEffect(() => {
     const handleClick = () => {
@@ -120,40 +115,42 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <PomodoroProvider>
-        <ExtremeModeProvider>
-          <DevKit />
-          <MainContainer id="main-container" ref={mainRef}>
-            <Navigation
-              navigationLists={NAVIGATION_LIST}
-              scrollYProgress={scrollYProgress}
-              isLabelVisible={isLabelVisible}
-              activeLabel={activeLabel}
-            />
-            <Welcome
-              buttonOpacityForScroll={buttonOpacityForScroll}
-              mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
-              mainLogoFillForScroll={mainLogoFillForScroll}
-              ref={welcomeRef}
-            />
-            <MainTodo ref={mainTodoRef} />
-            <motion.div
-              className="scroll__guide"
-              style={{
-                opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
-                  clamp: true,
-                }),
-              }}
-            >
-              <IconAtom
-                src="/icon/combobox.svg"
-                size={3}
-                className="scroll__guide__icon"
-                alt="An icon indicating to scroll down"
+        <CurrentTodoProvider>
+          <ExtremeModeProvider>
+            <DevKit />
+            <MainContainer id="main-container" ref={mainRef}>
+              <Navigation
+                navigationLists={NAVIGATION_LIST}
+                scrollYProgress={scrollYProgress}
+                isLabelVisible={isLabelVisible}
+                activeLabel={activeLabel}
               />
-            </motion.div>
-            <Noti />
-          </MainContainer>
-        </ExtremeModeProvider>
+              <Welcome
+                buttonOpacityForScroll={buttonOpacityForScroll}
+                mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
+                mainLogoFillForScroll={mainLogoFillForScroll}
+                ref={welcomeRef}
+              />
+              <MainTodo ref={mainTodoRef} />
+              <motion.div
+                className="scroll__guide"
+                style={{
+                  opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
+                    clamp: true,
+                  }),
+                }}
+              >
+                <IconAtom
+                  src="/icon/combobox.svg"
+                  size={3}
+                  className="scroll__guide__icon"
+                  alt="An icon indicating to scroll down"
+                />
+              </motion.div>
+              <Noti />
+            </MainContainer>
+          </ExtremeModeProvider>
+        </CurrentTodoProvider>
       </PomodoroProvider>
     </QueryClientProvider>
   );

@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
 import useAlarm from '../hooks/useAlert';
-import { usePomodoroValue } from '../hooks/usePomodoro';
-import { usePomodoroActions } from '../hooks/usePomodoro';
 import { useCurrentTodo } from '../hooks/useCurrentTodo';
 import styled from '@emotion/styled';
 
@@ -15,20 +13,7 @@ const Noti = () => {
     cancelNotification();
   };
 
-  const {
-    status: pomodoroStatus,
-    settings: pomodoroSettings,
-    time: pomodoroTime,
-  } = usePomodoroValue();
-  const actions = usePomodoroActions();
-  const { canRest, currentRound, canFocus } = useCurrentTodo({
-    value: {
-      status: pomodoroStatus,
-      settings: pomodoroSettings,
-      time: pomodoroTime,
-    },
-    actions,
-  });
+  const { canRest, currentRound, canFocus } = useCurrentTodo();
 
   useEffect(() => {
     if (canRest === true) {
@@ -45,13 +30,13 @@ const Noti = () => {
     if (notiType === 'rest') {
       return (
         <TypoAtom fontColor="primary1" fontSize="h2">
-          휴식시간 종료
+          {currentRound} 라운드 종료!
         </TypoAtom>
       );
     } else if (notiType === 'focus') {
       return (
         <TypoAtom fontColor="primary1" fontSize="h2">
-          {currentRound} 라운드 종료!
+          휴식시간 종료
         </TypoAtom>
       );
     }
