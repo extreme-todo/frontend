@@ -41,7 +41,6 @@ import styled from '@emotion/styled';
 import { ZodError } from 'zod';
 import FocusTrap from 'focus-trap-react';
 import { startOfYesterday } from 'date-fns';
-import { designTheme } from '../styles/theme';
 import { responsiveBreakpoints } from '../shared/constants';
 
 interface IAddTodoProps {
@@ -250,8 +249,8 @@ export const AddTodo = ({
                   borderColor: titleError
                     ? 'extreme_orange'
                     : isExtreme
-                    ? 'extreme_dark'
-                    : 'primary1',
+                      ? 'extreme_dark'
+                      : 'primary1',
                 }}
                 tabIndex={0}
               />
@@ -336,10 +335,10 @@ export const AddTodo = ({
 const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
   overflow: visible;
   background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.primary2};
+  theme: {
+    color: { backgroundColor },
+  },
+}) => backgroundColor.primary2};
   justify-content: space-between;
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
