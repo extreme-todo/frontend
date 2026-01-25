@@ -10,7 +10,6 @@ export const useIsMobile = () => {
     setResponsiveMobile(responsiveMobileRef.current);
   };
 
-
   useEffect(() => {
     if (window.ResizeObserver)
       new ResizeObserver((entries) => {
