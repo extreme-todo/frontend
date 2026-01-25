@@ -295,7 +295,7 @@ export const AddTodo = ({
           {isMobile ? (
             <TomatoSelectorAtom
               max={10}
-              min={0}
+              min={1}
               period={focusStep}
               handleTomato={handleTomato}
               tomato={tomato}
@@ -305,7 +305,7 @@ export const AddTodo = ({
             <TomatoContainer>
               <TomatoInputAtom
                 max={10}
-                min={0}
+                min={1}
                 period={focusStep}
                 handleTomato={handleTomato}
                 tomato={tomato}

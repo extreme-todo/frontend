@@ -57,8 +57,8 @@ const TomatoSelectorAtom = ({
       </SelectedDisplay>
       {isOpen && (
         <OptionList isExtreme={isExtreme}>
-          {Array.from({ length: tickCount }).map((_, index) => {
-            const value = index + 1;
+          {Array.from({ length: tickCount + 1 }).map((_, index) => {
+            const value = min + index;
             const isSelected = value === tomato;
             return (
               <OptionItem
