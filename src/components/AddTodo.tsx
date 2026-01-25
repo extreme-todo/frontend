@@ -406,7 +406,6 @@ const FooterWrapper = styled.div<{ isMobile: boolean }>`
     flex-direction: column;
     align-items: center;
     & > button {
-      width: 40%;
       min-width: 50%;
     }
   }
