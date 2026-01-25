@@ -83,7 +83,7 @@ export const TomatoInputAtom = memo(
         }
         let posX = clientX - rangeInputRect.left;
         const count = Math.floor(posX / tickWidth);
-        handleTomato(count + 1);
+        handleTomato(count + min);
         posX = count * tickWidth - thumbWidth + halfTickWidth + halfThumbWidth;
         thumbRef.current.style.transform = 'translate(' + posX + 'px, -50%)';
       }
@@ -98,11 +98,11 @@ export const TomatoInputAtom = memo(
         const halfTickWidth = tickWidth / 2;
         const halfThumbWidth = thumbWidth / 2;
         const newCorrection =
-          tomato * tickWidth - halfTickWidth - halfThumbWidth;
+          (tomato - min + 1) * tickWidth - halfTickWidth - halfThumbWidth;
         thumbRef.current.style.transform =
           'translate(' + newCorrection + 'px, -50%)';
       }
-    }, [tomato]);
+    }, [tomato, min]);
 
     useEffect(() => {
       handleInitTomato();
@@ -133,13 +133,13 @@ export const TomatoInputAtom = memo(
           </Thumb>
           <AssistantLine isExtreme={isExtreme} />
           <InputTickWrapper>
-            {Array.from({ length: tickCount }).map((_, index) => (
+            {Array.from({ length: tickCount + 1 }).map((_, index) => (
               <TickWrapper key={index} ref={tickRef} aria-label="tick">
                 <InputTick
                   tabIndex={1}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter') {
-                      handleTomato(index + 1);
+                      handleTomato(index + min);
                     }
                   }}
                   isExtreme={isExtreme}
@@ -150,9 +150,9 @@ export const TomatoInputAtom = memo(
         </RangeInputWrapper>
         {isLabel ? (
           <LabelWrapper>
-            {Array.from({ length: tickCount }).map((_, index) => (
+            {Array.from({ length: tickCount + 1 }).map((_, index) => (
               <TickWrapper key={index} aria-label="label">
-                {formatTime((index + 1) * period)}
+                {formatTime((index + min) * period)}
               </TickWrapper>
             ))}
           </LabelWrapper>
