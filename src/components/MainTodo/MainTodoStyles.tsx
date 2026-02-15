@@ -74,8 +74,13 @@ export const MainTodoCenter = styled.div`
     text-align: right;
     box-sizing: border-box;
     z-index: 1;
+    align-items: center;
     & > *:only-child {
       margin-left: auto;
+    }
+    @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+      ${({ theme }) => theme.responsiveDevice.mobile} {
+      bottom: -2.375rem;
     }
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},

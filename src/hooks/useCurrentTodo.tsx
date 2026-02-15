@@ -42,6 +42,7 @@ export interface ICurrentTodoData {
 export interface ICurrentTodoActions {
   updateFocus: (focusedTime: number) => void;
   doTodo: () => void;
+  doAllTodo: () => void;
 }
 
 const CurrentTodoDataContext = createContext<ICurrentTodoData>(
@@ -85,7 +86,33 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
     }
   }
 
+  async function doAllTodoMutateHandler({
+    id,
+    focusTime,
+  }: {
+    id: string;
+    focusTime: number;
+  }) {
+    if (currentTodo) {
+      await doTodoMutateHandler({ id, focusTime });
+    }
+    await todosApi.doAllTodo();
+  }
+
   const { mutate: doTodoMutate } = useMutation(doTodoMutateHandler, {
+    onSuccess: () => {
+      setCurrentTodo(undefined);
+      setFocusedOnTodo(0);
+      setLastRestRoundFocusedTime(0);
+      localStorage.removeItem(TODO_FOCUS_TIME_KEY);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+      queryClient.invalidateQueries({ queryKey: ['doneTodos'] });
+    },
+  });
+
+  const { mutate: doAllTodoMutate } = useMutation(doAllTodoMutateHandler, {
     onSuccess: () => {
       setCurrentTodo(undefined);
       setFocusedOnTodo(0);
@@ -220,6 +247,15 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
   }, [currentTodo, focusedOnTodo, doTodoMutate, pomodoroActions]);
 
   /**
+   * 현재 할 일을 완료 처리하고, 남은 할 일은 삭제 처리한다.
+   */
+  const doAllTodo = useCallback(() => {
+    if (currentTodo) {
+      doAllTodoMutate({ id: currentTodo.id, focusTime: focusedOnTodo });
+    }
+  }, [currentTodo, focusedOnTodo, doAllTodoMutate, pomodoroActions]);
+
+  /**
    * 다음 할 일을 가져온다.
    * 없으면 undefined를 반환한다.
    * @returns TodoEntity | undefined
@@ -317,8 +353,9 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
     () => ({
       updateFocus,
       doTodo,
+      doAllTodo,
     }),
-    [updateFocus, doTodo],
+    [updateFocus, doTodo, doAllTodo],
   );
 
   return (

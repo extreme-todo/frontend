@@ -4,7 +4,7 @@ import { ButtonName } from '../styles/emotion';
 export interface SideBtnAtomProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   btnStyle: ButtonName;
-  btnType?: 'text' | 'icon';
+  btnType?: 'text' | 'icon' | 'plain';
   className?: string;
   ariaLabel?: string;
   type?: 'submit' | 'reset' | 'button';
@@ -82,6 +82,18 @@ const BaseBtnAtom = styled.button<
     padding: 0;
     text-align: center;
     justify-content: center;
+  `}
+
+  ${({ btnType, theme }) =>
+    btnType === 'plain' &&
+    `
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: ${theme.fontSize.h3.size};
+    line-height: ${theme.fontSize.h3.lineHeight};
+    text-decoration: underline;
+    text-underline-offset: 4px;
   `}
 
   ${({ focused, theme, btnStyle: btnType }) =>

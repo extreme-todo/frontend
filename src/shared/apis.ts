@@ -157,6 +157,9 @@ export const todosApi = {
   async removeDidntDo(currentDate: string) {
     return await baseApi.delete('/todos', { params: { currentDate } });
   },
+  async doAllTodo() {
+    await baseApi.delete('/todos/undone/all');
+  },
 };
 export const timerApi = {
   _route: 'timer',

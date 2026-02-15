@@ -70,7 +70,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     currentCardAnimationTriggerSubject.current.asObservable(),
   );
 
-  const { currentTodo } = useCurrentTodo();
+  const { currentTodo, doAllTodo } = useCurrentTodo();
   const {
     settings: { focusStep },
   } = usePomodoroValue();
@@ -297,7 +297,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         timer: () => {
           handleClickSideButton('timeModal');
         },
-        doAll: () => alert('기능 준비 중입니다.'),
+        doAll: () => {
+          if (window.confirm('모든 TODO를 종료하시겠습니까?')) {
+            doAllTodo();
+          }
+        },
       }}
     >
       <MainTodoContainer ref={ref}>
@@ -343,6 +347,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 <MainCard />
                 {/* <CurrentMainCard type="current" /> */}
               </CardAnimationPlayerAtom>
+
               {prevCard && (
                 <CardAnimationPlayerAtom animation={'HIDE_UP'}>
                   <CurrentMainCard type="prev" />
@@ -354,6 +359,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 </CardAnimationPlayerAtom>
               )}
               <div className="bottom-side-buttons">
+                {currentCard === 'currentTodo' && (
+                  <SideButtons.ShowDoAllButton
+                    theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                  />
+                )}
                 {isMobile && (
                   <SideButtons.ShowRankingButton
                     theme={(() => {
