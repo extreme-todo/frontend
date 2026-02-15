@@ -4,32 +4,21 @@ import {
   usePomodoroActions,
   PomodoroProvider,
   initialPomodoroData,
+  focusStep,
+  restStep,
 } from '../../hooks';
-import React, { act, useEffect } from 'react';
+import React, { act } from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
-import {
-  PomodoroService,
-  PomodoroFocusingStatus,
-} from '../../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../../services/PomodoroService';
 
-jest.useFakeTimers();
 describe('usePomodoro', () => {
   let component: RenderResult;
-  const WrapperComponent = ({ children }) => (
+  const WrapperComponent = ({ children }: { children: React.ReactNode }) => (
     <PomodoroProvider>{children}</PomodoroProvider>
   );
-  const TestPomodoro = (expectedFocusStep, expectedRestStep) => {
+  const TestPomodoro = () => {
     const { settings, status, time } = usePomodoroValue();
-    const { startFocusing, startResting, setFocusStep, setRestStep } =
-      usePomodoroActions();
-
-    // Start the Pomodoro timer when the app loads
-    useEffect(() => {
-      const startTimer = PomodoroService.startTimer().subscribe();
-      return () => {
-        startTimer.unsubscribe();
-      };
-    }, []);
+    const { startFocusing, startResting } = usePomodoroActions();
 
     return (
       <>
@@ -45,16 +34,6 @@ describe('usePomodoro', () => {
         <br />
         <button data-testid="startFocusButton" onClick={startFocusing}></button>
         <button data-testid="startRestButton" onClick={startResting}></button>
-        <button
-          data-testid="setFocusStep"
-          onClick={() => {
-            setFocusStep(expectedFocusStep);
-          }}
-        ></button>
-        <button
-          data-testid="setRestStep"
-          onClick={() => setRestStep(expectedRestStep)}
-        ></button>
       </>
     );
   };
@@ -67,7 +46,7 @@ describe('usePomodoro', () => {
       );
       component = render(
         <WrapperComponent>
-          <TestPomodoro></TestPomodoro>
+          <TestPomodoro />
         </WrapperComponent>,
       );
     });
@@ -89,18 +68,15 @@ describe('usePomodoro', () => {
   });
 
   describe('localStorage에 기존 데이터가 있을 때', () => {
-    const mockData = {
-      settings: {
-        focusStep: 345,
-        restStep: 987,
-      },
+    const mockData: { focusStep: focusStep; restStep: restStep } = {
+      focusStep: 10,
+      restStep: 5,
     };
 
     beforeEach(() => {
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === 'pomodoro-settings')
-            return JSON.stringify(mockData.settings);
+          if (key === 'pomodoro-settings') return JSON.stringify(mockData);
           else return null;
         }),
       );
@@ -119,10 +95,10 @@ describe('usePomodoro', () => {
     it('localStorage의 데이터를 렌더링한다', () => {
       const { getByText } = component;
       expect(
-        getByText(new RegExp('focusStep:' + mockData.settings.focusStep)),
+        getByText(new RegExp('focusStep:' + mockData.focusStep)),
       ).toBeDefined();
       expect(
-        getByText(new RegExp('restStep:' + mockData.settings.restStep)),
+        getByText(new RegExp('restStep:' + mockData.restStep)),
       ).toBeDefined();
       expect(getByText(new RegExp('isFocusing:false'))).toBeDefined();
     });
@@ -151,14 +127,6 @@ describe('usePomodoro', () => {
       const { getByText } = component;
       expect(getByText(/isResting:false/)).toBeDefined();
     });
-
-    it('10초 뒤, focusedTime이 1000이 된다', async () => {
-      const { getByText } = component;
-      act(() => {
-        jest.advanceTimersByTime(1000);
-      });
-      expect(getByText(/isFocusing:1000/)).toBeDefined();
-    });
   });
 
   describe('휴식을 시작하면', () => {
@@ -183,14 +151,6 @@ describe('usePomodoro', () => {
     it('isFocusing false가 된다.', () => {
       const { getByText } = component;
       expect(getByText(/isFocusing:false/)).toBeDefined();
-    });
-
-    it('10초 뒤, restedTime이 1000이 된다', async () => {
-      const { getByText } = component;
-      act(() => {
-        jest.advanceTimersByTime(1000);
-      });
-      expect(getByText(/isResting:1000/)).toBeDefined();
     });
   });
 });

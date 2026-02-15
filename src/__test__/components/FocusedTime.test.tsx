@@ -7,6 +7,7 @@ import React from 'react';
 import { ICategory, IFocusTime } from '../../shared/interfaces';
 import { categoryApi, timerApi } from '../../shared/apis';
 import { formatTime, getDateInFormat } from '../../shared/timeUtils';
+import { AppProviders } from '../../contexts/AppProviders';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,15 +51,13 @@ describe('FocusedTime Component', () => {
 
   const renderComponent = () =>
     render(
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={designTheme}>
-          <FocusedTime
-            handleClose={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
-        </ThemeProvider>
-      </QueryClientProvider>,
+      <AppProviders queryClient={queryClient}>
+        <FocusedTime
+          handleClose={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+        />
+      </AppProviders>,
     );
 
   it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', () => {

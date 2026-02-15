@@ -10,13 +10,7 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import {
-  PomodoroProvider,
-  ExtremeModeProvider,
-  CurrentTodoProvider,
-} from './hooks';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
 import useAlarm from './hooks/useAlert';

@@ -4,8 +4,12 @@ import {
   PomodoroProvider,
   ExtremeModeProvider,
   CurrentTodoProvider,
+  LoginProvider,
 } from '../hooks';
 import { ResponsiveProvider } from './ResponsiveContext';
+import GlobalStyle from '../styles/Global';
+import { designTheme as Theme } from '../styles/theme';
+import { ThemeProvider } from '@emotion/react';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -17,14 +21,19 @@ export const AppProviders: React.FC<AppProvidersProps> = ({
   queryClient,
 }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ResponsiveProvider>
-        <PomodoroProvider>
-          <CurrentTodoProvider>
-            <ExtremeModeProvider>{children}</ExtremeModeProvider>
-          </CurrentTodoProvider>
-        </PomodoroProvider>
-      </ResponsiveProvider>
-    </QueryClientProvider>
+    <ThemeProvider theme={Theme}>
+      <GlobalStyle />
+      <LoginProvider>
+        <QueryClientProvider client={queryClient}>
+          <ResponsiveProvider>
+            <PomodoroProvider>
+              <CurrentTodoProvider>
+                <ExtremeModeProvider>{children}</ExtremeModeProvider>
+              </CurrentTodoProvider>
+            </PomodoroProvider>
+          </ResponsiveProvider>
+        </QueryClientProvider>
+      </LoginProvider>
+    </ThemeProvider>
   );
 };
