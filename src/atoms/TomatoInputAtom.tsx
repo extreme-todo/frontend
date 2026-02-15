@@ -82,7 +82,10 @@ export const TomatoInputAtom = memo(
           clientX = (event as MouseEvent).clientX;
         }
         let posX = clientX - rangeInputRect.left;
-        const count = Math.min(Math.max(Math.floor(posX / tickWidth), 0), tickCount);
+        const count = Math.min(
+          Math.max(Math.floor(posX / tickWidth), 0),
+          tickCount,
+        );
         handleTomato(count + min);
         posX = count * tickWidth - thumbWidth + halfTickWidth + halfThumbWidth;
         thumbRef.current.style.transform = 'translate(' + posX + 'px, -50%)';
@@ -170,11 +173,11 @@ const RangeInputWrapper = styled.div`
 `;
 const AssistantLine = styled.div<{ isExtreme?: boolean }>`
   background-color: ${({
-  theme: {
-    color: { backgroundColor },
-  },
-  isExtreme,
-}) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
+    theme: {
+      color: { backgroundColor },
+    },
+    isExtreme,
+  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   height: 0.25rem;
   border-radius: 50px;
   width: 100%;
@@ -204,11 +207,11 @@ const InputTick = styled.div<{ isExtreme?: boolean }>`
   width: 0.625rem;
   height: 0.625rem;
   background-color: ${({
-  theme: {
-    color: { backgroundColor },
-  },
-  isExtreme,
-}) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
+    theme: {
+      color: { backgroundColor },
+    },
+    isExtreme,
+  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   border-radius: 50%;
 `;
 
