@@ -82,8 +82,8 @@ export const TomatoInputAtom = memo(
           clientX = (event as MouseEvent).clientX;
         }
         let posX = clientX - rangeInputRect.left;
-        const count = Math.floor(posX / tickWidth);
-        handleTomato(count + 1);
+        const count = Math.min(Math.max(Math.floor(posX / tickWidth), 0), tickCount);
+        handleTomato(count + min);
         posX = count * tickWidth - thumbWidth + halfTickWidth + halfThumbWidth;
         thumbRef.current.style.transform = 'translate(' + posX + 'px, -50%)';
       }
@@ -98,11 +98,11 @@ export const TomatoInputAtom = memo(
         const halfTickWidth = tickWidth / 2;
         const halfThumbWidth = thumbWidth / 2;
         const newCorrection =
-          tomato * tickWidth - halfTickWidth - halfThumbWidth;
+          (tomato - min + 1) * tickWidth - halfTickWidth - halfThumbWidth;
         thumbRef.current.style.transform =
           'translate(' + newCorrection + 'px, -50%)';
       }
-    }, [tomato]);
+    }, [tomato, min]);
 
     useEffect(() => {
       handleInitTomato();
@@ -133,13 +133,13 @@ export const TomatoInputAtom = memo(
           </Thumb>
           <AssistantLine isExtreme={isExtreme} />
           <InputTickWrapper>
-            {Array.from({ length: tickCount }).map((_, index) => (
+            {Array.from({ length: tickCount + 1 }).map((_, index) => (
               <TickWrapper key={index} ref={tickRef} aria-label="tick">
                 <InputTick
                   tabIndex={1}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter') {
-                      handleTomato(index + 1);
+                      handleTomato(index + min);
                     }
                   }}
                   isExtreme={isExtreme}
@@ -150,9 +150,9 @@ export const TomatoInputAtom = memo(
         </RangeInputWrapper>
         {isLabel ? (
           <LabelWrapper>
-            {Array.from({ length: tickCount }).map((_, index) => (
+            {Array.from({ length: tickCount + 1 }).map((_, index) => (
               <TickWrapper key={index} aria-label="label">
-                {formatTime((index + 1) * period)}
+                {formatTime((index + min) * period)}
               </TickWrapper>
             ))}
           </LabelWrapper>
@@ -170,11 +170,11 @@ const RangeInputWrapper = styled.div`
 `;
 const AssistantLine = styled.div<{ isExtreme?: boolean }>`
   background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-    isExtreme,
-  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
+  theme: {
+    color: { backgroundColor },
+  },
+  isExtreme,
+}) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   height: 0.25rem;
   border-radius: 50px;
   width: 100%;
@@ -204,11 +204,11 @@ const InputTick = styled.div<{ isExtreme?: boolean }>`
   width: 0.625rem;
   height: 0.625rem;
   background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-    isExtreme,
-  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
+  theme: {
+    color: { backgroundColor },
+  },
+  isExtreme,
+}) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   border-radius: 50%;
 `;
 

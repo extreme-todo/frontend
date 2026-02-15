@@ -15,6 +15,7 @@ import {
   IconAtom,
   InputAtom,
   TomatoInputAtom,
+  TomatoSelectorAtom,
 } from '../atoms';
 import { CategoryInput } from '../molecules';
 
@@ -40,6 +41,7 @@ import styled from '@emotion/styled';
 import { ZodError } from 'zod';
 import FocusTrap from 'focus-trap-react';
 import { startOfYesterday } from 'date-fns';
+import { responsiveBreakpoints } from '../shared/constants';
 
 interface IAddTodoProps {
   handleClose: () => void;
@@ -242,13 +244,13 @@ export const AddTodo = ({
                   borderWidth: titleError ? '2px' : '1px',
                   width: '100%',
                   height: '3rem',
-                  font: 'h1',
+                  font: isMobile ? 'h3' : 'h1',
                   fontColor: isExtreme ? 'extreme_dark' : 'primary1',
                   borderColor: titleError
                     ? 'extreme_orange'
                     : isExtreme
-                    ? 'extreme_dark'
-                    : 'primary1',
+                      ? 'extreme_dark'
+                      : 'primary1',
                 }}
                 tabIndex={0}
               />
@@ -288,17 +290,29 @@ export const AddTodo = ({
             )}
           </CategoryWrapper>
         </MainWrapper>
-        <FooterWrapper>
-          <TomatoContainer>
-            <TomatoInputAtom
+        <FooterWrapper isMobile={isMobile}>
+          {isMobile ? (
+            <TomatoSelectorAtom
               max={10}
-              min={0}
+              min={1}
               period={focusStep}
               handleTomato={handleTomato}
               tomato={tomato}
               isExtreme={isExtreme}
             />
-          </TomatoContainer>
+          ) : (
+            <TomatoContainer>
+              <TomatoInputAtom
+                max={10}
+                min={1}
+                period={focusStep}
+                handleTomato={handleTomato}
+                tomato={tomato}
+                isExtreme={isExtreme}
+              />
+            </TomatoContainer>
+          )}
+
           <BtnAtom
             paddingHorizontal="2.0625rem"
             paddingVertical="0.375rem"
@@ -321,17 +335,14 @@ export const AddTodo = ({
 const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
   overflow: visible;
   background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.primary2};
+  theme: {
+    color: { backgroundColor },
+  },
+}) => backgroundColor.primary2};
   justify-content: space-between;
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
-    .todoTitle {
-      margin-bottom: 2rem;
-    }
     .calendar {
       margin: 2rem 0;
     }
@@ -385,8 +396,17 @@ const TomatoContainer = styled.div`
   width: 100%;
 `;
 
-const FooterWrapper = styled.div`
+const FooterWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
+  /* flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')}; */
   width: 100%;
   column-gap: 1.5625rem;
+  @media all and (max-width: ${responsiveBreakpoints.tablet_v.max}px) {
+    row-gap: 30px;
+    flex-direction: column;
+    align-items: center;
+    & > button {
+      min-width: 50%;
+    }
+  }
 `;
