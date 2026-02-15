@@ -351,6 +351,7 @@ const TodoListContainer = styled(CardAtom)`
   .todo-list-wrapper {
     width: 100%;
     flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: row;
     column-gap: 1rem;
@@ -359,14 +360,16 @@ const TodoListContainer = styled(CardAtom)`
 
 const ListSection = styled.section`
   width: 50%;
-  height: 100%;
+  min-height: 0;
   display: grid;
-  grid-template-rows: 1fr 9fr;
+  grid-template-rows: auto 1fr;
 
   .header__todo {
     justify-content: space-between;
-    height: 1.5rem;
+    min-height: 1.5rem;
+    padding-bottom: 0.5rem;
     display: flex;
+    align-items: center;
   }
 `;
 
