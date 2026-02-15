@@ -15,6 +15,7 @@ import {
   ExtremeModeProvider,
   CurrentTodoProvider,
 } from './hooks';
+import { ResponsiveProvider } from './contexts/ResponsiveContext';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -114,44 +115,51 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PomodoroProvider>
-        <CurrentTodoProvider>
-          <ExtremeModeProvider>
-            <DevKit />
-            <MainContainer id="main-container" ref={mainRef}>
-              <Navigation
-                navigationLists={NAVIGATION_LIST}
-                scrollYProgress={scrollYProgress}
-                isLabelVisible={isLabelVisible}
-                activeLabel={activeLabel}
-              />
-              <Welcome
-                buttonOpacityForScroll={buttonOpacityForScroll}
-                mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
-                mainLogoFillForScroll={mainLogoFillForScroll}
-                ref={welcomeRef}
-              />
-              <MainTodo ref={mainTodoRef} />
-              <motion.div
-                className="scroll__guide"
-                style={{
-                  opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
-                    clamp: true,
-                  }),
-                }}
-              >
-                <IconAtom
-                  src="/icon/combobox.svg"
-                  size={3}
-                  className="scroll__guide__icon"
-                  alt="An icon indicating to scroll down"
+      <ResponsiveProvider>
+        <PomodoroProvider>
+          <CurrentTodoProvider>
+            <ExtremeModeProvider>
+              <DevKit />
+              <MainContainer id="main-container" ref={mainRef}>
+                <Navigation
+                  navigationLists={NAVIGATION_LIST}
+                  scrollYProgress={scrollYProgress}
+                  isLabelVisible={isLabelVisible}
+                  activeLabel={activeLabel}
                 />
-              </motion.div>
-              <Noti />
-            </MainContainer>
-          </ExtremeModeProvider>
-        </CurrentTodoProvider>
-      </PomodoroProvider>
+                <Welcome
+                  buttonOpacityForScroll={buttonOpacityForScroll}
+                  mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
+                  mainLogoFillForScroll={mainLogoFillForScroll}
+                  ref={welcomeRef}
+                />
+                <MainTodo ref={mainTodoRef} />
+                <motion.div
+                  className="scroll__guide"
+                  style={{
+                    opacity: useTransform(
+                      scrollYProgress,
+                      [0, 0.01],
+                      [0.5, 0],
+                      {
+                        clamp: true,
+                      },
+                    ),
+                  }}
+                >
+                  <IconAtom
+                    src="/icon/combobox.svg"
+                    size={3}
+                    className="scroll__guide__icon"
+                    alt="An icon indicating to scroll down"
+                  />
+                </motion.div>
+                <Noti />
+              </MainContainer>
+            </ExtremeModeProvider>
+          </CurrentTodoProvider>
+        </PomodoroProvider>
+      </ResponsiveProvider>
     </QueryClientProvider>
   );
 }
