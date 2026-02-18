@@ -13,7 +13,6 @@ interface ICategoryContentProps {
   categoryValue: string;
   handleChangeCategory: (event: React.ChangeEvent<HTMLInputElement>) => void;
   tagColorList: Record<string, TagColorName>;
-  isDragging: boolean | undefined;
   isThisEdit: boolean;
   categoryError?: string;
 }
@@ -27,11 +26,10 @@ export const CategoryContent = memo(
     categoryValue,
     handleChangeCategory,
     tagColorList,
-    isDragging,
     isThisEdit,
     categoryError,
   }: ICategoryContentProps) => {
-    if (isDragging || !categories) return null;
+    if (!categories) return null;
     else if (isThisEdit) {
       return (
         <CategoryContainer

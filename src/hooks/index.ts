@@ -1,6 +1,5 @@
 export { LoginContext, LoginProvider, type ILogin } from './LoginContext';
 export { useCurrentTodo, type TodoResponseDto } from './useCurrentTodo';
-export { useDraggableInPortal } from './useDraggableInPortal';
 export { useEdit, EditContextProvider } from './useEdit';
 export {
   EXTREME_MODE,
@@ -23,4 +22,3 @@ export {
   usePomodoroActions,
 } from './usePomodoro';
 export { useHandleDidntDo } from './useHandleDidntDo';
-export { useTouchSensor } from './useTouchSensor';
