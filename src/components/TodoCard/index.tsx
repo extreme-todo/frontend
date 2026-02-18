@@ -385,10 +385,7 @@ export const TodoCard = ({
       <MainContent>
         <TitleContainer>
           <div>
-            <HandlerIconAndOrder
-              done={done}
-              order={order}
-            />
+            <HandlerIconAndOrder done={done} order={order} />
             <TitleOrInput
               titleValue={titleValue}
               isThisEdit={isThisEdit}
