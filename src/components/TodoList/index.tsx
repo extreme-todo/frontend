@@ -256,7 +256,12 @@ export const TodoList = memo(
                             focusStep={focusStep}
                             randomTagColor={randomTagColor}
                             isCurrTodo={false}
-                            order={idx + 1 + (doneTodos ? doneTodos.size : 0)}
+                            order={
+                              idx +
+                              1 +
+                              (doneTodoList?.length ?? 0) +
+                              (currentTodo ? 1 : 0)
+                            }
                             isExtreme={isExtreme}
                             onMoveUp={() => moveReorderHandler(todo, 'up')}
                             onMoveDown={() => moveReorderHandler(todo, 'down')}
