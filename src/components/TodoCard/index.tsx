@@ -18,11 +18,6 @@ import { UpdateDto, UpdateSchema } from '../../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
-  DraggableProvidedDragHandleProps,
-  DraggableStateSnapshot,
-} from 'react-beautiful-dnd';
-
-import {
   categoryValidation,
   titleValidation,
 } from '../../shared/inputValidation';
@@ -34,8 +29,6 @@ import { EditUI } from './EditUI';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
-  dragHandleProps?: DraggableProvidedDragHandleProps | null;
-  snapshot?: DraggableStateSnapshot;
   focusStep: focusStep;
   randomTagColor: RandomTagColorList;
   isExtreme: boolean;
@@ -43,14 +36,16 @@ interface ITodoCardProps {
   order: number;
   isThisEdit: boolean;
   setEditTodoId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
 export const TodoCard = ({
   todoData,
-  dragHandleProps,
-  snapshot,
   focusStep,
   randomTagColor,
   isCurrTodo,
@@ -58,6 +53,10 @@ export const TodoCard = ({
   isThisEdit,
   setEditTodoId,
   isExtreme,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
 }: ITodoCardProps) => {
   const { id, date: prevDate, todo, categories, duration } = todoData;
 
@@ -366,7 +365,6 @@ export const TodoCard = ({
         handleTitleBlur={handleTitleBlur}
         titleError={titleError}
         order={order}
-        dragHandleProps={dragHandleProps}
         handleEditCancel={handleEditCancel}
         categoryArray={categoryArray}
         handleAddCategory={handleAddCategory}
@@ -389,6 +387,11 @@ export const TodoCard = ({
         isSubmitting={isLoading}
         isDisabled={titleValue.length === 0 || titleError || isLoading}
         handleEditSubmit={handleEditSubmit}
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
+        isFirst={isFirst}
+        isLast={isLast}
+        isCurrTodo={isCurrTodo}
       />
     );
   }
@@ -396,8 +399,6 @@ export const TodoCard = ({
   return (
     <TodoUI
       todoData={todoData}
-      dragHandleProps={dragHandleProps}
-      snapshot={snapshot}
       focusStep={focusStep}
       randomTagColor={randomTagColor}
       isExtreme={isExtreme}
@@ -405,6 +406,10 @@ export const TodoCard = ({
       order={order}
       handleEditButton={handleEditButton}
       handleDeleteButton={handleDeleteButton}
+      onMoveUp={onMoveUp}
+      onMoveDown={onMoveDown}
+      isFirst={isFirst}
+      isLast={isLast}
     />
   );
 };

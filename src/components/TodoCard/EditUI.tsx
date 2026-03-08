@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import { focusStep } from '../../hooks';
 import { formatTime } from '../../shared/timeUtils';
 import { TagColorName } from '../../styles/emotion';
@@ -22,7 +21,6 @@ interface IEditUIProps {
   handleTitleBlur: ReactEventHandler<HTMLInputElement>;
   titleError: boolean;
   order: number;
-  dragHandleProps?: DraggableProvidedDragHandleProps | null;
   handleEditCancel: () => void;
   categoryArray: string[];
   handleAddCategory: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -45,6 +43,11 @@ interface IEditUIProps {
   isSubmitting: boolean;
   isDisabled: boolean;
   handleEditSubmit: (event: React.FormEvent) => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
+  isCurrTodo: boolean;
 }
 
 export const EditUI = memo(
@@ -54,7 +57,6 @@ export const EditUI = memo(
     handleTitleBlur,
     titleError,
     order,
-    dragHandleProps,
     handleEditCancel,
     categoryArray,
     handleAddCategory,
@@ -77,102 +79,129 @@ export const EditUI = memo(
     isSubmitting,
     isDisabled,
     handleEditSubmit,
+    onMoveUp,
+    onMoveDown,
+    isFirst,
+    isLast,
+    isCurrTodo,
   }: IEditUIProps) => {
     return (
       <EditCardContainer onSubmit={handleEditSubmit}>
-        <TitleContainer>
-          <div style={{ display: 'flex' }}>
-            <div {...dragHandleProps}>
-              <IconAtom src="icon/edit_handle.svg" alt="handler" size={1.25} />
-            </div>
-            <TypoAtom fontSize="h3" fontColor="primary1">
-              {order}.
-            </TypoAtom>
-            <label htmlFor="title" style={{ width: '100%' }}>
-              <InputAtom.Underline
-                value={titleValue}
-                handleChange={handleChangeTitle}
-                handleBlur={handleTitleBlur}
-                placeholder="할 일을 입력하세요"
-                ariaLabel="title_input"
-                name="title"
-                className="todoTitle"
-                inputRef={useCallback((node: HTMLInputElement | null) => {
-                  node?.focus();
-                }, [])}
-                styleOption={{
-                  borderWidth: titleError ? '2px' : '1px',
-                  padding: '0 0 0 0',
-                  height: '1.25rem',
-                  font: 'h3',
-                  borderColor: titleError ? 'extreme_orange' : 'primary1',
-                  fontColor: 'primary1',
-                }}
-              />
-            </label>
-          </div>
-          <BtnAtom handleOnClick={handleEditCancel}>
-            <IconAtom src={'icon/closeDark.svg'} size={1.25} alt="cancel" />
-          </BtnAtom>
-        </TitleContainer>
-
-        <CategoryContainer
-          className="categories"
-          categoryError={categoryError !== undefined}
-        >
-          <CategoryInput
-            categories={categoryArray}
-            handleSubmit={handleAddCategory}
-            handleClick={handleDeleteCategory}
-            category={categoryValue}
-            handleChangeCategory={handleChangeCategory}
-            tagColorList={tagColorList}
-          />
-          <p className="category_error" role="alert">
-            {categoryError ? categoryError : SPECIAL_EXPRESSION_WARNING}
-          </p>
-        </CategoryContainer>
-
-        <FooterContainer>
-          <BtnAtom handleOnClick={() => setShowTomatoInput(true)}>
-            <TimeWrapper>
-              <IconAtom
-                src={'icon/timer.svg'}
-                alt="timer"
-                className="timer"
-                size={1.25}
-              />
-              <div ref={setTriggerElement}>
-                <TypoAtom
-                  fontSize="body"
-                  fontColor="primary1"
-                  className="duration"
-                >
-                  {formatTime(durationValue * focusStep)}
-                </TypoAtom>
-              </div>
-            </TimeWrapper>
-          </BtnAtom>
-          <BtnAtom
-            type="submit"
-            disabled={isDisabled}
-            className="submit_btn"
-            aria-label="submit"
-          >
-            <TagAtom
-              styleOption={{
-                size: 'normal',
-                bg: 'transparent',
-                borderColor: 'primary1',
-              }}
-              className="save__button"
-            >
-              <TypoAtom fontSize="b2" fontColor={'primary1'}>
-                {isSubmitting ? '저장 중' : '저장'}
+        <MainContent>
+          <TitleContainer>
+            <div style={{ display: 'flex' }}>
+              <TypoAtom
+                fontSize="h3"
+                fontColor="primary1"
+                className="order-text"
+              >
+                {order}.
               </TypoAtom>
-            </TagAtom>
-          </BtnAtom>
-        </FooterContainer>
+              <label htmlFor="title" style={{ width: '100%' }}>
+                <InputAtom.Underline
+                  value={titleValue}
+                  handleChange={handleChangeTitle}
+                  handleBlur={handleTitleBlur}
+                  placeholder="할 일을 입력하세요"
+                  ariaLabel="title_input"
+                  name="title"
+                  className="todoTitle"
+                  inputRef={useCallback((node: HTMLInputElement | null) => {
+                    node?.focus();
+                  }, [])}
+                  styleOption={{
+                    borderWidth: titleError ? '2px' : '1px',
+                    padding: '0 0 0 0',
+                    height: '1.25rem',
+                    font: 'h3',
+                    borderColor: titleError ? 'extreme_orange' : 'primary1',
+                    fontColor: 'primary1',
+                  }}
+                />
+              </label>
+            </div>
+            <BtnAtom handleOnClick={handleEditCancel}>
+              <IconAtom src={'icon/closeDark.svg'} size={1.25} alt="cancel" />
+            </BtnAtom>
+          </TitleContainer>
+
+          <CategoryContainer
+            className="categories"
+            categoryError={categoryError !== undefined}
+          >
+            <CategoryInput
+              categories={categoryArray}
+              handleSubmit={handleAddCategory}
+              handleClick={handleDeleteCategory}
+              category={categoryValue}
+              handleChangeCategory={handleChangeCategory}
+              tagColorList={tagColorList}
+            />
+            <p className="category_error" role="alert">
+              {categoryError ? categoryError : SPECIAL_EXPRESSION_WARNING}
+            </p>
+          </CategoryContainer>
+
+          <FooterContainer>
+            <BtnAtom handleOnClick={() => setShowTomatoInput(true)}>
+              <TimeWrapper>
+                <IconAtom
+                  src={'icon/timer.svg'}
+                  alt="timer"
+                  className="timer"
+                  size={1.25}
+                />
+                <div ref={setTriggerElement}>
+                  <TypoAtom
+                    fontSize="body"
+                    fontColor="primary1"
+                    className="duration"
+                  >
+                    {formatTime(durationValue * focusStep)}
+                  </TypoAtom>
+                </div>
+              </TimeWrapper>
+            </BtnAtom>
+            <BtnAtom
+              type="submit"
+              disabled={isDisabled}
+              className="submit_btn"
+              aria-label="submit"
+            >
+              <TagAtom
+                styleOption={{
+                  size: 'normal',
+                  bg: 'transparent',
+                  borderColor: 'primary1',
+                }}
+                className="save__button"
+              >
+                <TypoAtom fontSize="b2" fontColor={'primary1'}>
+                  {isSubmitting ? '저장 중' : '저장'}
+                </TypoAtom>
+              </TagAtom>
+            </BtnAtom>
+          </FooterContainer>
+        </MainContent>
+
+        <OrderButtonsColumn>
+          <OrderBtn
+            type="button"
+            onClick={onMoveUp}
+            disabled={isFirst || isCurrTodo || !onMoveUp}
+            aria-label="move up"
+          >
+            ▲
+          </OrderBtn>
+          <OrderBtn
+            type="button"
+            onClick={onMoveDown}
+            disabled={isLast || isCurrTodo || !onMoveDown}
+            aria-label="move down"
+          >
+            ▼
+          </OrderBtn>
+        </OrderButtonsColumn>
 
         {showTomatoInput && (
           <PopperAtom
@@ -218,8 +247,8 @@ export const EditUI = memo(
 
 const EditCardContainer = styled.form`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: row;
+  align-items: stretch;
   width: 100%;
   box-sizing: border-box;
   padding: 0.75rem;
@@ -230,6 +259,44 @@ const EditCardContainer = styled.form`
   .duration {
     border-bottom: ${({ theme }) =>
       `1px solid ${theme.color.backgroundColor.primary1}`};
+  }
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+`;
+
+const OrderButtonsColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+`;
+
+const OrderBtn = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.color.backgroundColor.primary1};
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  line-height: 1;
+
+  &:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.7;
   }
 `;
 
@@ -244,10 +311,16 @@ const TitleContainer = styled.div`
   & > div {
     display: flex;
     flex: 1;
+    min-width: 0;
+  }
+
+  .order-text {
+    margin-right: 0.25rem;
   }
 
   .todoTitle {
     width: 100%;
+    min-width: 0;
   }
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
