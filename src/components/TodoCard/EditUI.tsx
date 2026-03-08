@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { focusStep } from '../../hooks';
-import { formatTime } from '../../shared/timeUtils';
 import { TagColorName } from '../../styles/emotion';
 import {
   IconAtom,
@@ -8,8 +7,7 @@ import {
   TypoAtom,
   BtnAtom,
   InputAtom,
-  PopperAtom,
-  TomatoInputAtom,
+  TomatoSelectorAtom,
 } from '../../atoms';
 import { CategoryInput } from '../../molecules';
 import { memo, ReactEventHandler, useCallback } from 'react';
@@ -32,14 +30,6 @@ interface IEditUIProps {
   durationValue: number;
   focusStep: focusStep;
   handleTomato: (count: number) => void;
-  showTomatoInput: boolean;
-  setShowTomatoInput: (show: boolean) => void;
-  popperElement: HTMLDivElement | null;
-  setPopperElement: (el: HTMLDivElement | null) => void;
-  triggerElement: HTMLDivElement | null;
-  setTriggerElement: (el: HTMLDivElement | null) => void;
-  arrowElement: HTMLImageElement | null;
-  setArrowElement: (el: HTMLImageElement | null) => void;
   isSubmitting: boolean;
   isDisabled: boolean;
   handleEditSubmit: (event: React.FormEvent) => void;
@@ -48,6 +38,7 @@ interface IEditUIProps {
   isFirst?: boolean;
   isLast?: boolean;
   isCurrTodo: boolean;
+  isExtreme: boolean;
 }
 
 export const EditUI = memo(
@@ -68,14 +59,6 @@ export const EditUI = memo(
     durationValue,
     focusStep,
     handleTomato,
-    showTomatoInput,
-    setShowTomatoInput,
-    popperElement,
-    setPopperElement,
-    triggerElement,
-    setTriggerElement,
-    arrowElement,
-    setArrowElement,
     isSubmitting,
     isDisabled,
     handleEditSubmit,
@@ -84,6 +67,7 @@ export const EditUI = memo(
     isFirst,
     isLast,
     isCurrTodo,
+    isExtreme,
   }: IEditUIProps) => {
     return (
       <EditCardContainer onSubmit={handleEditSubmit}>
@@ -143,25 +127,16 @@ export const EditUI = memo(
           </CategoryContainer>
 
           <FooterContainer>
-            <BtnAtom handleOnClick={() => setShowTomatoInput(true)}>
-              <TimeWrapper>
-                <IconAtom
-                  src={'icon/timer.svg'}
-                  alt="timer"
-                  className="timer"
-                  size={1.25}
-                />
-                <div ref={setTriggerElement}>
-                  <TypoAtom
-                    fontSize="body"
-                    fontColor="primary1"
-                    className="duration"
-                  >
-                    {formatTime(durationValue * focusStep)}
-                  </TypoAtom>
-                </div>
-              </TimeWrapper>
-            </BtnAtom>
+            <div style={{ flex: 1, marginRight: '1rem' }}>
+              <TomatoSelectorAtom
+                max={10}
+                min={1}
+                period={focusStep}
+                tomato={durationValue}
+                handleTomato={handleTomato}
+                isExtreme={isExtreme}
+              />
+            </div>
             <BtnAtom
               type="submit"
               disabled={isDisabled}
@@ -202,44 +177,6 @@ export const EditUI = memo(
             ▼
           </OrderBtn>
         </OrderButtonsColumn>
-
-        {showTomatoInput && (
-          <PopperAtom
-            popperElement={popperElement}
-            setPopperElement={setPopperElement}
-            triggerElement={triggerElement}
-            arrowElement={arrowElement}
-            placement={'bottom'}
-          >
-            <TomatoInputWrapper aria-label="tomatoInput">
-              <TomatoInfo>
-                <TypoAtom fontSize="h2" fontColor="primary1">
-                  {formatTime(durationValue * focusStep)}
-                </TypoAtom>
-                <TypoAtom fontSize="b2" fontColor="primary1">
-                  {durationValue}round
-                </TypoAtom>
-              </TomatoInfo>
-              <TomatoInputAtom
-                max={10}
-                min={0}
-                period={focusStep}
-                handleTomato={handleTomato}
-                tomato={+durationValue}
-                isBalloon={false}
-                isLabel={false}
-              />
-            </TomatoInputWrapper>
-            <IconAtom
-              id="arrow"
-              data-popper-arrow
-              ref={setArrowElement}
-              h={3.125}
-              w={0.875}
-              src={'icon/popperArrow.svg'}
-            />
-          </PopperAtom>
-        )}
       </EditCardContainer>
     );
   },
@@ -255,11 +192,6 @@ const EditCardContainer = styled.form`
   border-radius: 0.875rem;
   background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
   color: ${({ theme }) => theme.color.backgroundColor.primary1};
-
-  .duration {
-    border-bottom: ${({ theme }) =>
-      `1px solid ${theme.color.backgroundColor.primary1}`};
-  }
 `;
 
 const MainContent = styled.div`
@@ -353,6 +285,7 @@ const CategoryContainer = styled.div<{
 const FooterContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   column-gap: 0.5rem;
   .save__button {
     &:hover {
@@ -366,29 +299,5 @@ const FooterContainer = styled.div`
     * {
       cursor: not-allowed;
     }
-  }
-`;
-
-const TimeWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  column-gap: 0.25rem;
-`;
-
-const TomatoInputWrapper = styled.div`
-  background-color: ${({ theme }) => theme.color.backgroundColor.white};
-  width: 44.625rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 1.25rem 1rem;
-  border-radius: 1.25rem;
-`;
-
-const TomatoInfo = styled.div`
-  margin-bottom: 0.8rem;
-  & > span:first-of-type {
-    margin-right: 0.625rem;
   }
 `;

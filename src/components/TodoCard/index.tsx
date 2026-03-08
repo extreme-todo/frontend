@@ -1,10 +1,4 @@
-import {
-  FormEvent,
-  ReactEventHandler,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { FormEvent, ReactEventHandler, useCallback, useState } from 'react';
 
 import { focusStep } from '../../hooks';
 import { todosApi } from '../../shared/apis';
@@ -70,16 +64,6 @@ export const TodoCard = ({
     undefined,
   );
   const [durationValue, setDurationValue] = useState(duration);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null,
-  );
-  const [showTomatoInput, setShowTomatoInput] = useState(false);
-  const [triggerElement, setTriggerElement] = useState<HTMLDivElement | null>(
-    null,
-  );
-  const [arrowElement, setArrowElement] = useState<HTMLImageElement | null>(
-    null,
-  );
 
   // apis
   const queryClient = useQueryClient();
@@ -322,41 +306,6 @@ export const TodoCard = ({
     [],
   );
 
-  const handleClickBackgroundToCloseTomatoInput = useCallback(
-    (event: Event) => {
-      if (popperElement && !popperElement.contains(event.target as Node)) {
-        setShowTomatoInput(false);
-      }
-    },
-    [popperElement],
-  );
-
-  useEffect(() => {
-    const rootElement = document.querySelector('#root');
-    if (!rootElement) return;
-    if (showTomatoInput) {
-      rootElement.addEventListener(
-        'click',
-        handleClickBackgroundToCloseTomatoInput,
-      );
-    } else {
-      rootElement.removeEventListener(
-        'click',
-        handleClickBackgroundToCloseTomatoInput,
-      );
-    }
-    return () => {
-      rootElement.removeEventListener(
-        'click',
-        handleClickBackgroundToCloseTomatoInput,
-      );
-    };
-  }, [showTomatoInput, handleClickBackgroundToCloseTomatoInput]);
-
-  useEffect(() => {
-    !isThisEdit && showTomatoInput && setShowTomatoInput(false);
-  }, [isThisEdit, showTomatoInput]);
-
   if (isThisEdit) {
     return (
       <EditUI
@@ -376,14 +325,6 @@ export const TodoCard = ({
         durationValue={durationValue}
         focusStep={focusStep}
         handleTomato={handleTomato}
-        showTomatoInput={showTomatoInput}
-        setShowTomatoInput={setShowTomatoInput}
-        popperElement={popperElement}
-        setPopperElement={setPopperElement}
-        triggerElement={triggerElement}
-        setTriggerElement={setTriggerElement}
-        arrowElement={arrowElement}
-        setArrowElement={setArrowElement}
         isSubmitting={isLoading}
         isDisabled={titleValue.length === 0 || titleError || isLoading}
         handleEditSubmit={handleEditSubmit}
@@ -392,6 +333,7 @@ export const TodoCard = ({
         isFirst={isFirst}
         isLast={isLast}
         isCurrTodo={isCurrTodo}
+        isExtreme={isExtreme}
       />
     );
   }

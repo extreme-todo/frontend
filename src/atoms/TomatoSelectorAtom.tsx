@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { formatTime } from '../shared/timeUtils';
+import { PopperAtom } from './PopperAtom';
 
 interface ITomatoSelectorProps {
   max: number;
@@ -20,22 +21,38 @@ const TomatoSelectorAtom = ({
   isExtreme,
 }: ITomatoSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const selectorRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null,
+  );
+  const [triggerWidth, setTriggerWidth] = useState(0);
+
   const tickCount = max - min;
+
+  // 버튼의 실제 너비를 측정하여 목록에 전달
+  useLayoutEffect(() => {
+    if (triggerRef.current) {
+      setTriggerWidth(triggerRef.current.offsetWidth);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        selectorRef.current &&
-        !selectorRef.current.contains(event.target as Node)
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node) &&
+        popperElement &&
+        !popperElement.contains(event.target as Node)
       ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isOpen, popperElement]);
 
   const handleSelect = (value: number) => {
     handleTomato(value);
@@ -43,38 +60,50 @@ const TomatoSelectorAtom = ({
   };
 
   return (
-    <SelectorWrapper ref={selectorRef}>
+    <SelectorWrapper>
       <SelectedDisplay
+        ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
         isOpen={isOpen}
         isExtreme={isExtreme}
       >
-        <TomatoIcon>🍅</TomatoIcon>
-        <SelectedValue>
-          {tomato}회 ({formatTime(tomato * period)})
-        </SelectedValue>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <TomatoIcon>🍅</TomatoIcon>
+          <SelectedValue>
+            {tomato}회 ({formatTime(tomato * period)})
+          </SelectedValue>
+        </div>
         <ArrowIcon isOpen={isOpen}>▲</ArrowIcon>
       </SelectedDisplay>
+
       {isOpen && (
-        <OptionList isExtreme={isExtreme}>
-          {Array.from({ length: tickCount + 1 }).map((_, index) => {
-            const value = min + index;
-            const isSelected = value === tomato;
-            return (
-              <OptionItem
-                key={value}
-                onClick={() => handleSelect(value)}
-                isSelected={isSelected}
-                isExtreme={isExtreme}
-              >
-                <OptionTomato isSelected={isSelected}>🍅</OptionTomato>
-                <OptionText>
-                  {value}회 ({formatTime(value * period)})
-                </OptionText>
-              </OptionItem>
-            );
-          })}
-        </OptionList>
+        <PopperAtom
+          triggerElement={triggerRef.current}
+          popperElement={popperElement}
+          setPopperElement={setPopperElement}
+          placement="bottom-start"
+          offset={[0, 0]} // 간격 제거하여 일체감 형성
+        >
+          <OptionList isExtreme={isExtreme} style={{ width: triggerWidth }}>
+            {Array.from({ length: tickCount + 1 }).map((_, index) => {
+              const value = min + index;
+              const isSelected = value === tomato;
+              return (
+                <OptionItem
+                  key={value}
+                  onClick={() => handleSelect(value)}
+                  isSelected={isSelected}
+                  isExtreme={isExtreme}
+                >
+                  <OptionTomato isSelected={isSelected}>🍅</OptionTomato>
+                  <OptionText>
+                    {value}회 ({formatTime(value * period)})
+                  </OptionText>
+                </OptionItem>
+              );
+            })}
+          </OptionList>
+        </PopperAtom>
       )}
     </SelectorWrapper>
   );
@@ -83,8 +112,8 @@ const TomatoSelectorAtom = ({
 export { TomatoSelectorAtom };
 
 const SelectorWrapper = styled.div`
-  position: relative;
   width: 100%;
+  position: relative;
 `;
 
 const SelectedDisplay = styled.div<{ isOpen: boolean; isExtreme?: boolean }>`
@@ -92,13 +121,14 @@ const SelectedDisplay = styled.div<{ isOpen: boolean; isExtreme?: boolean }>`
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  border-radius: ${({ isOpen }) => (isOpen ? '0 0 1rem 1rem' : '1rem')};
+  border-radius: 1rem;
   background-color: ${({ theme, isExtreme }) =>
     isExtreme
       ? theme.color.backgroundColor.light_extreme_dark
       : theme.color.backgroundColor.dark_primary1};
   cursor: pointer;
   transition: all 0.2s ease;
+  z-index: 11;
 
   &:active {
     transform: scale(0.98);
@@ -110,7 +140,6 @@ const TomatoIcon = styled.span`
 `;
 
 const SelectedValue = styled.span`
-  flex: 1;
   margin-left: 0.75rem;
   font-size: ${({ theme }) => theme.fontSize.body.size};
   font-weight: ${({ theme }) => theme.fontSize.b1.weight};
@@ -125,19 +154,15 @@ const ArrowIcon = styled.span<{ isOpen: boolean }>`
 `;
 
 const OptionList = styled.div<{ isExtreme?: boolean }>`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 100%;
-  max-height: 200px;
+  max-height: 150px;
   overflow-y: auto;
   background-color: ${({ theme, isExtreme }) =>
     isExtreme
       ? theme.color.backgroundColor.extreme_dark
       : theme.color.backgroundColor.primary1};
-  border-radius: 1rem 1rem 0 0;
-  z-index: 10;
+  border-radius: 1rem;
   box-shadow: ${({ theme }) => theme.shadow.tomato};
+  z-index: 1000;
 
   overscroll-behavior: contain;
   &::-webkit-scrollbar {
@@ -172,6 +197,10 @@ const OptionItem = styled.div<{ isSelected: boolean; isExtreme?: boolean }>`
       isExtreme
         ? theme.color.backgroundColor.light_extreme_dark
         : theme.color.backgroundColor.dark_primary1};
+  }
+
+  &:first-of-type {
+    border-radius: 1rem 1rem 0 0;
   }
 
   &:last-child {
