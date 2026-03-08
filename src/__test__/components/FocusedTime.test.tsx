@@ -61,20 +61,18 @@ describe('FocusedTime Component', () => {
       </QueryClientProvider>,
     );
 
-  it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', () => {
+  it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', async () => {
     renderComponent();
     expect(timerApi.getRecords).toHaveBeenCalledWith(
       -new Date().getTimezoneOffset(),
       'day',
     );
-    expect(
-      screen.findByText(
-        formatTime(
-          Math.floor(
-            (mockRecordData.data.total.focused -
-              mockRecordData.data.total.prevFocused) /
-              60000,
-          ),
+    await screen.findByText(
+      formatTime(
+        Math.floor(
+          (mockRecordData.data.total.focused -
+            mockRecordData.data.total.prevFocused) /
+            60000,
         ),
       ),
     );

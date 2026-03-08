@@ -72,13 +72,13 @@ describe('usePomodoro', () => {
         getByText(
           new RegExp('focusStep:' + initialPomodoroData.settings.focusStep),
         ),
-      ).toBeDefined();
+      ).toBeInTheDocument();
       expect(
         getByText(
           new RegExp('restStep:' + initialPomodoroData.settings.restStep),
         ),
-      ).toBeDefined();
-      expect(getByText(new RegExp('isFocusing:false'))).toBeDefined();
+      ).toBeInTheDocument();
+      expect(getByText(new RegExp('isFocusing:false'))).toBeInTheDocument();
     });
   });
 
@@ -114,11 +114,11 @@ describe('usePomodoro', () => {
       const { getByText } = component;
       expect(
         getByText(new RegExp('focusStep:' + mockData.settings.focusStep)),
-      ).toBeDefined();
+      ).toBeInTheDocument();
       expect(
         getByText(new RegExp('restStep:' + mockData.settings.restStep)),
-      ).toBeDefined();
-      expect(getByText(new RegExp('isFocusing:false'))).toBeDefined();
+      ).toBeInTheDocument();
+      expect(getByText(new RegExp('isFocusing:false'))).toBeInTheDocument();
     });
   });
 
@@ -143,15 +143,15 @@ describe('usePomodoro', () => {
 
     it('isResting이 false가 된다.', () => {
       const { getByText } = component;
-      expect(getByText(/isResting:false/)).toBeDefined();
+      expect(getByText(/isResting:false/)).toBeInTheDocument();
     });
 
-    it('10초 뒤, focusedTime이 1000이 된다', async () => {
+    it('10초 뒤, focusedTime이 1000이 된다', () => {
       const { getByText } = component;
       act(() => {
         jest.advanceTimersByTime(1000);
       });
-      expect(getByText(/isFocusing:1000/)).toBeDefined();
+      expect(getByText(/isFocusing:1000/)).toBeInTheDocument();
     });
   });
 
@@ -176,15 +176,15 @@ describe('usePomodoro', () => {
 
     it('isFocusing false가 된다.', () => {
       const { getByText } = component;
-      expect(getByText(/isFocusing:false/)).toBeDefined();
+      expect(getByText(/isFocusing:false/)).toBeInTheDocument();
     });
 
-    it('10초 뒤, restedTime이 1000이 된다', async () => {
+    it('10초 뒤, restedTime이 1000이 된다', () => {
       const { getByText } = component;
       act(() => {
         jest.advanceTimersByTime(1000);
       });
-      expect(getByText(/isResting:1000/)).toBeDefined();
+      expect(getByText(/isResting:1000/)).toBeInTheDocument();
     });
   });
 });
