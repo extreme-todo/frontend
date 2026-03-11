@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { formatTime } from '../shared/timeUtils';
 import { PopperAtom } from './PopperAtom';
+import { TypoAtom } from './TypoAtom';
 
 interface ITomatoSelectorProps {
   max: number;
@@ -10,6 +11,7 @@ interface ITomatoSelectorProps {
   tomato: number;
   handleTomato: (count: number) => void;
   isExtreme?: boolean;
+  label?: string; // 라벨 추가
 }
 
 const TomatoSelectorAtom = ({
@@ -19,6 +21,7 @@ const TomatoSelectorAtom = ({
   tomato,
   handleTomato,
   isExtreme,
+  label,
 }: ITomatoSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +32,6 @@ const TomatoSelectorAtom = ({
 
   const tickCount = max - min;
 
-  // 버튼의 실제 너비를 측정하여 목록에 전달
   useLayoutEffect(() => {
     if (triggerRef.current) {
       setTriggerWidth(triggerRef.current.offsetWidth);
@@ -61,6 +63,16 @@ const TomatoSelectorAtom = ({
 
   return (
     <SelectorWrapper>
+      {label && (
+        <LabelWrapper>
+          <TypoAtom
+            fontSize="h3"
+            fontColor={isExtreme ? 'primary2' : 'primary1'}
+          >
+            {label}
+          </TypoAtom>
+        </LabelWrapper>
+      )}
       <SelectedDisplay
         ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
@@ -82,7 +94,7 @@ const TomatoSelectorAtom = ({
           popperElement={popperElement}
           setPopperElement={setPopperElement}
           placement="bottom-start"
-          offset={[0, 0]} // 간격 제거하여 일체감 형성
+          offset={[0, 0]}
         >
           <OptionList isExtreme={isExtreme} style={{ width: triggerWidth }}>
             {Array.from({ length: tickCount + 1 }).map((_, index) => {
@@ -114,6 +126,11 @@ export { TomatoSelectorAtom };
 const SelectorWrapper = styled.div`
   width: 100%;
   position: relative;
+`;
+
+const LabelWrapper = styled.div`
+  margin-bottom: 0.5rem;
+  margin-left: 0.25rem;
 `;
 
 const SelectedDisplay = styled.div<{ isOpen: boolean; isExtreme?: boolean }>`

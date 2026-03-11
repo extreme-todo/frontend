@@ -135,6 +135,7 @@ export const EditUI = memo(
                 tomato={durationValue}
                 handleTomato={handleTomato}
                 isExtreme={isExtreme}
+                label="TODO 반복 시간 설정"
               />
             </div>
             <BtnAtom
