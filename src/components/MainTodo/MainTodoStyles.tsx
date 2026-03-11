@@ -73,7 +73,7 @@ export const MainTodoCenter = styled.div`
     padding-right: 2.125rem;
     text-align: right;
     box-sizing: border-box;
-    z-index: 1;
+    z-index: 0; /* 1에서 0으로 하향 조정하여 메인 카드보다 뒤로 배치 */
     & > *:only-child {
       margin-left: auto;
     }
