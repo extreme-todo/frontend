@@ -10,15 +10,10 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import { QueryClient } from '@tanstack/react-query';
-
 import styled from '@emotion/styled';
 import useAlarm from './hooks/useAlert';
 import { AppProviders } from './contexts/AppProviders';
-
-export const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } },
-});
+import { queryClient } from './shared/queryClient';
 
 export type NavigationPageType = 'Welcome' | 'Main' | 'Focused';
 

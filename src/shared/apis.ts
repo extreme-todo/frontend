@@ -5,7 +5,7 @@ import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
 import { ICategory, IFocusTime, ISettings } from './interfaces';
 import { groupByDate } from './timeUtils';
 import { RandomTagColorList } from './RandomTagColorList';
-import { queryClient } from '../App';
+import { queryClient } from './queryClient';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
