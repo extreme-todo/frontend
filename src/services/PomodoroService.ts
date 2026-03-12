@@ -91,6 +91,13 @@ export class PomodoroServiceClass {
       .subscribe();
   }
 
+  dispose() {
+    if (this.PomodoroTimerSubscription) {
+      this.PomodoroTimerSubscription.unsubscribe();
+      this.PomodoroTimerSubscription = null;
+    }
+  }
+
   setPomodoroSpeed(speed: number) {
     if (this.isDevelopmentMode === false) {
       console.warn(
