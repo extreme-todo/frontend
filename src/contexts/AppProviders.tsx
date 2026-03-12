@@ -11,29 +11,62 @@ import GlobalStyle from '../styles/Global';
 import { designTheme as Theme } from '../styles/theme';
 import { ThemeProvider } from '@emotion/react';
 
-interface AppProvidersProps {
+interface ChildrenProps {
   children: ReactNode;
-  queryClient: QueryClient;
 }
 
-export const AppProviders: React.FC<AppProvidersProps> = ({
-  children,
-  queryClient,
-}) => {
+/**
+ * 1. UI/Style Layer
+ */
+export const UIProviders: React.FC<ChildrenProps> = ({ children }) => {
   return (
     <ThemeProvider theme={Theme}>
       <GlobalStyle />
-      <LoginProvider>
-        <QueryClientProvider client={queryClient}>
-          <ResponsiveProvider>
-            <PomodoroProvider>
-              <CurrentTodoProvider>
-                <ExtremeModeProvider>{children}</ExtremeModeProvider>
-              </CurrentTodoProvider>
-            </PomodoroProvider>
-          </ResponsiveProvider>
-        </QueryClientProvider>
-      </LoginProvider>
+      <ResponsiveProvider>{children}</ResponsiveProvider>
     </ThemeProvider>
+  );
+};
+
+/**
+ * 2. Data Access Layer
+ */
+export const QueryProvider: React.FC<{
+  children: ReactNode;
+  queryClient: QueryClient;
+}> = ({ children, queryClient }) => {
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
+
+/**
+ * 3. Business Logic Layer
+ * 주의: QueryProvider 내부에서 사용해야 함
+ */
+export const LogicProviders: React.FC<ChildrenProps> = ({ children }) => {
+  return (
+    <LoginProvider>
+      <PomodoroProvider>
+        <CurrentTodoProvider>
+          <ExtremeModeProvider>{children}</ExtremeModeProvider>
+        </CurrentTodoProvider>
+      </PomodoroProvider>
+    </LoginProvider>
+  );
+};
+
+/**
+ * Full Application Stack
+ */
+export const AppProviders: React.FC<{
+  children: ReactNode;
+  queryClient: QueryClient;
+}> = ({ children, queryClient }) => {
+  return (
+    <UIProviders>
+      <QueryProvider queryClient={queryClient}>
+        <LogicProviders>{children}</LogicProviders>
+      </QueryProvider>
+    </UIProviders>
   );
 };

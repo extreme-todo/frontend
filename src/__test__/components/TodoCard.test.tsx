@@ -1,5 +1,5 @@
 import React, { act } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 
 import { TodoCard } from '../../components';
 
@@ -9,12 +9,10 @@ import { IChildProps } from '../../shared/interfaces';
 
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 
-import { ThemeProvider } from '@emotion/react';
-import { designTheme } from '../../styles/theme';
-
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
+import { UIProviders, QueryProvider } from '../../contexts/AppProviders';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,11 +25,11 @@ const queryClient = new QueryClient({
 const randomTagColor = RandomTagColorList.getInstance();
 
 const wrapperCreator = ({ children }: IChildProps) => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider theme={designTheme}>
+  <UIProviders>
+    <QueryProvider queryClient={queryClient}>
       <EditContextProvider>{children}</EditContextProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+    </QueryProvider>
+  </UIProviders>
 );
 
 describe('TodoCard', () => {
@@ -67,6 +65,7 @@ describe('TodoCard', () => {
         order={1}
         isThisEdit={false}
         setEditTodoId={setEditTodoId}
+        isExtreme={false}
       />,
       wrapperCreator,
     );
@@ -155,6 +154,7 @@ describe('TodoCard', () => {
             order={1}
             isThisEdit={false}
             setEditTodoId={setEditTodoIdMock}
+            isExtreme={false}
           />,
           wrapperCreator,
         );
@@ -197,6 +197,7 @@ describe('TodoCard', () => {
           order={1}
           isThisEdit={false}
           setEditTodoId={jest.fn()}
+          isExtreme={false}
         />,
         wrapperCreator,
       );
@@ -242,6 +243,7 @@ describe('TodoCard', () => {
             order={1}
             isThisEdit={true}
             setEditTodoId={jest.fn()}
+            isExtreme={false}
           />,
           wrapperCreator,
         );
@@ -488,6 +490,7 @@ describe('TodoCard', () => {
               order={1}
               isThisEdit={true} // 직접 편집 모드로 설정
               setEditTodoId={setEditTodoIdMock}
+              isExtreme={false}
             />
           </div>,
           wrapperCreator,
@@ -524,6 +527,7 @@ describe('TodoCard', () => {
             order={1}
             isThisEdit={true}
             setEditTodoId={setEditTodoIdMock}
+            isExtreme={false}
           />,
           wrapperCreator,
         );

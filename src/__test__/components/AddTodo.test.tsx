@@ -1,4 +1,5 @@
 import React, { act } from 'react';
+import { QueryClient } from '@tanstack/react-query';
 
 import { AddTodo } from '../../components';
 
@@ -7,8 +8,7 @@ import { render } from '@testing-library/react';
 import { IChildProps } from '../../shared/interfaces';
 
 import userEvent from '@testing-library/user-event';
-import { QueryClient } from '@tanstack/react-query';
-import { AppProviders } from '../../contexts/AppProviders';
+import { UIProviders, QueryProvider, LogicProviders } from '../../contexts/AppProviders';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,7 +28,11 @@ describe('AddTodo', () => {
       renderUI = () =>
         render(<AddTodo handleClose={jest.fn} />, {
           wrapper: ({ children }: IChildProps) => (
-            <AppProviders queryClient={queryClient}>{children}</AppProviders>
+            <UIProviders>
+              <QueryProvider queryClient={queryClient}>
+                <LogicProviders>{children}</LogicProviders>
+              </QueryProvider>
+            </UIProviders>
           ),
         });
     });

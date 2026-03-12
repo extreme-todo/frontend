@@ -1,13 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@emotion/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FocusedTime } from '../../components';
-import { designTheme } from '../../styles/theme';
 import React from 'react';
 import { ICategory, IFocusTime } from '../../shared/interfaces';
 import { categoryApi, timerApi } from '../../shared/apis';
-import { formatTime, getDateInFormat } from '../../shared/timeUtils';
-import { AppProviders } from '../../contexts/AppProviders';
+import { formatTime } from '../../shared/timeUtils';
+import { UIProviders, QueryProvider, LogicProviders } from '../../contexts/AppProviders';
+import { QueryClient } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,32 +49,36 @@ describe('FocusedTime Component', () => {
 
   const renderComponent = () =>
     render(
-      <AppProviders queryClient={queryClient}>
-        <FocusedTime
-          handleClose={function (): void {
-            throw new Error('Function not implemented.');
-          }}
-        />
-      </AppProviders>,
+      <UIProviders>
+        <QueryProvider queryClient={queryClient}>
+          <LogicProviders>
+            <FocusedTime
+              handleClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          </LogicProviders>
+        </QueryProvider>
+      </UIProviders>,
     );
 
-  it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', () => {
+  it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', async () => {
     renderComponent();
     expect(timerApi.getRecords).toHaveBeenCalledWith(
       -new Date().getTimezoneOffset(),
       'day',
     );
-    expect(
-      screen.findByText(
-        formatTime(
-          Math.floor(
-            (mockRecordData.data.total.focused -
-              mockRecordData.data.total.prevFocused) /
-              60000,
-          ),
-        ),
+    
+    const expectedTime = formatTime(
+      Math.floor(
+        (mockRecordData.data.total.focused -
+          mockRecordData.data.total.prevFocused) /
+          60000,
       ),
     );
+    
+    // 텍스트가 여러 노드에 나뉘어 있을 수 있으므로 정규표현식이나 함수형 매처 사용
+    expect(await screen.findByText(new RegExp(expectedTime))).toBeInTheDocument();
   });
 
   it('Day, Week, Month를 클릭하면 각 버튼이 활성화되며 데이터를 요청한다', () => {
