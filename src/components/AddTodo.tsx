@@ -249,8 +249,8 @@ export const AddTodo = ({
                   borderColor: titleError
                     ? 'extreme_orange'
                     : isExtreme
-                    ? 'extreme_dark'
-                    : 'primary1',
+                      ? 'extreme_dark'
+                      : 'primary1',
                 }}
                 tabIndex={0}
               />
@@ -336,10 +336,10 @@ export const AddTodo = ({
 const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
   overflow: visible;
   background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.primary2};
+  theme: {
+    color: { backgroundColor },
+  },
+}) => backgroundColor.primary2};
   justify-content: space-between;
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
@@ -399,6 +399,7 @@ const TomatoContainer = styled.div`
 
 const FooterWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
+  /* flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')}; */
   width: 100%;
   column-gap: 1.5625rem;
   align-items: flex-end; /* 버튼을 셀렉터 높이에 맞춤 */

@@ -173,11 +173,11 @@ const RangeInputWrapper = styled.div`
 `;
 const AssistantLine = styled.div<{ isExtreme?: boolean }>`
   background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-    isExtreme,
-  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
+  theme: {
+    color: { backgroundColor },
+  },
+  isExtreme,
+}) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   height: 0.25rem;
   border-radius: 50px;
   width: 100%;
@@ -207,11 +207,11 @@ const InputTick = styled.div<{ isExtreme?: boolean }>`
   width: 0.625rem;
   height: 0.625rem;
   background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-    isExtreme,
-  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
+  theme: {
+    color: { backgroundColor },
+  },
+  isExtreme,
+}) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   border-radius: 50%;
 `;
 
