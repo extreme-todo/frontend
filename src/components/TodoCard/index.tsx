@@ -28,11 +28,6 @@ import {
 import { UpdateDto, UpdateSchema } from '../../DB/indexed';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import {
-  DraggableProvidedDragHandleProps,
-  DraggableStateSnapshot,
-} from 'react-beautiful-dnd';
-
 import { formatTime } from '../../shared/timeUtils';
 import {
   categoryValidation,
@@ -45,8 +40,6 @@ import { ZodError } from 'zod';
 
 interface ITodoCardProps {
   todoData: TodoEntity;
-  dragHandleProps?: DraggableProvidedDragHandleProps | null;
-  snapshot?: DraggableStateSnapshot;
   focusStep: focusStep;
   randomTagColor: RandomTagColorList;
   isExtreme: boolean;
@@ -54,14 +47,16 @@ interface ITodoCardProps {
   order: number;
   isThisEdit: boolean;
   setEditTodoId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
 const ramdomTagColorList = RandomTagColorList.getInstance();
 
 export const TodoCard = ({
   todoData,
-  dragHandleProps,
-  snapshot,
   focusStep,
   randomTagColor,
   isCurrTodo,
@@ -69,6 +64,10 @@ export const TodoCard = ({
   isThisEdit,
   setEditTodoId,
   isExtreme,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
 }: ITodoCardProps) => {
   const { id, date: prevDate, todo, categories, done, duration } = todoData;
 
@@ -383,58 +382,71 @@ export const TodoCard = ({
       isThisEdit={isThisEdit}
       onSubmit={handleEditSubmit}
     >
-      <TitleContainer>
-        <div>
-          <HandlerIconAndOrder
+      <MainContent>
+        <TitleContainer>
+          <div>
+            <HandlerIconAndOrder done={done} order={order} />
+            <TitleOrInput
+              titleValue={titleValue}
+              isThisEdit={isThisEdit}
+              handleChangeTitle={handleChangeTitle}
+              handleBlurTitle={handleTitleBlur}
+              todo={todo}
+              titleError={titleError}
+            />
+          </div>
+          <TopRightCornerIcon
             isCurrTodo={isCurrTodo}
             done={done}
             isThisEdit={isThisEdit}
-            order={order}
-            dragHandleProps={dragHandleProps}
+            handleEditCancel={handleEditCancel}
+            handleDeleteButton={handleDeleteButton}
           />
-          <TitleOrInput
-            titleValue={titleValue}
-            isThisEdit={isThisEdit}
-            handleChangeTitle={handleChangeTitle}
-            handleBlurTitle={handleTitleBlur}
-            todo={todo}
-            titleError={titleError}
-          />
-        </div>
-        <TopRightCornerIcon
-          isCurrTodo={isCurrTodo}
+        </TitleContainer>
+        <CategoryContent
+          categoryArray={categoryArray}
+          handleAddCategory={handleAddCategory}
+          handleDeleteCategory={handleDeleteCategory}
+          categoryValue={categoryValue}
+          handleChangeCategory={handleChangeCategory}
+          tagColorList={randomTagColor.getColorList}
+          isThisEdit={isThisEdit}
+          categories={categories}
+          categoryError={categoryError}
+        />
+        <FooterContent
           done={done}
           isThisEdit={isThisEdit}
-          isDragging={snapshot?.isDragging}
-          handleEditCancel={handleEditCancel}
-          handleDeleteButton={handleDeleteButton}
+          isDisabled={titleValue.length === 0 || titleError || isLoading}
+          isSubmitting={isLoading}
+          duration={formatTime(focusStep * todoData.duration)}
+          handleEditButton={handleEditButton}
+          durationValue={durationValue}
+          isCurrTodo={isCurrTodo}
+          setShowTomatoInput={setShowTomatoInput}
+          setTriggerElement={setTriggerElement}
         />
-      </TitleContainer>
-      <CategoryContent
-        categoryArray={categoryArray}
-        handleAddCategory={handleAddCategory}
-        handleDeleteCategory={handleDeleteCategory}
-        categoryValue={categoryValue}
-        handleChangeCategory={handleChangeCategory}
-        tagColorList={randomTagColor.getColorList}
-        isDragging={snapshot?.isDragging}
-        isThisEdit={isThisEdit}
-        categories={categories}
-        categoryError={categoryError}
-      />
-      <FooterContent
-        isDragging={snapshot?.isDragging}
-        done={done}
-        isThisEdit={isThisEdit}
-        isDisabled={titleValue.length === 0 || titleError || isLoading}
-        isSubmitting={isLoading}
-        duration={formatTime(focusStep * todoData.duration)}
-        handleEditButton={handleEditButton}
-        durationValue={durationValue}
-        isCurrTodo={isCurrTodo}
-        setShowTomatoInput={setShowTomatoInput}
-        setTriggerElement={setTriggerElement}
-      />
+      </MainContent>
+      {!done && (
+        <OrderButtonsColumn>
+          <OrderBtn
+            type="button"
+            onClick={onMoveUp}
+            disabled={isFirst || isCurrTodo || !onMoveUp}
+            aria-label="move up"
+          >
+            ▲
+          </OrderBtn>
+          <OrderBtn
+            type="button"
+            onClick={onMoveDown}
+            disabled={isLast || isCurrTodo || !onMoveDown}
+            aria-label="move down"
+          >
+            ▼
+          </OrderBtn>
+        </OrderButtonsColumn>
+      )}
       {showTomatoInput && (
         <PopperAtom
           popperElement={popperElement}
@@ -479,8 +491,8 @@ const TodoCardContainer = styled.div<{
   isThisEdit: boolean;
 }>`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: row;
+  align-items: stretch;
   /* width: 24.5rem; */
   width: 100%;
 
@@ -538,6 +550,44 @@ const TodoCardContainer = styled.div<{
   #arrow {
     position: absolute;
     z-index: -1;
+  }
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+`;
+
+const OrderButtonsColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const OrderBtn = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.color.backgroundColor.primary2};
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  line-height: 1;
+
+  &:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.7;
   }
 `;
 

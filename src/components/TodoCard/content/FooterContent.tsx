@@ -4,7 +4,6 @@ import { BtnAtom, IconAtom, TagAtom, TypoAtom } from '../../../atoms';
 import { formatTime } from '../../../shared/timeUtils';
 
 interface IFooterContentProps {
-  isDragging: boolean | undefined;
   done: boolean;
   isThisEdit: boolean;
   isCurrTodo: boolean;
@@ -21,7 +20,6 @@ interface IFooterContentProps {
 
 export const FooterContent = memo(
   ({
-    isDragging,
     done,
     isThisEdit,
     duration,
@@ -33,7 +31,7 @@ export const FooterContent = memo(
     isDisabled,
     isSubmitting,
   }: IFooterContentProps) => {
-    if (isDragging || done) return null;
+    if (done) return null;
     else if (isThisEdit) {
       return (
         <FooterContainer>

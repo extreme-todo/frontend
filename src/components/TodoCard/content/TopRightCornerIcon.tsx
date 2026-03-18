@@ -6,18 +6,16 @@ export const TopRightCornerIcon = memo(
     isCurrTodo,
     done,
     isThisEdit,
-    isDragging,
     handleEditCancel,
     handleDeleteButton,
   }: {
     isCurrTodo: boolean;
     done: boolean;
     isThisEdit: boolean;
-    isDragging: boolean | undefined;
     handleEditCancel: () => void;
     handleDeleteButton: () => void;
   }) => {
-    if (isCurrTodo || done || isDragging) return null;
+    if (isCurrTodo || done) return null;
     else if (isThisEdit) {
       return (
         <BtnAtom handleOnClick={handleEditCancel}>

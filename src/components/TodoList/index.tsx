@@ -12,29 +12,17 @@ import { TodoEntity } from '../../DB/indexedAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { todosApi } from '../../shared/apis';
 
-/* react DnD */
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-  useMouseSensor,
-} from 'react-beautiful-dnd';
-
 /* hooks */
 import {
-  useDraggableInPortal,
   useEdit,
   type focusStep,
-  useTouchSensor,
   useIsMobile,
   useExtremeMode,
 } from '../../hooks';
 
 /* etc */
 import styled from '@emotion/styled';
-import { getDateInFormat, setTimeInFormat } from '../../shared/timeUtils';
-import { onDragDropHandler } from './dragHelper';
+import { setTimeInFormat } from '../../shared/timeUtils';
 import { addTodoMocks } from './mockAddTodos';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 import { ModalType } from '../MainTodo';
@@ -116,12 +104,6 @@ export const TodoList = memo(
       },
     });
 
-    const droppableId = useMemo(
-      () =>
-        (todos && Array.from(todos.keys())[0]) ?? getDateInFormat(new Date()),
-      [todos],
-    );
-
     const todoList = useMemo(
       () => todos && Array.from(todos.values())[0],
       [todos],
@@ -133,17 +115,29 @@ export const TodoList = memo(
     );
 
     /* custom hook 호출 */
-    const optionalPortal = useDraggableInPortal();
     const [editTodoId, setEditTodoId] = useEdit();
 
-    /* react dnd의 onDragDropHandler */
-    const handleDragEnd = useCallback(
-      (info: DropResult) => {
+    const moveReorderHandler = useCallback(
+      (todo: TodoEntity, direction: 'up' | 'down') => {
         if (!todos) return;
-        const reorderedTodos = onDragDropHandler(info, todos);
-        reorderedTodos && reorderMutate(reorderedTodos);
+        const copyMapTodo = new Map(todos);
+        const dateKey = Array.from(copyMapTodo.keys())[0];
+        const copyTodo = (copyMapTodo.get(dateKey) ?? []).slice();
+        const idx = copyTodo.findIndex((t) => t.id === todo.id);
+        if (idx === -1) return;
+
+        const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+        if (swapIdx < 0 || swapIdx >= copyTodo.length) return;
+
+        const prevOrder = todo.order as number;
+        const newOrder = copyTodo[swapIdx].order as number;
+
+        [copyTodo[idx], copyTodo[swapIdx]] = [copyTodo[swapIdx], copyTodo[idx]];
+        copyMapTodo.set(dateKey, copyTodo);
+
+        reorderMutate({ prevOrder, newOrder, todolist: copyMapTodo });
       },
-      [todos],
+      [todos, reorderMutate],
     );
 
     /* dev mode에서 로컬 indexed DB에 mock todo data 추가하는 핸들러 */
@@ -248,63 +242,36 @@ export const TodoList = memo(
                       isExtreme={isExtreme}
                     />
                   )}
-                  <DragDropContext
-                    onDragEnd={handleDragEnd}
-                    enableDefaultSensors={false}
-                    sensors={[useMouseSensor, useTouchSensor]}
-                  >
-                    <Droppable droppableId={droppableId}>
-                      {(provided) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                          className="innerList"
-                        >
-                          {todoList.map(
-                            (todo, idx) =>
-                              todo.id !== currentTodo?.id && (
-                                <Draggable
-                                  draggableId={String(todo.id)}
-                                  index={idx}
-                                  key={todo.id}
-                                >
-                                  {optionalPortal((provided, snapshot) => (
-                                    <li
-                                      {...provided.draggableProps}
-                                      ref={provided.innerRef}
-                                    >
-                                      <MemoTodoCard
-                                        isThisEdit={editTodoId === todo.id}
-                                        setEditTodoId={setEditTodoId}
-                                        dragHandleProps={
-                                          provided.dragHandleProps
-                                        }
-                                        todoData={todo}
-                                        snapshot={snapshot}
-                                        focusStep={focusStep}
-                                        randomTagColor={randomTagColor}
-                                        isCurrTodo={
-                                          currentTodo
-                                            ? currentTodo.id === todo.id
-                                            : false
-                                        }
-                                        order={
-                                          idx +
-                                          1 +
-                                          (doneTodos ? doneTodos.size : 0)
-                                        }
-                                        isExtreme={isExtreme}
-                                      />
-                                    </li>
-                                  ))}
-                                </Draggable>
-                              ),
-                          )}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
+                  <div className="innerList">
+                    {(() => {
+                      const filteredList = todoList.filter(
+                        (todo) => todo.id !== currentTodo?.id,
+                      );
+                      return filteredList.map((todo, idx) => (
+                        <li key={todo.id}>
+                          <MemoTodoCard
+                            isThisEdit={editTodoId === todo.id}
+                            setEditTodoId={setEditTodoId}
+                            todoData={todo}
+                            focusStep={focusStep}
+                            randomTagColor={randomTagColor}
+                            isCurrTodo={false}
+                            order={
+                              idx +
+                              1 +
+                              (doneTodoList?.length ?? 0) +
+                              (currentTodo ? 1 : 0)
+                            }
+                            isExtreme={isExtreme}
+                            onMoveUp={() => moveReorderHandler(todo, 'up')}
+                            onMoveDown={() => moveReorderHandler(todo, 'down')}
+                            isFirst={idx === 0}
+                            isLast={idx === filteredList.length - 1}
+                          />
+                        </li>
+                      ));
+                    })()}
+                  </div>
                 </List>
               ) : (
                 <EmptyList>
@@ -351,6 +318,7 @@ const TodoListContainer = styled(CardAtom)`
   .todo-list-wrapper {
     width: 100%;
     flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: row;
     column-gap: 1rem;
@@ -359,14 +327,16 @@ const TodoListContainer = styled(CardAtom)`
 
 const ListSection = styled.section`
   width: 50%;
-  height: 100%;
+  min-height: 0;
   display: grid;
-  grid-template-rows: 1fr 9fr;
+  grid-template-rows: auto 1fr;
 
   .header__todo {
     justify-content: space-between;
-    height: 1.5rem;
+    min-height: 1.5rem;
+    padding-bottom: 0.5rem;
     display: flex;
+    align-items: center;
   }
 `;
 
