@@ -68,12 +68,14 @@ describe('FocusedTime Component', () => {
       'day',
     );
     await screen.findByText(
-      formatTime(
-        Math.floor(
-          (mockRecordData.data.total.focused -
-            mockRecordData.data.total.prevFocused) /
-            60000,
-        ),
+      new RegExp(
+        `\\+${formatTime(
+          Math.floor(
+            (mockRecordData.data.total.focused -
+              mockRecordData.data.total.prevFocused) /
+              60000,
+          ),
+        )}`,
       ),
     );
   });
