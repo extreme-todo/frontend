@@ -96,7 +96,11 @@ const TomatoSelectorAtom = ({
           placement="bottom-start"
           offset={[0, 0]}
         >
-          <OptionList isExtreme={isExtreme} style={{ width: triggerWidth }}>
+          <OptionList 
+            isExtreme={isExtreme} 
+            style={{ width: triggerWidth }}
+            aria-label="tomatoInput"
+          >
             {Array.from({ length: tickCount + 1 }).map((_, index) => {
               const value = min + index;
               const isSelected = value === tomato;

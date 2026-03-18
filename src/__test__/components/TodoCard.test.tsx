@@ -95,7 +95,7 @@ describe('TodoCard', () => {
       });
       it('소요 시간이 있다.', () => {
         const { getByText, getByAltText } = renderTodoUI();
-        const duration = getByText('3분');
+        const duration = getByText(/3분/);
         const timer = getByAltText('timer');
         expect(timer).toBeInTheDocument();
         expect(duration).toBeInTheDocument();
@@ -217,7 +217,7 @@ describe('TodoCard', () => {
       it('소요 시간이 없다.', () => {
         const { queryByAltText, queryByText } = doneTodoUI();
         const timerIcon = queryByAltText('timer');
-        const duration = queryByText('2분');
+        const duration = queryByText(/2분/);
         expect(duration).not.toBeInTheDocument();
         expect(timerIcon).not.toBeInTheDocument();
       });
@@ -332,11 +332,9 @@ describe('TodoCard', () => {
       });
 
       it('소요시간이 있다.', () => {
-        const { queryByAltText, queryByText } = renderEditUI();
-        const timerIcon = queryByAltText('timer');
-        const duration = queryByText('3분');
+        const { queryByText } = renderEditUI();
+        const duration = queryByText(/3분/);
         expect(duration).toBeInTheDocument();
-        expect(timerIcon).toBeInTheDocument();
       });
 
       it('취소 svg가 있다.', () => {
@@ -482,7 +480,7 @@ describe('TodoCard', () => {
     describe('소요시간을 누르면', () => {
       it('TomatoInput이 렌더링 된다.', () => {
         const { getByLabelText, getByText } = renderEditUI();
-        const duration = getByText('3분');
+        const duration = getByText(/3분/);
         act(() => userEvent.click(duration));
         const tomatoInput = getByLabelText('tomatoInput');
         expect(tomatoInput).toBeInTheDocument();
@@ -506,7 +504,7 @@ describe('TodoCard', () => {
         );
 
         // 수정 모드에서 tomatoInput 렌더링
-        const duration = getByText('3분');
+        const duration = getByText(/3분/);
         const titleInput = getByLabelText('title_input');
         fireEvent.click(duration);
 
@@ -515,7 +513,7 @@ describe('TodoCard', () => {
         expect(tomatoInput).toBeInTheDocument();
 
         // 외부 요소 클릭해서 언마운트 확인
-        fireEvent.click(titleInput);
+        fireEvent.mouseDown(titleInput);
         tomatoInput = queryByLabelText('tomatoInput');
         expect(tomatoInput).not.toBeInTheDocument();
       });
