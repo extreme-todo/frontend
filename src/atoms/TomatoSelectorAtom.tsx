@@ -96,8 +96,8 @@ const TomatoSelectorAtom = ({
           placement="bottom-start"
           offset={[0, 0]}
         >
-          <OptionList 
-            isExtreme={isExtreme} 
+          <OptionList
+            isExtreme={isExtreme}
             style={{ width: triggerWidth }}
             aria-label="tomatoInput"
           >
