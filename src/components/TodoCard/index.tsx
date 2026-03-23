@@ -36,7 +36,7 @@ interface ITodoCardProps {
   isLast?: boolean;
 }
 
-const ramdomTagColorList = RandomTagColorList.getInstance();
+const randomTagColorList = RandomTagColorList.getInstance();
 
 export const TodoCard = ({
   todoData,
@@ -266,7 +266,7 @@ export const TodoCard = ({
           const copy = categoryArray.slice();
           copy.push(trimmed);
           setCategoryArray(copy);
-          ramdomTagColorList.setColor = trimmed;
+          randomTagColorList.setColor = trimmed;
         }
 
         setCategoryValue('');

@@ -48,7 +48,7 @@ interface IAddTodoProps {
   mobileTopButtonSlot?: ReactNode;
 }
 
-const ramdomTagColorList = RandomTagColorList.getInstance();
+const randomTagColorList = RandomTagColorList.getInstance();
 
 export const AddTodo = ({
   handleClose,
@@ -155,7 +155,7 @@ export const AddTodo = ({
             const copy = categoryArray.slice();
             copy.push(trimmed);
             setCategoryArray(copy);
-            ramdomTagColorList.setColor = trimmed;
+            randomTagColorList.setColor = trimmed;
           }
           setCategory('');
         }
@@ -281,7 +281,7 @@ export const AddTodo = ({
               handleSubmit={handleSubmitCategory}
               handleClick={handleClickCategory}
               handleChangeCategory={handleCategoryInput}
-              tagColorList={ramdomTagColorList.getColorList}
+              tagColorList={randomTagColorList.getColorList}
             />
             {categoryError && (
               <p className="category_error" role="alert">
