@@ -12,7 +12,7 @@ import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
@@ -316,11 +316,9 @@ describe('TodoCard', () => {
         }) as HTMLInputElement;
 
         expect(categoryInput).toBeInTheDocument();
-        waitFor(() =>
-          fireEvent.change(categoryInput, {
-            target: { value: 'add new category' },
-          }),
-        );
+        fireEvent.change(categoryInput, {
+          target: { value: 'add new category' },
+        });
 
         expect(categoryInput).toHaveValue('add new category');
       });
