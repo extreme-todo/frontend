@@ -28,7 +28,7 @@ interface IEditUIProps {
   tagColorList: Record<string, TagColorName>;
   categoryError?: string;
   durationValue: number;
-  focusStep: focusStep;
+  focusStepValue: focusStep;
   handleTomato: (count: number) => void;
   isSubmitting: boolean;
   isDisabled: boolean;
@@ -57,7 +57,7 @@ export const EditUI = memo(
     tagColorList,
     categoryError,
     durationValue,
-    focusStep,
+    focusStepValue,
     handleTomato,
     isSubmitting,
     isDisabled,
@@ -131,7 +131,7 @@ export const EditUI = memo(
               <TomatoSelectorAtom
                 max={10}
                 min={1}
-                period={focusStep}
+                period={focusStepValue}
                 tomato={durationValue}
                 handleTomato={handleTomato}
                 isExtreme={isExtreme}

@@ -323,7 +323,7 @@ export const TodoCard = ({
         tagColorList={randomTagColor.getColorList}
         categoryError={categoryError}
         durationValue={durationValue}
-        focusStep={focusStep}
+        focusStepValue={focusStep}
         handleTomato={handleTomato}
         isSubmitting={isLoading}
         isDisabled={titleValue.length === 0 || titleError || isLoading}
