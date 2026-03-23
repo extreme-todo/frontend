@@ -68,44 +68,45 @@ export const EditUI = memo(
     isLast,
     isCurrTodo,
     isExtreme,
-    }: IEditUIProps) => {
-      const handleInputRef = useCallback((node: HTMLInputElement | null) => {
-        node?.focus();
-      }, []);
+  }: IEditUIProps) => {
+    const handleInputRef = useCallback((node: HTMLInputElement | null) => {
+      node?.focus();
+    }, []);
 
-      return (
-        <EditCardContainer onSubmit={handleEditSubmit}>
-          <MainContent>
-            <TitleContainer>
-              <div style={{ display: 'flex' }}>
-                <TypoAtom
-                  fontSize="h3"
-                  fontColor="primary1"
-                  className="order-text"
-                >
-                  {order}.
-                </TypoAtom>
-                <label htmlFor="title" style={{ width: '100%' }}>
-                  <InputAtom.Underline
-                    value={titleValue}
-                    handleChange={handleChangeTitle}
-                    handleBlur={handleTitleBlur}
-                    placeholder="할 일을 입력하세요"
-                    ariaLabel="title_input"
-                    name="title"
-                    className="todoTitle"
-                    inputRef={handleInputRef}
-                    styleOption={{
-                      borderWidth: titleError ? '2px' : '1px',
-                      padding: '0 0 0 0',
-                      height: '1.25rem',
-                      font: 'h3',
-                      borderColor: titleError ? 'extreme_orange' : 'primary1',
-                      fontColor: 'primary1',
-                    }}
-                  />
-                </label>
-              </div>            <BtnAtom handleOnClick={handleEditCancel}>
+    return (
+      <EditCardContainer onSubmit={handleEditSubmit}>
+        <MainContent>
+          <TitleContainer>
+            <div style={{ display: 'flex' }}>
+              <TypoAtom
+                fontSize="h3"
+                fontColor="primary1"
+                className="order-text"
+              >
+                {order}.
+              </TypoAtom>
+              <label htmlFor="title" style={{ width: '100%' }}>
+                <InputAtom.Underline
+                  value={titleValue}
+                  handleChange={handleChangeTitle}
+                  handleBlur={handleTitleBlur}
+                  placeholder="할 일을 입력하세요"
+                  ariaLabel="title_input"
+                  name="title"
+                  className="todoTitle"
+                  inputRef={handleInputRef}
+                  styleOption={{
+                    borderWidth: titleError ? '2px' : '1px',
+                    padding: '0 0 0 0',
+                    height: '1.25rem',
+                    font: 'h3',
+                    borderColor: titleError ? 'extreme_orange' : 'primary1',
+                    fontColor: 'primary1',
+                  }}
+                />
+              </label>
+            </div>{' '}
+            <BtnAtom handleOnClick={handleEditCancel}>
               <IconAtom src={'icon/closeDark.svg'} size={1.25} alt="cancel" />
             </BtnAtom>
           </TitleContainer>
