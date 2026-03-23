@@ -46,7 +46,7 @@ describe('useCheckLogin', () => {
       expect(isLogin).toHaveTextContent('true');
     });
     it('localstorage에 토큰과 유저 정보가 없을 때 false이다.', () => {
-      mockLocalStorage(jest.fn(() => undefined));
+      mockLocalStorage(jest.fn(() => null));
 
       const { getByLabelText } = renderFn();
       const isLogin = getByLabelText('isLogin');
