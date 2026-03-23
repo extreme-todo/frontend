@@ -67,17 +67,19 @@ describe('FocusedTime Component', () => {
       -new Date().getTimezoneOffset(),
       'day',
     );
-    await screen.findByText(
-      new RegExp(
-        `\\+${formatTime(
-          Math.floor(
-            (mockRecordData.data.total.focused -
-              mockRecordData.data.total.prevFocused) /
-              60000,
-          ),
-        )}`,
+    expect(
+      await screen.findByText(
+        new RegExp(
+          `\\+${formatTime(
+            Math.floor(
+              (mockRecordData.data.total.focused -
+                mockRecordData.data.total.prevFocused) /
+                60000,
+            ),
+          )}`,
+        ),
       ),
-    );
+    ).toBeInTheDocument();
   });
 
   it('Day, Week, Month를 클릭하면 각 버튼이 활성화되며 데이터를 요청한다', () => {
