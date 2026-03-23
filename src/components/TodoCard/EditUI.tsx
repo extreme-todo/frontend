@@ -115,6 +115,7 @@ export const EditUI = memo(
             categoryError={categoryError !== undefined}
           >
             <CategoryInput
+              isExtreme={isExtreme}
               categories={categoryArray}
               handleSubmit={handleAddCategory}
               handleClick={handleDeleteCategory}
