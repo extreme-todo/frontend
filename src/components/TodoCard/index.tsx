@@ -270,6 +270,7 @@ const OrderButtonsColumn = styled.div`
   margin-left: 0.5rem;
   padding-left: 0.5rem;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 `;
 
 const OrderBtn = styled.button`
@@ -314,12 +315,16 @@ const TitleContainer = styled.div`
   }
 
   .todoTitle {
-    width: 17.125rem;
+    width: 100%;
+    max-width: 17.125rem;
   }
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     .todoTitle {
+      width: auto;
+      max-width: none;
+      flex: 1;
       font-size: ${({ theme }) => theme.fontSize.h2.size};
       /* 지정된 줄 수로 제한해서 말 줄임 하기 */
       -webkit-line-clamp: 3;
