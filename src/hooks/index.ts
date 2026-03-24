@@ -30,3 +30,5 @@ export {
   usePomodoroActions,
 } from './usePomodoro';
 export { useHandleDidntDo } from './useHandleDidntDo';
+export { useTodoListData } from './useTodoListData';
+export { useTodoUpdate } from './useTodoUpdate';
