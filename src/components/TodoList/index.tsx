@@ -1,8 +1,9 @@
-import { memo, ReactNode } from 'react';
+import { memo, ReactNode, useMemo, useState } from 'react';
 
 /* component */
 import { TodoCard } from '../';
 import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../../atoms';
+import { TodoTab } from './TodoTab';
 
 /* indexed DB */
 import { TodoEntity } from '../../DB/indexedAction';
@@ -256,6 +257,7 @@ const TodoListContainer = styled(CardAtom)`
     width: 100%;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 0.5rem;
   }
 
   .mobile-top-button-slot {
@@ -268,16 +270,16 @@ const TodoListContainer = styled(CardAtom)`
     flex: 1;
     min-height: 0;
     display: flex;
-    flex-direction: row;
+    flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')};
     column-gap: 1rem;
   }
 `;
 
-const ListSection = styled.section`
-  width: 50%;
+const ListSection = styled.section<{ isMobile: boolean }>`
+  width: ${({ isMobile }) => (isMobile ? '100%' : '50%')};
   min-height: 0;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: ${({ isMobile }) => (isMobile ? '1fr' : 'auto 1fr')};
 
   .header__todo {
     justify-content: space-between;
