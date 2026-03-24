@@ -1,4 +1,4 @@
-import { memo, ReactNode, useCallback, useMemo } from 'react';
+import { memo, ReactNode } from 'react';
 
 /* component */
 import { TodoCard } from '../';
@@ -7,16 +7,13 @@ import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../../atoms';
 /* indexed DB */
 import { TodoEntity } from '../../DB/indexedAction';
 
-/* react query */
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { todosApi } from '../../shared/apis';
-
 /* hooks */
 import {
   useEdit,
   type focusStep,
   useIsMobile,
   useExtremeMode,
+  useTodoListData,
 } from '../../hooks';
 
 /* etc */
@@ -24,30 +21,6 @@ import styled from '@emotion/styled';
 import { setTimeInFormat } from '../../shared/timeUtils';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 import { ModalType } from '../MainTodo';
-
-interface orderMutationHandlerArgs {
-  prevOrder: number;
-  newOrder: number;
-  id?: string;
-  newDate?: string;
-  todolist?: Map<string, TodoEntity[]>;
-}
-
-const orderMutationHandler = async ({
-  prevOrder,
-  newOrder,
-  id,
-  newDate,
-}: orderMutationHandlerArgs) => {
-  if (!newDate || !id) {
-    await todosApi.reorderTodos(prevOrder, newOrder);
-  } else {
-    await todosApi.updateTodo(id, {
-      date: setTimeInFormat(new Date(newDate)).toISOString(),
-    });
-    await todosApi.reorderTodos(prevOrder, newOrder);
-  }
-};
 
 const randomTagColor = RandomTagColorList.getInstance();
 
@@ -69,9 +42,6 @@ export const TodoList = memo(
     handleClose,
     mobileTopButtonSlot,
   }: ITodoListProps) => {
-    /* api 호출 */
-    const queryClient = useQueryClient();
-
     const isMobile = useIsMobile();
     const { isExtreme } = useExtremeMode();
 
@@ -247,8 +217,6 @@ export const TodoList = memo(
                               (currentTodo ? 1 : 0)
                             }
                             isExtreme={isExtreme}
-                            onMoveUp={() => moveReorderHandler(todo, 'up')}
-                            onMoveDown={() => moveReorderHandler(todo, 'down')}
                             isFirst={idx === 0}
                             isLast={idx === filteredList.length - 1}
                           />
