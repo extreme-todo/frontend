@@ -8,7 +8,6 @@ export {
   type ICurrentTodoData,
   type ICurrentTodoActions,
 } from './useCurrentTodo';
-export { useDraggableInPortal } from './useDraggableInPortal';
 export { useEdit, EditContextProvider } from './useEdit';
 export {
   EXTREME_MODE,
@@ -31,4 +30,3 @@ export {
   usePomodoroActions,
 } from './usePomodoro';
 export { useHandleDidntDo } from './useHandleDidntDo';
-export { useTouchSensor } from './useTouchSensor';
