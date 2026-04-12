@@ -13,9 +13,17 @@ import {
 import styled from '@emotion/styled';
 import useAlarm from './hooks/useAlert';
 import { AppProviders } from './contexts/AppProviders';
-import { queryClient } from './shared/queryClient';
+import { QueryClient } from '@tanstack/react-query';
 
 export type NavigationPageType = 'Welcome' | 'Main' | 'Focused';
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export interface NavigationListType {
   componentName: NavigationPageType;
