@@ -62,8 +62,9 @@ baseApi.interceptors.response.use(
   async (err: AxiosError) => {
     if (err.message === DIDNT_LOGIN_USER) return Promise.reject(err);
     const config = err.config as AxiosCustomRequest;
-    config.retryCount = config.retryCount ?? 0;
+    if (!config) return Promise.reject(err); // 핸들링 하지 않은 에러는 그대로 reject
 
+    config.retryCount = config.retryCount ?? 0;
     const shouldRetry = config.retryCount < MAX_RETRY_COUNT;
     if (shouldRetry) {
       config.retryCount += 1;
