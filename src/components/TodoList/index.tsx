@@ -19,7 +19,6 @@ import {
 
 /* etc */
 import styled from '@emotion/styled';
-import { setTimeInFormat } from '../../shared/timeUtils';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 import { ModalType } from '../MainTodo';
 
@@ -46,73 +45,163 @@ export const TodoList = memo(
     const isMobile = useIsMobile();
     const { isExtreme } = useExtremeMode();
 
-    const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
-      staleTime: Infinity,
-    });
-
-    const { data: doneTodos } = useQuery(
-      ['doneTodos'],
-      () => todosApi.getList(true),
-      { staleTime: Infinity },
-    );
-
-    const { mutate: reorderMutate } = useMutation(orderMutationHandler, {
-      onMutate({ todolist }: { todolist?: Map<string, TodoEntity[]> }) {
-        queryClient.cancelQueries({ queryKey: ['todos'] });
-        const prevTodoList = queryClient.getQueryData<
-          Map<string, TodoEntity[]> | undefined
-        >(['todos']);
-        queryClient.setQueryData(['todos'], todolist);
-
-        return prevTodoList;
-      },
-      onError(_err: any, _: any, context) {
-        queryClient.setQueryData(['todos'], context);
-      },
-    });
-
-    const todoList = useMemo(
-      () => todos && Array.from(todos.values())[0],
-      [todos],
-    );
-
-    const doneTodoList = useMemo(
-      () => doneTodos && Array.from(doneTodos.values())[0],
-      [doneTodos],
-    );
+    const { todoList, doneTodoList } = useTodoListData();
 
     /* custom hook 호출 */
     const [editTodoId, setEditTodoId] = useEdit();
 
-    const moveReorderHandler = useCallback(
-      (todo: TodoEntity, direction: 'up' | 'down') => {
-        if (!todos) return;
-        const copyMapTodo = new Map(todos);
-        const dateKey = Array.from(copyMapTodo.keys())[0];
-        const copyTodo = (copyMapTodo.get(dateKey) ?? []).slice();
-        const idx = copyTodo.findIndex((t) => t.id === todo.id);
-        if (idx === -1) return;
+    const [activeTab, setActiveTab] = useState<'todo' | 'done'>('todo');
 
-        const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
-        if (swapIdx < 0 || swapIdx >= copyTodo.length) return;
+    const doneListSection = useMemo(
+      () => (
+        <ListSection
+          isMobile={isMobile}
+          role={isMobile ? 'tabpanel' : undefined}
+          id="done-tabpanel"
+          aria-labelledby="done-tab"
+        >
+          {!isMobile && (
+            <div className="header__todo">
+              <TypoAtom fontSize="body" fontColor="primary2">
+                완료한 TODO
+              </TypoAtom>
+            </div>
+          )}
+          {doneTodoList ? (
+            <List>
+              {doneTodoList.map((doneTodo, idx) => (
+                <MemoTodoCard
+                  key={doneTodo.id}
+                  isThisEdit={editTodoId === doneTodo.id}
+                  setEditTodoId={setEditTodoId}
+                  todoData={doneTodo}
+                  focusStep={focusStep}
+                  randomTagColor={randomTagColor}
+                  isCurrTodo={false}
+                  order={idx + 1}
+                  isExtreme={isExtreme}
+                />
+              ))}
+            </List>
+          ) : (
+            <EmptyList>
+              <TypoAtom fontSize="body" fontColor="primary2">
+                🍅
+              </TypoAtom>
+              <TypoAtom fontSize="body" fontColor="primary2">
+                힘차게 시작해볼까요?
+              </TypoAtom>
+            </EmptyList>
+          )}
+        </ListSection>
+      ),
+      [doneTodoList, editTodoId, focusStep, isExtreme, isMobile, setEditTodoId],
+    );
 
-        const prevOrder = todo.order as number;
-        const newOrder = copyTodo[swapIdx].order as number;
-
-        [copyTodo[idx], copyTodo[swapIdx]] = [copyTodo[swapIdx], copyTodo[idx]];
-        copyMapTodo.set(dateKey, copyTodo);
-
-        reorderMutate({ prevOrder, newOrder, todolist: copyMapTodo });
-      },
-      [todos, reorderMutate],
+    const todoListSection = useMemo(
+      () => (
+        <ListSection
+          isMobile={isMobile}
+          role={isMobile ? 'tabpanel' : undefined}
+          id="todo-tabpanel"
+          aria-labelledby="todo-tab"
+        >
+          {!isMobile && (
+            <div className="header__todo">
+              <TypoAtom fontSize="body" fontColor="primary2">
+                남은 TODO
+              </TypoAtom>
+              <BtnAtom
+                handleOnClick={handleClose}
+                ariaLabel="close"
+                className="close__btn"
+                tabIndex={3}
+              >
+                <IconAtom size={1.5} alt="close" src="icon/closeYellow.svg" />
+              </BtnAtom>
+            </div>
+          )}
+          {todoList ? (
+            <List>
+              {currentTodo && (
+                <MemoTodoCard
+                  isThisEdit={editTodoId === currentTodo.id}
+                  setEditTodoId={setEditTodoId}
+                  todoData={currentTodo}
+                  focusStep={focusStep}
+                  randomTagColor={randomTagColor}
+                  isCurrTodo={true}
+                  order={(doneTodoList?.length ?? 0) + 1}
+                  isExtreme={isExtreme}
+                />
+              )}
+              <div className="innerList">
+                {(() => {
+                  const filteredList = todoList.filter(
+                    (todo) => todo.id !== currentTodo?.id,
+                  );
+                  return filteredList.map((todo, idx) => (
+                    <li key={todo.id}>
+                      <MemoTodoCard
+                        isThisEdit={editTodoId === todo.id}
+                        setEditTodoId={setEditTodoId}
+                        todoData={todo}
+                        focusStep={focusStep}
+                        randomTagColor={randomTagColor}
+                        isCurrTodo={false}
+                        order={
+                          idx +
+                          1 +
+                          (doneTodoList?.length ?? 0) +
+                          (currentTodo ? 1 : 0)
+                        }
+                        isExtreme={isExtreme}
+                        isFirst={idx === 0}
+                        isLast={idx === filteredList.length - 1}
+                      />
+                    </li>
+                  ));
+                })()}
+              </div>
+            </List>
+          ) : (
+            <EmptyList>
+              <BtnAtom
+                handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
+                btnStyle="extremeDarkBtn"
+              >
+                <div style={{ padding: '0.375rem 1.28125rem' }}>
+                  <TypoAtom fontSize="b1" fontColor="primary2">
+                    Todo+
+                  </TypoAtom>
+                </div>
+              </BtnAtom>
+            </EmptyList>
+          )}
+        </ListSection>
+      ),
+      [
+        currentTodo,
+        doneTodoList?.length,
+        editTodoId,
+        focusStep,
+        handleClose,
+        isExtreme,
+        isMobile,
+        openAddTodoModal,
+        setEditTodoId,
+        todoList,
+      ],
     );
 
     return (
       <>
+        {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
         <TodoListContainer
           bg={isExtreme ? 'extreme_dark' : 'primary1'}
           padding="1rem 1.5rem"
           className="card"
+          isMobile={isMobile}
         >
           {isMobile && (
             <div className="mobile-header-wrapper">
@@ -129,118 +218,26 @@ export const TodoList = memo(
               </BtnAtom>
             </div>
           )}
+          {isMobile && (
+            <TodoTab
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              isExtreme={isExtreme}
+            />
+          )}
           <div className="todo-list-wrapper">
-            <ListSection>
-              <div className="header__todo">
-                <TypoAtom fontSize="body" fontColor="primary2">
-                  완료한 TODO
-                </TypoAtom>
-              </div>
-              {doneTodoList ? (
-                <List>
-                  {doneTodoList.map((doneTodo, idx) => (
-                    <MemoTodoCard
-                      key={doneTodo.id}
-                      isThisEdit={editTodoId === doneTodo.id}
-                      setEditTodoId={setEditTodoId}
-                      todoData={doneTodo}
-                      focusStep={focusStep}
-                      randomTagColor={randomTagColor}
-                      isCurrTodo={false}
-                      order={idx + 1}
-                      isExtreme={isExtreme}
-                    />
-                  ))}
-                </List>
+            {isMobile ? (
+              activeTab === 'todo' ? (
+                todoListSection
               ) : (
-                <EmptyList>
-                  <TypoAtom fontSize="body" fontColor="primary2">
-                    🍅
-                  </TypoAtom>
-                  <TypoAtom fontSize="body" fontColor="primary2">
-                    힘차게 시작해볼까요?
-                  </TypoAtom>
-                </EmptyList>
-              )}
-            </ListSection>
-            <ListSection>
-              <div className="header__todo">
-                <TypoAtom fontSize="body" fontColor="primary2">
-                  남은 TODO
-                </TypoAtom>
-                {!isMobile && (
-                  <BtnAtom
-                    handleOnClick={handleClose}
-                    ariaLabel="close"
-                    className="close__btn"
-                    tabIndex={3}
-                  >
-                    <IconAtom
-                      size={1.5}
-                      alt="close"
-                      src="icon/closeYellow.svg"
-                    />
-                  </BtnAtom>
-                )}
-              </div>
-              {todoList ? (
-                <List>
-                  {currentTodo && (
-                    <MemoTodoCard
-                      isThisEdit={editTodoId === currentTodo.id}
-                      setEditTodoId={setEditTodoId}
-                      todoData={currentTodo}
-                      focusStep={focusStep}
-                      randomTagColor={randomTagColor}
-                      isCurrTodo={true}
-                      order={(doneTodoList?.length ?? 0) + 1}
-                      isExtreme={isExtreme}
-                    />
-                  )}
-                  <div className="innerList">
-                    {(() => {
-                      const filteredList = todoList.filter(
-                        (todo) => todo.id !== currentTodo?.id,
-                      );
-                      return filteredList.map((todo, idx) => (
-                        <li key={todo.id}>
-                          <MemoTodoCard
-                            isThisEdit={editTodoId === todo.id}
-                            setEditTodoId={setEditTodoId}
-                            todoData={todo}
-                            focusStep={focusStep}
-                            randomTagColor={randomTagColor}
-                            isCurrTodo={false}
-                            order={
-                              idx +
-                              1 +
-                              (doneTodoList?.length ?? 0) +
-                              (currentTodo ? 1 : 0)
-                            }
-                            isExtreme={isExtreme}
-                            isFirst={idx === 0}
-                            isLast={idx === filteredList.length - 1}
-                          />
-                        </li>
-                      ));
-                    })()}
-                  </div>
-                </List>
-              ) : (
-                <EmptyList>
-                  <BtnAtom
-                    handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
-                    btnStyle="extremeDarkBtn"
-                  >
-                    <div style={{ padding: '0.375rem 1.28125rem' }}>
-                      <TypoAtom fontSize="b1" fontColor="primary2">
-                        Todo+
-                      </TypoAtom>
-                    </div>
-                  </BtnAtom>
-                </EmptyList>
-              )}
-            </ListSection>
+                doneListSection
+              )
+            ) : (
+              <>
+                {doneListSection}
+                {todoListSection}
+              </>
+            )}
           </div>
         </TodoListContainer>
       </>
@@ -248,7 +245,11 @@ export const TodoList = memo(
   },
 );
 
-const TodoListContainer = styled(CardAtom)`
+const TodoListContainer = styled(CardAtom)<{ isMobile: boolean }>`
+  /* &,
+  * {
+    outline: red 1px solid;
+  } */
   overflow: hidden;
   display: flex;
   flex-direction: column;

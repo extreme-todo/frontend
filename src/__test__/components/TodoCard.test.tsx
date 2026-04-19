@@ -53,9 +53,10 @@ describe('TodoCard', () => {
         isExtreme={false}
         isThisEdit={false}
         setEditTodoId={setEditTodoId}
+        onMoveUp={jest.fn()}
+        onMoveDown={jest.fn()}
         isFirst={false}
         isLast={false}
-        isExtreme={false}
       />,
       wrapperCreator,
     );
@@ -108,7 +109,8 @@ describe('TodoCard', () => {
     });
 
     describe('순서 이동 버튼을 클릭하면', () => {
-      it('에러 없이 클릭된다.', () => {
+      it('onMoveUp이 호출된다.', () => {
+        const onMoveUp = jest.fn();
         const { getByLabelText } = renderUI(
           <TodoCard
             todoData={mockTodo}
@@ -119,18 +121,17 @@ describe('TodoCard', () => {
             isExtreme={false}
             isThisEdit={false}
             setEditTodoId={jest.fn()}
+            onMoveUp={onMoveUp}
             isFirst={false}
-            isExtreme={false}
           />,
           wrapperCreator,
         );
-        const upBtn = getByLabelText('move up');
-        fireEvent.click(upBtn);
-        // 내부 훅 로직이 실행되므로 프롭 호출 대신 에러 발생 여부 확인
-        expect(upBtn).toBeInTheDocument();
+        fireEvent.click(getByLabelText('move up'));
+        expect(onMoveUp).toHaveBeenCalled();
       });
 
-      it('onMoveDown이 에러 없이 클릭된다.', () => {
+      it('onMoveDown이 호출된다.', () => {
+        const onMoveDown = jest.fn();
         const { getByLabelText } = renderUI(
           <TodoCard
             todoData={mockTodo}
@@ -141,14 +142,13 @@ describe('TodoCard', () => {
             isExtreme={false}
             isThisEdit={false}
             setEditTodoId={jest.fn()}
+            onMoveDown={onMoveDown}
             isLast={false}
-            isExtreme={false}
           />,
           wrapperCreator,
         );
-        const downBtn = getByLabelText('move down');
-        fireEvent.click(downBtn);
-        expect(downBtn).toBeInTheDocument();
+        fireEvent.click(getByLabelText('move down'));
+        expect(onMoveDown).toHaveBeenCalled();
       });
     });
 
@@ -165,7 +165,6 @@ describe('TodoCard', () => {
             isExtreme={false}
             isThisEdit={false}
             setEditTodoId={setEditTodoIdMock}
-            isExtreme={false}
           />,
           wrapperCreator,
         );
@@ -256,7 +255,6 @@ describe('TodoCard', () => {
             isExtreme={false}
             isThisEdit={true}
             setEditTodoId={jest.fn()}
-            isExtreme={false}
           />,
           wrapperCreator,
         );
@@ -294,9 +292,7 @@ describe('TodoCard', () => {
         }) as HTMLInputElement;
 
         const longText = 'a'.repeat(51);
-        act(() => {
-          userEvent.type(titleInput, longText);
-        });
+        act(() => userEvent.type(titleInput, longText));
 
         expect(titleInput.value.length).toBeLessThanOrEqual(50);
       });
@@ -307,9 +303,7 @@ describe('TodoCard', () => {
           name: /title/i,
         }) as HTMLInputElement;
         const saveBtn = getByRole('button', { name: /저장/i });
-        act(() => {
-          userEvent.clear(titleInput);
-        });
+        act(() => userEvent.clear(titleInput));
         expect(saveBtn).toBeDisabled();
       });
 
@@ -361,9 +355,7 @@ describe('TodoCard', () => {
         const categoryInput = getByRole('textbox', { name: 'category input' });
         const prevCategories = queryAllByRole('button', { name: /category/i });
 
-        act(() => {
-          userEvent.type(categoryInput, '새 카테고리{enter}');
-        });
+        act(() => userEvent.type(categoryInput, '새 카테고리{enter}'));
 
         const nextCategories = queryAllByRole('button', {
           name: /category/i,
@@ -375,9 +367,7 @@ describe('TodoCard', () => {
         const { queryAllByRole, getByRole } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category input' });
-        act(() => {
-          userEvent.type(categoryInput, '영어{enter}');
-        });
+        act(() => userEvent.type(categoryInput, '영어{enter}'));
 
         const categories = queryAllByRole('button', {
           name: /category/i,
@@ -393,15 +383,9 @@ describe('TodoCard', () => {
 
         const categoryInput = getByRole('textbox', { name: 'category input' });
 
-        act(() => {
-          userEvent.type(categoryInput, '첫 번째 카테고리{enter}');
-        });
-        act(() => {
-          userEvent.type(categoryInput, '두 번째 카테고리{enter}');
-        });
-        act(() => {
-          userEvent.type(categoryInput, '세 번째 카테고리{enter}');
-        });
+        act(() => userEvent.type(categoryInput, '첫 번째 카테고리{enter}'));
+        act(() => userEvent.type(categoryInput, '두 번째 카테고리{enter}'));
+        act(() => userEvent.type(categoryInput, '세 번째 카테고리{enter}'));
 
         const removedInput = queryByRole('textbox', { name: 'category input' });
 
@@ -417,12 +401,12 @@ describe('TodoCard', () => {
 
         const prevCategories = queryAllByRole('button', { name: /category/i });
 
-        act(() => {
+        act(() =>
           userEvent.type(
             categoryInput,
             'I really psyched up starting new 2024!!!{enter}',
-          );
-        });
+          ),
+        );
 
         const nextCategories = queryAllByRole('button', {
           name: /category/i,
@@ -440,9 +424,7 @@ describe('TodoCard', () => {
         const categoryInput = getByRole('textbox', { name: 'category input' });
         const prevCategories = queryAllByRole('button', { name: /category/i });
 
-        act(() => {
-          userEvent.type(categoryInput, '🍅 토마토 스터디{enter}');
-        });
+        act(() => userEvent.type(categoryInput, '🍅 토마토 스터디{enter}'));
 
         const nextCategories = queryAllByRole('button', {
           name: /category/i,
@@ -458,9 +440,7 @@ describe('TodoCard', () => {
 
         const categoryInput = getByRole('textbox', { name: 'category input' });
 
-        act(() => {
-          userEvent.type(categoryInput, '   공부   시간   {enter}');
-        });
+        act(() => userEvent.type(categoryInput, '   공부   시간   {enter}'));
 
         const cleanedCategory = getByText('공부 시간');
         expect(cleanedCategory).toBeInTheDocument();
@@ -472,9 +452,7 @@ describe('TodoCard', () => {
         const categoryInput = getByRole('textbox', {
           name: 'category input',
         });
-        act(() => {
-          userEvent.type(categoryInput, '수학공부{enter}');
-        });
+        act(() => userEvent.type(categoryInput, '수학공부{enter}'));
 
         const firstCheckPointCategories = queryAllByRole('button', {
           name: /category/i,
@@ -482,18 +460,14 @@ describe('TodoCard', () => {
         expect(firstCheckPointCategories.length).toBe(3);
 
         const thirdTag = getByText('수학공부');
-        act(() => {
-          userEvent.click(thirdTag);
-        });
+        act(() => userEvent.click(thirdTag));
         const secondCheckPointCategories = queryAllByRole('button', {
           name: /category/i,
         });
         expect(secondCheckPointCategories.length).toBe(2);
 
         const firstTag = getByText('영어');
-        act(() => {
-          userEvent.click(firstTag);
-        });
+        act(() => userEvent.click(firstTag));
         const lastCheckPointCategories = queryAllByRole('button', {
           name: /category/i,
         });
@@ -504,10 +478,8 @@ describe('TodoCard', () => {
     describe('소요시간을 누르면', () => {
       it('TomatoInput이 렌더링 된다.', () => {
         const { getByLabelText, getByText } = renderEditUI();
-        const duration = getByText('3분');
-        act(() => {
-          userEvent.click(duration);
-        });
+        const duration = getByText(/3분/);
+        act(() => userEvent.click(duration));
         const tomatoInput = getByLabelText('tomatoInput');
         expect(tomatoInput).toBeInTheDocument();
       });

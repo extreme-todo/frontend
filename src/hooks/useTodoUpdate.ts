@@ -50,17 +50,6 @@ export const useTodoUpdate = ({
   );
   const [durationValue, setDurationValue] = useState(duration);
 
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null,
-  );
-  const [showTomatoInput, setShowTomatoInput] = useState(false);
-  const [triggerElement, setTriggerElement] = useState<HTMLDivElement | null>(
-    null,
-  );
-  const [arrowElement, setArrowElement] = useState<HTMLImageElement | null>(
-    null,
-  );
-
   /**
    * 낙관적 업데이트를 위한 캐시 업데이트 헬퍼
    */
@@ -375,18 +364,10 @@ export const useTodoUpdate = ({
 
   /* --- 7. 부수 효과 --- */
   useEffect(() => {
-    const handleClickOutside = (event: Event) => {
-      if (popperElement && !popperElement.contains(event.target as Node))
-        setShowTomatoInput(false);
-    };
-    const root = document.querySelector('#root');
-    if (showTomatoInput) root?.addEventListener('click', handleClickOutside);
-    return () => root?.removeEventListener('click', handleClickOutside);
-  }, [showTomatoInput, popperElement]);
-
-  useEffect(() => {
-    if (!isThisEdit && showTomatoInput) setShowTomatoInput(false);
-  }, [isThisEdit, showTomatoInput]);
+    if (!isThisEdit) {
+      // isThisEdit가 false가 되면 입력값 초기화 등 필요한 처리 수행 가능
+    }
+  }, [isThisEdit]);
 
   return {
     titleValue,
@@ -395,14 +376,6 @@ export const useTodoUpdate = ({
     categoryValue,
     categoryError,
     durationValue,
-    popperElement,
-    setPopperElement,
-    showTomatoInput,
-    setShowTomatoInput,
-    triggerElement,
-    setTriggerElement,
-    arrowElement,
-    setArrowElement,
     isLoading,
     handleEditButton,
     handleEditSubmit,
