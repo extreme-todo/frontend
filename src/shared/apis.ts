@@ -97,7 +97,7 @@ export const usersApi = {
 };
 // export const todosApi: TodoModuleType = {
 export const todosApi = {
-  _ramdomTagColorList: RandomTagColorList.getInstance(),
+  _randomTagColorList: RandomTagColorList.getInstance(),
   async resetTodos() {
     await baseApi.delete('todos/reset');
   },
@@ -134,7 +134,7 @@ export const todosApi = {
       if (todo.categories && typeof todo.categories[0] !== 'string') {
         const stringified = (todo.categories as CategoryType[]).map(
           (category) => {
-            this._ramdomTagColorList.setColor = category.name;
+            this._randomTagColorList.setColor = category.name;
             return category.name;
           },
         );

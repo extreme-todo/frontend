@@ -41,10 +41,10 @@
     "test": "react-scripts test --detectOpenHandles --no-cache",
     "coverage": "react-scripts test --coverage --watchAll",
     "eject": "react-scripts eject",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "clear-cache": "jest --clearCache",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
   "eslintConfig": {
     "extends": [

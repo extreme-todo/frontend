@@ -143,9 +143,9 @@ describe('useExtremeMode', () => {
     it('일치하지 않는다면 localStroage.setItem을 호출한다.', () => {
       wrapMockLocalStorage(!mockExtremeTodo);
       render(<TestExtremeMode />, { wrapper: WrapperComponent });
-      expect(localStorage.setItem).toBeCalledWith(
+      expect(localStorage.setItem).toHaveBeenCalledWith(
         EXTREME_MODE,
-        `${mockExtremeTodo}`,
+        String(mockExtremeTodo),
       );
     });
   });

@@ -35,7 +35,7 @@ describe('CurrentTodo', () => {
 
     it('투두 제목을 렌더링한다', () => {
       const { getByText } = component;
-      expect(getByText(mockCurrentTodo.todo)).toBeDefined();
+      expect(getByText(mockCurrentTodo.todo)).toBeInTheDocument();
     });
 
     it('시간(뽀모도로 단위)를 렌더링한다', () => {
@@ -44,7 +44,7 @@ describe('CurrentTodo', () => {
         getByText(`🍅 `.repeat(mockCurrentTodo.duration).trim(), {
           exact: false,
         }),
-      ).toBeDefined();
+      ).toBeInTheDocument();
     });
   });
 });

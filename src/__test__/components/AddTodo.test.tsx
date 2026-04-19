@@ -55,7 +55,7 @@ describe('AddTodo', () => {
 
       act(() => userEvent.type(titleInput, '새로운 할 일 제목 입니다'));
 
-      expect(titleInput.value).toBe('새로운 할 일 제목 입니다');
+      expect(titleInput).toHaveValue('새로운 할 일 제목 입니다');
     });
 
     // 태그 input이 있다.
@@ -74,7 +74,7 @@ describe('AddTodo', () => {
 
       act(() => userEvent.type(categoryInput, '새로운 카테고리'));
 
-      expect(categoryInput.value).toBe('새로운 카테고리');
+      expect(categoryInput).toHaveValue('새로운 카테고리');
     });
 
     it('카테고리 input을 입력하고 Enter 키를 누르면 새로운 태그가 추가된다.', () => {
@@ -129,7 +129,7 @@ describe('AddTodo', () => {
 
       const removedInput = queryByRole('textbox', { name: /category input/i });
 
-      expect(removedInput).toBe(null);
+      expect(removedInput).not.toBeInTheDocument();
     });
 
     it('카테고리 값에 특수문자와 이모지가 있으면 추가되지 않고 경고 메시지를 보여준다.', () => {
@@ -149,7 +149,7 @@ describe('AddTodo', () => {
     it('카테고리 input은 20자 이상은 추가되지 않고 경고 메시지를 보여준다.', () => {
       const { getByRole, getByText, getAllByRole } = renderUI();
       const categoryInput = getByRole('textbox', { name: /category input/i });
-      let prevCategories = getAllByRole('button');
+      const prevCategories = getAllByRole('button');
       act(() =>
         userEvent.type(
           categoryInput,

@@ -5,7 +5,6 @@ import { TodoCard } from '../';
 import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../../atoms';
 
 /* indexed DB */
-import { AddTodoDto, ETIndexed } from '../../DB/indexed';
 import { TodoEntity } from '../../DB/indexedAction';
 
 /* react query */
@@ -23,7 +22,6 @@ import {
 /* etc */
 import styled from '@emotion/styled';
 import { setTimeInFormat } from '../../shared/timeUtils';
-import { addTodoMocks } from './mockAddTodos';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 import { ModalType } from '../MainTodo';
 
@@ -77,13 +75,11 @@ export const TodoList = memo(
     const isMobile = useIsMobile();
     const { isExtreme } = useExtremeMode();
 
-    const { data: todos, isLoading: isTodoLoading } = useQuery(
-      ['todos'],
-      () => todosApi.getList(false),
-      { staleTime: Infinity },
-    );
+    const { data: todos } = useQuery(['todos'], () => todosApi.getList(false), {
+      staleTime: Infinity,
+    });
 
-    const { data: doneTodos, isLoading: isDoneLoading } = useQuery(
+    const { data: doneTodos } = useQuery(
       ['doneTodos'],
       () => todosApi.getList(true),
       { staleTime: Infinity },
@@ -140,20 +136,8 @@ export const TodoList = memo(
       [todos, reorderMutate],
     );
 
-    /* dev mode에서 로컬 indexed DB에 mock todo data 추가하는 핸들러 */
-    // const onClickHandler = useCallback(() => {
-    //   const mock = addTodoMocks();
-    //   const temp = async () => {
-    //     for (let i = 0; i < mock.length; i++) {
-    //       await ETIndexed.getInstance().addTodo(mock[i]);
-    //     }
-    //   };
-    //   temp();
-    // }, []);
-
     return (
       <>
-        {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
         <TodoListContainer
           bg={isExtreme ? 'extreme_dark' : 'primary1'}
           padding="1rem 1.5rem"
@@ -296,10 +280,6 @@ export const TodoList = memo(
 );
 
 const TodoListContainer = styled(CardAtom)`
-  /* &,
-  * {
-    outline: red 1px solid;
-  } */
   overflow: hidden;
   display: flex;
   flex-direction: column;

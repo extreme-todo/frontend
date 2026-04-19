@@ -23,6 +23,10 @@ module.exports = {
     '@typescript-eslint/restrict-plus-operands': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unsafe-call': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'warn',
+    '@typescript-eslint/no-unsafe-argument': 'warn',
   },
   overrides: [
     {
@@ -33,6 +37,17 @@ module.exports = {
         'plugin:jest-dom/recommended',
         'plugin:testing-library/react',
       ],
+      rules: {
+        'testing-library/prefer-screen-queries': 'off',
+        'testing-library/no-render-in-setup': 'off',
+        'testing-library/no-unnecessary-act': 'off',
+        'testing-library/no-node-access': 'off',
+        'testing-library/no-container': 'off',
+        'testing-library/await-async-utils': 'off',
+        'testing-library/no-wait-for-side-effects': 'off',
+        'jest/no-alias-methods': 'off',
+        '@typescript-eslint/unbound-method': 'off',
+      },
     },
   ],
 };

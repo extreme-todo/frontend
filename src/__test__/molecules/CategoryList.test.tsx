@@ -18,8 +18,8 @@ describe('Clock', () => {
       const { getByText } = renderList({
         categories: ['study', 'work'],
       });
-      expect(getByText(/study/)).not.toBeNull();
-      expect(getByText(/work/)).not.toBeNull();
+      expect(getByText(/study/)).toBeInTheDocument();
+      expect(getByText(/work/)).toBeInTheDocument();
     });
   });
 
@@ -28,9 +28,9 @@ describe('Clock', () => {
       const { getByText } = renderList({
         categories: ['study', 'work', 'music'],
       });
-      expect(getByText(/study/)).not.toBeNull();
-      expect(getByText(/work/)).not.toBeNull();
-      expect(getByText(/music/)).not.toBeNull();
+      expect(getByText(/study/)).toBeInTheDocument();
+      expect(getByText(/work/)).toBeInTheDocument();
+      expect(getByText(/music/)).toBeInTheDocument();
     });
   });
 });

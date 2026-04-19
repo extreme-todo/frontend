@@ -70,18 +70,18 @@ describe('FocusedTime Component', () => {
       -new Date().getTimezoneOffset(),
       'day',
     );
-
-    const expectedTime = formatTime(
-      Math.floor(
-        (mockRecordData.data.total.focused -
-          mockRecordData.data.total.prevFocused) /
-          60000,
-      ),
-    );
-
-    // 텍스트가 여러 노드에 나뉘어 있을 수 있으므로 정규표현식이나 함수형 매처 사용
     expect(
-      await screen.findByText(new RegExp(expectedTime)),
+      await screen.findByText(
+        new RegExp(
+          `\\+${formatTime(
+            Math.floor(
+              (mockRecordData.data.total.focused -
+                mockRecordData.data.total.prevFocused) /
+                60000,
+            ),
+          )}`,
+        ),
+      ),
     ).toBeInTheDocument();
   });
 
