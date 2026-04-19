@@ -72,8 +72,8 @@ export const TimeSetter = ({
                 className="svgBtn"
               >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M20.0001 14.3586L9.9723 24.3864L7.29297 21.707L20.0001 8.99992L32.7072 21.707L30.0279 24.3864L20.0001 14.3586Z"
                   fill="#DBFE77"
                 />
@@ -93,8 +93,8 @@ export const TimeSetter = ({
                 className="svgBtn"
               >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M19.9999 25.0555L30.0277 15.0277L32.707 17.707L19.9999 30.4141L7.29282 17.707L9.97215 15.0277L19.9999 25.0555Z"
                   fill="#DBFE77"
                 />

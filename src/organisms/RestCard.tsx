@@ -1,10 +1,19 @@
 import styled from '@emotion/styled';
-import { BtnAtom, CardAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
+import {
+  BtnAtom,
+  CardAtom,
+  IconAtom,
+  TodoProgressBarAtom,
+  TypoAtom,
+} from '../atoms';
 import { Clock, ExtremeModeIndicator } from '../molecules';
-import { PomodoroStatus } from '../services/PomodoroService';
 import { usePomodoroActions, usePomodoroValue } from '../hooks/usePomodoro';
 import { useCurrentTodo, useExtremeMode, useIsMobile } from '../hooks';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
+import {
+  PomodoroFocusingStatus,
+  PomodoroTimerStatus,
+} from '../services/PomodoroService';
 
 export function RestCard({
   mobileTopButtonSlot,
@@ -15,42 +24,47 @@ export function RestCard({
   const pomodoro = usePomodoroValue();
   const actions = usePomodoroActions();
   const { isExtreme } = useExtremeMode();
-  const {
-    fullyFocused,
-    currentTodo: todo,
-    doTodo,
-    currentRound,
-  } = useCurrentTodo({
-    value: { ...pomodoro },
-    actions,
-  });
+  const { currentTodo: todo, doTodo, currentRound } = useCurrentTodo();
 
   const getLeftMs = () => {
     return pomodoro.settings.restStep * 60000 - (pomodoro.time ?? 0);
   };
+
+  const toggleTimerPlay = useCallback(() => {
+    if (pomodoro.timerStatus === PomodoroTimerStatus.PAUSED) {
+      actions.resumeTimer();
+    } else {
+      actions.pauseTimer();
+    }
+  }, [pomodoro.timerStatus, actions]);
+
   const getButtonContainer = useMemo(
     () => (
       <div className="button-container">
         <BtnAtom
-          className="focus"
-          btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
-          handleOnClick={() => {
-            fullyFocused ? doTodo() : actions.startFocusing();
-          }}
+          className="rest"
+          btnStyle="lightBtn"
+          handleOnClick={() => toggleTimerPlay && toggleTimerPlay()}
+          ariaLabel="일시정지"
         >
-          {fullyFocused ? '다음 할 일 하기' : '끝내기'}
+          {pomodoro.timerStatus === PomodoroTimerStatus.PAUSED ? (
+            <IconAtom src="icon/play-light.svg" size={2.25} />
+          ) : (
+            <IconAtom src="icon/pause-light.svg" size={1.5} />
+          )}
         </BtnAtom>
-        {fullyFocused && (
-          <BtnAtom
-            className="focusMore"
-            handleOnClick={() => actions.startFocusing()}
-          >
-            조금 더 집중하기
-          </BtnAtom>
-        )}
+        <BtnAtom
+          className="do-todo"
+          aria-label="do todo"
+          btnStyle="lightBtn"
+          handleOnClick={() => doTodo()}
+          ariaLabel="할일완료"
+        >
+          <IconAtom src="icon/stop-light.svg" size={1.625} />
+        </BtnAtom>
       </div>
     ),
-    [isExtreme, fullyFocused, doTodo, actions],
+    [todo, pomodoro.timerStatus, toggleTimerPlay],
   );
   return (
     <RestCardContainer>
@@ -70,7 +84,7 @@ export function RestCard({
             <ExtremeModeIndicator />
           </div>
         )}
-        {pomodoro.status === PomodoroStatus.RESTING && (
+        {pomodoro.status === PomodoroFocusingStatus.RESTING && (
           <RestCardWrapper>
             <div className="center-container">
               <TypoAtom
@@ -196,15 +210,14 @@ const RestCardWrapper = styled.div`
   }
   .button-container {
     display: flex;
-    flex-direction: column;
     gap: 0.5rem;
-    align-items: flex-end;
-    .focus {
-      min-width: 100px;
-      padding: 0 1rem;
-    }
-    .focusMore {
-      text-decoration: underline;
+    .rest,
+    .do-todo {
+      width: 3.75rem;
+      height: 3.75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
   .todo-duration {

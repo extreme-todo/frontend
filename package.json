@@ -38,7 +38,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --detectOpenHandles",
+    "test": "react-scripts test --detectOpenHandles --no-cache",
     "coverage": "react-scripts test --coverage --watchAll",
     "eject": "react-scripts eject",
     "clear-cache": "jest --clearCache",

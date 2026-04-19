@@ -9,8 +9,11 @@ import {
   usePomodoroValue,
 } from '../hooks';
 import styled from '@emotion/styled';
-import { ReactNode, useEffect } from 'react';
-import { PomodoroStatus } from '../services/PomodoroService';
+import { ReactNode, useCallback, useEffect } from 'react';
+import {
+  PomodoroFocusingStatus,
+  PomodoroTimerStatus,
+} from '../services/PomodoroService';
 
 export function CurrentTodoCard({
   mobileTopButtonSlot,
@@ -18,20 +21,25 @@ export function CurrentTodoCard({
   mobileTopButtonSlot?: ReactNode;
 }) {
   const isMobile = useIsMobile();
-  const { settings: pomodoroSettings, status, time } = usePomodoroValue();
+  const {
+    settings: pomodoroSettings,
+    status,
+    timerStatus,
+  } = usePomodoroValue();
   const { isExtreme } = useExtremeMode();
   const actions = usePomodoroActions();
-  const currentTodo = useCurrentTodo({
-    value: {
-      settings: pomodoroSettings,
-      status,
-      time,
-    },
-    actions,
-  });
+  const currentTodo = useCurrentTodo();
+
+  const toggleTimerPlay = useCallback(() => {
+    if (timerStatus === PomodoroTimerStatus.PAUSED) {
+      actions.resumeTimer();
+    } else {
+      actions.pauseTimer();
+    }
+  }, [timerStatus, actions]);
 
   useEffect(() => {
-    if (status === PomodoroStatus.NONE) {
+    if (status === PomodoroFocusingStatus.NONE) {
       actions.startFocusing();
     }
   }, [status, actions]);
@@ -57,13 +65,12 @@ export function CurrentTodoCard({
         {currentTodo.currentTodo && (
           <CurrentTodo
             todo={currentTodo.currentTodo}
-            doTodo={() => {
-              currentTodo.doTodo();
-            }}
+            doTodo={currentTodo.doTodo}
             focusStep={pomodoroSettings.focusStep}
             focusedOnTodo={currentTodo.focusedOnTodo}
-            startResting={actions.startResting}
             currentRound={currentTodo.currentRound}
+            paused={timerStatus === PomodoroTimerStatus.PAUSED}
+            toggleTimerPlay={toggleTimerPlay}
           ></CurrentTodo>
         )}
       </CardAtom>

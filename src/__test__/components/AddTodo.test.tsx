@@ -1,4 +1,5 @@
 import React, { act } from 'react';
+import { QueryClient } from '@tanstack/react-query';
 
 import { AddTodo } from '../../components';
 
@@ -6,11 +7,9 @@ import { render } from '@testing-library/react';
 
 import { IChildProps } from '../../shared/interfaces';
 
-import { ThemeProvider } from '@emotion/react';
-import { designTheme } from '../../styles/theme';
 import userEvent from '@testing-library/user-event';
+import { UIProviders, QueryProvider } from '../../contexts/AppProviders';
 import { PomodoroProvider } from '../../hooks';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,11 +29,11 @@ describe('AddTodo', () => {
       renderUI = () =>
         render(<AddTodo handleClose={jest.fn} />, {
           wrapper: ({ children }: IChildProps) => (
-            <QueryClientProvider client={queryClient}>
-              <ThemeProvider theme={designTheme}>
+            <UIProviders>
+              <QueryProvider queryClient={queryClient}>
                 <PomodoroProvider>{children}</PomodoroProvider>
-              </ThemeProvider>
-            </QueryClientProvider>
+              </QueryProvider>
+            </UIProviders>
           ),
         });
     });

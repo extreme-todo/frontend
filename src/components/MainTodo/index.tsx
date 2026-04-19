@@ -24,11 +24,10 @@ import {
   useCurrentTodo,
   useExtremeMode,
   useIsMobile,
-  usePomodoroActions,
   usePomodoroValue,
   useHandleDidntDo,
 } from '../../hooks';
-import { PomodoroStatus } from '../../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../../services/PomodoroService';
 import { usersApi } from '../../shared/apis';
 import {
   CardAtom,
@@ -57,12 +56,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
   const [currentCardColor, setCurrentCardColor] =
     useState<BackgroundColorName>('primary1');
-  const {
-    status: pomodoroStatus,
-    settings: pomodoroSettings,
-    time: pomodoroTime,
-  } = usePomodoroValue();
-  const actions = usePomodoroActions();
+  const { status: pomodoroStatus, settings: pomodoroSettings } =
+    usePomodoroValue();
   const { isLogin } = useContext(LoginContext);
   const isMobile = useIsMobile();
   const { isExtreme } = useExtremeMode();
@@ -75,14 +70,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     currentCardAnimationTriggerSubject.current.asObservable(),
   );
 
-  const { currentTodo } = useCurrentTodo({
-    value: {
-      status: pomodoroStatus,
-      settings: pomodoroSettings,
-      time: pomodoroTime,
-    },
-    actions,
-  });
+  const { currentTodo, doAllTodo } = useCurrentTodo();
   const {
     settings: { focusStep },
   } = usePomodoroValue();
@@ -109,7 +97,9 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const handleClose = useCallback(() => {
     changeCard(
       currentCard,
-      pomodoroStatus === PomodoroStatus.RESTING ? 'rest' : 'currentTodo',
+      pomodoroStatus === PomodoroFocusingStatus.RESTING
+        ? 'rest'
+        : 'currentTodo',
     );
   }, [currentCard, pomodoroStatus, changeCard]);
 
@@ -247,11 +237,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   useEffect(() => {
     setTimeout(() => {
       switch (pomodoroStatus) {
-        case PomodoroStatus.RESTING:
+        case PomodoroFocusingStatus.RESTING:
           console.log('🍅', pomodoroStatus);
           changeCard(currentCard, 'rest');
           break;
-        case PomodoroStatus.FOCUSING:
+        case PomodoroFocusingStatus.FOCUSING:
           console.log('🥔', pomodoroStatus);
           changeCard(currentCard, 'currentTodo');
           break;
@@ -307,7 +297,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         timer: () => {
           handleClickSideButton('timeModal');
         },
-        doAll: () => alert('기능 준비 중입니다.'),
+        doAll: () => {
+          if (window.confirm('모든 TODO를 종료하시겠습니까?')) {
+            doAllTodo();
+          }
+        },
       }}
     >
       <MainTodoContainer ref={ref}>
@@ -353,6 +347,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 <MainCard />
                 {/* <CurrentMainCard type="current" /> */}
               </CardAnimationPlayerAtom>
+
               {prevCard && (
                 <CardAnimationPlayerAtom animation={'HIDE_UP'}>
                   <CurrentMainCard type="prev" />
@@ -364,6 +359,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 </CardAnimationPlayerAtom>
               )}
               <div className="bottom-side-buttons">
+                {currentCard === 'currentTodo' && (
+                  <SideButtons.ShowDoAllButton
+                    theme={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                  />
+                )}
                 {isMobile && (
                   <SideButtons.ShowRankingButton
                     theme={(() => {

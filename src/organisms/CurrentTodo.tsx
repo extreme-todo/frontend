@@ -9,11 +9,12 @@ import styled from '@emotion/styled';
 
 interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
-  doTodo: (focusTime: number) => void;
+  doTodo: () => void;
   focusStep: number;
   focusedOnTodo: number;
-  startResting: () => void;
   currentRound: number;
+  paused?: boolean;
+  toggleTimerPlay?: () => void;
 }
 
 export function CurrentTodo({
@@ -21,8 +22,9 @@ export function CurrentTodo({
   focusStep,
   focusedOnTodo,
   doTodo,
-  startResting,
+  toggleTimerPlay,
   currentRound,
+  paused,
 }: ICurrentTodoProps) {
   const [todoProgress, setTodoProgress] = useState<number>(0);
   const isMobile = useIsMobile();
@@ -38,10 +40,6 @@ export function CurrentTodo({
     );
   }, [focusedOnTodo]);
 
-  const doAndRest = () => {
-    doTodo(focusedOnTodo);
-  };
-
   const getLeftMs = () => {
     return todo.duration * focusStep * 60000 - focusedOnTodo;
   };
@@ -52,23 +50,27 @@ export function CurrentTodo({
         <BtnAtom
           className="rest"
           btnStyle="darkBtn"
-          handleOnClick={() => startResting()}
-          ariaLabel="쉬기"
+          handleOnClick={() => toggleTimerPlay && toggleTimerPlay()}
+          ariaLabel="일시정지"
         >
-          <IconAtom src="icon/pause-dark.svg" size={1.5} />
+          {paused ? (
+            <IconAtom src="icon/play-dark.svg" className="play" size={2.25} />
+          ) : (
+            <IconAtom src="icon/pause-dark.svg" size={1.5} />
+          )}
         </BtnAtom>
         <BtnAtom
           className="do-todo"
           aria-label="do todo"
           btnStyle="darkBtn"
-          handleOnClick={() => doAndRest()}
+          handleOnClick={() => doTodo()}
           ariaLabel="할일완료"
         >
-          <IconAtom src="icon/stop-dark.svg" size={1} />
+          <IconAtom src="icon/stop-dark.svg" size={1.625} />
         </BtnAtom>
       </div>
     ),
-    [todo],
+    [todo, toggleTimerPlay, paused],
   );
 
   return (
@@ -163,10 +165,6 @@ const CurrentTodoContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    img {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
   }
   .left-round {
     opacity: 0.5;

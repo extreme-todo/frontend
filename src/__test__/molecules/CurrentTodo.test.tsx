@@ -2,9 +2,7 @@ import { render } from '@testing-library/react';
 import { TodoEntity } from '../../DB/indexedAction';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { CurrentTodo } from '../../organisms';
-import React from 'react';
-import { ThemeProvider } from '@emotion/react';
-import { designTheme } from '../../styles/theme';
+import { UIProviders } from '../../contexts/AppProviders';
 
 describe('CurrentTodo', () => {
   const mockCurrentTodo: TodoEntity = mockFetchTodoList()[0];
@@ -12,17 +10,15 @@ describe('CurrentTodo', () => {
   const mockDoTodoProp = jest.fn();
   function renderRanking(todo: TodoEntity) {
     return render(
-      <ThemeProvider theme={designTheme}>
+      <UIProviders>
         <CurrentTodo
           todo={todo}
           doTodo={mockDoTodoProp}
           focusStep={10}
           focusedOnTodo={10}
-          startResting={jest.fn()}
           currentRound={0}
         ></CurrentTodo>
-        ,
-      </ThemeProvider>,
+      </UIProviders>,
     );
   }
 

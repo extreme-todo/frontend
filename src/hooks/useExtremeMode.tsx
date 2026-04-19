@@ -11,7 +11,7 @@ import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
 import { settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
 import { useCurrentTodo, useIsOnline } from './';
-import { PomodoroStatus } from '../services/PomodoroService';
+import { PomodoroFocusingStatus } from '../services/PomodoroService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 
@@ -39,14 +39,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   // hooks
   const { status, settings, time } = usePomodoroValue();
   const pomodoroActions = usePomodoroActions();
-  const { currentTodo } = useCurrentTodo({
-    value: {
-      settings,
-      status,
-      time,
-    },
-    actions: pomodoroActions,
-  });
+  const { currentTodo } = useCurrentTodo();
   const isOnline = useIsOnline();
   const queryClient = useQueryClient();
 
@@ -105,7 +98,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   // handlers
   const handleExtremeMode = useCallback(
     (newMode: boolean) => {
-      if (status === PomodoroStatus.FOCUSING) {
+      if (status === PomodoroFocusingStatus.FOCUSING) {
         window.alert('집중 시간에는 모드 변경이 불가능합니다.');
       } else
         handleExtremeMutation({
@@ -121,7 +114,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   };
 
   const getLeftTime = () => {
-    if (status === PomodoroStatus.RESTING) {
+    if (status === PomodoroFocusingStatus.RESTING) {
       const leftMs = settings.restStep * 60000 - (time ?? 0);
       if (leftMs >= 0) {
         handleLeftTime('휴식 시간이 끝나면 기록이 삭제됩니다!');
@@ -138,7 +131,7 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
     }
     if (
       isExtreme === true &&
-      status === PomodoroStatus.RESTING &&
+      status === PomodoroFocusingStatus.RESTING &&
       resetFlag === false &&
       currentTodo !== null &&
       Number(leftMs) < 0

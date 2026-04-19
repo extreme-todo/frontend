@@ -1,14 +1,8 @@
-import { screen, fireEvent, render, waitFor } from '@testing-library/react';
-import {
-  useExtremeMode,
-  EXTREME_MODE,
-  ExtremeModeProvider,
-  PomodoroProvider,
-  usePomodoroActions,
-} from '../../hooks';
-import React, { useEffect } from 'react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
+import { useExtremeMode, EXTREME_MODE, usePomodoroActions } from '../../hooks';
+import React from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import {
   todosApi,
   settingsApi,
@@ -16,7 +10,7 @@ import {
   EXTREME_TOKEN_STORAGE,
 } from '../../shared/apis';
 import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
-import { PomodoroService } from '../../services/PomodoroService';
+import { LogicProviders, QueryProvider } from '../../contexts/AppProviders';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,23 +24,15 @@ window.alert = jest.fn();
 
 describe('useExtremeMode', () => {
   // setting test environment
-  const WrapperComponent = ({ children }) => (
-    <QueryClientProvider client={queryClient}>
-      <PomodoroProvider>
-        <ExtremeModeProvider>{children}</ExtremeModeProvider>
-      </PomodoroProvider>
-    </QueryClientProvider>
+  const WrapperComponent = ({ children }: { children: React.ReactNode }) => (
+    <QueryProvider queryClient={queryClient}>
+      <LogicProviders>{children}</LogicProviders>
+    </QueryProvider>
   );
   const TestExtremeMode = () => {
     const { isExtreme, handleExtremeMode, warningText } = useExtremeMode();
     const { startFocusing, startResting } = usePomodoroActions();
-    // Start the Pomodoro timer when the app loads
-    useEffect(() => {
-      const startTimer = PomodoroService.startTimer().subscribe();
-      return () => {
-        startTimer.unsubscribe();
-      };
-    }, []);
+
     return (
       <>
         isExtreme:{String(isExtreme)}

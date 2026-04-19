@@ -1,5 +1,5 @@
 import React, { act } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 
 import { TodoCard } from '../../components';
 
@@ -15,6 +15,7 @@ import { designTheme } from '../../styles/theme';
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
+import { UIProviders, QueryProvider } from '../../contexts/AppProviders';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,11 +28,11 @@ const queryClient = new QueryClient({
 const randomTagColor = RandomTagColorList.getInstance();
 
 const wrapperCreator = ({ children }: IChildProps) => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider theme={designTheme}>
+  <UIProviders>
+    <QueryProvider queryClient={queryClient}>
       <EditContextProvider>{children}</EditContextProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+    </QueryProvider>
+  </UIProviders>
 );
 
 describe('TodoCard', () => {
@@ -200,39 +201,38 @@ describe('TodoCard', () => {
     });
 
     describe('완료한 TodoUI에는', () => {
-      const doneTodoUI = () =>
-        renderUI(
-          <TodoCard
-            todoData={mockFetchTodoList()[2]}
-            focusStep={1}
-            randomTagColor={randomTagColor}
-            isCurrTodo={false}
-            order={1}
-            isExtreme={false}
-            isThisEdit={false}
-            setEditTodoId={jest.fn()}
-          />,
-          wrapperCreator,
-        );
+      const doneTodoUI = renderUI(
+        <TodoCard
+          todoData={mockFetchTodoList()[2]}
+          focusStep={1}
+          randomTagColor={randomTagColor}
+          isCurrTodo={false}
+          order={1}
+          isExtreme={false}
+          isThisEdit={false}
+          setEditTodoId={jest.fn()}
+        />,
+        wrapperCreator,
+      );
       it('소요 시간이 없다.', () => {
-        const { queryByAltText, queryByText } = doneTodoUI();
+        const { queryByAltText, queryByText } = doneTodoUI;
         const timerIcon = queryByAltText('timer');
         const duration = queryByText(/2분/);
         expect(duration).not.toBeInTheDocument();
         expect(timerIcon).not.toBeInTheDocument();
       });
       it('삭제 버튼이 없다.', () => {
-        const { queryByText } = doneTodoUI();
+        const { queryByText } = doneTodoUI;
         const deleteBtn = queryByText('삭제');
         expect(deleteBtn).not.toBeInTheDocument();
       });
       it('수정 버튼이 없다.', () => {
-        const { queryByText } = doneTodoUI();
+        const { queryByText } = doneTodoUI;
         const editBtn = queryByText('수정');
         expect(editBtn).not.toBeInTheDocument();
       });
       it('순서 이동 버튼이 없다.', () => {
-        const { queryByLabelText } = doneTodoUI();
+        const { queryByLabelText } = doneTodoUI;
         expect(queryByLabelText('move up')).not.toBeInTheDocument();
         expect(queryByLabelText('move down')).not.toBeInTheDocument();
       });

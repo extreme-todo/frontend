@@ -174,8 +174,9 @@ const ShowDoAllButton = ({
       onClick={context.onClickHandlers?.doAll}
       btnStyle={theme}
       className={className}
+      btnType="plain"
     >
-      전체완료
+      모든 TODO 종료하기
     </SideBtnAtom>
   );
 };

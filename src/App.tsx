@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 
 import { IconAtom } from './atoms';
 import { Navigation, Noti } from './molecules';
-import { FocusedTime, MainTodo, Welcome } from './components';
+import { DevKit, MainTodo, Welcome } from './components';
 import {
   motion,
   useMotionValueEvent,
@@ -10,19 +10,20 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import { PomodoroProvider, ExtremeModeProvider } from './hooks';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
 import styled from '@emotion/styled';
-import { PomodoroService } from './services/PomodoroService';
 import useAlarm from './hooks/useAlert';
-
-export const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } },
-});
+import { AppProviders } from './contexts/AppProviders';
+import { QueryClient } from '@tanstack/react-query';
 
 export type NavigationPageType = 'Welcome' | 'Main' | 'Focused';
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export interface NavigationListType {
   componentName: NavigationPageType;
@@ -98,14 +99,6 @@ function App() {
     }
   });
 
-  // Start the Pomodoro timer when the app loads
-  useEffect(() => {
-    const startTimer = PomodoroService.startTimer().subscribe();
-    return () => {
-      startTimer.unsubscribe();
-    };
-  }, []);
-
   const { initSoundPlayer } = useAlarm();
   useEffect(() => {
     const handleClick = () => {
@@ -118,43 +111,40 @@ function App() {
   }, [initSoundPlayer]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <PomodoroProvider>
-        <ExtremeModeProvider>
-          <MainContainer id="main-container" ref={mainRef}>
-            <Navigation
-              navigationLists={NAVIGATION_LIST}
-              scrollYProgress={scrollYProgress}
-              isLabelVisible={isLabelVisible}
-              activeLabel={activeLabel}
-            />
-            <Welcome
-              buttonOpacityForScroll={buttonOpacityForScroll}
-              mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
-              mainLogoFillForScroll={mainLogoFillForScroll}
-              ref={welcomeRef}
-            />
-            <MainTodo ref={mainTodoRef} />
-            <motion.div
-              className="scroll__guide"
-              style={{
-                opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
-                  clamp: true,
-                }),
-              }}
-            >
-              <IconAtom
-                src="/icon/combobox.svg"
-                size={3}
-                className="scroll__guide__icon"
-                alt="An icon indicating to scroll down"
-              />
-            </motion.div>
-            <Noti />
-          </MainContainer>
-        </ExtremeModeProvider>
-      </PomodoroProvider>
-    </QueryClientProvider>
+    <AppProviders queryClient={queryClient}>
+      <DevKit />
+      <MainContainer id="main-container" ref={mainRef}>
+        <Navigation
+          navigationLists={NAVIGATION_LIST}
+          scrollYProgress={scrollYProgress}
+          isLabelVisible={isLabelVisible}
+          activeLabel={activeLabel}
+        />
+        <Welcome
+          buttonOpacityForScroll={buttonOpacityForScroll}
+          mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
+          mainLogoFillForScroll={mainLogoFillForScroll}
+          ref={welcomeRef}
+        />
+        <MainTodo ref={mainTodoRef} />
+        <motion.div
+          className="scroll__guide"
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
+              clamp: true,
+            }),
+          }}
+        >
+          <IconAtom
+            src="/icon/combobox.svg"
+            size={3}
+            className="scroll__guide__icon"
+            alt="An icon indicating to scroll down"
+          />
+        </motion.div>
+        <Noti />
+      </MainContainer>
+    </AppProviders>
   );
 }
 
