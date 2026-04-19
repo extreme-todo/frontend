@@ -2,8 +2,7 @@ import { render } from '@testing-library/react';
 import { TodoEntity } from '../../DB/indexedAction';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { CurrentTodo } from '../../organisms';
-import { AppProviders } from '../../contexts/AppProviders';
-import { QueryClient } from '@tanstack/react-query';
+import { UIProviders } from '../../contexts/AppProviders';
 
 describe('CurrentTodo', () => {
   const mockCurrentTodo: TodoEntity = mockFetchTodoList()[0];
@@ -11,11 +10,7 @@ describe('CurrentTodo', () => {
   const mockDoTodoProp = jest.fn();
   function renderRanking(todo: TodoEntity) {
     return render(
-      <AppProviders
-        queryClient={
-          new QueryClient({ defaultOptions: { queries: { retry: false } } })
-        }
-      >
+      <UIProviders>
         <CurrentTodo
           todo={todo}
           doTodo={mockDoTodoProp}
@@ -23,8 +18,7 @@ describe('CurrentTodo', () => {
           focusedOnTodo={10}
           currentRound={0}
         ></CurrentTodo>
-        ,
-      </AppProviders>,
+      </UIProviders>,
     );
   }
 
