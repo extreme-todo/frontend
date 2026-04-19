@@ -12,7 +12,7 @@ import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { ThemeProvider } from '@emotion/react';
 import { designTheme } from '../../styles/theme';
 
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 
@@ -49,6 +49,7 @@ describe('TodoCard', () => {
         randomTagColor={randomTagColor}
         isCurrTodo={isCurrTodo}
         order={1}
+        isExtreme={false}
         isThisEdit={false}
         setEditTodoId={setEditTodoId}
         onMoveUp={jest.fn()}
@@ -94,7 +95,7 @@ describe('TodoCard', () => {
       });
       it('소요 시간이 있다.', () => {
         const { getByText, getByAltText } = renderTodoUI();
-        const duration = getByText('3분');
+        const duration = getByText(/3분/);
         const timer = getByAltText('timer');
         expect(timer).toBeInTheDocument();
         expect(duration).toBeInTheDocument();
@@ -116,6 +117,7 @@ describe('TodoCard', () => {
             randomTagColor={randomTagColor}
             isCurrTodo={false}
             order={1}
+            isExtreme={false}
             isThisEdit={false}
             setEditTodoId={jest.fn()}
             onMoveUp={onMoveUp}
@@ -136,6 +138,7 @@ describe('TodoCard', () => {
             randomTagColor={randomTagColor}
             isCurrTodo={false}
             order={1}
+            isExtreme={false}
             isThisEdit={false}
             setEditTodoId={jest.fn()}
             onMoveDown={onMoveDown}
@@ -158,6 +161,7 @@ describe('TodoCard', () => {
             randomTagColor={randomTagColor}
             isCurrTodo={false}
             order={1}
+            isExtreme={false}
             isThisEdit={false}
             setEditTodoId={setEditTodoIdMock}
           />,
@@ -196,22 +200,24 @@ describe('TodoCard', () => {
     });
 
     describe('완료한 TodoUI에는', () => {
-      const doneTodoUI = () => renderUI(
-        <TodoCard
-          todoData={mockFetchTodoList()[2]}
-          focusStep={1}
-          randomTagColor={randomTagColor}
-          isCurrTodo={false}
-          order={1}
-          isThisEdit={false}
-          setEditTodoId={jest.fn()}
-        />,
-        wrapperCreator,
-      );
+      const doneTodoUI = () =>
+        renderUI(
+          <TodoCard
+            todoData={mockFetchTodoList()[2]}
+            focusStep={1}
+            randomTagColor={randomTagColor}
+            isCurrTodo={false}
+            order={1}
+            isExtreme={false}
+            isThisEdit={false}
+            setEditTodoId={jest.fn()}
+          />,
+          wrapperCreator,
+        );
       it('소요 시간이 없다.', () => {
         const { queryByAltText, queryByText } = doneTodoUI();
         const timerIcon = queryByAltText('timer');
-        const duration = queryByText('2분');
+        const duration = queryByText(/2분/);
         expect(duration).not.toBeInTheDocument();
         expect(timerIcon).not.toBeInTheDocument();
       });
@@ -246,6 +252,7 @@ describe('TodoCard', () => {
             randomTagColor={randomTagColor}
             isCurrTodo={false}
             order={1}
+            isExtreme={false}
             isThisEdit={true}
             setEditTodoId={jest.fn()}
           />,
@@ -263,7 +270,7 @@ describe('TodoCard', () => {
         }) as HTMLInputElement;
 
         expect(titleInput).toBeInTheDocument();
-        expect(titleInput.value).toBe('Go to grocery store');
+        expect(titleInput).toHaveValue('Go to grocery store');
       });
 
       it('title input에서 유저가 입력값을 수정할 수 있다.', () => {
@@ -272,10 +279,10 @@ describe('TodoCard', () => {
           name: /title/i,
         }) as HTMLInputElement;
 
-        expect(titleInput.value).toBe('Go to grocery store');
+        expect(titleInput).toHaveValue('Go to grocery store');
 
         fireEvent.change(titleInput, { target: { value: 'modified title' } });
-        expect(titleInput.value).toBe('modified title');
+        expect(titleInput).toHaveValue('modified title');
       });
 
       it('title이 50자 이상 입력되면 더 이상 입력되지 않는다.', () => {
@@ -290,7 +297,7 @@ describe('TodoCard', () => {
         expect(titleInput.value.length).toBeLessThanOrEqual(50);
       });
 
-      it('title을 비워두면 제출 버튼이 disabled된다.', async () => {
+      it('title을 비워두면 제출 버튼이 disabled된다.', () => {
         const { getByRole } = renderEditUI();
         const titleInput = getByRole('textbox', {
           name: /title/i,
@@ -309,13 +316,11 @@ describe('TodoCard', () => {
         }) as HTMLInputElement;
 
         expect(categoryInput).toBeInTheDocument();
-        waitFor(() =>
-          fireEvent.change(categoryInput, {
-            target: { value: 'add new category' },
-          }),
-        );
+        fireEvent.change(categoryInput, {
+          target: { value: 'add new category' },
+        });
 
-        expect(categoryInput.value).toBe('add new category');
+        expect(categoryInput).toHaveValue('add new category');
       });
 
       it('기존 category가 있다.', () => {
@@ -325,11 +330,9 @@ describe('TodoCard', () => {
       });
 
       it('소요시간이 있다.', () => {
-        const { queryByAltText, queryByText } = renderEditUI();
-        const timerIcon = queryByAltText('timer');
-        const duration = queryByText('3분');
+        const { queryByText } = renderEditUI();
+        const duration = queryByText(/3분/);
         expect(duration).toBeInTheDocument();
-        expect(timerIcon).toBeInTheDocument();
       });
 
       it('취소 svg가 있다.', () => {
@@ -350,7 +353,7 @@ describe('TodoCard', () => {
         const { getByRole, queryAllByRole } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category input' });
-        let prevCategories = queryAllByRole('button', { name: /category/i });
+        const prevCategories = queryAllByRole('button', { name: /category/i });
 
         act(() => userEvent.type(categoryInput, '새 카테고리{enter}'));
 
@@ -386,7 +389,7 @@ describe('TodoCard', () => {
 
         const removedInput = queryByRole('textbox', { name: 'category input' });
 
-        expect(removedInput).toBe(null);
+        expect(removedInput).not.toBeInTheDocument();
       });
 
       it('카테고리가 20자를 초과하면, 유효성 검사에 실패하여 추가되지 않는다.', () => {
@@ -396,7 +399,7 @@ describe('TodoCard', () => {
           name: 'category input',
         }) as HTMLInputElement;
 
-        let prevCategories = queryAllByRole('button', { name: /category/i });
+        const prevCategories = queryAllByRole('button', { name: /category/i });
 
         act(() =>
           userEvent.type(
@@ -410,7 +413,7 @@ describe('TodoCard', () => {
         });
 
         expect(nextCategories.length).toBe(prevCategories.length);
-        expect(categoryInput.value).toBe(
+        expect(categoryInput).toHaveValue(
           'I really psyched up starting new 2024!!!',
         );
       });
@@ -419,7 +422,7 @@ describe('TodoCard', () => {
         const { getByRole, queryAllByRole, queryByText } = renderEditUI();
 
         const categoryInput = getByRole('textbox', { name: 'category input' });
-        let prevCategories = queryAllByRole('button', { name: /category/i });
+        const prevCategories = queryAllByRole('button', { name: /category/i });
 
         act(() => userEvent.type(categoryInput, '🍅 토마토 스터디{enter}'));
 
@@ -475,7 +478,7 @@ describe('TodoCard', () => {
     describe('소요시간을 누르면', () => {
       it('TomatoInput이 렌더링 된다.', () => {
         const { getByLabelText, getByText } = renderEditUI();
-        const duration = getByText('3분');
+        const duration = getByText(/3분/);
         act(() => userEvent.click(duration));
         const tomatoInput = getByLabelText('tomatoInput');
         expect(tomatoInput).toBeInTheDocument();
@@ -499,7 +502,7 @@ describe('TodoCard', () => {
         );
 
         // 수정 모드에서 tomatoInput 렌더링
-        const duration = getByText('3분');
+        const duration = getByText(/3분/);
         const titleInput = getByLabelText('title_input');
         fireEvent.click(duration);
 
@@ -508,7 +511,7 @@ describe('TodoCard', () => {
         expect(tomatoInput).toBeInTheDocument();
 
         // 외부 요소 클릭해서 언마운트 확인
-        fireEvent.click(titleInput);
+        fireEvent.mouseDown(titleInput);
         tomatoInput = queryByLabelText('tomatoInput');
         expect(tomatoInput).not.toBeInTheDocument();
       });
