@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { focusStep } from '../../hooks';
 import { TagColorName } from '../../styles/emotion';
 import {
-  IconAtom,
   TagAtom,
   TypoAtom,
   BtnAtom,
@@ -97,18 +96,15 @@ export const EditUI = memo(
                   inputRef={handleInputRef}
                   styleOption={{
                     borderWidth: titleError ? '2px' : '1px',
-                    padding: '0 0 0 0',
-                    height: '1.25rem',
+                    padding: '0.25rem 0 0.25rem 0',
+                    height: '1.5rem',
                     font: 'h3',
                     borderColor: titleError ? 'extreme_orange' : 'primary1',
                     fontColor: 'primary1',
                   }}
                 />
               </label>
-            </div>{' '}
-            <BtnAtom handleOnClick={handleEditCancel}>
-              <IconAtom src={'icon/closeDark.svg'} size={1.25} alt="cancel" />
-            </BtnAtom>
+            </div>
           </TitleContainer>
 
           <CategoryContainer
@@ -130,7 +126,7 @@ export const EditUI = memo(
           </CategoryContainer>
 
           <FooterContainer>
-            <div style={{ flex: 1, marginRight: '1rem' }}>
+            <div className="tomato-wrapper">
               <TomatoSelectorAtom
                 max={10}
                 min={1}
@@ -141,25 +137,45 @@ export const EditUI = memo(
                 label="TODO 반복 시간 설정"
               />
             </div>
-            <BtnAtom
-              type="submit"
-              disabled={isDisabled}
-              className="submit_btn"
-              aria-label="submit"
-            >
-              <TagAtom
-                styleOption={{
-                  size: 'normal',
-                  bg: 'transparent',
-                  borderColor: 'primary1',
-                }}
-                className="save__button"
+            <div className="button-group">
+              <BtnAtom
+                type="submit"
+                disabled={isDisabled}
+                className="submit_btn"
+                aria-label="submit"
               >
-                <TypoAtom fontSize="b2" fontColor={'primary1'}>
-                  {isSubmitting ? '저장 중' : '저장'}
-                </TypoAtom>
-              </TagAtom>
-            </BtnAtom>
+                <TagAtom
+                  styleOption={{
+                    size: 'normal',
+                    bg: 'transparent',
+                    borderColor: 'primary1',
+                  }}
+                  className="save__button"
+                >
+                  <TypoAtom fontSize="b2" fontColor={'primary1'}>
+                    {isSubmitting ? '저장 중' : '저장'}
+                  </TypoAtom>
+                </TagAtom>
+              </BtnAtom>
+              <BtnAtom
+                type="button"
+                className="cancel_btn"
+                aria-label="cancel"
+                handleOnClick={handleEditCancel}
+              >
+                <TagAtom
+                  styleOption={{
+                    size: 'normal',
+                    bg: 'transparent',
+                    borderColor: 'primary1',
+                  }}
+                >
+                  <TypoAtom fontSize="b2" fontColor={'primary1'}>
+                    취소
+                  </TypoAtom>
+                </TagAtom>
+              </BtnAtom>
+            </div>
           </FooterContainer>
         </MainContent>
 
@@ -240,29 +256,32 @@ const TitleContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   column-gap: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 0.75rem;
 
   & > div {
     display: flex;
     flex: 1;
+    align-items: center;
     min-width: 0;
   }
 
   .order-text {
-    margin-right: 0.25rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
   }
 
   .todoTitle {
     width: 100%;
     min-width: 0;
+    line-height: 1.2;
   }
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     .todoTitle {
-      font-size: ${({ theme }) => theme.fontSize.h2.size};
+      font-size: ${({ theme }) => theme.fontSize.h3.size};
     }
   }
 `;
@@ -288,9 +307,23 @@ const CategoryContainer = styled.div<{
 
 const FooterContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  column-gap: 0.5rem;
+  flex-direction: column;
+  align-items: stretch;
+  row-gap: 1rem;
+
+  .tomato-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .button-group {
+    display: flex;
+    column-gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+
   .save__button {
     &:hover {
       background-color: ${({ theme: { button } }) =>
@@ -298,6 +331,7 @@ const FooterContainer = styled.div`
     }
     transition: background-color 0.3s ease-in-out;
   }
+
   .submit_btn:disabled {
     opacity: 0.4;
     * {
