@@ -84,11 +84,11 @@ export class PomodoroServiceClass {
         this.PomodoroTimeSubject.value + this.PomodoroInterval,
       );
     };
-    this.PomodoroTimerSubscription = interval(
-      this.PomodoroInterval / this.PomodoroSpeed,
-    )
-      .pipe(tap(processTimer))
-      .subscribe();
+    // this.PomodoroTimerSubscription = interval(
+    //   this.PomodoroInterval / this.PomodoroSpeed,
+    // )
+    //   .pipe(tap(processTimer))
+    //   .subscribe();
   }
 
   dispose() {
