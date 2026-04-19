@@ -496,7 +496,6 @@ describe('TodoCard', () => {
               order={1}
               isThisEdit={true} // 직접 편집 모드로 설정
               setEditTodoId={setEditTodoIdMock}
-              isExtreme={false}
             />
           </div>,
           wrapperCreator,
@@ -532,7 +531,6 @@ describe('TodoCard', () => {
             order={1}
             isThisEdit={true}
             setEditTodoId={setEditTodoIdMock}
-            isExtreme={false}
           />,
           wrapperCreator,
         );

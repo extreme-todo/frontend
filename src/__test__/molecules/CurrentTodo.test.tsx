@@ -2,9 +2,7 @@ import { render } from '@testing-library/react';
 import { TodoEntity } from '../../DB/indexedAction';
 import { mockFetchTodoList } from '../../../fixture/mockTodoList';
 import { CurrentTodo } from '../../organisms';
-import { QueryProvider, UIProviders } from '../../contexts/AppProviders';
-import { CurrentTodoProvider, PomodoroProvider } from '../../hooks';
-import { QueryClient } from '@tanstack/react-query';
+import { UIProviders } from '../../contexts/AppProviders';
 
 describe('CurrentTodo', () => {
   const mockCurrentTodo: TodoEntity = mockFetchTodoList()[0];
@@ -13,23 +11,13 @@ describe('CurrentTodo', () => {
   function renderRanking(todo: TodoEntity) {
     return render(
       <UIProviders>
-        <QueryProvider
-          queryClient={
-            new QueryClient({ defaultOptions: { queries: { retry: false } } })
-          }
-        >
-          <PomodoroProvider>
-            <CurrentTodoProvider>
-              <CurrentTodo
-                todo={todo}
-                doTodo={mockDoTodoProp}
-                focusStep={10}
-                focusedOnTodo={10}
-                currentRound={0}
-              ></CurrentTodo>
-            </CurrentTodoProvider>
-          </PomodoroProvider>
-        </QueryProvider>
+        <CurrentTodo
+          todo={todo}
+          doTodo={mockDoTodoProp}
+          focusStep={10}
+          focusedOnTodo={10}
+          currentRound={0}
+        ></CurrentTodo>
       </UIProviders>,
     );
   }
