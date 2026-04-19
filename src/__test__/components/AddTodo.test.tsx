@@ -8,7 +8,8 @@ import { render } from '@testing-library/react';
 import { IChildProps } from '../../shared/interfaces';
 
 import userEvent from '@testing-library/user-event';
-import { UIProviders, QueryProvider, LogicProviders } from '../../contexts/AppProviders';
+import { UIProviders, QueryProvider } from '../../contexts/AppProviders';
+import { PomodoroProvider } from '../../hooks';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,7 +31,7 @@ describe('AddTodo', () => {
           wrapper: ({ children }: IChildProps) => (
             <UIProviders>
               <QueryProvider queryClient={queryClient}>
-                <LogicProviders>{children}</LogicProviders>
+                <PomodoroProvider>{children}</PomodoroProvider>
               </QueryProvider>
             </UIProviders>
           ),

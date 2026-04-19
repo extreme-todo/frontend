@@ -1,5 +1,12 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import { useExtremeMode, EXTREME_MODE, usePomodoroActions } from '../../hooks';
+import {
+  useExtremeMode,
+  EXTREME_MODE,
+  usePomodoroActions,
+  PomodoroProvider,
+  ExtremeModeProvider,
+  CurrentTodoProvider,
+} from '../../hooks';
 import React from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import { QueryClient } from '@tanstack/react-query';
@@ -10,7 +17,7 @@ import {
   EXTREME_TOKEN_STORAGE,
 } from '../../shared/apis';
 import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
-import { AppProviders } from '../../contexts/AppProviders';
+import { AppProviders, QueryProvider } from '../../contexts/AppProviders';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +32,13 @@ window.alert = jest.fn();
 describe('useExtremeMode', () => {
   // setting test environment
   const WrapperComponent = ({ children }: { children: React.ReactNode }) => (
-    <AppProviders queryClient={queryClient}>{children}</AppProviders>
+    <QueryProvider queryClient={queryClient}>
+      <PomodoroProvider>
+        <CurrentTodoProvider>
+          <ExtremeModeProvider>{children}</ExtremeModeProvider>
+        </CurrentTodoProvider>
+      </PomodoroProvider>
+    </QueryProvider>
   );
   const TestExtremeMode = () => {
     const { isExtreme, handleExtremeMode, warningText } = useExtremeMode();
