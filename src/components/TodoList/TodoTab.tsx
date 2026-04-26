@@ -5,12 +5,16 @@ interface ITodoTabProps {
   activeTab: 'todo' | 'done';
   setActiveTab: (tab: 'todo' | 'done') => void;
   isExtreme?: boolean;
+  todoCount?: number;
+  doneCount?: number;
 }
 
 export const TodoTab = ({
   activeTab,
   setActiveTab,
   isExtreme,
+  todoCount = 0,
+  doneCount = 0,
 }: ITodoTabProps) => {
   return (
     <TabContainer role="tablist" isExtreme={isExtreme}>
@@ -24,7 +28,7 @@ export const TodoTab = ({
         isExtreme={isExtreme}
       >
         <TabText
-          fontSize="body"
+          fontSize="h3"
           fontColor={
             activeTab === 'todo'
               ? isExtreme
@@ -34,7 +38,7 @@ export const TodoTab = ({
           }
           active={activeTab === 'todo'}
         >
-          남은 TODO
+          남은 TODO: {todoCount}
         </TabText>
       </TabButton>
       <TabButton
@@ -47,7 +51,7 @@ export const TodoTab = ({
         isExtreme={isExtreme}
       >
         <TabText
-          fontSize="body"
+          fontSize="h3"
           fontColor={
             activeTab === 'done'
               ? isExtreme
@@ -57,7 +61,7 @@ export const TodoTab = ({
           }
           active={activeTab === 'done'}
         >
-          완료한 TODO
+          완료한 TODO: {doneCount}
         </TabText>
       </TabButton>
     </TabContainer>

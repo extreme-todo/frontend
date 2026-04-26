@@ -42,6 +42,8 @@ const TodoListContainer = styled(CardAtom)<{ isMobile: boolean }>`
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 
   .mobile-header-wrapper {
     width: 100%;
@@ -66,6 +68,7 @@ const TodoListContainer = styled(CardAtom)<{ isMobile: boolean }>`
 `;
 
 const ListSection = styled.section<{ isMobile: boolean }>`
+  flex: 1;
   width: ${({ isMobile }) => (isMobile ? '100%' : '50%')};
   min-height: 0;
   display: grid;
@@ -160,8 +163,8 @@ export const TodoList = memo(
         >
           {!isMobile && (
             <div className="header__todo">
-              <TypoAtom fontSize="body" fontColor="primary2">
-                완료한 TODO
+              <TypoAtom fontSize="h2" fontColor="primary2">
+                완료한 TODO: {doneTodoList?.length ?? 0}
               </TypoAtom>
             </div>
           )}
@@ -206,8 +209,8 @@ export const TodoList = memo(
         >
           {!isMobile && (
             <div className="header__todo">
-              <TypoAtom fontSize="body" fontColor="primary2">
-                남은 TODO
+              <TypoAtom fontSize="h2" fontColor="primary2">
+                남은 TODO: {todoList?.length ?? 0}
               </TypoAtom>
               <BtnAtom
                 handleOnClick={handleClose}
@@ -264,6 +267,12 @@ export const TodoList = memo(
             </List>
           ) : (
             <EmptyList isExtreme={isExtreme}>
+              <TypoAtom fontSize="body" fontColor="primary2">
+                🍅
+              </TypoAtom>
+              <TypoAtom fontSize="body" fontColor="primary2">
+                새로운 TODO를 작성해볼까요?
+              </TypoAtom>
               <BtnAtom
                 handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
                 btnStyle="extremeDarkBtn"
@@ -321,6 +330,8 @@ export const TodoList = memo(
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               isExtreme={isExtreme}
+              todoCount={todoList?.length ?? 0}
+              doneCount={doneTodoList?.length ?? 0}
             />
           )}
           <div className="todo-list-wrapper">
