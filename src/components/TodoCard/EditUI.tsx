@@ -294,7 +294,7 @@ export const EditUI = memo(
                 type="submit"
                 disabled={isDisabled}
                 className="submit_btn"
-                aria-label="submit"
+                ariaLabel="submit"
               >
                 <TagAtom
                   styleOption={{
@@ -315,7 +315,7 @@ export const EditUI = memo(
               <BtnAtom
                 type="button"
                 className="cancel_btn"
-                aria-label="cancel"
+                ariaLabel="cancel"
                 handleOnClick={handleEditCancel}
               >
                 <TagAtom
