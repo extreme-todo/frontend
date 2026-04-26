@@ -34,6 +34,104 @@ interface ITodoListProps {
   mobileTopButtonSlot?: ReactNode;
 }
 
+const TodoListContainer = styled(CardAtom)<{ isMobile: boolean }>`
+  /* &,
+  * {
+    outline: red 1px solid;
+  } */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .mobile-header-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-top-button-slot {
+    flex-shrink: 0;
+    text-align: left;
+  }
+
+  .todo-list-wrapper {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')};
+    column-gap: 1rem;
+  }
+`;
+
+const ListSection = styled.section<{ isMobile: boolean }>`
+  width: ${({ isMobile }) => (isMobile ? '100%' : '50%')};
+  min-height: 0;
+  display: grid;
+  grid-template-rows: ${({ isMobile }) => (isMobile ? '1fr' : 'auto 1fr')};
+
+  .header__todo {
+    justify-content: space-between;
+    min-height: 1.5rem;
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+`;
+
+const List = styled.ul<{ isExtreme: boolean }>`
+  border-radius: 0.875rem;
+
+  overflow-y: scroll;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) => theme.color.backgroundColor.primary2}
+    transparent;
+  &::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({
+      theme: {
+        color: { backgroundColor },
+      },
+    }) => backgroundColor.primary2};
+    border-radius: 0.375rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &,
+  .innerList {
+    display: grid;
+    grid-auto-rows: min-content;
+    row-gap: 0.5rem;
+  }
+`;
+
+const EmptyList = styled.div<{ isExtreme: boolean }>`
+  border-radius: 0.875rem;
+  background-color: ${({
+    isExtreme,
+    theme: {
+      color: { backgroundColor },
+    },
+  }) =>
+    isExtreme
+      ? backgroundColor.light_extreme_dark
+      : backgroundColor.dark_primary1};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  row-gap: 0.3125rem;
+`;
+
 export const TodoList = memo(
   ({
     openAddTodoModal,
@@ -68,7 +166,7 @@ export const TodoList = memo(
             </div>
           )}
           {doneTodoList ? (
-            <List>
+            <List isExtreme={isExtreme}>
               {doneTodoList.map((doneTodo, idx) => (
                 <MemoTodoCard
                   key={doneTodo.id}
@@ -84,7 +182,7 @@ export const TodoList = memo(
               ))}
             </List>
           ) : (
-            <EmptyList>
+            <EmptyList isExtreme={isExtreme}>
               <TypoAtom fontSize="body" fontColor="primary2">
                 🍅
               </TypoAtom>
@@ -117,12 +215,12 @@ export const TodoList = memo(
                 className="close__btn"
                 tabIndex={3}
               >
-                <IconAtom size={1.5} alt="close" src="icon/closeYellow.svg" />
+                <IconAtom size={1.5} alt="close" src={'icon/closeYellow.svg'} />
               </BtnAtom>
             </div>
           )}
           {todoList ? (
-            <List>
+            <List isExtreme={isExtreme}>
               {currentTodo && (
                 <MemoTodoCard
                   isThisEdit={editTodoId === currentTodo.id}
@@ -165,7 +263,7 @@ export const TodoList = memo(
               </div>
             </List>
           ) : (
-            <EmptyList>
+            <EmptyList isExtreme={isExtreme}>
               <BtnAtom
                 handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
                 btnStyle="extremeDarkBtn"
@@ -214,7 +312,7 @@ export const TodoList = memo(
                 className="close__btn"
                 tabIndex={3}
               >
-                <IconAtom size={1.5} alt="close" src="icon/closeYellow.svg" />
+                <IconAtom size={1.5} alt="close" src={'icon/closeYellow.svg'} />
               </BtnAtom>
             </div>
           )}
@@ -244,96 +342,3 @@ export const TodoList = memo(
     );
   },
 );
-
-const TodoListContainer = styled(CardAtom)<{ isMobile: boolean }>`
-  /* &,
-  * {
-    outline: red 1px solid;
-  } */
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-
-  .mobile-header-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-  }
-
-  .mobile-top-button-slot {
-    flex-shrink: 0;
-    text-align: left;
-  }
-
-  .todo-list-wrapper {
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')};
-    column-gap: 1rem;
-  }
-`;
-
-const ListSection = styled.section<{ isMobile: boolean }>`
-  width: ${({ isMobile }) => (isMobile ? '100%' : '50%')};
-  min-height: 0;
-  display: grid;
-  grid-template-rows: ${({ isMobile }) => (isMobile ? '1fr' : 'auto 1fr')};
-
-  .header__todo {
-    justify-content: space-between;
-    min-height: 1.5rem;
-    padding-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-  }
-`;
-
-const List = styled.ul`
-  border-radius: 0.875rem;
-
-  overflow-y: scroll;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
-  scrollbar-width: thin;
-  scrollbar-color: #dbfe77 transparent;
-  &::-webkit-scrollbar {
-    width: 0.25rem;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({
-      theme: {
-        color: { backgroundColor },
-      },
-    }) => backgroundColor.primary2};
-    border-radius: 0.375rem;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &,
-  .innerList {
-    display: grid;
-    grid-auto-rows: min-content;
-    row-gap: 0.5rem;
-  }
-`;
-
-const EmptyList = styled.div`
-  border-radius: 0.875rem;
-  background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.dark_primary1};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-
-  row-gap: 0.3125rem;
-`;
