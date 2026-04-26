@@ -10,7 +10,6 @@ interface ITomatoSelectorProps {
   period: number;
   tomato: number;
   handleTomato: (count: number) => void;
-  isExtreme?: boolean;
   label?: string; // 라벨 추가
 }
 
@@ -20,7 +19,6 @@ const TomatoSelectorAtom = ({
   period,
   tomato,
   handleTomato,
-  isExtreme,
   label,
 }: ITomatoSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,10 +63,7 @@ const TomatoSelectorAtom = ({
     <SelectorWrapper>
       {label && (
         <LabelWrapper>
-          <TypoAtom
-            fontSize="h3"
-            fontColor={isExtreme ? 'primary2' : 'primary1'}
-          >
+          <TypoAtom fontSize="h3" fontColor="primary1">
             {label}
           </TypoAtom>
         </LabelWrapper>
@@ -77,7 +72,6 @@ const TomatoSelectorAtom = ({
         ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
         isOpen={isOpen}
-        isExtreme={isExtreme}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <TomatoIcon>🍅</TomatoIcon>
@@ -96,11 +90,7 @@ const TomatoSelectorAtom = ({
           placement="bottom-start"
           offset={[0, 0]}
         >
-          <OptionList
-            isExtreme={isExtreme}
-            style={{ width: triggerWidth }}
-            aria-label="tomatoInput"
-          >
+          <OptionList style={{ width: triggerWidth }} aria-label="tomatoInput">
             {Array.from({ length: tickCount + 1 }).map((_, index) => {
               const value = min + index;
               const isSelected = value === tomato;
@@ -109,7 +99,6 @@ const TomatoSelectorAtom = ({
                   key={value}
                   onClick={() => handleSelect(value)}
                   isSelected={isSelected}
-                  isExtreme={isExtreme}
                 >
                   <OptionTomato isSelected={isSelected}>🍅</OptionTomato>
                   <OptionText>
@@ -137,7 +126,7 @@ const LabelWrapper = styled.div`
   margin-left: 0.25rem;
 `;
 
-const SelectedDisplay = styled.div<{ isOpen: boolean; isExtreme?: boolean }>`
+const SelectedDisplay = styled.div<{ isOpen: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -172,7 +161,7 @@ const ArrowIcon = styled.span<{ isOpen: boolean }>`
   transition: transform 0.2s ease;
 `;
 
-const OptionList = styled.div<{ isExtreme?: boolean }>`
+const OptionList = styled.div`
   max-height: 150px;
   overflow-y: auto;
   background-color: ${({ theme }) => theme.color.backgroundColor.white};
@@ -196,7 +185,7 @@ const OptionList = styled.div<{ isExtreme?: boolean }>`
   }
 `;
 
-const OptionItem = styled.div<{ isSelected: boolean; isExtreme?: boolean }>`
+const OptionItem = styled.div<{ isSelected: boolean }>`
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;

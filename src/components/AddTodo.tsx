@@ -298,7 +298,6 @@ export const AddTodo = ({
               period={focusStep}
               handleTomato={handleTomato}
               tomato={tomato}
-              isExtreme={isExtreme}
               label="TODO 반복 시간 설정"
             />
           ) : (

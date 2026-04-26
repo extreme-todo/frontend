@@ -286,7 +286,6 @@ export const EditUI = memo(
                 period={focusStepValue}
                 tomato={durationValue}
                 handleTomato={handleTomato}
-                isExtreme={false}
                 label="TODO 반복 시간 설정"
               />
             </div>
