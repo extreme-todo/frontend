@@ -268,7 +268,7 @@ describe('TodoCard', () => {
         const titleInput = getByRole('textbox', {
           name: /title/i,
         }) as HTMLInputElement;
-        const saveBtn = getByRole('button', { name: /저장/i });
+        const saveBtn = getByRole('button', { name: /submit/i });
         await userEvent.clear(titleInput);
         expect(saveBtn).toBeDisabled();
       });
