@@ -40,169 +40,7 @@ interface IEditUIProps {
   isExtreme: boolean;
 }
 
-export const EditUI = memo(
-  ({
-    titleValue,
-    handleChangeTitle,
-    handleTitleBlur,
-    titleError,
-    order,
-    handleEditCancel,
-    categoryArray,
-    handleAddCategory,
-    handleDeleteCategory,
-    categoryValue,
-    handleChangeCategory,
-    tagColorList,
-    categoryError,
-    durationValue,
-    focusStepValue,
-    handleTomato,
-    isSubmitting,
-    isDisabled,
-    handleEditSubmit,
-    onMoveUp,
-    onMoveDown,
-    isFirst,
-    isLast,
-    isCurrTodo,
-    isExtreme,
-  }: IEditUIProps) => {
-    const handleInputRef = useCallback((node: HTMLInputElement | null) => {
-      node?.focus();
-    }, []);
-
-    return (
-      <EditCardContainer onSubmit={handleEditSubmit}>
-        <MainContent>
-          <TitleContainer>
-            <div style={{ display: 'flex' }}>
-              <TypoAtom
-                fontSize="h3"
-                fontColor="primary1"
-                className="order-text"
-              >
-                {order}.
-              </TypoAtom>
-              <label htmlFor="title" style={{ width: '100%' }}>
-                <InputAtom.Underline
-                  value={titleValue}
-                  handleChange={handleChangeTitle}
-                  handleBlur={handleTitleBlur}
-                  placeholder="할 일을 입력하세요"
-                  ariaLabel="title_input"
-                  name="title"
-                  className="todoTitle"
-                  inputRef={handleInputRef}
-                  styleOption={{
-                    borderWidth: titleError ? '2px' : '1px',
-                    padding: '0.25rem 0 0.25rem 0',
-                    height: '1.5rem',
-                    font: 'h3',
-                    borderColor: titleError ? 'extreme_orange' : 'primary1',
-                    fontColor: 'primary1',
-                  }}
-                />
-              </label>
-            </div>
-          </TitleContainer>
-
-          <CategoryContainer
-            className="categories"
-            categoryError={categoryError !== undefined}
-          >
-            <CategoryInput
-              isExtreme={isExtreme}
-              categories={categoryArray}
-              handleSubmit={handleAddCategory}
-              handleClick={handleDeleteCategory}
-              category={categoryValue}
-              handleChangeCategory={handleChangeCategory}
-              tagColorList={tagColorList}
-            />
-            <p className="category_error" role="alert">
-              {categoryError ? categoryError : SPECIAL_EXPRESSION_WARNING}
-            </p>
-          </CategoryContainer>
-
-          <FooterContainer>
-            <div className="tomato-wrapper">
-              <TomatoSelectorAtom
-                max={10}
-                min={1}
-                period={focusStepValue}
-                tomato={durationValue}
-                handleTomato={handleTomato}
-                isExtreme={isExtreme}
-                label="TODO 반복 시간 설정"
-              />
-            </div>
-            <div className="button-group">
-              <BtnAtom
-                type="submit"
-                disabled={isDisabled}
-                className="submit_btn"
-                aria-label="submit"
-              >
-                <TagAtom
-                  styleOption={{
-                    size: 'normal',
-                    bg: 'transparent',
-                    borderColor: 'primary1',
-                  }}
-                  className="save__button"
-                >
-                  <TypoAtom fontSize="b2" fontColor={'primary1'}>
-                    {isSubmitting ? '저장 중' : '저장'}
-                  </TypoAtom>
-                </TagAtom>
-              </BtnAtom>
-              <BtnAtom
-                type="button"
-                className="cancel_btn"
-                aria-label="cancel"
-                handleOnClick={handleEditCancel}
-              >
-                <TagAtom
-                  styleOption={{
-                    size: 'normal',
-                    bg: 'transparent',
-                    borderColor: 'primary1',
-                  }}
-                >
-                  <TypoAtom fontSize="b2" fontColor={'primary1'}>
-                    취소
-                  </TypoAtom>
-                </TagAtom>
-              </BtnAtom>
-            </div>
-          </FooterContainer>
-        </MainContent>
-
-        <OrderButtonsColumn>
-          <OrderBtn
-            type="button"
-            onClick={onMoveUp}
-            disabled={isFirst || isCurrTodo || !onMoveUp}
-            aria-label="move up"
-          >
-            ▲
-          </OrderBtn>
-          <OrderBtn
-            type="button"
-            onClick={onMoveDown}
-            disabled={isLast || isCurrTodo || !onMoveDown}
-            aria-label="move down"
-          >
-            ▼
-          </OrderBtn>
-        </OrderButtonsColumn>
-      </EditCardContainer>
-    );
-  },
-);
-
-const EditCardContainer = styled.form`
+const EditCardContainer = styled.form<{ isExtreme: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -211,7 +49,10 @@ const EditCardContainer = styled.form`
   padding: 0.75rem;
   border-radius: 0.875rem;
   background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
-  color: ${({ theme }) => theme.color.backgroundColor.primary1};
+  color: ${({ theme, isExtreme }) =>
+    isExtreme
+      ? theme.color.fontColor.extreme_dark
+      : theme.color.backgroundColor.primary1};
 `;
 
 const MainContent = styled.div`
@@ -222,22 +63,27 @@ const MainContent = styled.div`
   min-width: 0;
 `;
 
-const OrderButtonsColumn = styled.div`
+const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   margin-left: 0.5rem;
   padding-left: 0.5rem;
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: 1px solid
+    ${({ isExtreme }) =>
+      isExtreme ? 'rgba(28, 28, 29, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
 `;
 
-const OrderBtn = styled.button`
+const OrderBtn = styled.button<{ isExtreme: boolean }>`
   background: none;
   border: none;
   cursor: pointer;
   font-size: 0.75rem;
-  color: ${({ theme }) => theme.color.backgroundColor.primary1};
+  color: ${({ theme, isExtreme }) =>
+    isExtreme
+      ? theme.color.fontColor.extreme_dark
+      : theme.color.backgroundColor.primary1};
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   line-height: 1;
@@ -305,7 +151,7 @@ const CategoryContainer = styled.div<{
   }
 `;
 
-const FooterContainer = styled.div`
+const FooterContainer = styled.div<{ isExtreme: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -326,8 +172,10 @@ const FooterContainer = styled.div`
 
   .save__button {
     &:hover {
-      background-color: ${({ theme: { button } }) =>
-        button.darkBtn.hover.backgroundColor};
+      background-color: ${({ theme: { button }, isExtreme }) =>
+        isExtreme
+          ? button.extremeDarkBtn.hover.backgroundColor
+          : button.darkBtn.hover.backgroundColor};
     }
     transition: background-color 0.3s ease-in-out;
   }
@@ -339,3 +187,177 @@ const FooterContainer = styled.div`
     }
   }
 `;
+
+export const EditUI = memo(
+  ({
+    titleValue,
+    handleChangeTitle,
+    handleTitleBlur,
+    titleError,
+    order,
+    handleEditCancel,
+    categoryArray,
+    handleAddCategory,
+    handleDeleteCategory,
+    categoryValue,
+    handleChangeCategory,
+    tagColorList,
+    categoryError,
+    durationValue,
+    focusStepValue,
+    handleTomato,
+    isSubmitting,
+    isDisabled,
+    handleEditSubmit,
+    onMoveUp,
+    onMoveDown,
+    isFirst,
+    isLast,
+    isCurrTodo,
+    isExtreme,
+  }: IEditUIProps) => {
+    const handleInputRef = useCallback((node: HTMLInputElement | null) => {
+      node?.focus();
+    }, []);
+
+    return (
+      <EditCardContainer onSubmit={handleEditSubmit} isExtreme={isExtreme}>
+        <MainContent>
+          <TitleContainer>
+            <div style={{ display: 'flex' }}>
+              <TypoAtom
+                fontSize="h3"
+                fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                className="order-text"
+              >
+                {order}.
+              </TypoAtom>
+              <label htmlFor="title" style={{ width: '100%' }}>
+                <InputAtom.Underline
+                  value={titleValue}
+                  handleChange={handleChangeTitle}
+                  handleBlur={handleTitleBlur}
+                  placeholder="할 일을 입력하세요"
+                  ariaLabel="title_input"
+                  name="title"
+                  className="todoTitle"
+                  inputRef={handleInputRef}
+                  styleOption={{
+                    borderWidth: titleError ? '2px' : '1px',
+                    padding: '0.25rem 0 0.25rem 0',
+                    height: '1.5rem',
+                    font: 'h3',
+                    borderColor: titleError
+                      ? 'extreme_orange'
+                      : isExtreme
+                      ? 'extreme_dark'
+                      : 'primary1',
+                    fontColor: isExtreme ? 'extreme_dark' : 'primary1',
+                  }}
+                />
+              </label>
+            </div>
+          </TitleContainer>
+
+          <CategoryContainer
+            className="categories"
+            categoryError={categoryError !== undefined}
+          >
+            <CategoryInput
+              isExtreme={isExtreme}
+              categories={categoryArray}
+              handleSubmit={handleAddCategory}
+              handleClick={handleDeleteCategory}
+              category={categoryValue}
+              handleChangeCategory={handleChangeCategory}
+              tagColorList={tagColorList}
+            />
+            <p className="category_error" role="alert">
+              {categoryError ? categoryError : SPECIAL_EXPRESSION_WARNING}
+            </p>
+          </CategoryContainer>
+
+          <FooterContainer isExtreme={isExtreme}>
+            <div className="tomato-wrapper">
+              <TomatoSelectorAtom
+                max={10}
+                min={1}
+                period={focusStepValue}
+                tomato={durationValue}
+                handleTomato={handleTomato}
+                isExtreme={false}
+                label="TODO 반복 시간 설정"
+              />
+            </div>
+            <div className="button-group">
+              <BtnAtom
+                type="submit"
+                disabled={isDisabled}
+                className="submit_btn"
+                aria-label="submit"
+              >
+                <TagAtom
+                  styleOption={{
+                    size: 'normal',
+                    bg: 'transparent',
+                    borderColor: isExtreme ? 'extreme_dark' : 'primary1',
+                  }}
+                  className="save__button"
+                >
+                  <TypoAtom
+                    fontSize="b2"
+                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                  >
+                    {isSubmitting ? '저장 중' : '저장'}
+                  </TypoAtom>
+                </TagAtom>
+              </BtnAtom>
+              <BtnAtom
+                type="button"
+                className="cancel_btn"
+                aria-label="cancel"
+                handleOnClick={handleEditCancel}
+              >
+                <TagAtom
+                  styleOption={{
+                    size: 'normal',
+                    bg: 'transparent',
+                    borderColor: isExtreme ? 'extreme_dark' : 'primary1',
+                  }}
+                >
+                  <TypoAtom
+                    fontSize="b2"
+                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                  >
+                    취소
+                  </TypoAtom>
+                </TagAtom>
+              </BtnAtom>
+            </div>
+          </FooterContainer>
+        </MainContent>
+
+        <OrderButtonsColumn isExtreme={isExtreme}>
+          <OrderBtn
+            type="button"
+            onClick={onMoveUp}
+            disabled={isFirst || isCurrTodo || !onMoveUp}
+            aria-label="move up"
+            isExtreme={isExtreme}
+          >
+            ▲
+          </OrderBtn>
+          <OrderBtn
+            type="button"
+            onClick={onMoveDown}
+            disabled={isLast || isCurrTodo || !onMoveDown}
+            aria-label="move down"
+            isExtreme={isExtreme}
+          >
+            ▼
+          </OrderBtn>
+        </OrderButtonsColumn>
+      </EditCardContainer>
+    );
+  },
+);
