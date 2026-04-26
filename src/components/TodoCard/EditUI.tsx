@@ -66,8 +66,9 @@ const MainContent = styled.div`
 const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  row-gap: 0.5rem;
   margin-left: 0.5rem;
   padding-left: 0.5rem;
   border-left: 1px solid
