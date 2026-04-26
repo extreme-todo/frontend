@@ -20,14 +20,13 @@ import {
 /* etc */
 import styled from '@emotion/styled';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
-import { ModalType } from '../MainTodo';
 
 const randomTagColor = RandomTagColorList.getInstance();
 
 const MemoTodoCard = memo(TodoCard);
 
 interface ITodoListProps {
-  openAddTodoModal: (type: ModalType) => Window | null | undefined;
+  openAddTodoModal: () => Window | null | undefined;
   currentTodo: TodoEntity | undefined;
   focusStep: focusStep;
   handleClose: () => void;
@@ -167,7 +166,7 @@ export const TodoList = memo(
           ) : (
             <EmptyList>
               <BtnAtom
-                handleOnClick={openAddTodoModal.bind(this, 'addTodoModal')}
+                handleOnClick={openAddTodoModal}
                 btnStyle="extremeDarkBtn"
               >
                 <div style={{ padding: '0.375rem 1.28125rem' }}>

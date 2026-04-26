@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { SideButtons } from '../../molecules';
+import { SideButtons, SideButtonType } from '../../molecules/SideButtons';
 import { CurrentTodoCard, NoTodoCard, RestCard } from '../../organisms';
 import { TodoList, AddTodo, PomodoroTimeSetting, FocusedTime } from '..';
 import {
@@ -84,16 +84,37 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   };
 
   const handleClickSideButton = useCallback(
-    (type: ModalType) => {
+    (type: SideButtonType) => {
       if (!isLogin) {
         if (window.confirm('로그인을 하시겠습니까?')) {
           return usersApi.login();
         }
       } else {
-        changeCard(currentCard, type);
+        switch (type) {
+          case 'help':
+            setIsHelpModalOpen(true);
+            break;
+          case 'doAll':
+            if (window.confirm('모든 TODO를 종료하시겠습니까?')) {
+              doAllTodo();
+            }
+            break;
+          case 'addTodo':
+            changeCard(currentCard, 'addTodoModal');
+            break;
+          case 'timer':
+            changeCard(currentCard, 'timeModal');
+            break;
+          case 'list':
+            changeCard(currentCard, 'todolistModal');
+            break;
+          case 'ranking':
+            changeCard(currentCard, 'ranking');
+            break;
+        }
       }
     },
-    [isLogin, currentCard, changeCard],
+    [isLogin, currentCard, changeCard, doAllTodo],
   );
 
   const handleClose = useCallback(() => {
@@ -156,7 +177,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           return (
             <EditContextProvider>
               <TodoList
-                openAddTodoModal={handleClickSideButton}
+                openAddTodoModal={() => handleClickSideButton('addTodo')}
                 currentTodo={currentTodo}
                 focusStep={focusStep}
                 handleClose={handleClose}
@@ -170,7 +191,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           ) : (
             <NoTodoCard
               addTodoHandler={() => {
-                handleClickSideButton('addTodoModal');
+                handleClickSideButton('addTodo');
               }}
               mobileTopButtonSlot={props.children}
             />
@@ -181,7 +202,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           ) : (
             <NoTodoCard
               addTodoHandler={() => {
-                handleClickSideButton('addTodoModal');
+                handleClickSideButton('addTodo');
               }}
               mobileTopButtonSlot={props.children}
             />
@@ -286,24 +307,12 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     <SideButtons
       focusedButton={currentFocusedSideButton}
       onClickHandlers={{
-        ranking: () => {
-          handleClickSideButton('ranking');
-        },
-        help: () => setIsHelpModalOpen(true),
-        addTodo: () => {
-          handleClickSideButton('addTodoModal');
-        },
-        list: () => {
-          handleClickSideButton('todolistModal');
-        },
-        timer: () => {
-          handleClickSideButton('timeModal');
-        },
-        doAll: () => {
-          if (window.confirm('모든 TODO를 종료하시겠습니까?')) {
-            doAllTodo();
-          }
-        },
+        ranking: () => handleClickSideButton('ranking'),
+        help: () => handleClickSideButton('help'),
+        addTodo: () => handleClickSideButton('addTodo'),
+        list: () => handleClickSideButton('list'),
+        timer: () => handleClickSideButton('timer'),
+        doAll: () => handleClickSideButton('doAll'),
       }}
     >
       <MainTodoContainer ref={ref}>

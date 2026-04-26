@@ -24,8 +24,8 @@ const Overlay = styled(motion.div)`
 `;
 
 const HelpImage = styled(motion.img)`
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 100%;
+  max-height: 100%;
   border-radius: 12px;
   object-fit: contain;
   pointer-events: none;
