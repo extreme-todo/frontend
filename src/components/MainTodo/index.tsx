@@ -33,6 +33,7 @@ import {
   CardAtom,
   CardAnimationPlayerAnimationType,
   CardAnimationPlayerAtom,
+  HelpModalAtom,
 } from '../../atoms';
 import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
@@ -53,6 +54,7 @@ export type CardType =
 export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
   const [currentCard, setCurrentCard] = useState<CardType>('currentTodo');
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
   const [currentCardColor, setCurrentCardColor] =
     useState<BackgroundColorName>('primary1');
@@ -287,7 +289,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         ranking: () => {
           handleClickSideButton('ranking');
         },
-        help: () => alert('기능 준비 중입니다.'),
+        help: () => setIsHelpModalOpen(true),
         addTodo: () => {
           handleClickSideButton('addTodoModal');
         },
@@ -387,6 +389,11 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
           </MainTodoCenter>
         </MainTodoContentWrapper>
       </MainTodoContainer>
+      <HelpModalAtom
+        isOpen={isHelpModalOpen}
+        onClose={() => setIsHelpModalOpen(false)}
+        isMobile={isMobile}
+      />
     </SideButtons>
   );
 });

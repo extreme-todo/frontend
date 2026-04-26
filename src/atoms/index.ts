@@ -14,3 +14,4 @@ export { TagAtom, type ITagSpanProps } from './TagAtom';
 export { TodoProgressBarAtom } from './TodoProgressBarAtom';
 export { TomatoInputAtom } from './TomatoInputAtom';
 export { TomatoSelectorAtom } from './TomatoSelectorAtom';
+export { HelpModalAtom } from './HelpModalAtom';
