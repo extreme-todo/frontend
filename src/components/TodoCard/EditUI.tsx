@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { focusStep } from '../../hooks';
 import { TagColorName } from '../../styles/emotion';
 import {
-  IconAtom,
   TagAtom,
   TypoAtom,
   BtnAtom,
@@ -41,6 +40,155 @@ interface IEditUIProps {
   isExtreme: boolean;
 }
 
+const EditCardContainer = styled.form<{ isExtreme: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border-radius: 0.875rem;
+  background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
+  color: ${({ theme, isExtreme }) =>
+    isExtreme
+      ? theme.color.fontColor.extreme_dark
+      : theme.color.backgroundColor.primary1};
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+`;
+
+const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 0.5rem;
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid
+    ${({ isExtreme }) =>
+      isExtreme ? 'rgba(28, 28, 29, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
+`;
+
+const OrderBtn = styled.button<{ isExtreme: boolean }>`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: ${({ theme, isExtreme }) =>
+    isExtreme
+      ? theme.color.fontColor.extreme_dark
+      : theme.color.backgroundColor.primary1};
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  line-height: 1;
+
+  &:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.7;
+  }
+`;
+
+const TitleContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 4px;
+  margin-bottom: 0.75rem;
+
+  & > div {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .order-text {
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .todoTitle {
+    width: 100%;
+    min-width: 0;
+    line-height: 1.2;
+  }
+
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    .todoTitle {
+      font-size: ${({ theme }) => theme.fontSize.h3.size};
+    }
+  }
+`;
+
+const CategoryContainer = styled.div<{
+  categoryError: boolean;
+}>`
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
+  .category_error {
+    transition: all 0.7s ease;
+    margin-top: 0.5rem;
+    color: ${({ theme }) => theme.color.fontColor.extreme_orange};
+    font-size: ${({ theme }) => theme.fontSize.b2.size};
+    font-weight: ${({ theme }) => theme.fontSize.b2.weight};
+    height: ${({ categoryError }) => (categoryError ? '1.8rem' : '0px')};
+    overflow: hidden;
+  }
+`;
+
+const FooterContainer = styled.div<{ isExtreme: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  row-gap: 1rem;
+
+  .tomato-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .button-group {
+    display: flex;
+    column-gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+
+  .save__button {
+    &:hover {
+      background-color: ${({ theme: { button }, isExtreme }) =>
+        isExtreme
+          ? button.extremeDarkBtn.hover.backgroundColor
+          : button.darkBtn.hover.backgroundColor};
+    }
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .submit_btn:disabled {
+    opacity: 0.4;
+    * {
+      cursor: not-allowed;
+    }
+  }
+`;
+
 export const EditUI = memo(
   ({
     titleValue,
@@ -74,13 +222,13 @@ export const EditUI = memo(
     }, []);
 
     return (
-      <EditCardContainer onSubmit={handleEditSubmit}>
+      <EditCardContainer onSubmit={handleEditSubmit} isExtreme={isExtreme}>
         <MainContent>
           <TitleContainer>
             <div style={{ display: 'flex' }}>
               <TypoAtom
                 fontSize="h3"
-                fontColor="primary1"
+                fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
                 className="order-text"
               >
                 {order}.
@@ -97,18 +245,19 @@ export const EditUI = memo(
                   inputRef={handleInputRef}
                   styleOption={{
                     borderWidth: titleError ? '2px' : '1px',
-                    padding: '0 0 0 0',
-                    height: '1.25rem',
+                    padding: '0.25rem 0 0.25rem 0',
+                    height: '1.5rem',
                     font: 'h3',
-                    borderColor: titleError ? 'extreme_orange' : 'primary1',
-                    fontColor: 'primary1',
+                    borderColor: titleError
+                      ? 'extreme_orange'
+                      : isExtreme
+                      ? 'extreme_dark'
+                      : 'primary1',
+                    fontColor: isExtreme ? 'extreme_dark' : 'primary1',
                   }}
                 />
               </label>
-            </div>{' '}
-            <BtnAtom handleOnClick={handleEditCancel}>
-              <IconAtom src={'icon/closeDark.svg'} size={1.25} alt="cancel" />
-            </BtnAtom>
+            </div>
           </TitleContainer>
 
           <CategoryContainer
@@ -129,46 +278,72 @@ export const EditUI = memo(
             </p>
           </CategoryContainer>
 
-          <FooterContainer>
-            <div style={{ flex: 1, marginRight: '1rem' }}>
+          <FooterContainer isExtreme={isExtreme}>
+            <div className="tomato-wrapper">
               <TomatoSelectorAtom
                 max={10}
                 min={1}
                 period={focusStepValue}
                 tomato={durationValue}
                 handleTomato={handleTomato}
-                isExtreme={isExtreme}
                 label="TODO 반복 시간 설정"
               />
             </div>
-            <BtnAtom
-              type="submit"
-              disabled={isDisabled}
-              className="submit_btn"
-              aria-label="submit"
-            >
-              <TagAtom
-                styleOption={{
-                  size: 'normal',
-                  bg: 'transparent',
-                  borderColor: 'primary1',
-                }}
-                className="save__button"
+            <div className="button-group">
+              <BtnAtom
+                type="submit"
+                disabled={isDisabled}
+                className="submit_btn"
+                ariaLabel="submit"
               >
-                <TypoAtom fontSize="b2" fontColor={'primary1'}>
-                  {isSubmitting ? '저장 중' : '저장'}
-                </TypoAtom>
-              </TagAtom>
-            </BtnAtom>
+                <TagAtom
+                  styleOption={{
+                    size: 'normal',
+                    bg: 'transparent',
+                    borderColor: isExtreme ? 'extreme_dark' : 'primary1',
+                  }}
+                  className="save__button"
+                >
+                  <TypoAtom
+                    fontSize="b2"
+                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                  >
+                    {isSubmitting ? '저장 중' : '저장'}
+                  </TypoAtom>
+                </TagAtom>
+              </BtnAtom>
+              <BtnAtom
+                type="button"
+                className="cancel_btn"
+                ariaLabel="cancel"
+                handleOnClick={handleEditCancel}
+              >
+                <TagAtom
+                  styleOption={{
+                    size: 'normal',
+                    bg: 'transparent',
+                    borderColor: isExtreme ? 'extreme_dark' : 'primary1',
+                  }}
+                >
+                  <TypoAtom
+                    fontSize="b2"
+                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
+                  >
+                    취소
+                  </TypoAtom>
+                </TagAtom>
+              </BtnAtom>
+            </div>
           </FooterContainer>
         </MainContent>
 
-        <OrderButtonsColumn>
+        <OrderButtonsColumn isExtreme={isExtreme}>
           <OrderBtn
             type="button"
             onClick={onMoveUp}
             disabled={isFirst || isCurrTodo || !onMoveUp}
             aria-label="move up"
+            isExtreme={isExtreme}
           >
             ▲
           </OrderBtn>
@@ -177,6 +352,7 @@ export const EditUI = memo(
             onClick={onMoveDown}
             disabled={isLast || isCurrTodo || !onMoveDown}
             aria-label="move down"
+            isExtreme={isExtreme}
           >
             ▼
           </OrderBtn>
@@ -185,123 +361,3 @@ export const EditUI = memo(
     );
   },
 );
-
-const EditCardContainer = styled.form`
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.75rem;
-  border-radius: 0.875rem;
-  background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
-  color: ${({ theme }) => theme.color.backgroundColor.primary1};
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 0;
-`;
-
-const OrderButtonsColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: 0.5rem;
-  padding-left: 0.5rem;
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
-`;
-
-const OrderBtn = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.color.backgroundColor.primary1};
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  line-height: 1;
-
-  &:disabled {
-    opacity: 0.2;
-    cursor: not-allowed;
-  }
-
-  &:not(:disabled):hover {
-    opacity: 0.7;
-  }
-`;
-
-const TitleContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  column-gap: 4px;
-  margin-bottom: 4px;
-
-  & > div {
-    display: flex;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .order-text {
-    margin-right: 0.25rem;
-  }
-
-  .todoTitle {
-    width: 100%;
-    min-width: 0;
-  }
-
-  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
-    ${({ theme }) => theme.responsiveDevice.mobile} {
-    .todoTitle {
-      font-size: ${({ theme }) => theme.fontSize.h2.size};
-    }
-  }
-`;
-
-const CategoryContainer = styled.div<{
-  categoryError: boolean;
-}>`
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-  column-gap: 0.5rem;
-  row-gap: 0.25rem;
-  .category_error {
-    transition: all 0.7s ease;
-    margin-top: 0.5rem;
-    color: ${({ theme }) => theme.color.fontColor.extreme_orange};
-    font-size: ${({ theme }) => theme.fontSize.b2.size};
-    font-weight: ${({ theme }) => theme.fontSize.b2.weight};
-    height: ${({ categoryError }) => (categoryError ? '1.8rem' : '0px')};
-    overflow: hidden;
-  }
-`;
-
-const FooterContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  column-gap: 0.5rem;
-  .save__button {
-    &:hover {
-      background-color: ${({ theme: { button } }) =>
-        button.darkBtn.hover.backgroundColor};
-    }
-    transition: background-color 0.3s ease-in-out;
-  }
-  .submit_btn:disabled {
-    opacity: 0.4;
-    * {
-      cursor: not-allowed;
-    }
-  }
-`;

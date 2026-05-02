@@ -21,144 +21,6 @@ interface ITodoUIProps {
   isLast?: boolean;
 }
 
-export const TodoUI = memo(
-  ({
-    todoData,
-    focusStep,
-    randomTagColor,
-    isExtreme,
-    isCurrTodo,
-    order,
-    handleEditButton,
-    handleDeleteButton,
-    onMoveUp,
-    onMoveDown,
-    isFirst,
-    isLast,
-  }: ITodoUIProps) => {
-    const { todo, categories, done, duration } = todoData;
-    const tagColorList = randomTagColor.getColorList;
-
-    return (
-      <TodoCardContainer
-        isExtreme={isExtreme}
-        done={done}
-        isCurrTodo={isCurrTodo}
-        isThisEdit={false}
-      >
-        <MainContent>
-          <TitleContainer>
-            <div style={{ display: 'flex' }}>
-              {!done && (
-                <TypoAtom
-                  fontSize="h3"
-                  fontColor="primary2"
-                  className="order-text"
-                >
-                  {order}.
-                </TypoAtom>
-              )}
-              <TypoAtom
-                className="todoTitle"
-                fontSize="h3"
-                fontColor="primary2"
-              >
-                {todo}
-              </TypoAtom>
-            </div>
-            {!isCurrTodo && !done && (
-              <BtnAtom handleOnClick={handleDeleteButton}>
-                <IconAtom src={'icon/delete.svg'} size={1.25} alt="delete" />
-              </BtnAtom>
-            )}
-          </TitleContainer>
-
-          {categories && categories.length !== 0 && (
-            <CategoryContainer className="categories" categoryError={false}>
-              {categories.map((category) => (
-                <TagAtom
-                  key={category}
-                  title={category}
-                  styleOption={{ bg: tagColorList[category], size: 'normal' }}
-                >
-                  {category}
-                </TagAtom>
-              ))}
-            </CategoryContainer>
-          )}
-
-          {!done && (
-            <FooterContainer>
-              <TimeWrapper>
-                <IconAtom
-                  src={
-                    isCurrTodo ? 'icon/yellowTimer.svg' : 'icon/yellowTimer.svg'
-                  }
-                  alt="timer"
-                  className="timer"
-                  size={1.25}
-                />
-                <TypoAtom fontSize="body" fontColor="primary2">
-                  {formatTime(focusStep * duration)}
-                </TypoAtom>
-              </TimeWrapper>
-              {isCurrTodo ? (
-                <TagAtom
-                  styleOption={{
-                    size: 'normal',
-                    bg: 'transparent',
-                    borderColor: 'primary2',
-                  }}
-                >
-                  <TypoAtom fontSize="b2" fontColor="primary2">
-                    진행중
-                  </TypoAtom>
-                </TagAtom>
-              ) : (
-                <BtnAtom handleOnClick={handleEditButton}>
-                  <TagAtom
-                    styleOption={{
-                      size: 'normal',
-                      bg: 'transparent',
-                      borderColor: 'primary2',
-                    }}
-                    className="edit__button"
-                  >
-                    <TypoAtom fontSize="b2" fontColor="primary2">
-                      수정
-                    </TypoAtom>
-                  </TagAtom>
-                </BtnAtom>
-              )}
-            </FooterContainer>
-          )}
-        </MainContent>
-
-        {!done && (
-          <OrderButtonsColumn>
-            <OrderBtn
-              type="button"
-              onClick={onMoveUp}
-              disabled={isFirst || isCurrTodo || !onMoveUp}
-              aria-label="move up"
-            >
-              ▲
-            </OrderBtn>
-            <OrderBtn
-              type="button"
-              onClick={onMoveDown}
-              disabled={isLast || isCurrTodo || !onMoveDown}
-              aria-label="move down"
-            >
-              ▼
-            </OrderBtn>
-          </OrderButtonsColumn>
-        )}
-      </TodoCardContainer>
-    );
-  },
-);
-
 const TodoCardContainer = styled.div<{
   done: boolean;
   isExtreme: boolean;
@@ -217,14 +79,17 @@ const MainContent = styled.div`
   min-width: 0;
 `;
 
-const OrderButtonsColumn = styled.div`
+const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  row-gap: 0.5rem;
   margin-left: 0.5rem;
   padding-left: 0.5rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid
+    ${({ isExtreme }) =>
+      isExtreme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)'};
 `;
 
 const OrderBtn = styled.button`
@@ -295,14 +160,16 @@ const CategoryContainer = styled.div<{
   row-gap: 0.25rem;
 `;
 
-const FooterContainer = styled.div`
+const FooterContainer = styled.div<{ isExtreme: boolean }>`
   display: flex;
   justify-content: flex-end;
   column-gap: 0.5rem;
   .edit__button {
     &:hover {
-      background-color: ${({ theme: { button } }) =>
-        button.darkBtn.hover.backgroundColor};
+      background-color: ${({ theme: { button }, isExtreme }) =>
+        isExtreme
+          ? button.extremeDarkBtn.hover.backgroundColor
+          : button.darkBtn.hover.backgroundColor};
     }
     transition: background-color 0.3s ease-in-out;
   }
@@ -313,3 +180,139 @@ const TimeWrapper = styled.div`
   align-items: center;
   column-gap: 0.25rem;
 `;
+
+export const TodoUI = memo(
+  ({
+    todoData,
+    focusStep,
+    randomTagColor,
+    isExtreme,
+    isCurrTodo,
+    order,
+    handleEditButton,
+    handleDeleteButton,
+    onMoveUp,
+    onMoveDown,
+    isFirst,
+    isLast,
+  }: ITodoUIProps) => {
+    const { todo, categories, done, duration } = todoData;
+    const tagColorList = randomTagColor.getColorList;
+
+    return (
+      <TodoCardContainer
+        isExtreme={isExtreme}
+        done={done}
+        isCurrTodo={isCurrTodo}
+        isThisEdit={false}
+      >
+        <MainContent>
+          <TitleContainer>
+            <div style={{ display: 'flex' }}>
+              {!done && (
+                <TypoAtom
+                  fontSize="h3"
+                  fontColor="primary2"
+                  className="order-text"
+                >
+                  {order}.
+                </TypoAtom>
+              )}
+              <TypoAtom
+                className="todoTitle"
+                fontSize="h3"
+                fontColor="primary2"
+              >
+                {todo}
+              </TypoAtom>
+            </div>
+            {!isCurrTodo && !done && (
+              <BtnAtom handleOnClick={handleDeleteButton}>
+                <IconAtom src={'icon/delete.svg'} size={1.25} alt="delete" />
+              </BtnAtom>
+            )}
+          </TitleContainer>
+
+          {categories && categories.length !== 0 && (
+            <CategoryContainer className="categories" categoryError={false}>
+              {categories.map((category) => (
+                <TagAtom
+                  key={category}
+                  title={category}
+                  styleOption={{ bg: tagColorList[category], size: 'normal' }}
+                >
+                  {category}
+                </TagAtom>
+              ))}
+            </CategoryContainer>
+          )}
+
+          {!done && (
+            <FooterContainer isExtreme={isExtreme}>
+              <TimeWrapper>
+                <IconAtom
+                  src={'icon/yellowTimer.svg'}
+                  alt="timer"
+                  className="timer"
+                  size={1.25}
+                />
+                <TypoAtom fontSize="body" fontColor="primary2">
+                  {formatTime(focusStep * duration)}
+                </TypoAtom>
+              </TimeWrapper>
+              {isCurrTodo ? (
+                <TagAtom
+                  styleOption={{
+                    size: 'normal',
+                    bg: 'transparent',
+                    borderColor: 'primary2',
+                  }}
+                >
+                  <TypoAtom fontSize="b2" fontColor="primary2">
+                    진행중
+                  </TypoAtom>
+                </TagAtom>
+              ) : (
+                <BtnAtom handleOnClick={handleEditButton}>
+                  <TagAtom
+                    styleOption={{
+                      size: 'normal',
+                      bg: 'transparent',
+                      borderColor: 'primary2',
+                    }}
+                    className="edit__button"
+                  >
+                    <TypoAtom fontSize="b2" fontColor="primary2">
+                      수정
+                    </TypoAtom>
+                  </TagAtom>
+                </BtnAtom>
+              )}
+            </FooterContainer>
+          )}
+        </MainContent>
+
+        {!done && (
+          <OrderButtonsColumn isExtreme={isExtreme}>
+            <OrderBtn
+              type="button"
+              onClick={onMoveUp}
+              disabled={isFirst || isCurrTodo || !onMoveUp}
+              aria-label="move up"
+            >
+              ▲
+            </OrderBtn>
+            <OrderBtn
+              type="button"
+              onClick={onMoveDown}
+              disabled={isLast || isCurrTodo || !onMoveDown}
+              aria-label="move down"
+            >
+              ▼
+            </OrderBtn>
+          </OrderButtonsColumn>
+        )}
+      </TodoCardContainer>
+    );
+  },
+);

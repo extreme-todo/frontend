@@ -1,3 +1,4 @@
+export { TypoAtom } from './TypoAtom';
 export { BtnAtom } from './BtnAtom';
 export {
   type CardAnimationPlayerAnimationType,
@@ -12,5 +13,4 @@ export { PopperAtom } from './PopperAtom';
 export { TagAtom, type ITagSpanProps } from './TagAtom';
 export { TodoProgressBarAtom } from './TodoProgressBarAtom';
 export { TomatoInputAtom } from './TomatoInputAtom';
-export { TypoAtom } from './TypoAtom';
 export { TomatoSelectorAtom } from './TomatoSelectorAtom';

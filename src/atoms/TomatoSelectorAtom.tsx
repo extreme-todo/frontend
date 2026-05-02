@@ -10,7 +10,6 @@ interface ITomatoSelectorProps {
   period: number;
   tomato: number;
   handleTomato: (count: number) => void;
-  isExtreme?: boolean;
   label?: string; // 라벨 추가
 }
 
@@ -20,7 +19,6 @@ const TomatoSelectorAtom = ({
   period,
   tomato,
   handleTomato,
-  isExtreme,
   label,
 }: ITomatoSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,10 +63,7 @@ const TomatoSelectorAtom = ({
     <SelectorWrapper>
       {label && (
         <LabelWrapper>
-          <TypoAtom
-            fontSize="h3"
-            fontColor={isExtreme ? 'primary2' : 'primary1'}
-          >
+          <TypoAtom fontSize="h3" fontColor="primary1">
             {label}
           </TypoAtom>
         </LabelWrapper>
@@ -77,7 +72,6 @@ const TomatoSelectorAtom = ({
         ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
         isOpen={isOpen}
-        isExtreme={isExtreme}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <TomatoIcon>🍅</TomatoIcon>
@@ -96,11 +90,7 @@ const TomatoSelectorAtom = ({
           placement="bottom-start"
           offset={[0, 0]}
         >
-          <OptionList
-            isExtreme={isExtreme}
-            style={{ width: triggerWidth }}
-            aria-label="tomatoInput"
-          >
+          <OptionList style={{ width: triggerWidth }} aria-label="tomatoInput">
             {Array.from({ length: tickCount + 1 }).map((_, index) => {
               const value = min + index;
               const isSelected = value === tomato;
@@ -109,7 +99,6 @@ const TomatoSelectorAtom = ({
                   key={value}
                   onClick={() => handleSelect(value)}
                   isSelected={isSelected}
-                  isExtreme={isExtreme}
                 >
                   <OptionTomato isSelected={isSelected}>🍅</OptionTomato>
                   <OptionText>
@@ -137,19 +126,17 @@ const LabelWrapper = styled.div`
   margin-left: 0.25rem;
 `;
 
-const SelectedDisplay = styled.div<{ isOpen: boolean; isExtreme?: boolean }>`
+const SelectedDisplay = styled.div<{ isOpen: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
   border-radius: 1rem;
-  background-color: ${({ theme, isExtreme }) =>
-    isExtreme
-      ? theme.color.backgroundColor.light_extreme_dark
-      : theme.color.backgroundColor.dark_primary1};
+  background-color: ${({ theme }) => theme.color.backgroundColor.white};
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 11;
+  border: 1px solid ${({ theme }) => theme.color.backgroundColor.gray};
 
   &:active {
     transform: scale(0.98);
@@ -164,26 +151,24 @@ const SelectedValue = styled.span`
   margin-left: 0.75rem;
   font-size: ${({ theme }) => theme.fontSize.body.size};
   font-weight: ${({ theme }) => theme.fontSize.b1.weight};
-  color: ${({ theme }) => theme.color.fontColor.white};
+  color: ${({ theme }) => theme.color.fontColor.extreme_orange};
 `;
 
 const ArrowIcon = styled.span<{ isOpen: boolean }>`
   font-size: 0.75rem;
-  color: ${({ theme }) => theme.color.fontColor.primary2};
+  color: ${({ theme }) => theme.color.fontColor.extreme_orange};
   transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: transform 0.2s ease;
 `;
 
-const OptionList = styled.div<{ isExtreme?: boolean }>`
+const OptionList = styled.div`
   max-height: 150px;
   overflow-y: auto;
-  background-color: ${({ theme, isExtreme }) =>
-    isExtreme
-      ? theme.color.backgroundColor.extreme_dark
-      : theme.color.backgroundColor.primary1};
+  background-color: ${({ theme }) => theme.color.backgroundColor.white};
   border-radius: 1rem;
   box-shadow: ${({ theme }) => theme.shadow.tomato};
   z-index: 1000;
+  border: 1px solid ${({ theme }) => theme.color.backgroundColor.gray};
 
   overscroll-behavior: contain;
   &::-webkit-scrollbar {
@@ -200,24 +185,17 @@ const OptionList = styled.div<{ isExtreme?: boolean }>`
   }
 `;
 
-const OptionItem = styled.div<{ isSelected: boolean; isExtreme?: boolean }>`
+const OptionItem = styled.div<{ isSelected: boolean }>`
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
   cursor: pointer;
-  background-color: ${({ isSelected, theme, isExtreme }) =>
-    isSelected
-      ? isExtreme
-        ? theme.color.backgroundColor.light_extreme_dark
-        : theme.color.backgroundColor.dark_primary1
-      : 'transparent'};
+  background-color: ${({ isSelected, theme }) =>
+    isSelected ? theme.color.backgroundColor.gray : 'transparent'};
   transition: background-color 0.15s ease;
 
   &:hover {
-    background-color: ${({ theme, isExtreme }) =>
-      isExtreme
-        ? theme.color.backgroundColor.light_extreme_dark
-        : theme.color.backgroundColor.dark_primary1};
+    background-color: ${({ theme }) => theme.color.backgroundColor.gray};
   }
 
   &:first-of-type {
@@ -239,5 +217,5 @@ const OptionText = styled.span`
   margin-left: 0.75rem;
   font-size: ${({ theme }) => theme.fontSize.b2.size};
   font-weight: ${({ theme }) => theme.fontSize.b2.weight};
-  color: ${({ theme }) => theme.color.fontColor.white};
+  color: ${({ theme }) => theme.color.fontColor.extreme_dark};
 `;
