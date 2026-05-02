@@ -279,12 +279,33 @@ const PomodoroCardAtom = styled(CardAtom)`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      gap: 0;
+    }
+
     & > div:first-of-type {
       display: flex;
       align-items: center;
 
       & > div:first-of-type {
         margin-right: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        justify-content: space-around;
+        width: 100%;
+        height: 100%;
+        margin-right: 0;
+        flex: 1;
+
+        & > div:first-of-type {
+          margin-right: 0;
+        }
       }
     }
 
@@ -301,6 +322,16 @@ const PomodoroCardAtom = styled(CardAtom)`
       & > button:last-of-type {
         align-self: flex-start;
       }
+
+      @media (max-width: 768px) {
+        justify-content: center;
+        margin-top: 1rem;
+        height: auto;
+
+        & > button:first-of-type {
+          margin: 0;
+        }
+      }
     }
   }
 
@@ -316,11 +347,12 @@ const PomodoroCardAtom = styled(CardAtom)`
 `;
 
 const ClockTypo = styled((props: React.ComponentProps<typeof TypoAtom>) => (
-  <TypoAtom {...props} />
+  <TypoAtom fontSize="clock" {...props} />
 ))`
-  font-weight: 700;
-  font-size: 8.75rem;
-  line-height: 6.25rem;
+  && {
+    font-size: 8.75rem;
+    line-height: 6.25rem;
+  }
 `;
 
 const ClockTypoContainer = styled.div`
