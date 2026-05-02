@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react';
 
-import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../atoms';
 
 import {
   focusStepList,
@@ -17,6 +17,7 @@ interface ITimeCounterProps {
   handleTimeUp: () => void;
   handleTimeDown: () => void;
   isExtreme?: boolean;
+  iconSrc: string;
 }
 
 export const TimeSetter = ({
@@ -25,6 +26,7 @@ export const TimeSetter = ({
   handleTimeUp,
   handleTimeDown,
   isExtreme,
+  iconSrc,
 }: ITimeCounterProps) => {
   return (
     <div
@@ -33,7 +35,11 @@ export const TimeSetter = ({
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Rectangle />
+        <IconAtom
+          src={iconSrc}
+          size={1.25}
+          style={{ marginRight: '0.375rem' }}
+        />
         <TypoAtom fontSize="h2" fontColor="primary2">
           {timeTitle}
         </TypoAtom>
@@ -204,6 +210,7 @@ export const PomodoroTimeSetting = ({
             handleTimeUp={handleFocusUp}
             handleTimeDown={handleFocusDown}
             isExtreme={isExtreme}
+            iconSrc="/icon/work.svg"
           />
           <TimeSetter
             timeTitle={'휴식시간'}
@@ -211,6 +218,7 @@ export const PomodoroTimeSetting = ({
             handleTimeUp={handleRestUp}
             handleTimeDown={handleRestDown}
             isExtreme={isExtreme}
+            iconSrc="/icon/rest.svg"
           />
         </div>
 
@@ -305,17 +313,6 @@ const PomodoroCardAtom = styled(CardAtom)`
   .svgBtn:hover rect {
     opacity: 0.4;
   }
-`;
-
-const Rectangle = styled.div`
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.primary2};
-  margin-right: 0.375rem;
 `;
 
 const ClockTypo = styled((props: React.ComponentProps<typeof TypoAtom>) => (
