@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react';
 
-import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../atoms';
 
 import {
   focusStepList,
@@ -17,6 +17,7 @@ interface ITimeCounterProps {
   handleTimeUp: () => void;
   handleTimeDown: () => void;
   isExtreme?: boolean;
+  iconSrc: string;
 }
 
 export const TimeSetter = ({
@@ -25,6 +26,7 @@ export const TimeSetter = ({
   handleTimeUp,
   handleTimeDown,
   isExtreme,
+  iconSrc,
 }: ITimeCounterProps) => {
   return (
     <div
@@ -33,7 +35,11 @@ export const TimeSetter = ({
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Rectangle />
+        <IconAtom
+          src={iconSrc}
+          size={1.25}
+          style={{ marginRight: '0.375rem' }}
+        />
         <TypoAtom fontSize="h2" fontColor="primary2">
           {timeTitle}
         </TypoAtom>
@@ -204,6 +210,7 @@ export const PomodoroTimeSetting = ({
             handleTimeUp={handleFocusUp}
             handleTimeDown={handleFocusDown}
             isExtreme={isExtreme}
+            iconSrc="/icon/work.svg"
           />
           <TimeSetter
             timeTitle={'휴식시간'}
@@ -211,6 +218,7 @@ export const PomodoroTimeSetting = ({
             handleTimeUp={handleRestUp}
             handleTimeDown={handleRestDown}
             isExtreme={isExtreme}
+            iconSrc="/icon/rest.svg"
           />
         </div>
 
@@ -271,12 +279,33 @@ const PomodoroCardAtom = styled(CardAtom)`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      gap: 0;
+    }
+
     & > div:first-of-type {
       display: flex;
       align-items: center;
 
       & > div:first-of-type {
         margin-right: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        justify-content: space-around;
+        width: 100%;
+        height: 100%;
+        margin-right: 0;
+        flex: 1;
+
+        & > div:first-of-type {
+          margin-right: 0;
+        }
       }
     }
 
@@ -293,6 +322,16 @@ const PomodoroCardAtom = styled(CardAtom)`
       & > button:last-of-type {
         align-self: flex-start;
       }
+
+      @media (max-width: 768px) {
+        justify-content: center;
+        margin-top: 1rem;
+        height: auto;
+
+        & > button:first-of-type {
+          margin: 0;
+        }
+      }
     }
   }
 
@@ -307,23 +346,13 @@ const PomodoroCardAtom = styled(CardAtom)`
   }
 `;
 
-const Rectangle = styled.div`
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.primary2};
-  margin-right: 0.375rem;
-`;
-
 const ClockTypo = styled((props: React.ComponentProps<typeof TypoAtom>) => (
-  <TypoAtom {...props} />
+  <TypoAtom fontSize="clock" {...props} />
 ))`
-  font-weight: 700;
-  font-size: 8.75rem;
-  line-height: 6.25rem;
+  && {
+    font-size: 8.75rem;
+    line-height: 6.25rem;
+  }
 `;
 
 const ClockTypoContainer = styled.div`

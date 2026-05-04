@@ -11,6 +11,7 @@ interface IIconAtomProps {
   id?: string;
   w?: number;
   h?: number;
+  style?: React.CSSProperties;
 }
 
 export const IconAtom = forwardRef<HTMLImageElement, IIconAtomProps>(
