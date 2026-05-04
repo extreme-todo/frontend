@@ -48,17 +48,18 @@ const Noti = () => {
   return (
     <Backdrop>
       <NotiContainer>
-        <div className="noti__icons">
-          <BtnAtom
-            btnStyle="textBtn"
-            handleOnClick={handleClose}
-            ariaLabel="close"
-          >
-            <IconAtom src="/icon/closeDark.svg" size={2} alt="close" />
-          </BtnAtom>
+        <BtnAtom
+          btnStyle="textBtn"
+          handleOnClick={handleClose}
+          ariaLabel="close"
+          className="close__btn"
+        >
+          <IconAtom src="/icon/closeDark.svg" size={2} alt="close" />
+        </BtnAtom>
+        <div className="noti__center">
           <img src="/icon/noti_clock.svg" className="noti-clock" />
+          <NotiComment />
         </div>
-        <NotiComment />
       </NotiContainer>
     </Backdrop>
   );
@@ -82,14 +83,25 @@ const Backdrop = styled.div`
 const NotiContainer = styled.section`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   width: 25rem;
   height: 17.375rem;
   background-color: ${({ theme: { color } }) => color.backgroundColor.white};
   border-radius: 2.0625rem;
   box-shadow: ${({ theme: { shadow } }) => shadow.container};
-  * {
-    box-sizing: border-box;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  position: relative;
+  .noti__center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1.375rem;
+    width: 100%;
   }
   .noti-clock {
     width: 8rem;
@@ -97,25 +109,30 @@ const NotiContainer = styled.section`
     animation: shake 300ms infinite;
     transform: rotate(-10deg);
   }
-  .noti__icons {
-    margin-bottom: 1.375rem;
-    display: flex;
-    flex-direction: column;
-    padding: 1.25rem;
-    button {
-      align-self: flex-end;
-      width: 2rem;
-      height: 2rem;
-    }
-    align-items: center;
-    width: 100%;
-  }
   @keyframes shake {
     30% {
       transform: rotate(-10deg);
     }
     70% {
       transform: rotate(10deg);
+    }
+  }
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 100%;
+    margin: 0 3.625rem;
+    min-height: 25rem;
+    position: relative;
+    .noti__center {
+      top: 4.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .close__btn {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
     }
   }
 `;

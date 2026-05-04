@@ -293,6 +293,7 @@ const PomodoroCardAtom = styled(CardAtom)`
 
     & > div:first-of-type {
       display: flex;
+      align-items: center;
 
       & > div:first-of-type {
         margin-right: 2rem;
@@ -301,6 +302,7 @@ const PomodoroCardAtom = styled(CardAtom)`
       @media (max-width: 768px) {
         flex-direction: column;
         justify-content: center;
+        align-items: flex-start;
         width: 100%;
         height: 100%;
         margin-right: 0;
