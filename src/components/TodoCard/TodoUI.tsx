@@ -86,7 +86,6 @@ const TitleContainer = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   column-gap: 4px;
-  margin-bottom: 4px;
 
   & > div {
     display: flex;
@@ -96,6 +95,7 @@ const TitleContainer = styled.div`
 
   .order-text {
     margin-right: 0.25rem;
+    margin-left: 0.25rem;
   }
 
   .todoTitle {
@@ -112,7 +112,6 @@ const TitleContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     .todoTitle {
-      font-size: ${({ theme }) => theme.fontSize.h2.size};
       -webkit-line-clamp: 3;
     }
   }
@@ -126,6 +125,8 @@ const CategoryContainer = styled.div<{
   margin-bottom: 0.5rem;
   column-gap: 0.5rem;
   row-gap: 0.25rem;
+  margin-left: 1.5635rem;
+  margin-top: 0.25rem;
 `;
 
 const FooterContainer = styled.div<{ isExtreme: boolean }>`

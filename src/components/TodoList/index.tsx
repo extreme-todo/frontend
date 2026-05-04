@@ -48,7 +48,7 @@ const TodoListContainer = styled(CardAtom)<{ isMobile: boolean }>`
     width: 100%;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
     padding-right: 0.25rem;
   }
 
@@ -77,7 +77,7 @@ const ListSection = styled.section<{ isMobile: boolean }>`
   .header__todo {
     justify-content: space-between;
     min-height: 1.5rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
     display: flex;
     align-items: center;
   }

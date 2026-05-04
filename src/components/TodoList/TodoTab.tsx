@@ -13,8 +13,6 @@ export const TodoTab = ({
   activeTab,
   setActiveTab,
   isExtreme,
-  todoCount = 0,
-  doneCount = 0,
 }: ITodoTabProps) => {
   return (
     <TabContainer role="tablist" isExtreme={isExtreme}>
@@ -38,7 +36,7 @@ export const TodoTab = ({
           }
           active={activeTab === 'todo'}
         >
-          남은 TODO: {todoCount}
+          남은 TODO
         </TabText>
       </TabButton>
       <TabButton
@@ -61,7 +59,7 @@ export const TodoTab = ({
           }
           active={activeTab === 'done'}
         >
-          완료한 TODO: {doneCount}
+          완료한 TODO
         </TabText>
       </TabButton>
     </TabContainer>
@@ -74,14 +72,14 @@ const TabContainer = styled.div<{ isExtreme?: boolean }>`
   padding: 4px;
   background-color: ${({ isExtreme }) =>
     isExtreme ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.2)'};
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
   box-sizing: border-box;
 `;
 
 const TabButton = styled.button<{ active: boolean; isExtreme?: boolean }>`
   flex: 1;
-  height: 2.5rem;
+  height: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -100,6 +98,4 @@ const TabButton = styled.button<{ active: boolean; isExtreme?: boolean }>`
   }
 `;
 
-const TabText = styled(TypoAtom)<{ active: boolean }>`
-  font-weight: ${({ active }) => (active ? 700 : 400)};
-`;
+const TabText = styled(TypoAtom)<{ active: boolean }>``;

@@ -106,7 +106,7 @@ const TitleContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   column-gap: 4px;
-  margin-bottom: 0.75rem;
+  margin-left: 0.25rem;
 
   & > div {
     display: flex;
@@ -116,7 +116,8 @@ const TitleContainer = styled.div`
   }
 
   .order-text {
-    margin-right: 0.5rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
     flex-shrink: 0;
   }
 
@@ -139,12 +140,13 @@ const CategoryContainer = styled.div<{
 }>`
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 0.5rem;
+  margin-left: 1.5635rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.375rem;
   column-gap: 0.5rem;
   row-gap: 0.25rem;
   .category_error {
     transition: all 0.7s ease;
-    margin-top: 0.5rem;
     color: ${({ theme }) => theme.color.fontColor.extreme_orange};
     font-size: ${({ theme }) => theme.fontSize.b2.size};
     font-weight: ${({ theme }) => theme.fontSize.b2.weight};
@@ -287,7 +289,6 @@ export const EditUI = memo(
                 period={focusStepValue}
                 tomato={durationValue}
                 handleTomato={handleTomato}
-                label="TODO 반복 시간 설정"
               />
             </div>
             <div className="button-group">

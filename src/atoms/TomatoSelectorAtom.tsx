@@ -3,6 +3,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { formatTime } from '../shared/timeUtils';
 import { PopperAtom } from './PopperAtom';
 import { TypoAtom } from './TypoAtom';
+import { useIsMobile } from '../hooks';
 
 interface ITomatoSelectorProps {
   max: number;
@@ -27,6 +28,7 @@ const TomatoSelectorAtom = ({
     null,
   );
   const [triggerWidth, setTriggerWidth] = useState(0);
+  const isMobile = useIsMobile();
 
   const tickCount = max - min;
 
@@ -76,10 +78,20 @@ const TomatoSelectorAtom = ({
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <TomatoIcon>🍅</TomatoIcon>
           <SelectedValue>
-            {tomato}회 ({formatTime(tomato * period)})
+            <TypoAtom fontSize="h3" fontColor="extreme_orange">
+              {tomato} Round
+            </TypoAtom>
+            <ArrowIcon isOpen={isOpen} />
           </SelectedValue>
         </div>
-        <ArrowIcon isOpen={isOpen}>▲</ArrowIcon>
+        <div
+          style={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}
+        >
+          <TypoAtom fontColor="extreme_orange" fontSize="body">
+            {formatTime(tomato * period)}
+            {!isMobile && ' 동안 집중'}
+          </TypoAtom>
+        </div>
       </SelectedDisplay>
 
       {isOpen && (
@@ -136,7 +148,6 @@ const SelectedDisplay = styled.div<{ isOpen: boolean }>`
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 11;
-  border: 1px solid ${({ theme }) => theme.color.backgroundColor.gray};
 
   &:active {
     transform: scale(0.98);
@@ -148,17 +159,21 @@ const TomatoIcon = styled.span`
 `;
 
 const SelectedValue = styled.span`
-  margin-left: 0.75rem;
-  font-size: ${({ theme }) => theme.fontSize.body.size};
-  font-weight: ${({ theme }) => theme.fontSize.b1.weight};
-  color: ${({ theme }) => theme.color.fontColor.extreme_orange};
+  margin-left: 0.25rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 `;
 
-const ArrowIcon = styled.span<{ isOpen: boolean }>`
+const ArrowIcon = styled.div<{ isOpen: boolean }>`
+  width: 1.25rem;
+  height: 1.25rem;
   font-size: 0.75rem;
   color: ${({ theme }) => theme.color.fontColor.extreme_orange};
   transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: transform 0.2s ease;
+  background-color: ${({ theme }) => theme.color.fontColor.extreme_orange};
+  mask-image: url('/icon/combobox.svg');
 `;
 
 const OptionList = styled.div`
