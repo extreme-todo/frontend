@@ -5,6 +5,7 @@ import { formatTime } from '../../shared/timeUtils';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 import { IconAtom, TagAtom, TypoAtom, BtnAtom } from '../../atoms';
 import { memo } from 'react';
+import { SideBtnAtom } from '../../atoms/SideBtnAtom';
 
 interface ITodoUIProps {
   todoData: TodoEntity;
@@ -164,15 +165,6 @@ const FooterContainer = styled.div<{ isExtreme: boolean }>`
   display: flex;
   justify-content: flex-end;
   column-gap: 0.5rem;
-  .edit__button {
-    &:hover {
-      background-color: ${({ theme: { button }, isExtreme }) =>
-        isExtreme
-          ? button.extremeDarkBtn.hover.backgroundColor
-          : button.darkBtn.hover.backgroundColor};
-    }
-    transition: background-color 0.3s ease-in-out;
-  }
 `;
 
 const TimeWrapper = styled.div`
@@ -261,32 +253,21 @@ export const TodoUI = memo(
                 </TypoAtom>
               </TimeWrapper>
               {isCurrTodo ? (
-                <TagAtom
-                  styleOption={{
-                    size: 'normal',
-                    bg: 'transparent',
-                    borderColor: 'primary2',
-                  }}
+                <SideBtnAtom
+                  btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+                  disabled
+                  width="5.625rem"
                 >
-                  <TypoAtom fontSize="b2" fontColor="primary2">
-                    진행중
-                  </TypoAtom>
-                </TagAtom>
+                  진행중
+                </SideBtnAtom>
               ) : (
-                <BtnAtom handleOnClick={handleEditButton}>
-                  <TagAtom
-                    styleOption={{
-                      size: 'normal',
-                      bg: 'transparent',
-                      borderColor: 'primary2',
-                    }}
-                    className="edit__button"
-                  >
-                    <TypoAtom fontSize="b2" fontColor="primary2">
-                      수정
-                    </TypoAtom>
-                  </TagAtom>
-                </BtnAtom>
+                <SideBtnAtom
+                  btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+                  onClick={handleEditButton}
+                  width="5.625rem"
+                >
+                  수정
+                </SideBtnAtom>
               )}
             </FooterContainer>
           )}

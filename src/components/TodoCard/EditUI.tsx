@@ -11,6 +11,7 @@ import {
 import { CategoryInput } from '../../molecules';
 import { memo, ReactEventHandler, useCallback } from 'react';
 import { SPECIAL_EXPRESSION_WARNING } from '../../DB/indexedAction';
+import { SideBtnAtom } from '../../atoms/SideBtnAtom';
 
 interface IEditUIProps {
   titleValue: string;
@@ -290,49 +291,24 @@ export const EditUI = memo(
               />
             </div>
             <div className="button-group">
-              <BtnAtom
+              <SideBtnAtom
                 type="submit"
-                disabled={isDisabled}
-                className="submit_btn"
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                disabled={isDisabled || isSubmitting}
+                width="5.625rem"
                 ariaLabel="submit"
               >
-                <TagAtom
-                  styleOption={{
-                    size: 'normal',
-                    bg: 'transparent',
-                    borderColor: isExtreme ? 'extreme_dark' : 'primary1',
-                  }}
-                  className="save__button"
-                >
-                  <TypoAtom
-                    fontSize="b2"
-                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
-                  >
-                    {isSubmitting ? '저장 중' : '저장'}
-                  </TypoAtom>
-                </TagAtom>
-              </BtnAtom>
-              <BtnAtom
-                type="button"
-                className="cancel_btn"
+                {isSubmitting ? '저장 중' : '저장'}
+              </SideBtnAtom>
+              <SideBtnAtom
+                type="submit"
+                btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+                width="5.625rem"
                 ariaLabel="cancel"
-                handleOnClick={handleEditCancel}
+                onClick={handleEditCancel}
               >
-                <TagAtom
-                  styleOption={{
-                    size: 'normal',
-                    bg: 'transparent',
-                    borderColor: isExtreme ? 'extreme_dark' : 'primary1',
-                  }}
-                >
-                  <TypoAtom
-                    fontSize="b2"
-                    fontColor={isExtreme ? 'extreme_dark' : 'primary1'}
-                  >
-                    취소
-                  </TypoAtom>
-                </TagAtom>
-              </BtnAtom>
+                취소
+              </SideBtnAtom>
             </div>
           </FooterContainer>
         </MainContent>
