@@ -299,8 +299,6 @@ const WelcomeContainer = styled.main`
   align-items: center;
 
   #logo {
-    width: 33.75rem;
-    height: 11.25rem;
     margin-bottom: 3.0625rem;
   }
 
