@@ -35,6 +35,7 @@ import {
   CardAnimationPlayerAtom,
   HelpModalAtom,
 } from '../../atoms';
+import { HelpType } from '../../atoms/HelpModalAtom';
 import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
 
@@ -76,6 +77,24 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const {
     settings: { focusStep },
   } = usePomodoroValue();
+
+  const helpType = useMemo<HelpType>(() => {
+    switch (currentCard) {
+      case 'todolistModal':
+        return 'list';
+      case 'addTodoModal':
+        return 'new';
+      case 'timeModal':
+        return 'time';
+      case 'rest':
+        return 'rest';
+      case 'currentTodo':
+      case 'noTodo':
+      case 'ranking':
+      default:
+        return 'main';
+    }
+  }, [currentCard]);
 
   const changeCard = (curr: CardType, next: CardType) => {
     setPrevCard(curr);
@@ -402,6 +421,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         isOpen={isHelpModalOpen}
         onClose={() => setIsHelpModalOpen(false)}
         isMobile={isMobile}
+        type={helpType}
       />
     </SideButtons>
   );
