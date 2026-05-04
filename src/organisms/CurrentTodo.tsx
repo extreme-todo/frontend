@@ -26,10 +26,8 @@ export function CurrentTodo({
   currentRound,
   paused,
 }: ICurrentTodoProps) {
-  const [todoProgress, setTodoProgress] = useState<number>(0);
-  const isMobile = useIsMobile();
-  useEffect(() => {
-    setTodoProgress(
+  const todoProgress = useMemo(
+    () =>
       Number(
         getPomodoroStepPercent({
           curr: focusedOnTodo % (focusStep * 60000),
@@ -37,8 +35,9 @@ export function CurrentTodo({
           step: focusStep,
         }),
       ),
-    );
-  }, [focusedOnTodo]);
+    [focusedOnTodo, focusStep],
+  );
+  const isMobile = useIsMobile();
 
   const getLeftMs = () => {
     return todo.duration * focusStep * 60000 - focusedOnTodo;
