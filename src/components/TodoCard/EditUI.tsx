@@ -47,7 +47,6 @@ const EditCardContainer = styled.form<{ isExtreme: boolean }>`
   align-items: stretch;
   width: 100%;
   box-sizing: border-box;
-  padding: 0.75rem;
   border-radius: 0.875rem;
   background-color: ${({ theme }) => theme.color.backgroundColor.primary2};
   color: ${({ theme, isExtreme }) =>
@@ -62,6 +61,7 @@ const MainContent = styled.div`
   flex-direction: column;
   justify-content: space-between;
   min-width: 0;
+  padding: 0.75rem;
 `;
 
 const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
@@ -69,16 +69,15 @@ const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 1.75rem;
   row-gap: 0.5rem;
-  margin-left: 0.5rem;
-  padding-left: 0.5rem;
-  border-left: 1px solid
-    ${({ isExtreme }) =>
-      isExtreme ? 'rgba(28, 28, 29, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
+  background-color: #95716919;
 `;
 
-const OrderBtn = styled.button<{ isExtreme: boolean }>`
-  background: none;
+const OrderBtn = styled.button<{ isExtreme: boolean; upDown: 'up' | 'down' }>`
+  width: 1.25rem;
+  height: 1.25rem;
+  background: ${({ theme }) => theme.color.backgroundColor.primary1};
   border: none;
   cursor: pointer;
   font-size: 0.75rem;
@@ -89,6 +88,15 @@ const OrderBtn = styled.button<{ isExtreme: boolean }>`
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   line-height: 1;
+  mask-image: url('icon/combobox.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  ${({ upDown }) =>
+    upDown === 'down'
+      ? 'transform: rotate(0deg);'
+      : 'transform: rotate(180deg);'}
 
   &:disabled {
     opacity: 0.2;
@@ -321,18 +329,16 @@ export const EditUI = memo(
             disabled={isFirst || isCurrTodo || !onMoveUp}
             aria-label="move up"
             isExtreme={isExtreme}
-          >
-            ▲
-          </OrderBtn>
+            upDown="up"
+          />
           <OrderBtn
             type="button"
             onClick={onMoveDown}
             disabled={isLast || isCurrTodo || !onMoveDown}
             aria-label="move down"
             isExtreme={isExtreme}
-          >
-            ▼
-          </OrderBtn>
+            upDown="down"
+          />
         </OrderButtonsColumn>
       </EditCardContainer>
     );
