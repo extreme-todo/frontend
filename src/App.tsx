@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 
-import { IconAtom } from './atoms';
+import { IconAtom, TypoAtom } from './atoms';
 import { Navigation, Noti } from './molecules';
 import { DevKit, MainTodo, Welcome } from './components';
 import {
@@ -135,9 +135,11 @@ function App() {
             }),
           }}
         >
+          <TypoAtom fontSize="b2">Scroll</TypoAtom>
           <IconAtom
-            src="/icon/combobox.svg"
-            size={3}
+            src="/icon/scroll.svg"
+            w={2}
+            h={1}
             className="scroll__guide__icon"
             alt="An icon indicating to scroll down"
           />
@@ -198,24 +200,27 @@ const MainContainer = styled.div`
     bottom: 5%;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
     font-size: ${({ theme: { fontSize } }) => fontSize.h3.size};
     font-weight: ${({ theme: { fontSize } }) => fontSize.h3.weight};
+    animation: updown 1.5s infinite;
 
-    img.scroll__guide__icon {
-      @keyframes updown {
-        0% {
-          transform: translateY(10px);
-          animation-timing-function: ease-in;
-        }
-        50% {
-          transform: translateY(-10px);
-          animation-timing-function: ease-out;
-        }
-        100% {
-          transform: translateY(10px);
-        }
+    @keyframes updown {
+      0% {
+        transform: translateY(10px);
+        animation-timing-function: ease-in;
       }
-      animation: updown 1.5s infinite;
+      50% {
+        transform: translateY(-10px);
+        animation-timing-function: ease-out;
+      }
+      100% {
+        transform: translateY(10px);
+      }
     }
   }
 `;
