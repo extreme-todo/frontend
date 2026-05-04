@@ -408,17 +408,12 @@ const FooterWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   /* flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')}; */
   width: 100%;
-  column-gap: 1.5625rem;
+  column-gap: 1.25rem;
   align-items: flex-end; /* 버튼을 셀렉터 높이에 맞춤 */
 
   @media all and (max-width: ${responsiveBreakpoints.tablet_v.max}px) {
     row-gap: 1rem;
     flex-direction: column;
-    align-items: stretch; /* 모바일에서 가로로 꽉 차게 */
-
-    & > button {
-      width: 100%;
-      height: 3rem; /* 모바일 버튼 클릭 영역 확대 */
-    }
+    align-items: center;
   }
 `;
