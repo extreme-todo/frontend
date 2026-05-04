@@ -8,6 +8,7 @@ export {
 export { CardAtom } from './CardAtom';
 export { IconAtom } from './IconAtom';
 export { InputAtom } from './InputAtom';
+export { TextAreaAtom } from './TextAreaAtom';
 export { ListAtom } from './ListAtom';
 export { PopperAtom } from './PopperAtom';
 export { TagAtom, type ITagSpanProps } from './TagAtom';
