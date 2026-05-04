@@ -88,6 +88,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         return 'time';
       case 'rest':
         return 'rest';
+      case 'ranking':
+        return 'ranking';
       default:
         return 'main';
     }
