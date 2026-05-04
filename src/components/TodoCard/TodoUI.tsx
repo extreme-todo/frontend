@@ -80,39 +80,6 @@ const MainContent = styled.div`
   min-width: 0;
 `;
 
-const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  row-gap: 0.5rem;
-  margin-left: 0.5rem;
-  padding-left: 0.5rem;
-  border-left: 1px solid
-    ${({ isExtreme }) =>
-      isExtreme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)'};
-`;
-
-const OrderBtn = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.color.backgroundColor.primary2};
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  line-height: 1;
-
-  &:disabled {
-    opacity: 0.2;
-    cursor: not-allowed;
-  }
-
-  &:not(:disabled):hover {
-    opacity: 0.7;
-  }
-`;
-
 const TitleContainer = styled.div`
   width: 100%;
   display: flex;
@@ -183,10 +150,6 @@ export const TodoUI = memo(
     order,
     handleEditButton,
     handleDeleteButton,
-    onMoveUp,
-    onMoveDown,
-    isFirst,
-    isLast,
   }: ITodoUIProps) => {
     const { todo, categories, done, duration } = todoData;
     const tagColorList = randomTagColor.getColorList;
@@ -272,27 +235,6 @@ export const TodoUI = memo(
             </FooterContainer>
           )}
         </MainContent>
-
-        {!done && (
-          <OrderButtonsColumn isExtreme={isExtreme}>
-            <OrderBtn
-              type="button"
-              onClick={onMoveUp}
-              disabled={isFirst || isCurrTodo || !onMoveUp}
-              aria-label="move up"
-            >
-              ▲
-            </OrderBtn>
-            <OrderBtn
-              type="button"
-              onClick={onMoveDown}
-              disabled={isLast || isCurrTodo || !onMoveDown}
-              aria-label="move down"
-            >
-              ▼
-            </OrderBtn>
-          </OrderButtonsColumn>
-        )}
       </TodoCardContainer>
     );
   },
