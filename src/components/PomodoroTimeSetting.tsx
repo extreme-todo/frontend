@@ -35,11 +35,7 @@ export const TimeSetter = ({
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <IconAtom
-          src={iconSrc}
-          size={1.25}
-          style={{ marginRight: '0.375rem' }}
-        />
+        <IconAtom src={iconSrc} size={1.5} style={{ marginRight: '0.5rem' }} />
         <TypoAtom fontSize="h2" fontColor="primary2">
           {timeTitle}
         </TypoAtom>
@@ -223,7 +219,11 @@ export const PomodoroTimeSetting = ({
         </div>
 
         <div>
-          <BtnAtom handleOnClick={handleSubmit} btnStyle="extremeDarkBtn">
+          <BtnAtom
+            className="save_btn"
+            handleOnClick={handleSubmit}
+            btnStyle="extremeDarkBtn"
+          >
             <div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
               <TypoAtom fontColor="primary2" fontSize="b1">
                 저장
@@ -267,6 +267,10 @@ const PomodoroCardAtom = styled(CardAtom)`
   display: flex;
   flex-direction: column;
 
+  .save_btn {
+    min-height: 44px;
+  }
+
   .mobile-header-wrapper {
     width: 100%;
     display: flex;
@@ -278,18 +282,17 @@ const PomodoroCardAtom = styled(CardAtom)`
     height: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
 
     @media (max-width: 768px) {
       flex-direction: column;
       align-items: center;
-      justify-content: space-around;
+      justify-content: center;
       gap: 0;
     }
 
     & > div:first-of-type {
       display: flex;
-      align-items: center;
 
       & > div:first-of-type {
         margin-right: 2rem;
@@ -297,11 +300,12 @@ const PomodoroCardAtom = styled(CardAtom)`
 
       @media (max-width: 768px) {
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: center;
         width: 100%;
         height: 100%;
         margin-right: 0;
         flex: 1;
+        gap: 2.5rem;
 
         & > div:first-of-type {
           margin-right: 0;
@@ -330,6 +334,7 @@ const PomodoroCardAtom = styled(CardAtom)`
 
         & > button:first-of-type {
           margin: 0;
+          margin-bottom: 10px;
         }
       }
     }

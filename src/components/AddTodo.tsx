@@ -323,6 +323,7 @@ export const AddTodo = ({
             type="submit"
             disabled={title.length === 0 || titleError || isLoading}
             tabIndex={2}
+            className="submit_btn"
           >
             <div style={{ width: 'max-content' }}>
               {isLoading ? '제출 중' : '추가'}
@@ -410,6 +411,10 @@ const FooterWrapper = styled.div<{ isMobile: boolean }>`
   width: 100%;
   column-gap: 1.25rem;
   align-items: flex-end; /* 버튼을 셀렉터 높이에 맞춤 */
+
+  .submit_btn {
+    min-height: 44px;
+  }
 
   @media all and (max-width: ${responsiveBreakpoints.tablet_v.max}px) {
     row-gap: 1rem;
