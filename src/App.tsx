@@ -11,7 +11,7 @@ import {
 } from 'framer-motion';
 
 import styled from '@emotion/styled';
-import useAlarm from './hooks/useAlert';
+import useAlarm from './hooks/useAlarm';
 import { AppProviders } from './contexts/AppProviders';
 import { QueryClient } from '@tanstack/react-query';
 

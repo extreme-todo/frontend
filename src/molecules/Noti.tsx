@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
-import useAlarm from '../hooks/useAlert';
+import useAlarm from '../hooks/useAlarm';
 import { useCurrentTodo } from '../hooks/useCurrentTodo';
 import styled from '@emotion/styled';
 
