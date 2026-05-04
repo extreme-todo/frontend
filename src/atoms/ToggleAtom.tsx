@@ -40,7 +40,7 @@ const ToggleWrapper = styled.div<{ isOn: boolean }>`
   background-color: ${({ theme, isOn }) =>
     isOn
       ? theme.color.backgroundColor.extreme_orange
-      : theme.color.backgroundColor.extreme_dark};
+      : theme.color.backgroundColor.primary1 + 'A1'};
   position: relative;
   cursor: pointer;
   display: flex;
@@ -57,7 +57,8 @@ const ToggleHandle = styled.div<{ isOn: boolean }>`
   background-color: ${({ theme }) => theme.color.backgroundColor.white};
   border-radius: 50%;
   position: absolute;
-  top: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
   left: ${({ isOn }) => (isOn ? 'calc(100% - 1.75rem)' : '0.25rem')};
   transition: left 0.2s ease-in-out;
   z-index: 2;
@@ -69,11 +70,13 @@ const ToggleText = styled.span<{ isOn: boolean }>`
   color: ${({ theme, isOn }) =>
     isOn ? theme.color.fontColor.white : theme.color.fontColor.white};
   position: absolute;
-  width: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  left: ${({ isOn }) => (isOn ? '0' : 'calc(100% - 2.5rem)')};
+  top: 50%;
+  transform: translateY(-50%);
+  left: ${({ isOn }) => (isOn ? '0.75rem' : 'auto')};
+  right: ${({ isOn }) => (isOn ? 'auto' : '0.5rem')};
   transition: all 0.2s ease-in-out;
   z-index: 1;
   line-height: 1;
