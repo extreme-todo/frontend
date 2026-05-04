@@ -93,9 +93,9 @@ export function CurrentTodo({
         <div className="todo-duration">
           <TypoAtom fontSize={'h3'}>{currentRound + ' Round'}</TypoAtom>
           <div>
-            <TypoAtom fontSize="h3">{`🍅 `.repeat(currentRound)}</TypoAtom>
-            <TypoAtom fontSize="h3" className="left-round">
-              {`🍅 `.repeat(Math.max(todo.duration - currentRound, 0))}
+            <TypoAtom fontSize={'h3'}>{`🍅`.repeat(currentRound)}</TypoAtom>
+            <TypoAtom fontSize={'h3'} className="left-round">
+              {`🍅`.repeat(Math.max(todo.duration - currentRound, 0))}
             </TypoAtom>
           </div>
         </div>
@@ -113,8 +113,7 @@ const CurrentTodoContainer = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  width: 90%;
-  max-width: 90%;
+  width: 100%;
   height: 100%;
   position: relative;
   gap: 2.56rem;

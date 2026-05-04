@@ -126,12 +126,10 @@ export function RestCard({
                   {currentRound + ' Round'}
                 </TypoAtom>
                 <div>
-                  <TypoAtom fontSize="h3">
-                    {`🍅 `.repeat(currentRound)}
-                  </TypoAtom>
+                  <TypoAtom fontSize="h3">{`🍅`.repeat(currentRound)}</TypoAtom>
                   <TypoAtom fontSize="h3" className="left-round">
                     {todo?.duration &&
-                      `🍅 `.repeat(Math.max(todo.duration - currentRound, 0))}
+                      `🍅`.repeat(Math.max(todo.duration - currentRound, 0))}
                   </TypoAtom>
                 </div>
               </div>
