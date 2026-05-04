@@ -12,6 +12,7 @@ const useAlarm = () => {
     setIsAlarmOn((prev) => {
       const next = !prev;
       localStorage.setItem('isAlarmOn', String(next));
+      if (alarmSound.current) alarmSound.current.muted = !next;
       return next;
     });
   }, []);
