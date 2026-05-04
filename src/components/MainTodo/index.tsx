@@ -55,7 +55,7 @@ export type CardType =
 export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
   const [currentCard, setCurrentCard] = useState<CardType>('currentTodo');
-  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [helpModalType, setHelpModalType] = useState<HelpType | null>(null);
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
   const [currentCardColor, setCurrentCardColor] =
     useState<BackgroundColorName>('primary1');
@@ -78,8 +78,8 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     settings: { focusStep },
   } = usePomodoroValue();
 
-  const helpType = useMemo<HelpType>(() => {
-    switch (currentCard) {
+  const getHelpType = useCallback((card: CardType): HelpType => {
+    switch (card) {
       case 'todolistModal':
         return 'list';
       case 'addTodoModal':
@@ -88,13 +88,10 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         return 'time';
       case 'rest':
         return 'rest';
-      case 'currentTodo':
-      case 'noTodo':
-      case 'ranking':
       default:
         return 'main';
     }
-  }, [currentCard]);
+  }, []);
 
   const changeCard = (curr: CardType, next: CardType) => {
     setPrevCard(curr);
@@ -111,7 +108,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
       } else {
         switch (type) {
           case 'help':
-            setIsHelpModalOpen(true);
+            setHelpModalType(getHelpType(currentCard));
             break;
           case 'doAll':
             if (window.confirm('모든 TODO를 종료하시겠습니까?')) {
@@ -133,7 +130,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         }
       }
     },
-    [isLogin, currentCard, changeCard, doAllTodo],
+    [isLogin, currentCard, changeCard, doAllTodo, getHelpType],
   );
 
   const handleClose = useCallback(() => {
@@ -418,10 +415,10 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         </MainTodoContentWrapper>
       </MainTodoContainer>
       <HelpModalAtom
-        isOpen={isHelpModalOpen}
-        onClose={() => setIsHelpModalOpen(false)}
+        isOpen={helpModalType !== null}
+        onClose={() => setHelpModalType(null)}
         isMobile={isMobile}
-        type={helpType}
+        type={helpModalType || 'main'}
       />
     </SideButtons>
   );
