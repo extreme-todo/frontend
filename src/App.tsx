@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 
 import { IconAtom, TypoAtom } from './atoms';
 import { Navigation, Noti } from './molecules';
@@ -82,6 +82,12 @@ function App() {
       clamp: true,
     },
   );
+  const goToMain = useCallback(() => {
+    NAVIGATION_LIST[1].componentRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [NAVIGATION_LIST]);
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const THRESHOLD = 0.1;
@@ -100,6 +106,7 @@ function App() {
   });
 
   const { initSoundPlayer } = useAlarm();
+
   useEffect(() => {
     const handleClick = () => {
       void initSoundPlayer();
@@ -130,10 +137,12 @@ function App() {
         <motion.div
           className="scroll__guide"
           style={{
+            cursor: 'pointer',
             opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
               clamp: true,
             }),
           }}
+          onClick={goToMain}
         >
           <TypoAtom fontSize="b2">Scroll</TypoAtom>
           <IconAtom
