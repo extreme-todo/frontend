@@ -166,8 +166,10 @@ describe('Welcome', () => {
           fireEvent.click(reset);
         });
 
-        expect(todosApi.resetTodos).toHaveBeenCalled();
-        expect(timerApi.resetRecords).toHaveBeenCalled();
+        await waitFor(() => {
+          expect(todosApi.resetTodos).toHaveBeenCalled();
+          expect(timerApi.resetRecords).toHaveBeenCalled();
+        });
       });
 
       it('회원 탈퇴 버튼을 누르면 withdrawal을 호출한다.', async () => {
@@ -188,7 +190,9 @@ describe('Welcome', () => {
           fireEvent.click(withdraw);
         });
 
-        expect(usersApi.withdrawal).toHaveBeenCalled();
+        await waitFor(() => {
+          expect(usersApi.withdrawal).toHaveBeenCalled();
+        });
       });
 
       it('X 아이콘을 누르면 뒤로 간다.', async () => {

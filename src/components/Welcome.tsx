@@ -110,7 +110,7 @@ export const Welcome = forwardRef(
                   alignItems: 'center',
                 }}
               >
-                <motion.button
+                <motion.div
                   initial={{ opacity: 0, y: -50 }}
                   animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
                   exit={{ opacity: 0, y: -40, transition: { delay: 0.6 } }}
@@ -123,8 +123,8 @@ export const Welcome = forwardRef(
                       데이터 초기화
                     </TypoAtom>
                   </BtnAtom>
-                </motion.button>
-                <motion.button
+                </motion.div>
+                <motion.div
                   initial={{ opacity: 0, y: -50 }}
                   animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
                   exit={{ opacity: 0, y: -40, transition: { delay: 0.4 } }}
@@ -140,8 +140,8 @@ export const Welcome = forwardRef(
                       회원 탈퇴
                     </TypoAtom>
                   </BtnAtom>
-                </motion.button>
-                <motion.button
+                </motion.div>
+                <motion.div
                   initial={{ opacity: 0, y: -50 }}
                   animate={{ opacity: 1, y: 0, transition: { delay: 0.6 } }}
                   exit={{ opacity: 0, y: -40, transition: { delay: 0.2 } }}
@@ -152,7 +152,7 @@ export const Welcome = forwardRef(
                   <BtnAtom handleOnClick={handleClose} ariaLabel="goback">
                     <IconAtom size={2} src="/icon/closeOrange.svg" />
                   </BtnAtom>
-                </motion.button>
+                </motion.div>
               </div>
             </motion.div>
           ) : (
