@@ -13,7 +13,7 @@ import {
 import { CategorySelector, RankingChart } from '../molecules';
 import { RandomTagColorList } from '../shared/RandomTagColorList';
 import { formatTime } from '../shared/timeUtils';
-import { useExtremeMode, useIsMobile } from '../hooks';
+import { LoginContext, useExtremeMode, useIsMobile } from '../hooks';
 import { SideBtnAtom } from '../atoms/SideBtnAtom';
 
 export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
@@ -25,6 +25,7 @@ export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
   );
   const { isExtreme } = useExtremeMode();
   const isMobile = useIsMobile();
+  const { isLogin } = useContext(LoginContext);
 
   const getRecord = () =>
     selectedCategory
@@ -102,8 +103,12 @@ export const FocusedTime = ({ handleClose }: { handleClose: () => void }) => {
     ['category', selectedCategory, unit, 'focusedTime'],
     getRecord,
   );
-  const { data: categories } = useQuery(['category'], () =>
-    categoryApi.getCategories(),
+  const { data: categories } = useQuery(
+    ['category'],
+    () => categoryApi.getCategories(),
+    {
+      enabled: isLogin,
+    },
   );
 
   return (

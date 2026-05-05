@@ -10,7 +10,7 @@ import { IChildProps, ISettings } from '../shared/interfaces';
 import { usePomodoroActions, usePomodoroValue } from './usePomodoro';
 import { settingsApi, timerApi, todosApi } from '../shared/apis';
 import { ETIndexed } from '../DB/indexed';
-import { useCurrentTodo, useIsOnline } from './';
+import { LoginContext, useCurrentTodo, useIsOnline } from './';
 import { PomodoroFocusingStatus } from '../services/PomodoroService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
@@ -42,12 +42,14 @@ export const ExtremeModeProvider = ({ children }: IChildProps) => {
   const { currentTodo } = useCurrentTodo();
   const isOnline = useIsOnline();
   const queryClient = useQueryClient();
+  const { isLogin } = useContext(LoginContext);
 
   // apis
   const { data: extremeModeData, isLoading } = useQuery({
     queryFn: settingsApi.getSettings,
     queryKey: ['settings'],
     staleTime: Infinity,
+    enabled: isLogin,
   });
 
   const { mutate: handleExtremeMutation } = useMutation(
