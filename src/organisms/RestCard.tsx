@@ -202,9 +202,6 @@ const RestCardWrapper = styled.div`
     margin-bottom: 1.1428571429rem;
     justify-content: flex-end;
     align-items: center;
-    .left-round {
-      opacity: 0.5;
-    }
   }
   .button-container {
     display: flex;
@@ -219,10 +216,16 @@ const RestCardWrapper = styled.div`
     }
   }
   .todo-duration {
-    height: 28px;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
+    > :first-child {
+      flex-shrink: 0;
+    }
+    span {
+      color: ${({ theme }) => theme.color.primary.primary1};
+    }
   }
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
@@ -248,6 +251,9 @@ const RestCardWrapper = styled.div`
       > :first-child {
         margin-bottom: 1rem;
       }
+    }
+    .todo-duration {
+      flex-wrap: wrap;
     }
     .button-container {
       margin-top: 3.75rem;
