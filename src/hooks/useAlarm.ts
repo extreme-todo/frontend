@@ -20,7 +20,14 @@ const useAlarm = () => {
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'isAlarmOn') {
-        setIsAlarmOn(e.newValue === 'true');
+        const next = e.newValue === null ? true : e.newValue === 'true';
+        setIsAlarmOn(next);
+        if (alarmSound.current) {
+          alarmSound.current.muted = !next;
+          if (!next) {
+            alarmSound.current.currentTime = 0;
+          }
+        }
       }
     };
     window.addEventListener('storage', handleStorageChange);

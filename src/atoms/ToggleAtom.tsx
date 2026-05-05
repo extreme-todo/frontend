@@ -48,7 +48,6 @@ const ToggleWrapper = styled.div<{ isOn: boolean }>`
   transition: background-color 0.2s ease-in-out;
   user-select: none;
   box-sizing: border-box;
-  outline: none;
 `;
 
 const ToggleHandle = styled.div<{ isOn: boolean }>`

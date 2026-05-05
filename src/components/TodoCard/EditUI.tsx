@@ -310,7 +310,7 @@ export const EditUI = memo(
                 {isSubmitting ? '저장 중' : '저장'}
               </SideBtnAtom>
               <SideBtnAtom
-                type="submit"
+                type="button"
                 btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
                 width="5.625rem"
                 ariaLabel="cancel"
