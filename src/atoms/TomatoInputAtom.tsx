@@ -228,6 +228,7 @@ const Thumb = styled.div<{ useBalloon: boolean }>(({ theme, useBalloon }) => ({
   alignItems: 'center',
   position: 'relative',
   cursor: 'grab',
+  textShadow: '4px 6px 8px #1c1c1d66',
 
   '&:active': {
     cursor: 'grabbing',
@@ -240,13 +241,14 @@ const Thumb = styled.div<{ useBalloon: boolean }>(({ theme, useBalloon }) => ({
       bottom: '4rem', // 말풍선 위치
       left: '50%',
       transform: 'translateX(-50%)',
-      font: theme.fontSize.h3.size,
+      fontSize: theme.fontSize.h3.size,
       fontWeight: theme.fontSize.h3.weight,
       color: theme.color.backgroundColor.extreme_orange,
       backgroundColor: theme.color.backgroundColor.white,
       padding: '0.5625rem 1.3125rem',
       borderRadius: '4.5625rem',
       zIndex: 1,
+      textShadow: 'none',
     },
 
     '&:after': {

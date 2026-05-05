@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export type HelpType = 'main' | 'list' | 'new' | 'rest' | 'time';
+export type HelpType = 'main' | 'list' | 'new' | 'rest' | 'time' | 'ranking';
 
 interface HelpModalAtomProps {
   isOpen: boolean;

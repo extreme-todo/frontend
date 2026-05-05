@@ -5,6 +5,7 @@ import { formatTime } from '../../shared/timeUtils';
 import { RandomTagColorList } from '../../shared/RandomTagColorList';
 import { IconAtom, TagAtom, TypoAtom, BtnAtom } from '../../atoms';
 import { memo } from 'react';
+import { SideBtnAtom } from '../../atoms/SideBtnAtom';
 
 interface ITodoUIProps {
   todoData: TodoEntity;
@@ -79,46 +80,12 @@ const MainContent = styled.div`
   min-width: 0;
 `;
 
-const OrderButtonsColumn = styled.div<{ isExtreme: boolean }>`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  row-gap: 0.5rem;
-  margin-left: 0.5rem;
-  padding-left: 0.5rem;
-  border-left: 1px solid
-    ${({ isExtreme }) =>
-      isExtreme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)'};
-`;
-
-const OrderBtn = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.color.backgroundColor.primary2};
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  line-height: 1;
-
-  &:disabled {
-    opacity: 0.2;
-    cursor: not-allowed;
-  }
-
-  &:not(:disabled):hover {
-    opacity: 0.7;
-  }
-`;
-
 const TitleContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   column-gap: 4px;
-  margin-bottom: 4px;
 
   & > div {
     display: flex;
@@ -128,6 +95,7 @@ const TitleContainer = styled.div`
 
   .order-text {
     margin-right: 0.25rem;
+    margin-left: 0.25rem;
   }
 
   .todoTitle {
@@ -144,7 +112,6 @@ const TitleContainer = styled.div`
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
     .todoTitle {
-      font-size: ${({ theme }) => theme.fontSize.h2.size};
       -webkit-line-clamp: 3;
     }
   }
@@ -158,21 +125,14 @@ const CategoryContainer = styled.div<{
   margin-bottom: 0.5rem;
   column-gap: 0.5rem;
   row-gap: 0.25rem;
+  margin-left: 1.5635rem;
+  margin-top: 0.25rem;
 `;
 
 const FooterContainer = styled.div<{ isExtreme: boolean }>`
   display: flex;
   justify-content: flex-end;
   column-gap: 0.5rem;
-  .edit__button {
-    &:hover {
-      background-color: ${({ theme: { button }, isExtreme }) =>
-        isExtreme
-          ? button.extremeDarkBtn.hover.backgroundColor
-          : button.darkBtn.hover.backgroundColor};
-    }
-    transition: background-color 0.3s ease-in-out;
-  }
 `;
 
 const TimeWrapper = styled.div`
@@ -191,10 +151,6 @@ export const TodoUI = memo(
     order,
     handleEditButton,
     handleDeleteButton,
-    onMoveUp,
-    onMoveDown,
-    isFirst,
-    isLast,
   }: ITodoUIProps) => {
     const { todo, categories, done, duration } = todoData;
     const tagColorList = randomTagColor.getColorList;
@@ -261,57 +217,25 @@ export const TodoUI = memo(
                 </TypoAtom>
               </TimeWrapper>
               {isCurrTodo ? (
-                <TagAtom
-                  styleOption={{
-                    size: 'normal',
-                    bg: 'transparent',
-                    borderColor: 'primary2',
-                  }}
+                <SideBtnAtom
+                  btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+                  disabled
+                  width="5.625rem"
                 >
-                  <TypoAtom fontSize="b2" fontColor="primary2">
-                    진행중
-                  </TypoAtom>
-                </TagAtom>
+                  진행중
+                </SideBtnAtom>
               ) : (
-                <BtnAtom handleOnClick={handleEditButton}>
-                  <TagAtom
-                    styleOption={{
-                      size: 'normal',
-                      bg: 'transparent',
-                      borderColor: 'primary2',
-                    }}
-                    className="edit__button"
-                  >
-                    <TypoAtom fontSize="b2" fontColor="primary2">
-                      수정
-                    </TypoAtom>
-                  </TagAtom>
-                </BtnAtom>
+                <SideBtnAtom
+                  btnStyle={isExtreme ? 'extremeDarkBtn' : 'darkBtn'}
+                  onClick={handleEditButton}
+                  width="5.625rem"
+                >
+                  수정
+                </SideBtnAtom>
               )}
             </FooterContainer>
           )}
         </MainContent>
-
-        {!done && (
-          <OrderButtonsColumn isExtreme={isExtreme}>
-            <OrderBtn
-              type="button"
-              onClick={onMoveUp}
-              disabled={isFirst || isCurrTodo || !onMoveUp}
-              aria-label="move up"
-            >
-              ▲
-            </OrderBtn>
-            <OrderBtn
-              type="button"
-              onClick={onMoveDown}
-              disabled={isLast || isCurrTodo || !onMoveDown}
-              aria-label="move down"
-            >
-              ▼
-            </OrderBtn>
-          </OrderButtonsColumn>
-        )}
       </TodoCardContainer>
     );
   },

@@ -26,10 +26,8 @@ export function CurrentTodo({
   currentRound,
   paused,
 }: ICurrentTodoProps) {
-  const [todoProgress, setTodoProgress] = useState<number>(0);
-  const isMobile = useIsMobile();
-  useEffect(() => {
-    setTodoProgress(
+  const todoProgress = useMemo(
+    () =>
       Number(
         getPomodoroStepPercent({
           curr: focusedOnTodo % (focusStep * 60000),
@@ -37,8 +35,9 @@ export function CurrentTodo({
           step: focusStep,
         }),
       ),
-    );
-  }, [focusedOnTodo]);
+    [focusedOnTodo, focusStep],
+  );
+  const isMobile = useIsMobile();
 
   const getLeftMs = () => {
     return todo.duration * focusStep * 60000 - focusedOnTodo;
@@ -94,9 +93,9 @@ export function CurrentTodo({
         <div className="todo-duration">
           <TypoAtom fontSize={'h3'}>{currentRound + ' Round'}</TypoAtom>
           <div>
-            <TypoAtom fontSize="h3">{`🍅 `.repeat(currentRound)}</TypoAtom>
-            <TypoAtom fontSize="h3" className="left-round">
-              {`🍅 `.repeat(Math.max(todo.duration - currentRound, 0))}
+            <TypoAtom fontSize={'h3'}>{`🍅`.repeat(currentRound)}</TypoAtom>
+            <TypoAtom fontSize={'h3'} className="left-round">
+              {`🍅`.repeat(Math.max(todo.duration - currentRound, 0))}
             </TypoAtom>
           </div>
         </div>
@@ -114,8 +113,7 @@ const CurrentTodoContainer = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  width: 90%;
-  max-width: 90%;
+  width: 100%;
   height: 100%;
   position: relative;
   gap: 2.56rem;
@@ -218,6 +216,9 @@ const CurrentTodoContainer = styled.div`
       > :first-child {
         margin-bottom: 1rem;
       }
+    }
+    .todo-duration {
+      flex-wrap: wrap;
     }
     .button-container {
       margin-top: 3.75rem;

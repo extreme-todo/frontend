@@ -11,6 +11,8 @@ export interface SideBtnAtomProps {
   disabled?: boolean;
   focused?: boolean;
   children?: React.ReactNode;
+  width?: string;
+  height?: string;
 }
 
 export const SideBtnAtom = ({
@@ -23,6 +25,7 @@ export const SideBtnAtom = ({
   focused = false,
   btnType = 'text',
   children,
+  ...props
 }: SideBtnAtomProps) => {
   return (
     <BaseBtnAtom
@@ -34,6 +37,7 @@ export const SideBtnAtom = ({
       type={type}
       disabled={disabled}
       focused={focused}
+      {...props}
     >
       {children}
     </BaseBtnAtom>
@@ -41,17 +45,26 @@ export const SideBtnAtom = ({
 };
 
 const BaseBtnAtom = styled.button<
-  Pick<SideBtnAtomProps, 'btnStyle' | 'focused' | 'btnType'>
+  Pick<
+    SideBtnAtomProps,
+    'btnStyle' | 'focused' | 'btnType' | 'width' | 'height'
+  >
 >`
+  width: ${({ width }) => width || 'auto'};
+  height: ${({ height }) => height || 'auto'};
+
   background-color: transparent;
   color: ${({ theme, btnStyle }) => theme.sideButton[btnStyle].default.color};
   border: 1px solid
     ${({ theme, btnStyle }) => theme.sideButton[btnStyle].default.color};
-  padding: 0.25rem 1.5rem;
+  padding: ${({ width, height }) =>
+    (height ? '0' : '0.25rem') + (width ? ' 0' : ' 1.5rem')};
   border-radius: 1.25rem;
   display: flex;
   align-items: center;
   cursor: pointer;
+  text-align: center;
+  justify-content: center;
   font-size: ${({ theme }) => theme.fontSize.body.size};
   font-weight: ${({ theme }) => theme.fontSize.body.weight};
   line-height: ${({ theme }) => theme.fontSize.body.lineHeight};
@@ -68,10 +81,10 @@ const BaseBtnAtom = styled.button<
     color: ${({ theme, btnStyle }) => theme.sideButton[btnStyle].click.color};
   }
   &:disabled {
-    background-color: ${({ theme, btnStyle }) =>
-      theme.sideButton[btnStyle].default.backgroundColor};
+    pointer-events: none;
     color: ${({ theme, btnStyle }) => theme.sideButton[btnStyle].default.color};
     cursor: not-allowed;
+    opacity: 0.5;
   }
 
   ${({ btnType }) =>

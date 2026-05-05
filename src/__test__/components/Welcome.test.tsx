@@ -11,6 +11,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import { LoginProvider } from '../../hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMotionValue } from 'framer-motion';
+import { ResponsiveProvider } from '../../contexts/ResponsiveContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +25,9 @@ const ProviderWrapper = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={designTheme}>
-        <LoginProvider>{children}</LoginProvider>
+        <ResponsiveProvider>
+          <LoginProvider>{children}</LoginProvider>
+        </ResponsiveProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
