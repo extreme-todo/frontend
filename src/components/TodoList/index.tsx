@@ -1,4 +1,4 @@
-import { memo, ReactNode, useContext, useMemo, useState } from 'react';
+import { memo, ReactNode, useMemo, useState } from 'react';
 
 /* component */
 import { TodoCard } from '../';
@@ -15,7 +15,6 @@ import {
   useIsMobile,
   useExtremeMode,
   useTodoListData,
-  LoginContext,
 } from '../../hooks';
 
 /* etc */
@@ -146,9 +145,8 @@ export const TodoList = memo(
   }: ITodoListProps) => {
     const isMobile = useIsMobile();
     const { isExtreme } = useExtremeMode();
-    const { isLogin } = useContext(LoginContext);
 
-    const { todoList, doneTodoList } = useTodoListData({ isLogin });
+    const { todoList, doneTodoList } = useTodoListData();
 
     /* custom hook 호출 */
     const [editTodoId, setEditTodoId] = useEdit();
