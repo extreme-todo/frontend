@@ -35,7 +35,7 @@ describe('CurrentTodo', () => {
     it('시간(뽀모도로 단위)를 렌더링한다', () => {
       const { getByText } = component;
       expect(
-        getByText(`🍅 `.repeat(mockCurrentTodo.duration).trim(), {
+        getByText(`🍅`.repeat(mockCurrentTodo.duration).trim(), {
           exact: false,
         }),
       ).toBeInTheDocument();
