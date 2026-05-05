@@ -1,11 +1,13 @@
 import { useContext, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { todosApi } from '../shared/apis';
+import { LoginContext } from './LoginContext';
 
 /**
  * TodoList 전체의 데이터 페칭 및 관리 로직을 담당하는 커스텀 훅 (조회 전용)
  */
-export const useTodoListData = ({ isLogin }: { isLogin: boolean }) => {
+export const useTodoListData = () => {
+  const { isLogin } = useContext(LoginContext);
   /* --- 1. 데이터 페칭 (React Query) --- */
   // 완료되지 않은 할 일 목록 가져오기
   const { data: todos, isLoading: isTodoLoading } = useQuery(
