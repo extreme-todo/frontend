@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { formatTime } from '../shared/timeUtils';
 import { PopperAtom } from './PopperAtom';
 import { TypoAtom } from './TypoAtom';
-import { useIsMobile } from '../hooks';
+import { IconAtom } from './IconAtom';
 
 interface ITomatoSelectorProps {
   max: number;
@@ -28,7 +28,6 @@ const TomatoSelectorAtom = ({
     null,
   );
   const [triggerWidth, setTriggerWidth] = useState(0);
-  const isMobile = useIsMobile();
 
   const tickCount = max - min;
 
@@ -75,23 +74,28 @@ const TomatoSelectorAtom = ({
         onClick={() => setIsOpen(!isOpen)}
         isOpen={isOpen}
       >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <TomatoIcon>🍅</TomatoIcon>
-          <SelectedValue>
-            <TypoAtom fontSize="h3" fontColor="extreme_orange">
-              {tomato} Round
-            </TypoAtom>
-            <ArrowIcon isOpen={isOpen} />
-          </SelectedValue>
-        </div>
         <div
-          style={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
         >
-          <TypoAtom fontColor="extreme_orange" fontSize="body">
-            {formatTime(tomato * period)}
-            {!isMobile && ' 동안 집중'}
-          </TypoAtom>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              columnGap: '0.25rem',
+              marginRight: '0.6rem',
+            }}
+          >
+            <TomatoIcon>🍅</TomatoIcon>
+            <SelectedValue>{tomato} Round</SelectedValue>
+          </div>
+          <OrangeComboBox />
         </div>
+        <SelectedValue className="formatted__time">
+          {formatTime(tomato * period)} 동안 집중
+        </SelectedValue>
       </SelectedDisplay>
 
       {isOpen && (
@@ -100,22 +104,15 @@ const TomatoSelectorAtom = ({
           popperElement={popperElement}
           setPopperElement={setPopperElement}
           placement="bottom-start"
-          offset={[0, 0]}
+          offset={[0, 5]}
         >
-          <OptionList style={{ width: triggerWidth }} aria-label="tomatoInput">
+          <OptionList aria-label="tomatoInput">
             {Array.from({ length: tickCount + 1 }).map((_, index) => {
               const value = min + index;
               const isSelected = value === tomato;
               return (
-                <OptionItem
-                  key={value}
-                  onClick={() => handleSelect(value)}
-                  isSelected={isSelected}
-                >
-                  <OptionTomato isSelected={isSelected}>🍅</OptionTomato>
-                  <OptionText>
-                    {value}회 ({formatTime(value * period)})
-                  </OptionText>
+                <OptionItem key={value} onClick={() => handleSelect(value)}>
+                  <OptionText isSelected={isSelected}>{value} Round</OptionText>
                 </OptionItem>
               );
             })}
@@ -159,58 +156,40 @@ const TomatoIcon = styled.span`
 `;
 
 const SelectedValue = styled.span`
-  margin-left: 0.25rem;
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-`;
-
-const ArrowIcon = styled.div<{ isOpen: boolean }>`
-  width: 1.25rem;
-  height: 1.25rem;
-  font-size: 0.75rem;
+  font-size: ${({ theme }) => theme.fontSize.h3.size};
+  font-weight: ${({ theme }) => theme.fontSize.h3.weight};
   color: ${({ theme }) => theme.color.fontColor.extreme_orange};
-  transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
-  transition: transform 0.2s ease;
-  background-color: ${({ theme }) => theme.color.fontColor.extreme_orange};
-  mask-image: url('/icon/combobox.svg');
+  .formatted__time {
+    font-size: ${({ theme }) => theme.fontSize.body.size};
+    font-weight: ${({ theme }) => theme.fontSize.body.weight};
+  }
 `;
 
 const OptionList = styled.div`
-  max-height: 150px;
+  max-height: 7.125rem;
   overflow-y: auto;
   background-color: ${({ theme }) => theme.color.backgroundColor.white};
   border-radius: 1rem;
-  box-shadow: ${({ theme }) => theme.shadow.tomato};
+  box-shadow: ${({ theme }) => theme.shadow.container};
   z-index: 1000;
   border: 1px solid ${({ theme }) => theme.color.backgroundColor.gray};
+  width: fit-content;
 
   overscroll-behavior: contain;
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.color.fontColor.gray};
-    border-radius: 3px;
-  }
 `;
 
-const OptionItem = styled.div<{ isSelected: boolean }>`
+const OptionItem = styled.div`
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0;
+  padding-right: 3.6875rem;
   cursor: pointer;
-  background-color: ${({ isSelected, theme }) =>
-    isSelected ? theme.color.backgroundColor.gray : 'transparent'};
-  transition: background-color 0.15s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.color.backgroundColor.gray};
+    background-color: #dbfe7780;
+    span {
+      color: ${({ theme }) => theme.color.fontColor.extreme_orange};
+    }
   }
 
   &:first-of-type {
@@ -222,15 +201,22 @@ const OptionItem = styled.div<{ isSelected: boolean }>`
   }
 `;
 
-const OptionTomato = styled.span<{ isSelected: boolean }>`
-  font-size: 1.25rem;
-  opacity: ${({ isSelected }) => (isSelected ? 1 : 0.6)};
-  transition: opacity 0.15s ease;
+const OrangeComboBox = styled.div`
+  width: 1.25rem;
+  height: 1.25rem;
+  background: ${({ theme }) => theme.color.backgroundColor.extreme_orange};
+  mask-image: url('/icon/combobox.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 `;
 
-const OptionText = styled.span`
+const OptionText = styled.span<{ isSelected: boolean }>`
   margin-left: 0.75rem;
-  font-size: ${({ theme }) => theme.fontSize.b2.size};
-  font-weight: ${({ theme }) => theme.fontSize.b2.weight};
-  color: ${({ theme }) => theme.color.fontColor.extreme_dark};
+  font-size: 16px;
+  font-weight: ${({ theme }) => theme.fontSize.body.weight};
+  color: ${({ isSelected, theme }) =>
+    isSelected
+      ? theme.color.fontColor.extreme_orange
+      : theme.color.fontColor.primary1};
 `;
