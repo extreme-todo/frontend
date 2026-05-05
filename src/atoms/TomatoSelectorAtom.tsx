@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { formatTime } from '../shared/timeUtils';
 import { PopperAtom } from './PopperAtom';
 import { TypoAtom } from './TypoAtom';
-import { IconAtom } from './IconAtom';
+import { useIsMobile } from '../hooks';
 
 interface ITomatoSelectorProps {
   max: number;
@@ -28,6 +28,7 @@ const TomatoSelectorAtom = ({
     null,
   );
   const [triggerWidth, setTriggerWidth] = useState(0);
+  const isMobile = useIsMobile();
 
   const tickCount = max - min;
 
@@ -94,7 +95,8 @@ const TomatoSelectorAtom = ({
           <OrangeComboBox />
         </div>
         <SelectedValue className="formatted__time">
-          {formatTime(tomato * period)} 동안 집중
+          {formatTime(tomato * period)}
+          {!isMobile && ' 동안 집중'}
         </SelectedValue>
       </SelectedDisplay>
 
@@ -105,6 +107,7 @@ const TomatoSelectorAtom = ({
           setPopperElement={setPopperElement}
           placement="bottom-start"
           offset={[0, 5]}
+          className="tomatoInputPopper"
         >
           <OptionList aria-label="tomatoInput">
             {Array.from({ length: tickCount + 1 }).map((_, index) => {
@@ -128,6 +131,13 @@ export { TomatoSelectorAtom };
 const SelectorWrapper = styled.div`
   width: 100%;
   position: relative;
+  .tomatoInputPopper {
+    width: fit-content;
+    @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+      ${({ theme }) => theme.responsiveDevice.mobile} {
+      width: 100%;
+    }
+  }
 `;
 
 const LabelWrapper = styled.div`
@@ -159,7 +169,7 @@ const SelectedValue = styled.span`
   font-size: ${({ theme }) => theme.fontSize.h3.size};
   font-weight: ${({ theme }) => theme.fontSize.h3.weight};
   color: ${({ theme }) => theme.color.fontColor.extreme_orange};
-  .formatted__time {
+  &.formatted__time {
     font-size: ${({ theme }) => theme.fontSize.body.size};
     font-weight: ${({ theme }) => theme.fontSize.body.weight};
   }
@@ -172,10 +182,14 @@ const OptionList = styled.div`
   border-radius: 1rem;
   box-shadow: ${({ theme }) => theme.shadow.container};
   z-index: 1000;
-  border: 1px solid ${({ theme }) => theme.color.backgroundColor.gray};
   width: fit-content;
 
   overscroll-behavior: contain;
+
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    width: 100%;
+  }
 `;
 
 const OptionItem = styled.div`
