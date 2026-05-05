@@ -37,3 +37,8 @@ export interface ISettings {
   colorMode: 'auto' | 'dark' | 'light';
   extremeMode: boolean;
 }
+
+export interface IUser {
+  email: string;
+  username?: string;
+}
