@@ -1,8 +1,7 @@
-export const EXTREME_TOKEN_STORAGE = 'extremeToken';
-export const EXTREME_EMAIL_STORAGE = 'extremeEmail';
-
 export const usersApi = {
   login: jest.fn(),
+  getMe: jest.fn(),
+  logout: jest.fn().mockResolvedValue({}),
   withdrawal: jest.fn(),
 };
 
