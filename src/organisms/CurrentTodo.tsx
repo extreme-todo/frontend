@@ -217,6 +217,9 @@ const CurrentTodoContainer = styled.div`
         margin-bottom: 1rem;
       }
     }
+    .todo-duration {
+      flex-wrap: wrap;
+    }
     .button-container {
       margin-top: 3.75rem;
     }

@@ -101,21 +101,6 @@ describe('TodoCard', () => {
         expect(timer).toBeInTheDocument();
         expect(duration).toBeInTheDocument();
       });
-      it('순서 이동 버튼(▲, ▼)이 있다.', () => {
-        const { getByLabelText } = renderTodoUI();
-        expect(getByLabelText('move up')).toBeInTheDocument();
-        expect(getByLabelText('move down')).toBeInTheDocument();
-      });
-    });
-
-    describe('순서 이동 버튼을 클릭하면', () => {
-      // TodoCard가 내부적으로 useTodoUpdate의 handleMoveUp/Down을 사용하므로
-      // props로 전달한 mock 함수의 호출 여부를 테스트하는 것은 현재 구현에서 무의미함
-      it('순서 이동 버튼이 렌더링 된다.', () => {
-        const { getByLabelText } = renderTodoUI();
-        expect(getByLabelText('move up')).toBeInTheDocument();
-        expect(getByLabelText('move down')).toBeInTheDocument();
-      });
     });
 
     describe('남은 TodoUI의 수정 버튼을 클릭하면', () => {
@@ -158,11 +143,6 @@ describe('TodoCard', () => {
         const { getByText } = renderTodoUI(true);
         const inProgressTag = getByText('진행중');
         expect(inProgressTag).toBeInTheDocument();
-      });
-      it('순서 이동 버튼이 비활성화된다.', () => {
-        const { getByLabelText } = renderTodoUI(true);
-        expect(getByLabelText('move up')).toBeDisabled();
-        expect(getByLabelText('move down')).toBeDisabled();
       });
     });
 
@@ -311,6 +291,22 @@ describe('TodoCard', () => {
         const { queryByText } = renderEditUI();
         const saveBtn = queryByText('저장');
         expect(saveBtn).toBeInTheDocument();
+      });
+
+      it('순서 이동 버튼(▲, ▼)이 있다.', () => {
+        const { getByLabelText } = renderEditUI();
+        expect(getByLabelText('move up')).toBeInTheDocument();
+        expect(getByLabelText('move down')).toBeInTheDocument();
+      });
+
+      describe('순서 이동 버튼을 클릭하면', () => {
+        // TodoCard가 내부적으로 useTodoUpdate의 handleMoveUp/Down을 사용하므로
+        // props로 전달한 mock 함수의 호출 여부를 테스트하는 것은 현재 구현에서 무의미함
+        it('순서 이동 버튼이 렌더링 된다.', () => {
+          const { getByLabelText } = renderEditUI();
+          expect(getByLabelText('move up')).toBeInTheDocument();
+          expect(getByLabelText('move down')).toBeInTheDocument();
+        });
       });
     });
 
