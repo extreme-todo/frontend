@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FocusedTime } from '../../components';
 import React from 'react';
 import { ICategory, IFocusTime } from '../../shared/interfaces';
-import { categoryApi, timerApi } from '../../shared/apis';
+import { categoryApi, timerApi, usersApi } from '../../shared/apis';
 import { formatTime } from '../../shared/timeUtils';
 import {
   UIProviders,
@@ -43,33 +43,73 @@ describe('FocusedTime Component', () => {
       ],
     },
   };
+  const mockWeekRecordData: { data: IFocusTime } = {
+    data: {
+      total: {
+        start: '2025-05-11T00:00:00Z',
+        end: '2025-05-17T23:59:59Z',
+        focused: 3600000 * 5,
+        prevFocused: 1800000 * 5,
+      },
+      values: [
+        { day: 'mon', focused: 3600000 },
+        { day: 'tue', focused: 3600000 },
+      ],
+    },
+  };
+  const mockMonthRecordData: { data: IFocusTime } = {
+    data: {
+      total: {
+        start: '2025-05-01T00:00:00Z',
+        end: '2025-05-31T23:59:59Z',
+        focused: 3600000 * 20,
+        prevFocused: 1800000 * 20,
+      },
+      values: [
+        { week: '1', focused: 3600000 * 5 },
+        { week: '2', focused: 3600000 * 5 },
+      ],
+    },
+  };
 
   beforeEach(() => {
+    usersApi.getMe = jest
+      .fn()
+      .mockResolvedValue({ data: { email: 'test@test.com' } });
     categoryApi.getCategories = jest
       .fn()
       .mockImplementation(() => mockCategories);
-    timerApi.getRecords = jest.fn().mockImplementation(() => mockRecordData);
+    timerApi.getRecords = jest.fn().mockImplementation((_, unit) => {
+      if (unit === 'day') return mockRecordData;
+      if (unit === 'week') return mockWeekRecordData;
+      if (unit === 'month') return mockMonthRecordData;
+      return mockRecordData;
+    });
   });
 
   const renderComponent = () =>
     render(
       <UIProviders>
         <QueryProvider queryClient={queryClient}>
-          <FocusedTime
-            handleClose={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
+          <LogicProviders>
+            <FocusedTime
+              handleClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          </LogicProviders>
         </QueryProvider>
       </UIProviders>,
     );
 
   it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', async () => {
     renderComponent();
-    expect(timerApi.getRecords).toHaveBeenCalledWith(
-      -new Date().getTimezoneOffset(),
-      'day',
-    );
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'day',
+      );
+    });
     expect(
       await screen.findByText(
         new RegExp(
@@ -85,35 +125,43 @@ describe('FocusedTime Component', () => {
     ).toBeInTheDocument();
   });
 
-  it('Day, Week, Month를 클릭하면 각 버튼이 활성화되며 데이터를 요청한다', () => {
+  it('Day, Week, Month를 클릭하면 각 버튼이 활성화되며 데이터를 요청한다', async () => {
     renderComponent();
     const dayButton = screen.getByText('Day');
     const weekButton = screen.getByText('Week');
     const monthButton = screen.getByText('Month');
 
     fireEvent.click(weekButton);
-    expect(timerApi.getRecords).toHaveBeenCalledWith(
-      -new Date().getTimezoneOffset(),
-      'week',
-    );
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'week',
+      );
+    });
     fireEvent.click(monthButton);
-    expect(timerApi.getRecords).toHaveBeenCalledWith(
-      -new Date().getTimezoneOffset(),
-      'month',
-    );
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'month',
+      );
+    });
     fireEvent.click(dayButton);
-    expect(timerApi.getRecords).toHaveBeenCalledWith(
-      -new Date().getTimezoneOffset(),
-      'day',
-    );
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'day',
+      );
+    });
   });
 
-  it('모든 카테고리를 렌더하고, 각 버튼을 클릭하면 데이터를 요청한다', () => {
+  it('모든 카테고리를 렌더하고, 각 버튼을 클릭하면 데이터를 요청한다', async () => {
     renderComponent();
-    mockCategories.forEach((category) => {
-      const categoryButton = screen.getByText(category.name);
+    for (const category of mockCategories) {
+      const categoryButton = await screen.findByText(category.name);
       fireEvent.click(categoryButton);
-      expect(timerApi.getRecords).toHaveBeenCalled();
-    });
+      await waitFor(() => {
+        expect(timerApi.getRecords).toHaveBeenCalled();
+      });
+    }
   });
 });

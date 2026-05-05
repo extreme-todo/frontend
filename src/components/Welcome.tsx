@@ -35,8 +35,8 @@ export const Welcome = forwardRef(
       return usersApi.login();
     };
 
-    const handleLogoutBtn = (): void => {
-      return deleteToken();
+    const handleLogoutBtn = async (): Promise<void> => {
+      await deleteToken();
     };
 
     const handleSetting = (): void => {
@@ -254,7 +254,7 @@ export const Welcome = forwardRef(
                         key={'login_btn-logout'}
                       >
                         <BtnAtom
-                          handleOnClick={handleLogoutBtn}
+                          handleOnClick={() => void handleLogoutBtn()}
                           ariaLabel="logout"
                           className="buttonWithIcon"
                         >

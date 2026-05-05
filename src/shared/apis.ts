@@ -2,24 +2,20 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { CategoryType, TodoEntity } from '../DB/indexedAction';
 import { UpdateTodoDto, type AddTodoDto } from '../DB/indexed';
-import { ICategory, IFocusTime, ISettings } from './interfaces';
+import { ICategory, IFocusTime, ISettings, IUser } from './interfaces';
 import { groupByDate } from './timeUtils';
 import { RandomTagColorList } from './RandomTagColorList';
 import { queryClient } from '../App';
 
 const SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
 const MAX_RETRY_COUNT = 2;
-const DIDNT_LOGIN_USER = '로그인이 필요합니다.';
-const EXTREME_TOKEN_HEADER = 'extreme-token';
-const EXTREME_EMAIL_HEADER = 'extreme-email';
-export const EXTREME_TOKEN_STORAGE = 'extremeToken';
-export const EXTREME_EMAIL_STORAGE = 'extremeEmail';
 
 interface AxiosCustomRequest extends AxiosRequestConfig {
   retryCount: number;
 }
 
 let IS_INVALID_TOKEN = false;
+let IS_LOGGING_OUT = false;
 
 const baseApi = axios.create({
   baseURL: SERVER_URL + '/api',
@@ -28,68 +24,69 @@ const baseApi = axios.create({
     accept: 'application/json',
   },
   timeout: 7000,
-});
-
-baseApi.interceptors.request.use(async (config) => {
-  const accessToken = localStorage.getItem(EXTREME_TOKEN_STORAGE);
-  const email = localStorage.getItem(EXTREME_EMAIL_STORAGE);
-  if (
-    config.url !== '/api/users/callback/google/start' &&
-    !email &&
-    !accessToken
-  ) {
-    await queryClient.cancelQueries();
-  }
-  if (config.headers) {
-    config.headers[EXTREME_TOKEN_HEADER] = accessToken
-      ? accessToken
-      : (false as boolean);
-    config.headers[EXTREME_EMAIL_HEADER] = email ? email : (false as boolean);
-  }
-
-  return config;
+  withCredentials: true,
 });
 
 baseApi.interceptors.response.use(
   (config) => {
-    if (EXTREME_TOKEN_HEADER in config.headers)
-      localStorage.setItem(
-        EXTREME_TOKEN_STORAGE,
-        config.headers[EXTREME_TOKEN_HEADER],
-      );
     return config;
   },
   async (err: AxiosError) => {
-    if (err.message === DIDNT_LOGIN_USER) return Promise.reject(err);
-    const config = err.config as AxiosCustomRequest;
-    if (!config) return Promise.reject(err); // 핸들링 하지 않은 에러는 그대로 reject
+    // 401 Unauthorized 처리
+    if (err.response?.status === 401) {
+      // 1. 'users/me' 또는 'users/logout' 요청은 실패해도 알림이나 새로고침을 하지 않음
+      const isAuthPath =
+        err.config?.url === 'users/me' || err.config?.url === 'users/logout';
 
+      if (isAuthPath || IS_LOGGING_OUT) {
+        return Promise.reject(err);
+      }
+
+      // 2. 이미 처리가 진행 중이거나, 로그인되지 않은 상태에서 발생한 다른 401 처리 방지
+      if (IS_INVALID_TOKEN === false) {
+        IS_INVALID_TOKEN = true;
+        await queryClient.cancelQueries();
+        window.alert('세션이 만료됐습니다!\n 다시 로그인 해주세요.');
+        window.location.reload();
+      }
+      return Promise.reject(err);
+    }
+
+    const config = err.config as AxiosCustomRequest;
+    if (!config) return Promise.reject(err);
+
+    // 401이 아닌 다른 에러(네트워크 불안정 등)에 대해서만 Retry 수행
     config.retryCount = config.retryCount ?? 0;
     const shouldRetry = config.retryCount < MAX_RETRY_COUNT;
     if (shouldRetry) {
       config.retryCount += 1;
       return baseApi(config);
     }
-    if (err.response?.status === 401) {
-      if (IS_INVALID_TOKEN === false) {
-        IS_INVALID_TOKEN = true;
-        await queryClient.cancelQueries();
-        localStorage.removeItem(EXTREME_EMAIL_STORAGE);
-        localStorage.removeItem(EXTREME_TOKEN_STORAGE);
-        window.alert('토큰이 만료됐습니다!\n 다시 로그인 해주세요.');
-      }
-    }
+
     return Promise.reject(err);
   },
 );
 
 export const usersApi = {
   login() {
+    IS_LOGGING_OUT = false;
     const data = window.open(
       SERVER_URL + '/api/users/callback/google/start',
       '_self',
     );
     return data;
+  },
+  async logout() {
+    try {
+      IS_LOGGING_OUT = true;
+      return await baseApi.post('users/logout');
+    } catch (error) {
+      IS_LOGGING_OUT = false;
+      throw error;
+    }
+  },
+  async getMe() {
+    return await baseApi.get<IUser>('users/me');
   },
   async withdrawal() {
     await baseApi.delete('users/revoke');

@@ -19,6 +19,7 @@ import {
   usePomodoroActions,
   pomodoroUnit,
 } from './usePomodoro';
+import { LoginContext } from './LoginContext';
 
 export type TodoResponseDto = TodoEntity;
 
@@ -57,6 +58,7 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
   const [focusedOnTodo, setFocusedOnTodo] = useState<number>(0);
   const [lastRestRoundFocusedTime, setLastRestRoundFocusedTime] =
     useState<number>(0);
+  const { isLogin } = useContext(LoginContext);
 
   const pomodoroValue = usePomodoroValue();
   const pomodoroActions = usePomodoroActions();
@@ -69,6 +71,7 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
     },
     {
       staleTime: Infinity,
+      enabled: isLogin,
     },
   );
 

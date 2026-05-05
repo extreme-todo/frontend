@@ -3,12 +3,7 @@ import { useExtremeMode, EXTREME_MODE, usePomodoroActions } from '../../hooks';
 import React from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import { QueryClient } from '@tanstack/react-query';
-import {
-  todosApi,
-  settingsApi,
-  EXTREME_EMAIL_STORAGE,
-  EXTREME_TOKEN_STORAGE,
-} from '../../shared/apis';
+import { todosApi, settingsApi, usersApi } from '../../shared/apis';
 import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
 import { LogicProviders, QueryProvider } from '../../contexts/AppProviders';
 
@@ -61,14 +56,17 @@ describe('useExtremeMode', () => {
   let mockExtremeTodo: boolean;
 
   beforeEach(() => {
+    // login mocking
+    usersApi.getMe = jest
+      .fn()
+      .mockResolvedValue({ data: { email: 'test@test.com' } });
+
     // localStorage mocking
     mockExtremeTodo = true;
     wrapMockLocalStorage = (extremeMode: boolean) =>
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
-            return 'whydiditwork';
-          else if (key === EXTREME_MODE) return extremeMode;
+          if (key === EXTREME_MODE) return extremeMode;
           else if (key === 'pomodoro-settings')
             return `{ "focusStep": 30, "restStep": 15 }`;
         }),
@@ -112,10 +110,12 @@ describe('useExtremeMode', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('렌더링 되었을 때', () => {
-    it('settingsApi의 getSettings 메서드가 호출된다.', () => {
+    it('settingsApi의 getSettings 메서드가 호출된다.', async () => {
       wrapMockLocalStorage(mockExtremeTodo);
       render(<TestExtremeMode />, { wrapper: WrapperComponent });
-      expect(settingsApi.getSettings).toBeCalled();
+      await waitFor(() => {
+        expect(settingsApi.getSettings).toBeCalled();
+      });
     });
   });
 
@@ -187,11 +187,10 @@ describe('useExtremeMode', () => {
     it('시간이 초과되면 초기화 진행 안내가 렌더링 된다.', async () => {
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
-            return 'whydiditwork';
-          else if (key === EXTREME_MODE) return mockExtremeTodo;
+          if (key === EXTREME_MODE) return mockExtremeTodo;
           else if (key === 'pomodoro-settings')
             return `{ "focusStep": 30, "restStep": -10 }`;
+          return null;
         }),
         jest.fn((key: string) => JSON.stringify('true')),
       );
