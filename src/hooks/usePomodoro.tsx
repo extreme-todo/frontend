@@ -1,6 +1,5 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -8,7 +7,11 @@ import {
   useState,
 } from 'react';
 import { IChildProps } from '../shared/interfaces';
-import { PomodoroService, PomodoroStatus } from '../services/PomodoroService';
+import {
+  PomodoroService,
+  PomodoroFocusingStatus,
+  PomodoroTimerStatus,
+} from '../services/PomodoroService';
 
 export const pomodoroUnit = 60000;
 // TODO : 테스트용 1 제거 필요
@@ -30,17 +33,19 @@ interface IPomodoroSettings {
 
 export interface IPomodoroData {
   settings: IPomodoroSettings;
-  status?: PomodoroStatus;
+  status?: PomodoroFocusingStatus;
   time?: number;
+  timerStatus?: PomodoroTimerStatus;
 }
 
 export interface IPomodoroActions {
   setFocusStep: (step: focusStep) => void;
   setRestStep: (step: restStep) => void;
   startFocusing: () => void;
-  startOverFocusing: () => void;
   startResting: () => void;
   stopTimer: () => void;
+  pauseTimer: () => void;
+  resumeTimer: () => void;
 }
 
 const PomodoroValueContext = createContext<IPomodoroData>({} as IPomodoroData);
@@ -53,20 +58,29 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
     getPomodoroData<IPomodoroSettings>('settings'),
   );
   const [time, setTime] = useState<number>();
-  const [status, setStatus] = useState<PomodoroStatus>();
+  const [status, setStatus] = useState<PomodoroFocusingStatus>();
+  const [timerStatus, setTimerStatus] = useState<PomodoroTimerStatus>();
 
   const settingsRef = useRef<IPomodoroSettings>(settings);
 
   useEffect(() => {
-    const subStatus = PomodoroService.pomodoroStatus$.subscribe((res) => {
-      setStatus(res);
-    });
+    const subStatus = PomodoroService.pomodoroFocusingStatus$.subscribe(
+      (res) => {
+        setStatus(res);
+      },
+    );
     const subTime = PomodoroService.pomodoroTime$.subscribe((res) => {
       setTime(res);
     });
+    const subTimerStatus = PomodoroService.pomodoroTimerStatus$.subscribe(
+      (res) => {
+        setTimerStatus(res);
+      },
+    );
     return () => {
       subStatus.unsubscribe();
       subTime.unsubscribe();
+      subTimerStatus.unsubscribe();
     };
   }, []);
 
@@ -86,23 +100,30 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
           return newData;
         });
       },
-      startOverFocusing: () => {
-        PomodoroService.setStatus(PomodoroStatus.OVERFOCUSING);
-      },
       startFocusing: () => {
-        PomodoroService.setStatus(PomodoroStatus.FOCUSING);
+        PomodoroService.setStatus(PomodoroFocusingStatus.FOCUSING);
+        PomodoroService.resumeTimer();
       },
       startResting: () => {
-        PomodoroService.setStatus(PomodoroStatus.RESTING);
+        PomodoroService.setStatus(PomodoroFocusingStatus.RESTING);
+        PomodoroService.resumeTimer();
       },
       stopTimer: () => {
-        PomodoroService.setStatus(PomodoroStatus.NONE);
+        PomodoroService.setStatus(PomodoroFocusingStatus.NONE);
+        PomodoroService.pauseTimer();
+      },
+      pauseTimer: () => {
+        PomodoroService.pauseTimer();
+      },
+      resumeTimer: () => {
+        PomodoroService.resumeTimer();
       },
     }),
     [],
   );
 
   useEffect(() => {
+    // 페이지 unloading 전에 셋팅값 저장
     function updatePomodorBeforeUnload(settings: IPomodoroSettings) {
       updatePomodoroData<IPomodoroSettings>(settings, 'settings');
     }
@@ -118,7 +139,9 @@ export const PomodoroProvider = ({ children }: IChildProps) => {
 
   return (
     <PomodoroActionsContext.Provider value={actions}>
-      <PomodoroValueContext.Provider value={{ settings, time, status }}>
+      <PomodoroValueContext.Provider
+        value={{ settings, time, status, timerStatus }}
+      >
         {children}
       </PomodoroValueContext.Provider>
     </PomodoroActionsContext.Provider>

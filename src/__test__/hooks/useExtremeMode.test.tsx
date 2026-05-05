@@ -1,22 +1,11 @@
-import { screen, fireEvent, render, waitFor } from '@testing-library/react';
-import {
-  useExtremeMode,
-  EXTREME_MODE,
-  ExtremeModeProvider,
-  PomodoroProvider,
-  usePomodoroActions,
-} from '../../hooks';
-import React, { useEffect } from 'react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
+import { useExtremeMode, EXTREME_MODE, usePomodoroActions } from '../../hooks';
+import React from 'react';
 import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  todosApi,
-  settingsApi,
-  EXTREME_EMAIL_STORAGE,
-  EXTREME_TOKEN_STORAGE,
-} from '../../shared/apis';
+import { QueryClient } from '@tanstack/react-query';
+import { todosApi, settingsApi, usersApi } from '../../shared/apis';
 import { getDateInFormat, groupByDate } from '../../shared/timeUtils';
-import { PomodoroService } from '../../services/PomodoroService';
+import { LogicProviders, QueryProvider } from '../../contexts/AppProviders';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,25 +15,19 @@ const queryClient = new QueryClient({
   },
 });
 
+window.alert = jest.fn();
+
 describe('useExtremeMode', () => {
   // setting test environment
-  const WrapperComponent = ({ children }) => (
-    <QueryClientProvider client={queryClient}>
-      <PomodoroProvider>
-        <ExtremeModeProvider>{children}</ExtremeModeProvider>
-      </PomodoroProvider>
-    </QueryClientProvider>
+  const WrapperComponent = ({ children }: { children: React.ReactNode }) => (
+    <QueryProvider queryClient={queryClient}>
+      <LogicProviders>{children}</LogicProviders>
+    </QueryProvider>
   );
   const TestExtremeMode = () => {
     const { isExtreme, handleExtremeMode, warningText } = useExtremeMode();
     const { startFocusing, startResting } = usePomodoroActions();
-    // Start the Pomodoro timer when the app loads
-    useEffect(() => {
-      const startTimer = PomodoroService.startTimer().subscribe();
-      return () => {
-        startTimer.unsubscribe();
-      };
-    }, []);
+
     return (
       <>
         isExtreme:{String(isExtreme)}
@@ -73,14 +56,17 @@ describe('useExtremeMode', () => {
   let mockExtremeTodo: boolean;
 
   beforeEach(() => {
+    // login mocking
+    usersApi.getMe = jest
+      .fn()
+      .mockResolvedValue({ data: { email: 'test@test.com' } });
+
     // localStorage mocking
     mockExtremeTodo = true;
     wrapMockLocalStorage = (extremeMode: boolean) =>
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
-            return 'whydiditwork';
-          else if (key === EXTREME_MODE) return extremeMode;
+          if (key === EXTREME_MODE) return extremeMode;
           else if (key === 'pomodoro-settings')
             return `{ "focusStep": 30, "restStep": 15 }`;
         }),
@@ -124,10 +110,12 @@ describe('useExtremeMode', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('렌더링 되었을 때', () => {
-    it('settingsApi의 getSettings 메서드가 호출된다.', () => {
+    it('settingsApi의 getSettings 메서드가 호출된다.', async () => {
       wrapMockLocalStorage(mockExtremeTodo);
       render(<TestExtremeMode />, { wrapper: WrapperComponent });
-      expect(settingsApi.getSettings).toBeCalled();
+      await waitFor(() => {
+        expect(settingsApi.getSettings).toBeCalled();
+      });
     });
   });
 
@@ -144,9 +132,9 @@ describe('useExtremeMode', () => {
     it('일치하지 않는다면 localStroage.setItem을 호출한다.', () => {
       wrapMockLocalStorage(!mockExtremeTodo);
       render(<TestExtremeMode />, { wrapper: WrapperComponent });
-      expect(localStorage.setItem).toBeCalledWith(
+      expect(localStorage.setItem).toHaveBeenCalledWith(
         EXTREME_MODE,
-        `${mockExtremeTodo}`,
+        String(mockExtremeTodo),
       );
     });
   });
@@ -157,10 +145,8 @@ describe('useExtremeMode', () => {
       const { getByTestId } = render(<TestExtremeMode />, {
         wrapper: WrapperComponent,
       });
-      // 포모도로 상태가 초기화될 때까지 기다림
-      await waitFor(() => {
-        expect(screen.getByText(/isExtreme:/)).toBeInTheDocument();
-      });
+      const restBtn = getByTestId('startResting');
+      await waitFor(() => fireEvent.click(restBtn));
 
       const mutationBtn = getByTestId('handleExtremeMode');
       fireEvent.click(mutationBtn);
@@ -201,11 +187,10 @@ describe('useExtremeMode', () => {
     it('시간이 초과되면 초기화 진행 안내가 렌더링 된다.', async () => {
       mockLocalStorage(
         jest.fn((key: string) => {
-          if (key === EXTREME_TOKEN_STORAGE || key === EXTREME_EMAIL_STORAGE)
-            return 'whydiditwork';
-          else if (key === EXTREME_MODE) return mockExtremeTodo;
+          if (key === EXTREME_MODE) return mockExtremeTodo;
           else if (key === 'pomodoro-settings')
             return `{ "focusStep": 30, "restStep": -10 }`;
+          return null;
         }),
         jest.fn((key: string) => JSON.stringify('true')),
       );

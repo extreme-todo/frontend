@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BtnAtom, IconAtom, TodoProgressBarAtom, TypoAtom } from '../atoms';
 import { Clock, CategoryList } from '../molecules';
 import { TodoEntity } from '../DB/indexedAction';
-import { useExtremeMode } from '../hooks';
+import { useExtremeMode, useIsMobile } from '../hooks';
 import { IChildProps } from '../shared/interfaces';
 import { getPomodoroStepPercent } from '../shared/timeUtils';
 import styled from '@emotion/styled';
 
 interface ICurrentTodoProps extends IChildProps {
   todo: TodoEntity;
-  doTodo: (focusTime: number) => void;
+  doTodo: () => void;
   focusStep: number;
   focusedOnTodo: number;
-  startResting: () => void;
+  currentRound: number;
+  paused?: boolean;
+  toggleTimerPlay?: () => void;
 }
 
 export function CurrentTodo({
@@ -20,84 +22,87 @@ export function CurrentTodo({
   focusStep,
   focusedOnTodo,
   doTodo,
-  startResting,
+  toggleTimerPlay,
+  currentRound,
+  paused,
 }: ICurrentTodoProps) {
-  const [todoProgress, setTodoProgress] = useState<number>(0);
-  const { isExtreme } = useExtremeMode();
-  useEffect(() => {
-    setTodoProgress(
+  const todoProgress = useMemo(
+    () =>
       Number(
         getPomodoroStepPercent({
-          curr: focusedOnTodo,
-          unit: todo.duration,
+          curr: focusedOnTodo % (focusStep * 60000),
+          unit: 1,
           step: focusStep,
         }),
       ),
-    );
-  }, [focusedOnTodo]);
-
-  const doAndRest = () => {
-    doTodo(focusedOnTodo);
-  };
+    [focusedOnTodo, focusStep],
+  );
+  const isMobile = useIsMobile();
 
   const getLeftMs = () => {
     return todo.duration * focusStep * 60000 - focusedOnTodo;
   };
 
+  const getButtonContainer = useMemo(
+    () => (
+      <div className="button-container">
+        <BtnAtom
+          className="rest"
+          btnStyle="darkBtn"
+          handleOnClick={() => toggleTimerPlay && toggleTimerPlay()}
+          ariaLabel="일시정지"
+        >
+          {paused ? (
+            <IconAtom src="icon/play-dark.svg" className="play" size={2.25} />
+          ) : (
+            <IconAtom src="icon/pause-dark.svg" size={1.5} />
+          )}
+        </BtnAtom>
+        <BtnAtom
+          className="do-todo"
+          aria-label="do todo"
+          btnStyle="darkBtn"
+          handleOnClick={() => doTodo()}
+          ariaLabel="할일완료"
+        >
+          <IconAtom src="icon/stop-dark.svg" size={1.625} />
+        </BtnAtom>
+      </div>
+    ),
+    [todo, toggleTimerPlay, paused],
+  );
+
   return (
     <CurrentTodoContainer>
-      <TypoAtom fontSize={'h1'} fontColor={'primary2'} className="title">
-        {isExtreme ? '더 집중하셔야 합니다!' : '힘 내세요!'}
-      </TypoAtom>
-      <TypoAtom fontSize={'body'} fontColor={'primary2'} className="left-time">
-        남은 시간
-      </TypoAtom>
       <div className="center-container">
+        <TypoAtom fontSize={'h3'} fontColor={'primary2'} className="left-time">
+          남은 시간
+        </TypoAtom>
         <Clock ms={getLeftMs()} fontColor={'primary2'}></Clock>
-        <div className="todo-title">
-          <div className="categories">
-            <CategoryList categories={todo.categories}></CategoryList>
-          </div>
-          <TypoAtom fontSize={'h2'} fontColor="primary2">
-            {todo.todo}
-          </TypoAtom>
-        </div>
-      </div>
-      <div className="indicator-container">
-        <div className="todo-duration">
-          <TypoAtom fontSize={'h3'}>{todo.duration + ' Round'}</TypoAtom>
-          <TypoAtom fontSize="h3">
-            {todo.duration < 20
-              ? `🍅 `.repeat(todo.duration)
-              : `🍅 ` + todo.duration}
-          </TypoAtom>
-        </div>
-        <div className="button-container">
-          <BtnAtom
-            className="rest"
-            btnStyle="darkBtn"
-            handleOnClick={() => startResting()}
-          >
-            <IconAtom src="icon/pause-dark.svg" size={1} />
-          </BtnAtom>
-          <BtnAtom
-            className="do-todo"
-            aria-label="do todo"
-            btnStyle="darkBtn"
-            handleOnClick={() => doAndRest()}
-          >
-            끝내기
-          </BtnAtom>
-        </div>
+        {!isMobile && getButtonContainer}
       </div>
 
       <div className="progress-container">
         <TodoProgressBarAtom
           type="primary2"
           progress={Math.min(todoProgress, 100)}
-        >
-          <div className="progress"></div>
-        </TodoProgressBarAtom>
+        ></TodoProgressBarAtom>
+      </div>
+
+      <div className="todo-title">
+        <div className="todo-duration">
+          <TypoAtom fontSize={'h3'}>{currentRound + ' Round'}</TypoAtom>
+          <div>
+            <TypoAtom fontSize={'h3'}>{`🍅`.repeat(currentRound)}</TypoAtom>
+            <TypoAtom fontSize={'h3'} className="left-round">
+              {`🍅`.repeat(Math.max(todo.duration - currentRound, 0))}
+            </TypoAtom>
+          </div>
+        </div>
+        <TypoAtom fontSize={'h2'} fontColor="primary2">
+          {todo.todo}
+        </TypoAtom>
+        {isMobile && getButtonContainer}
       </div>
     </CurrentTodoContainer>
   );
@@ -106,22 +111,38 @@ export function CurrentTodo({
 const CurrentTodoContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: flex-end;
+  align-items: center;
   width: 100%;
   height: 100%;
+  position: relative;
+  gap: 2.56rem;
   .todo-title {
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
-    max-width: 20ch;
+    max-width: 40ch;
+    position: absolute;
+    margin-bottom: 1.1428571429rem;
+    justify-content: flex-end;
+    align-items: center;
   }
   .center-container {
     display: flex;
     width: 100%;
+    margin-top: 1.125rem;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0.5rem;
+    > :first-child {
+      padding-left: 4.75rem;
+    }
+  }
+  .progress-container {
+    width: 100%;
+    height: 11rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .indicator-container {
     width: 100%;
@@ -135,16 +156,16 @@ const CurrentTodoContainer = styled.div`
     display: flex;
     gap: 0.5rem;
   }
-  .rest {
-    width: 2.25rem;
-    height: 2.25rem;
+  .rest,
+  .do-todo {
+    width: 3.75rem;
+    height: 3.75rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    img {
-      width: 1rem;
-      height: 1rem;
-    }
+  }
+  .left-round {
+    opacity: 0.5;
   }
   .categories {
     width: 100%;
@@ -159,28 +180,14 @@ const CurrentTodoContainer = styled.div`
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+    > :first-child {
+      flex-shrink: 0;
+    }
     span {
       color: ${({ theme }) => theme.color.primary.primary2};
     }
   }
-  .do-todo {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem 1.0625rem;
-    gap: 0.625rem;
-    width: 6.25rem;
-  }
-  .progress-container {
-    width: 100%;
-    height: 4rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-  }
+
   .title {
     line-height: 2.5rem;
     margin-bottom: 0.25rem;
@@ -189,62 +196,32 @@ const CurrentTodoContainer = styled.div`
     ${({ theme }) => theme.responsiveDevice.mobile} {
     height: 100%;
     position: relative;
-    .title {
-      font-size: ${({ theme: { fontSize } }) => fontSize.b1.size};
-      font-weight: ${({ theme: { fontSize } }) => fontSize.b1.weight};
-      text-align: right;
+    gap: 0rem;
+    justify-content: center;
+    .progress-container {
+      margin-top: 1.25rem;
+      height: 5.5rem;
+      margin-bottom: 0.625rem;
     }
-    .todo-title {
-      overflow: auto;
-      padding-right: 16rem;
-      box-sizing: border-box;
-      max-height: 50%;
-      text-align: right;
-
-      span {
-        vertical-align: middle;
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-        white-space: normal;
-        overflow: initial;
-        text-align: right;
+    .center-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      > :first-child {
+        padding-left: 0;
       }
     }
-    .categories {
-      margin: 4rem 0 4rem 0;
-      span {
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-        border-radius: 6rem;
-        padding: 1rem 3rem 1rem 3rem;
+    .todo-title {
+      position: relative;
+      > :first-child {
+        margin-bottom: 1rem;
       }
     }
     .todo-duration {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2rem;
-      span {
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-      }
-      div > span {
-        font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-        border-radius: 6rem;
-        padding: 0.5rem 3rem 0.5rem 3rem;
-      }
+      flex-wrap: wrap;
     }
-    .progress-container {
-      position: absolute;
-      height: calc(100% - 12rem);
-      width: 6rem;
-      top: 0;
-      right: 0;
-      flex-direction: row-reverse;
-      box-sizing: border-box;
-      .do-todo {
-        position: absolute;
-        right: 8rem;
-        background-position: center;
-      }
+    .button-container {
+      margin-top: 3.75rem;
     }
   }
 `;

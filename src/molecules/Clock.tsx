@@ -74,15 +74,4 @@ const ClockContainer = styled.div<IClockProps>`
       }
     }
   }
-  @media ${({ theme }) => theme.responsiveDevice.mobile},
-    ${({ theme }) => theme.responsiveDevice.tablet_v} {
-    position: fixed;
-    top: 4rem;
-    .clock-date {
-      font-size: ${({ theme: { fontSize } }) => fontSize.h1.size};
-    }
-    .clock-time {
-      font-size: ${({ theme: { fontSize } }) => fontSize.clock.size};
-    }
-  }
 `;

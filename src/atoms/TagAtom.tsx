@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 import { IChildProps } from '../shared/interfaces';
 import { BackgroundColorName, FontName, TagColorName } from '../styles/emotion';
 import { css } from '@emotion/react';
+import { useMemo } from 'react';
+import { designTheme } from '../styles/theme';
 
 interface ITagAtomProps extends IChildProps {
   title?: string;
@@ -19,6 +21,19 @@ export interface ITagSpanProps {
   selectable?: boolean;
 }
 
+export function getTagTextColor(bg: TagColorName | 'transparent' | undefined) {
+  switch (bg) {
+    case 'green':
+    case 'gray':
+    case 'brown':
+    case 'purple':
+    case 'cyan':
+      return designTheme.color.fontColor.white;
+    default:
+      return designTheme.color.fontColor.primary1;
+  }
+}
+
 export function TagAtom({
   children,
   styleOption,
@@ -26,6 +41,10 @@ export function TagAtom({
   ariaLabel,
   className,
 }: ITagAtomProps) {
+  const tagTextColor = useMemo(() => {
+    return getTagTextColor(styleOption?.bg);
+  }, [styleOption?.bg]);
+
   return (
     <TagSpan
       title={title}
@@ -33,6 +52,7 @@ export function TagAtom({
       className={className}
       aria-label={ariaLabel}
       bg={styleOption?.bg ?? 'orange'}
+      color={tagTextColor}
     >
       {children}
       {styleOption?.selectable && (
@@ -52,7 +72,11 @@ export function TagAtom({
 }
 
 const TagSpan = styled.span<
-  ITagSpanProps & { isHandler?: boolean; bg: TagColorName | 'transparent' }
+  ITagSpanProps & {
+    isHandler?: boolean;
+    bg: TagColorName | 'transparent';
+    color?: string;
+  }
 >`
   transition: opacity 0.3s ease-in-out;
   width: ${({ size }) => {
@@ -75,29 +99,18 @@ const TagSpan = styled.span<
     switch (size) {
       case 'normal':
       default:
-        return '0 1rem';
+        return '0.375rem 0.75rem';
     }
   }};
 
   background: ${({ bg, theme }) =>
     bg === 'transparent' ? 'transparent' : theme.color.tag[bg]};
   color: ${({
-    bg,
+    color,
     theme: {
       color: { fontColor },
     },
-  }) => {
-    switch (bg) {
-      case 'green':
-      case 'gray':
-      case 'brown':
-      case 'purple':
-      case 'cyan':
-        return fontColor.white;
-      default:
-        return fontColor.primary1;
-    }
-  }};
+  }) => color ?? fontColor.primary1};
   border: ${({
     borderColor,
     theme: {
@@ -109,9 +122,9 @@ const TagSpan = styled.span<
   border-radius: 50px;
 
   font-size: ${({ fontsize, theme: { fontSize } }) =>
-    fontsize ? fontSize[fontsize].size : fontSize.b2.size};
+    fontsize ? fontSize[fontsize].size : fontSize.tag.size};
   font-weight: ${({ fontsize, theme: { fontSize } }) =>
-    fontsize ? fontSize[fontsize].weight : fontSize.b2.weight};
+    fontsize ? fontSize[fontsize].weight : fontSize.tag.weight};
   line-height: 120%;
 
   text-overflow: ellipsis;
@@ -121,7 +134,7 @@ const TagSpan = styled.span<
   align-items: center;
 
   &:has(.check-icon) {
-    padding-right: 0.25rem;
+    padding-right: 0.375rem;
     ${({ isSelected }) =>
       !isSelected &&
       css`
@@ -130,8 +143,8 @@ const TagSpan = styled.span<
   }
   .check-icon {
     display: inline-flex;
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 1.25rem;
+    height: 1.25rem;
     border-radius: 50%;
     margin-left: 0.25rem;
     padding: 0.125rem;

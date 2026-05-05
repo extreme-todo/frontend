@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 
-import { IconAtom } from './atoms';
-import { Navigation } from './molecules';
-import { FocusedTime, MainTodo, Welcome } from './components';
+import { IconAtom, TypoAtom } from './atoms';
+import { Navigation, Noti } from './molecules';
+import { DevKit, MainTodo, Welcome } from './components';
 import {
   motion,
   useMotionValueEvent,
@@ -10,18 +10,20 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import { PomodoroProvider, ExtremeModeProvider } from './hooks';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
 import styled from '@emotion/styled';
-import { PomodoroService } from './services/PomodoroService';
-
-export const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } },
-});
+import useAlarm from './hooks/useAlarm';
+import { AppProviders } from './contexts/AppProviders';
+import { QueryClient } from '@tanstack/react-query';
 
 export type NavigationPageType = 'Welcome' | 'Main' | 'Focused';
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export interface NavigationListType {
   componentName: NavigationPageType;
@@ -36,7 +38,6 @@ function App() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const welcomeRef = useRef<HTMLElement>(null);
   const mainTodoRef = useRef<HTMLElement>(null);
-  const focusedRef = useRef<HTMLElement>(null);
 
   const NAVIGATION_LIST: NavigationListType[] = useMemo(
     () => [
@@ -48,12 +49,7 @@ function App() {
       {
         componentName: 'Main',
         componentRef: mainTodoRef,
-        dotActivePos: [0.3, 0.5, 0.7],
-      },
-      {
-        componentName: 'Focused',
-        componentRef: focusedRef,
-        dotActivePos: [0.7, 1],
+        dotActivePos: [0.3, 0.5],
       },
     ],
     [],
@@ -86,6 +82,12 @@ function App() {
       clamp: true,
     },
   );
+  const goToMain = useCallback(() => {
+    NAVIGATION_LIST[1].componentRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [NAVIGATION_LIST]);
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const THRESHOLD = 0.1;
@@ -103,52 +105,57 @@ function App() {
     }
   });
 
-  // Start the Pomodoro timer when the app loads
+  const { initSoundPlayer } = useAlarm();
+
   useEffect(() => {
-    const startTimer = PomodoroService.startTimer().subscribe();
-    return () => {
-      startTimer.unsubscribe();
+    const handleClick = () => {
+      void initSoundPlayer();
     };
-  }, []);
+    window.addEventListener('click', handleClick);
+    return () => {
+      window.removeEventListener('click', handleClick);
+    };
+  }, [initSoundPlayer]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <PomodoroProvider>
-        <ExtremeModeProvider>
-          <MainContainer id="main-container" ref={mainRef}>
-            <Navigation
-              navigationLists={NAVIGATION_LIST}
-              scrollYProgress={scrollYProgress}
-              isLabelVisible={isLabelVisible}
-              activeLabel={activeLabel}
-            />
-            <Welcome
-              buttonOpacityForScroll={buttonOpacityForScroll}
-              mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
-              mainLogoFillForScroll={mainLogoFillForScroll}
-              ref={welcomeRef}
-            />
-            <MainTodo ref={mainTodoRef} />
-            <FocusedTime ref={focusedRef} />
-            <motion.div
-              className="scroll__guide"
-              style={{
-                opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
-                  clamp: true,
-                }),
-              }}
-            >
-              <IconAtom
-                src="/icon/combobox.svg"
-                size={3}
-                className="scroll__guide__icon"
-                alt="An icon indicating to scroll down"
-              />
-            </motion.div>
-          </MainContainer>
-        </ExtremeModeProvider>
-      </PomodoroProvider>
-    </QueryClientProvider>
+    <AppProviders queryClient={queryClient}>
+      <DevKit />
+      <MainContainer id="main-container" ref={mainRef}>
+        <Navigation
+          navigationLists={NAVIGATION_LIST}
+          scrollYProgress={scrollYProgress}
+          isLabelVisible={isLabelVisible}
+          activeLabel={activeLabel}
+        />
+        <Welcome
+          buttonOpacityForScroll={buttonOpacityForScroll}
+          mainLogoPathLengthForScroll={mainLogoPathLengthForScroll}
+          mainLogoFillForScroll={mainLogoFillForScroll}
+          ref={welcomeRef}
+        />
+        <MainTodo ref={mainTodoRef} />
+        <motion.div
+          className="scroll__guide"
+          style={{
+            cursor: 'pointer',
+            opacity: useTransform(scrollYProgress, [0, 0.01], [0.5, 0], {
+              clamp: true,
+            }),
+          }}
+          onClick={goToMain}
+        >
+          <TypoAtom fontSize="b2">Scroll</TypoAtom>
+          <IconAtom
+            src="/icon/scroll.svg"
+            w={2}
+            h={1}
+            className="scroll__guide__icon"
+            alt="An icon indicating to scroll down"
+          />
+        </motion.div>
+        <Noti />
+      </MainContainer>
+    </AppProviders>
   );
 }
 
@@ -202,24 +209,27 @@ const MainContainer = styled.div`
     bottom: 5%;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
     font-size: ${({ theme: { fontSize } }) => fontSize.h3.size};
     font-weight: ${({ theme: { fontSize } }) => fontSize.h3.weight};
+    animation: updown 1.5s infinite;
 
-    img.scroll__guide__icon {
-      @keyframes updown {
-        0% {
-          transform: translateY(10px);
-          animation-timing-function: ease-in;
-        }
-        50% {
-          transform: translateY(-10px);
-          animation-timing-function: ease-out;
-        }
-        100% {
-          transform: translateY(10px);
-        }
+    @keyframes updown {
+      0% {
+        transform: translateY(10px);
+        animation-timing-function: ease-in;
       }
-      animation: updown 1.5s infinite;
+      50% {
+        transform: translateY(-10px);
+        animation-timing-function: ease-out;
+      }
+      100% {
+        transform: translateY(10px);
+      }
     }
   }
 `;

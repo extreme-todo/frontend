@@ -20,6 +20,7 @@ describe('PomodoroTimeSetting', () => {
           time={30}
           handleTimeUp={handleTimeUP}
           handleTimeDown={handleTimeDown}
+          iconSrc="/icon/work.svg"
         />,
         {
           wrapper: ({ children }: IChildProps) => (

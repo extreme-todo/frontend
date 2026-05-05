@@ -3,6 +3,7 @@ import {
   FormEvent,
   KeyboardEventHandler,
   ReactEventHandler,
+  ReactNode,
   useCallback,
   useState,
 } from 'react';
@@ -12,13 +13,14 @@ import {
   BtnAtom,
   CardAtom,
   IconAtom,
-  InputAtom,
+  TextAreaAtom,
   TomatoInputAtom,
+  TomatoSelectorAtom,
 } from '../atoms';
 import { CategoryInput } from '../molecules';
 
 /* custom hooks */
-import { usePomodoroValue } from '../hooks';
+import { useExtremeMode, useIsMobile, usePomodoroValue } from '../hooks';
 
 /* custom functions or methods */
 import { todosApi } from '../shared/apis';
@@ -39,14 +41,19 @@ import styled from '@emotion/styled';
 import { ZodError } from 'zod';
 import FocusTrap from 'focus-trap-react';
 import { startOfYesterday } from 'date-fns';
+import { responsiveBreakpoints } from '../shared/constants';
 
 interface IAddTodoProps {
   handleClose: () => void;
+  mobileTopButtonSlot?: ReactNode;
 }
 
-const ramdomTagColorList = RandomTagColorList.getInstance();
+const randomTagColorList = RandomTagColorList.getInstance();
 
-export const AddTodo = ({ handleClose }: IAddTodoProps) => {
+export const AddTodo = ({
+  handleClose,
+  mobileTopButtonSlot,
+}: IAddTodoProps) => {
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [category, setCategory] = useState('');
@@ -55,6 +62,8 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
     undefined,
   );
   const [tomato, setTomato] = useState(1);
+  const isMobile = useIsMobile();
+  const { isExtreme } = useExtremeMode();
 
   const queryClient = useQueryClient();
 
@@ -81,7 +90,7 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
   } = usePomodoroValue();
 
   /* handler */
-  const handleTitleInput: ReactEventHandler<HTMLInputElement> = useCallback(
+  const handleTitleInput: ReactEventHandler<HTMLTextAreaElement> = useCallback(
     (event) => {
       const trimmed = titleValidation(event.currentTarget.value);
       if (typeof trimmed === 'object') {
@@ -99,18 +108,17 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
     [titleError],
   );
 
-  const handleTitleBlur: ReactEventHandler<HTMLInputElement> = useCallback(
-    (event) => {
-      const checkEmpty = titleValidation(event.currentTarget.value);
-      if (
-        typeof checkEmpty === 'object' &&
-        checkEmpty.errorMessage === TITLE_EMPTY_MESSAGE
-      ) {
-        setTitleError(true);
-      }
-    },
-    [],
-  );
+  const handleTitleBlur: ReactEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = useCallback((event) => {
+    const checkEmpty = titleValidation(event.currentTarget.value);
+    if (
+      typeof checkEmpty === 'object' &&
+      checkEmpty.errorMessage === TITLE_EMPTY_MESSAGE
+    ) {
+      setTitleError(true);
+    }
+  }, []);
 
   const handleCategoryInput: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
@@ -146,7 +154,7 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
             const copy = categoryArray.slice();
             copy.push(trimmed);
             setCategoryArray(copy);
-            ramdomTagColorList.setColor = trimmed;
+            randomTagColorList.setColor = trimmed;
           }
           setCategory('');
         }
@@ -198,49 +206,84 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
       }}
     >
       <AddTodoWrapper
-        w="53.75rem"
-        h="20rem"
         padding="1.5rem"
         className="card"
         onSubmit={handleAddSubmit}
       >
         <MainWrapper>
+          {isMobile && (
+            <div className="mobile-header-wrapper">
+              <div className="mobile-top-button-wrapper">
+                {mobileTopButtonSlot}
+              </div>
+              <BtnAtom
+                handleOnClick={handleClose}
+                ariaLabel="close"
+                tabIndex={3}
+              >
+                <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
+              </BtnAtom>
+            </div>
+          )}
           <TitleWrapper>
             <label htmlFor="title">
-              <InputAtom.Underline
+              <TextAreaAtom.Underline
                 name="title"
                 value={title}
                 handleBlur={handleTitleBlur}
                 id={'title'}
-                inputRef={useCallback((node: HTMLInputElement | null) => {
+                inputRef={useCallback((node: HTMLTextAreaElement | null) => {
                   node?.focus();
                 }, [])}
                 handleChange={handleTitleInput}
-                placeholder="새로운 TODO를 작성해주세요"
+                placeholder={
+                  isMobile
+                    ? `새로운 TODO를\n작성해주세요`
+                    : '새로운 TODO를 작성해주세요'
+                }
                 ariaLabel="title input"
                 className="todoTitle"
                 styleOption={{
                   borderWidth: titleError ? '2px' : '1px',
                   width: '100%',
-                  height: '3rem',
                   font: 'h1',
-                  borderColor: titleError ? 'extreme_orange' : 'primary1',
+                  fontColor: isExtreme ? 'extreme_dark' : 'primary1',
+                  borderColor: titleError
+                    ? 'extreme_orange'
+                    : isExtreme
+                    ? 'extreme_dark'
+                    : 'primary1',
                 }}
                 tabIndex={0}
               />
             </label>
-            <BtnAtom handleOnClick={handleClose} ariaLabel="close" tabIndex={3}>
-              <IconAtom size={2} alt="close" src="icon/closeDark.svg" />
-            </BtnAtom>
+            {!isMobile && (
+              <BtnAtom
+                handleOnClick={handleClose}
+                ariaLabel="close"
+                tabIndex={3}
+              >
+                <IconAtom
+                  size={2}
+                  alt="close"
+                  src={
+                    isExtreme
+                      ? 'icon/closeExtremeDark.svg'
+                      : 'icon/closeDark.svg'
+                  }
+                />
+              </BtnAtom>
+            )}
           </TitleWrapper>
           <CategoryWrapper>
             <CategoryInput
+              isExtreme={isExtreme}
               categories={categoryArray}
               category={category}
               handleSubmit={handleSubmitCategory}
               handleClick={handleClickCategory}
               handleChangeCategory={handleCategoryInput}
-              tagColorList={ramdomTagColorList.getColorList}
+              tagColorList={randomTagColorList.getColorList}
             />
             {categoryError && (
               <p className="category_error" role="alert">
@@ -249,24 +292,38 @@ export const AddTodo = ({ handleClose }: IAddTodoProps) => {
             )}
           </CategoryWrapper>
         </MainWrapper>
-        <FooterWrapper>
-          <TomatoContainer>
-            <TomatoInputAtom
+        <FooterWrapper isMobile={isMobile}>
+          {isMobile ? (
+            <TomatoSelectorAtom
               max={10}
-              min={0}
+              min={1}
               period={focusStep}
               handleTomato={handleTomato}
               tomato={tomato}
+              label="TODO 반복 시간 설정"
             />
-          </TomatoContainer>
+          ) : (
+            <TomatoContainer>
+              <TomatoInputAtom
+                max={10}
+                min={1}
+                period={focusStep}
+                handleTomato={handleTomato}
+                tomato={tomato}
+                isExtreme={isExtreme}
+              />
+            </TomatoContainer>
+          )}
+
           <BtnAtom
             paddingHorizontal="2.0625rem"
             paddingVertical="0.375rem"
-            btnStyle="lightBtn"
+            btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
             ariaLabel="submit"
             type="submit"
             disabled={title.length === 0 || titleError || isLoading}
             tabIndex={2}
+            className="submit_btn"
           >
             <div style={{ width: 'max-content' }}>
               {isLoading ? '제출 중' : '추가'}
@@ -289,9 +346,6 @@ const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
 
   @media ${({ theme }) => theme.responsiveDevice.tablet_v},
     ${({ theme }) => theme.responsiveDevice.mobile} {
-    .todoTitle {
-      margin-bottom: 2rem;
-    }
     .calendar {
       margin: 2rem 0;
     }
@@ -301,14 +355,23 @@ const AddTodoWrapper = styled(CardAtom.withComponent('form'))`
 const MainWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 1rem;
   width: 100%;
+  .mobile-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    .mobile-top-button-wrapper {
+      flex-shrink: 0;
+    }
+  }
 `;
 
 const TitleWrapper = styled.div`
   display: flex;
   width: 100%;
   column-gap: 3rem;
+  margin-bottom: 1.25rem;
 
   & > label {
     width: 100%;
@@ -316,6 +379,11 @@ const TitleWrapper = styled.div`
 
   & > button {
     height: 2rem;
+  }
+
+  @media ${({ theme }) => theme.responsiveDevice.tablet_v},
+    ${({ theme }) => theme.responsiveDevice.mobile} {
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -337,8 +405,20 @@ const TomatoContainer = styled.div`
   width: 100%;
 `;
 
-const FooterWrapper = styled.div`
+const FooterWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
+  /* flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')}; */
   width: 100%;
-  column-gap: 1.5625rem;
+  column-gap: 1.25rem;
+  align-items: flex-end; /* 버튼을 셀렉터 높이에 맞춤 */
+
+  .submit_btn {
+    min-height: 44px;
+  }
+
+  @media all and (max-width: ${responsiveBreakpoints.tablet_v.max}px) {
+    row-gap: 1rem;
+    flex-direction: column;
+    align-items: center;
+  }
 `;

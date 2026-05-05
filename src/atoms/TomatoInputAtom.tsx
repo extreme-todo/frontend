@@ -18,6 +18,7 @@ interface ITomatoInputProps {
   tomato: number;
   isBalloon?: boolean;
   isLabel?: boolean;
+  isExtreme?: boolean;
 }
 
 export const TomatoInputAtom = memo(
@@ -29,6 +30,7 @@ export const TomatoInputAtom = memo(
     handleTomato,
     isBalloon = true,
     isLabel = true,
+    isExtreme,
   }: ITomatoInputProps) => {
     const [isDragging, setIsDragging] = useState(false);
     const thumbRef = useRef<HTMLDivElement>(null);
@@ -80,8 +82,11 @@ export const TomatoInputAtom = memo(
           clientX = (event as MouseEvent).clientX;
         }
         let posX = clientX - rangeInputRect.left;
-        const count = Math.floor(posX / tickWidth);
-        handleTomato(count + 1);
+        const count = Math.min(
+          Math.max(Math.floor(posX / tickWidth), 0),
+          tickCount,
+        );
+        handleTomato(count + min);
         posX = count * tickWidth - thumbWidth + halfTickWidth + halfThumbWidth;
         thumbRef.current.style.transform = 'translate(' + posX + 'px, -50%)';
       }
@@ -96,11 +101,11 @@ export const TomatoInputAtom = memo(
         const halfTickWidth = tickWidth / 2;
         const halfThumbWidth = thumbWidth / 2;
         const newCorrection =
-          tomato * tickWidth - halfTickWidth - halfThumbWidth;
+          (tomato - min + 1) * tickWidth - halfTickWidth - halfThumbWidth;
         thumbRef.current.style.transform =
           'translate(' + newCorrection + 'px, -50%)';
       }
-    }, [tomato]);
+    }, [tomato, min]);
 
     useEffect(() => {
       handleInitTomato();
@@ -129,17 +134,18 @@ export const TomatoInputAtom = memo(
           >
             🍅
           </Thumb>
-          <AssistantLine />
+          <AssistantLine isExtreme={isExtreme} />
           <InputTickWrapper>
-            {Array.from({ length: tickCount }).map((_, index) => (
+            {Array.from({ length: tickCount + 1 }).map((_, index) => (
               <TickWrapper key={index} ref={tickRef} aria-label="tick">
                 <InputTick
                   tabIndex={1}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter') {
-                      handleTomato(index + 1);
+                      handleTomato(index + min);
                     }
                   }}
+                  isExtreme={isExtreme}
                 />
               </TickWrapper>
             ))}
@@ -147,9 +153,9 @@ export const TomatoInputAtom = memo(
         </RangeInputWrapper>
         {isLabel ? (
           <LabelWrapper>
-            {Array.from({ length: tickCount }).map((_, index) => (
+            {Array.from({ length: tickCount + 1 }).map((_, index) => (
               <TickWrapper key={index} aria-label="label">
-                {formatTime((index + 1) * period)}
+                {formatTime((index + min) * period)}
               </TickWrapper>
             ))}
           </LabelWrapper>
@@ -165,12 +171,13 @@ const RangeInputWrapper = styled.div`
   cursor: pointer;
   height: 20px;
 `;
-const AssistantLine = styled.div`
+const AssistantLine = styled.div<{ isExtreme?: boolean }>`
   background-color: ${({
     theme: {
       color: { backgroundColor },
     },
-  }) => backgroundColor.primary1};
+    isExtreme,
+  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   height: 0.25rem;
   border-radius: 50px;
   width: 100%;
@@ -196,14 +203,15 @@ const TickWrapper = styled.div`
   font-weight: ${({ theme: { fontSize } }) => fontSize.b2.weight};
 `;
 
-const InputTick = styled.div`
+const InputTick = styled.div<{ isExtreme?: boolean }>`
   width: 0.625rem;
   height: 0.625rem;
   background-color: ${({
     theme: {
       color: { backgroundColor },
     },
-  }) => backgroundColor.primary1};
+    isExtreme,
+  }) => (isExtreme ? backgroundColor.extreme_dark : backgroundColor.primary1)};
   border-radius: 50%;
 `;
 
@@ -220,6 +228,7 @@ const Thumb = styled.div<{ useBalloon: boolean }>(({ theme, useBalloon }) => ({
   alignItems: 'center',
   position: 'relative',
   cursor: 'grab',
+  textShadow: '4px 6px 8px #1c1c1d66',
 
   '&:active': {
     cursor: 'grabbing',
@@ -232,13 +241,14 @@ const Thumb = styled.div<{ useBalloon: boolean }>(({ theme, useBalloon }) => ({
       bottom: '4rem', // 말풍선 위치
       left: '50%',
       transform: 'translateX(-50%)',
-      font: theme.fontSize.h3.size,
+      fontSize: theme.fontSize.h3.size,
       fontWeight: theme.fontSize.h3.weight,
       color: theme.color.backgroundColor.extreme_orange,
       backgroundColor: theme.color.backgroundColor.white,
       padding: '0.5625rem 1.3125rem',
       borderRadius: '4.5625rem',
       zIndex: 1,
+      textShadow: 'none',
     },
 
     '&:after': {

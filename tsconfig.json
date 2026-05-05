@@ -15,8 +15,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "removeComments": true
+    "removeComments": true,
+    "noImplicitAny": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/__test__", "**/*.test.ts", "**/*.test.tsx"]
+  "include": ["src/**/*", "fixture/**/*", "stubs/**/*"],
+  "exclude": ["node_modules"]
 }

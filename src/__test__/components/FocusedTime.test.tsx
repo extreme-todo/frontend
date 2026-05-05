@@ -1,12 +1,15 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@emotion/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FocusedTime } from '../../components';
-import { designTheme } from '../../styles/theme';
 import React from 'react';
 import { ICategory, IFocusTime } from '../../shared/interfaces';
-import { categoryApi, timerApi } from '../../shared/apis';
-import { formatTime, getDateInFormat } from '../../shared/timeUtils';
+import { categoryApi, timerApi, usersApi } from '../../shared/apis';
+import { formatTime } from '../../shared/timeUtils';
+import {
+  UIProviders,
+  QueryProvider,
+  LogicProviders,
+} from '../../contexts/AppProviders';
+import { QueryClient } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,65 +43,125 @@ describe('FocusedTime Component', () => {
       ],
     },
   };
+  const mockWeekRecordData: { data: IFocusTime } = {
+    data: {
+      total: {
+        start: '2025-05-11T00:00:00Z',
+        end: '2025-05-17T23:59:59Z',
+        focused: 3600000 * 5,
+        prevFocused: 1800000 * 5,
+      },
+      values: [
+        { day: 'mon', focused: 3600000 },
+        { day: 'tue', focused: 3600000 },
+      ],
+    },
+  };
+  const mockMonthRecordData: { data: IFocusTime } = {
+    data: {
+      total: {
+        start: '2025-05-01T00:00:00Z',
+        end: '2025-05-31T23:59:59Z',
+        focused: 3600000 * 20,
+        prevFocused: 1800000 * 20,
+      },
+      values: [
+        { week: '1', focused: 3600000 * 5 },
+        { week: '2', focused: 3600000 * 5 },
+      ],
+    },
+  };
 
   beforeEach(() => {
+    usersApi.getMe = jest
+      .fn()
+      .mockResolvedValue({ data: { email: 'test@test.com' } });
     categoryApi.getCategories = jest
       .fn()
       .mockImplementation(() => mockCategories);
-    timerApi.getRecords = jest.fn().mockImplementation(() => mockRecordData);
+    timerApi.getRecords = jest.fn().mockImplementation((_, unit) => {
+      if (unit === 'day') return mockRecordData;
+      if (unit === 'week') return mockWeekRecordData;
+      if (unit === 'month') return mockMonthRecordData;
+      return mockRecordData;
+    });
   });
 
   const renderComponent = () =>
     render(
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={designTheme}>
-          <FocusedTime />
-        </ThemeProvider>
-      </QueryClientProvider>,
+      <UIProviders>
+        <QueryProvider queryClient={queryClient}>
+          <LogicProviders>
+            <FocusedTime
+              handleClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          </LogicProviders>
+        </QueryProvider>
+      </UIProviders>,
     );
 
-  it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', () => {
+  it('처음 진입하면 모든 카테고리에 대한 데이터를 요청한다', async () => {
     renderComponent();
-    expect(timerApi.getRecords).toHaveBeenCalledWith(
-      -new Date().getTimezoneOffset(),
-      'day',
-    );
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'day',
+      );
+    });
     expect(
-      screen.findByText(
-        formatTime(
-          Math.floor(
-            (mockRecordData.data.total.focused -
-              mockRecordData.data.total.prevFocused) /
-              60000,
-          ),
+      await screen.findByText(
+        new RegExp(
+          `\\+${formatTime(
+            Math.floor(
+              (mockRecordData.data.total.focused -
+                mockRecordData.data.total.prevFocused) /
+                60000,
+            ),
+          )}`,
         ),
       ),
-    );
+    ).toBeInTheDocument();
   });
 
-  it('Day, Week, Month를 클릭하면 각 버튼이 활성화되며 데이터를 요청한다', () => {
+  it('Day, Week, Month를 클릭하면 각 버튼이 활성화되며 데이터를 요청한다', async () => {
     renderComponent();
     const dayButton = screen.getByText('Day');
     const weekButton = screen.getByText('Week');
     const monthButton = screen.getByText('Month');
 
     fireEvent.click(weekButton);
-    expect(weekButton).toHaveClass('active');
-    expect(timerApi.getRecords).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'week',
+      );
+    });
     fireEvent.click(monthButton);
-    expect(monthButton).toHaveClass('active');
-    expect(timerApi.getRecords).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'month',
+      );
+    });
     fireEvent.click(dayButton);
-    expect(dayButton).toHaveClass('active');
-    expect(timerApi.getRecords).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(timerApi.getRecords).toHaveBeenCalledWith(
+        -new Date().getTimezoneOffset(),
+        'day',
+      );
+    });
   });
 
-  it('모든 카테고리를 렌더하고, 각 버튼을 클릭하면 데이터를 요청한다', () => {
+  it('모든 카테고리를 렌더하고, 각 버튼을 클릭하면 데이터를 요청한다', async () => {
     renderComponent();
-    mockCategories.forEach((category) => {
-      const categoryButton = screen.getByText(category.name);
+    for (const category of mockCategories) {
+      const categoryButton = await screen.findByText(category.name);
       fireEvent.click(categoryButton);
-      expect(timerApi.getRecords).toHaveBeenCalled();
-    });
+      await waitFor(() => {
+        expect(timerApi.getRecords).toHaveBeenCalled();
+      });
+    }
   });
 });

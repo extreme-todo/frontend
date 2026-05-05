@@ -98,5 +98,6 @@ export const CardAnimationPlayerAtom = ({
 };
 const StyledCardAnimationPlayerWrapper = styled.div`
   position: absolute;
-  transform-origin: bottom left;
+  transform-origin: center;
+  width: 100%;
 `;

@@ -1,28 +1,29 @@
 import React, { useContext } from 'react';
-import { render } from '@testing-library/react';
-import { userStub } from '../../../stubs';
+import { render, waitFor, act } from '@testing-library/react';
 import { LoginContext, LoginProvider } from '../../hooks';
-import { mockLocalStorage } from '../../../fixture/mockLocalStorage';
 import userEvent from '@testing-library/user-event';
-import {
-  EXTREME_EMAIL_STORAGE,
-  EXTREME_TOKEN_STORAGE,
-} from '../../shared/apis';
+import { usersApi } from '../../shared/apis';
 
-describe('useCheckLogin', () => {
+jest.mock('../../shared/apis');
+
+describe('LoginContext', () => {
   const TestLoginComponent = () => {
     const { isLogin, deleteToken } = useContext(LoginContext);
-    const user = userStub();
     return (
       <>
         <p aria-label="isLogin">{isLogin.toString()}</p>
-        <button aria-label="loginBtn">로그인</button>
-        <button aria-label="logoutBtn" onClick={() => deleteToken()}>
+        <button
+          aria-label="logoutBtn"
+          onClick={() => {
+            void deleteToken();
+          }}
+        >
           로그아웃
         </button>
       </>
     );
   };
+
   const renderFn = () =>
     render(
       <LoginProvider>
@@ -31,41 +32,51 @@ describe('useCheckLogin', () => {
     );
 
   describe('isLogin은', () => {
-    it('localstorage에 토큰과 유저 정보가 있을 때 true이다.', () => {
-      mockLocalStorage(
-        jest.fn((key: string) => {
-          if (key === EXTREME_TOKEN_STORAGE) return userStub().access;
-          else if (key === EXTREME_EMAIL_STORAGE) return userStub().email;
-          else return null;
-        }),
+    it('usersApi.getMe가 성공하면 true이다.', async () => {
+      (usersApi.getMe as jest.Mock).mockResolvedValue({
+        data: { email: 'test@test.com' },
+      });
+
+      const { getByLabelText } = renderFn();
+
+      await waitFor(() => {
+        expect(getByLabelText('isLogin')).toHaveTextContent('true');
+      });
+    });
+
+    it('usersApi.getMe가 실패하면 false이다.', async () => {
+      (usersApi.getMe as jest.Mock).mockRejectedValue(
+        new Error('Unauthorized'),
       );
 
       const { getByLabelText } = renderFn();
-      const isLogin = getByLabelText('isLogin');
 
-      expect(isLogin.textContent).toBe('true');
-    });
-    it('localstorage에 토큰과 유저 정보가 없을 때 false이다.', () => {
-      mockLocalStorage(jest.fn((key: string) => {}));
-
-      const { getByLabelText } = renderFn();
-      const isLogin = getByLabelText('isLogin');
-
-      expect(isLogin.textContent).toBe('false');
+      await waitFor(() => {
+        expect(getByLabelText('isLogin')).toHaveTextContent('false');
+      });
     });
   });
 
   describe('deleteToken은', () => {
-    it('토큰과 사용자 정보를 로컬 스토리지에서 삭제한다.', () => {
-      const mockDeleteLocalStorage = jest.fn();
-      mockLocalStorage(jest.fn(), jest.fn(), mockDeleteLocalStorage);
+    it('isLogin 상태를 false로 변경한다.', async () => {
+      (usersApi.getMe as jest.Mock).mockResolvedValue({
+        data: { email: 'test@test.com' },
+      });
 
-      const { getByRole } = renderFn();
+      const { getByLabelText, getByRole } = renderFn();
+
+      await waitFor(() => {
+        expect(getByLabelText('isLogin')).toHaveTextContent('true');
+      });
+
       const logoutBtn = getByRole('button', { name: 'logoutBtn' });
+      act(() => {
+        userEvent.click(logoutBtn);
+      });
 
-      userEvent.click(logoutBtn);
-
-      expect(mockDeleteLocalStorage).toBeCalledTimes(2);
+      await waitFor(() => {
+        expect(getByLabelText('isLogin')).toHaveTextContent('false');
+      });
     });
   });
 });

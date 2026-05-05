@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
-import { BtnAtom, CardAtom, TypoAtom } from '../atoms';
+import { BtnAtom, CardAtom, IconAtom, TypoAtom } from '../atoms';
 
 import {
   focusStepList,
@@ -9,12 +9,15 @@ import {
   usePomodoroValue,
 } from '../hooks/usePomodoro';
 import styled from '@emotion/styled';
+import { useExtremeMode, useIsMobile } from '../hooks';
 
 interface ITimeCounterProps {
   timeTitle: string;
   time: number;
   handleTimeUp: () => void;
   handleTimeDown: () => void;
+  isExtreme?: boolean;
+  iconSrc: string;
 }
 
 export const TimeSetter = ({
@@ -22,6 +25,8 @@ export const TimeSetter = ({
   time,
   handleTimeUp,
   handleTimeDown,
+  isExtreme,
+  iconSrc,
 }: ITimeCounterProps) => {
   return (
     <div
@@ -30,7 +35,7 @@ export const TimeSetter = ({
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Rectangle />
+        <IconAtom src={iconSrc} size={1.5} style={{ marginRight: '0.5rem' }} />
         <TypoAtom fontSize="h2" fontColor="primary2">
           {timeTitle}
         </TypoAtom>
@@ -57,7 +62,7 @@ export const TimeSetter = ({
           >
             <BtnAtom
               handleOnClick={handleTimeUp}
-              btnStyle="lightBtn"
+              btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
               ariaLabel="timeup"
             >
               <svg
@@ -69,14 +74,18 @@ export const TimeSetter = ({
                 className="svgBtn"
               >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M20.0001 14.3586L9.9723 24.3864L7.29297 21.707L20.0001 8.99992L32.7072 21.707L30.0279 24.3864L20.0001 14.3586Z"
                   fill="#DBFE77"
                 />
               </svg>
             </BtnAtom>
-            <BtnAtom handleOnClick={handleTimeDown} ariaLabel="timedown">
+            <BtnAtom
+              handleOnClick={handleTimeDown}
+              btnStyle={isExtreme ? 'extremeLightBtn' : 'lightBtn'}
+              ariaLabel="timedown"
+            >
               <svg
                 width="2.5rem"
                 height="2.5rem"
@@ -86,8 +95,8 @@ export const TimeSetter = ({
                 className="svgBtn"
               >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M19.9999 25.0555L30.0277 15.0277L32.707 17.707L19.9999 30.4141L7.29282 17.707L9.97215 15.0277L19.9999 25.0555Z"
                   fill="#DBFE77"
                 />
@@ -105,8 +114,10 @@ export const TimeSetter = ({
 
 export const PomodoroTimeSetting = ({
   handleClose,
+  mobileTopButtonSlot,
 }: {
   handleClose: () => void;
+  mobileTopButtonSlot?: ReactNode;
 }) => {
   /* pomodoro context */
   const {
@@ -121,6 +132,9 @@ export const PomodoroTimeSetting = ({
   const [restTimeIndex, setRestTimeIndex] = useState(
     restStepList.findIndex((time) => time === restStep),
   );
+
+  const isMobile = useIsMobile();
+  const { isExtreme } = useExtremeMode();
 
   /* local variable */
   const newTime = {
@@ -153,55 +167,97 @@ export const PomodoroTimeSetting = ({
   };
 
   return (
-    <PomodoroCardAtom bg="primary1">
-      <div>
-        <TimeSetter
-          timeTitle={'집중시간'}
-          time={focusStepList[focusTimeIndex]}
-          handleTimeUp={handleFocusUp}
-          handleTimeDown={handleFocusDown}
-        />
-        <TimeSetter
-          timeTitle={'휴식시간'}
-          time={restStepList[restTimeIndex]}
-          handleTimeUp={handleRestUp}
-          handleTimeDown={handleRestDown}
-        />
-      </div>
+    <PomodoroCardAtom bg={isExtreme ? 'extreme_dark' : 'primary1'}>
+      {isMobile && (
+        <div className="mobile-header-wrapper">
+          <div className="mobile-top-button-wrapper">{mobileTopButtonSlot}</div>
+          <BtnAtom handleOnClick={handleClose}>
+            <svg
+              width="2rem"
+              height="2rem"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="svgBtn"
+            >
+              <rect
+                width="1.81331"
+                height="25.3864"
+                transform="matrix(-0.707107 0.707107 0.707107 0.707107 7.28223 6.19324)"
+                fill="#DBFE77"
+              />
+              <rect
+                x="7.28223"
+                y="25.233"
+                width="1.81331"
+                height="25.3864"
+                transform="rotate(-135 7.28223 25.233)"
+                fill="#DBFE77"
+              />
+            </svg>
+          </BtnAtom>
+        </div>
+      )}
+      <div className="time-setter-wrapper">
+        <div>
+          <TimeSetter
+            timeTitle={'집중시간'}
+            time={focusStepList[focusTimeIndex]}
+            handleTimeUp={handleFocusUp}
+            handleTimeDown={handleFocusDown}
+            isExtreme={isExtreme}
+            iconSrc="/icon/work.svg"
+          />
+          <TimeSetter
+            timeTitle={'휴식시간'}
+            time={restStepList[restTimeIndex]}
+            handleTimeUp={handleRestUp}
+            handleTimeDown={handleRestDown}
+            isExtreme={isExtreme}
+            iconSrc="/icon/rest.svg"
+          />
+        </div>
 
-      <div>
-        <BtnAtom handleOnClick={handleSubmit} btnStyle="extremeDarkBtn">
-          <div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-            <TypoAtom fontColor="primary2" fontSize="b1">
-              저장
-            </TypoAtom>
-          </div>
-        </BtnAtom>
-        <BtnAtom handleOnClick={handleClose}>
-          <svg
-            width="2rem"
-            height="2rem"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="svgBtn"
+        <div>
+          <BtnAtom
+            className="save_btn"
+            handleOnClick={handleSubmit}
+            btnStyle="extremeDarkBtn"
           >
-            <rect
-              width="1.81331"
-              height="25.3864"
-              transform="matrix(-0.707107 0.707107 0.707107 0.707107 7.28223 6.19324)"
-              fill="#DBFE77"
-            />
-            <rect
-              x="7.28223"
-              y="25.233"
-              width="1.81331"
-              height="25.3864"
-              transform="rotate(-135 7.28223 25.233)"
-              fill="#DBFE77"
-            />
-          </svg>
-        </BtnAtom>
+            <div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
+              <TypoAtom fontColor="primary2" fontSize="b1">
+                저장
+              </TypoAtom>
+            </div>
+          </BtnAtom>
+          {!isMobile && (
+            <BtnAtom handleOnClick={handleClose}>
+              <svg
+                width="2rem"
+                height="2rem"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="svgBtn"
+              >
+                <rect
+                  width="1.81331"
+                  height="25.3864"
+                  transform="matrix(-0.707107 0.707107 0.707107 0.707107 7.28223 6.19324)"
+                  fill="#DBFE77"
+                />
+                <rect
+                  x="7.28223"
+                  y="25.233"
+                  width="1.81331"
+                  height="25.3864"
+                  transform="rotate(-135 7.28223 25.233)"
+                  fill="#DBFE77"
+                />
+              </svg>
+            </BtnAtom>
+          )}
+        </div>
       </div>
     </PomodoroCardAtom>
   );
@@ -209,8 +265,82 @@ export const PomodoroTimeSetting = ({
 
 const PomodoroCardAtom = styled(CardAtom)`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+
+  .save_btn {
+    min-height: 44px;
+  }
+
+  .mobile-header-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .time-setter-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    & > div:first-of-type {
+      display: flex;
+      align-items: center;
+
+      & > div:first-of-type {
+        margin-right: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        height: 100%;
+        margin-right: 0;
+        flex: 1;
+        gap: 2.5rem;
+
+        & > div:first-of-type {
+          margin-right: 0;
+        }
+      }
+    }
+
+    & > div:last-of-type {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: flex-end;
+
+      & > button:first-of-type {
+        margin: auto;
+      }
+
+      & > button:last-of-type {
+        align-self: flex-start;
+      }
+
+      @media (max-width: 768px) {
+        justify-content: center;
+        margin-top: 1rem;
+        height: auto;
+
+        & > button:first-of-type {
+          margin: 0;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
 
   .svgBtn path,
   .svgBtn rect {
@@ -221,46 +351,15 @@ const PomodoroCardAtom = styled(CardAtom)`
   .svgBtn:hover rect {
     opacity: 0.4;
   }
-
-  & > div:first-of-type {
-    display: flex;
-
-    & > div:first-of-type {
-      margin-right: 2rem;
-    }
-  }
-
-  & > div:last-of-type {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: flex-end;
-
-    & > button:first-of-type {
-      margin: auto;
-    }
-
-    & > button:last-of-type {
-      align-self: flex-start;
-    }
-  }
 `;
 
-const Rectangle = styled.div`
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: ${({
-    theme: {
-      color: { backgroundColor },
-    },
-  }) => backgroundColor.primary2};
-  margin-right: 0.375rem;
-`;
-
-const ClockTypo = styled(TypoAtom)`
-  font-weight: 700;
-  font-size: 8.75rem;
-  line-height: 6.25rem;
+const ClockTypo = styled((props: React.ComponentProps<typeof TypoAtom>) => (
+  <TypoAtom fontSize="clock" {...props} />
+))`
+  && {
+    font-size: 8.75rem;
+    line-height: 6.25rem;
+  }
 `;
 
 const ClockTypoContainer = styled.div`
