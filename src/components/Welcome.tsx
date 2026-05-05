@@ -203,7 +203,7 @@ export const Welcome = forwardRef(
                   <BtnAtom handleOnClick={handleClose} ariaLabel="goback">
                     <IconAtom size={2} src="/icon/closeOrange.svg" />
                   </BtnAtom>
-                </motion.div>
+                </motion.button>
               </div>
             </motion.div>
           ) : (
