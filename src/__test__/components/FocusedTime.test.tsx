@@ -127,7 +127,7 @@ describe('FocusedTime Component', () => {
 
   it('Day, Week, Month를 클릭하면 각 버튼이 활성화되며 데이터를 요청한다', async () => {
     renderComponent();
-    const dayButton = await screen.findByText('Day');
+    const dayButton = screen.getByText('Day');
     const weekButton = screen.getByText('Week');
     const monthButton = screen.getByText('Month');
 
