@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, useContext, useRef, useState } from 'react';
 
-import { BtnAtom, IconAtom, TypoAtom } from '../atoms';
+import { BtnAtom, IconAtom, ToggleAtom, TypoAtom } from '../atoms';
 import { MainLogo } from '../svg/MainLogo';
 
 import { LoginContext } from '../hooks';
@@ -9,6 +9,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import styled from '@emotion/styled';
 import { motion, AnimatePresence, MotionValue } from 'framer-motion';
+import useAlarm from '../hooks/useAlarm';
+import { designTheme } from '../styles/theme';
 
 interface IWelcomeProps {
   buttonOpacityForScroll: MotionValue<number>;
@@ -27,6 +29,7 @@ export const Welcome = forwardRef(
   ) => {
     const [isSettingModal, setIsSettingModal] = useState<boolean>(false);
     const { isLogin, deleteToken } = useContext(LoginContext);
+    const { isAlarmOn, toggleAlarm } = useAlarm();
 
     const handleLoginBtn = () => {
       return usersApi.login();
@@ -102,46 +105,94 @@ export const Welcome = forwardRef(
               key={'settingModal'}
             >
               <IconAtom src="/icon/logo.svg" size={10} />
+
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  rowGap: '1.25rem',
                   alignItems: 'center',
                 }}
               >
                 <motion.div
+                  style={{
+                    display: 'flex',
+                    gap: '0.5rem',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
                   initial={{ opacity: 0, y: -50 }}
-                  animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
-                  exit={{ opacity: 0, y: -40, transition: { delay: 0.6 } }}
+                  animate={{ opacity: 1, y: 0, transition: { delay: 0.0 } }}
+                  exit={{ opacity: 0, y: -40, transition: { delay: 0.8 } }}
                   transition={{
                     duration: 0.3,
                   }}
                 >
-                  <BtnAtom handleOnClick={resetMutation} ariaLabel="reset">
-                    <TypoAtom fontSize="body" fontColor="extreme_orange">
-                      데이터 초기화
-                    </TypoAtom>
-                  </BtnAtom>
+                  <TypoAtom fontSize="body" fontColor="extreme_orange">
+                    알림음
+                  </TypoAtom>
+                  <ToggleAtom
+                    isOn={isAlarmOn}
+                    onToggle={toggleAlarm}
+                    ariaLabel="알림음 토글"
+                  />
                 </motion.div>
                 <motion.div
+                  style={{
+                    width: '1.25rem',
+                    height: '0.125rem',
+                    marginTop: '1.75rem',
+                    marginBottom: '2rem',
+                    backgroundColor: designTheme.color.fontColor.extreme_orange,
+                  }}
                   initial={{ opacity: 0, y: -50 }}
-                  animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
-                  exit={{ opacity: 0, y: -40, transition: { delay: 0.4 } }}
+                  animate={{ opacity: 1, y: 0, transition: { delay: 0.0 } }}
+                  exit={{ opacity: 0, y: -40, transition: { delay: 0.8 } }}
                   transition={{
                     duration: 0.3,
                   }}
+                />
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '1.25rem',
+                  }}
                 >
-                  <BtnAtom
-                    handleOnClick={withdrawMutation}
-                    ariaLabel="withdraw"
+                  <motion.button
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
+                    exit={{ opacity: 0, y: -40, transition: { delay: 0.6 } }}
+                    transition={{
+                      duration: 0.3,
+                    }}
                   >
-                    <TypoAtom fontSize="body" fontColor="extreme_orange">
-                      회원 탈퇴
-                    </TypoAtom>
-                  </BtnAtom>
-                </motion.div>
-                <motion.div
+                    <BtnAtom handleOnClick={resetMutation} ariaLabel="reset">
+                      <TypoAtom fontSize="body" fontColor="extreme_orange">
+                        데이터 초기화
+                      </TypoAtom>
+                    </BtnAtom>
+                  </motion.button>
+                  <motion.button
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
+                    exit={{ opacity: 0, y: -40, transition: { delay: 0.4 } }}
+                    transition={{
+                      duration: 0.3,
+                    }}
+                  >
+                    <BtnAtom
+                      handleOnClick={withdrawMutation}
+                      ariaLabel="withdraw"
+                    >
+                      <TypoAtom fontSize="body" fontColor="extreme_orange">
+                        회원 탈퇴
+                      </TypoAtom>
+                    </BtnAtom>
+                  </motion.button>
+                </div>
+                <motion.button
+                  style={{ marginTop: '2.5rem' }}
                   initial={{ opacity: 0, y: -50 }}
                   animate={{ opacity: 1, y: 0, transition: { delay: 0.6 } }}
                   exit={{ opacity: 0, y: -40, transition: { delay: 0.2 } }}
@@ -248,8 +299,6 @@ const WelcomeContainer = styled.main`
   align-items: center;
 
   #logo {
-    width: 33.75rem;
-    height: 11.25rem;
     margin-bottom: 3.0625rem;
   }
 

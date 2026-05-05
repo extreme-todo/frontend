@@ -49,7 +49,8 @@ const TodoListContainer = styled(CardAtom)<{ isMobile: boolean }>`
     width: 100%;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-right: 0.25rem;
   }
 
   .mobile-top-button-slot {
@@ -77,7 +78,7 @@ const ListSection = styled.section<{ isMobile: boolean }>`
   .header__todo {
     justify-content: space-between;
     min-height: 1.5rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
     display: flex;
     align-items: center;
   }
@@ -219,7 +220,7 @@ export const TodoList = memo(
                 className="close__btn"
                 tabIndex={3}
               >
-                <IconAtom size={1.5} alt="close" src={'icon/closeYellow.svg'} />
+                <IconAtom size={2} alt="close" src={'icon/closeYellow.svg'} />
               </BtnAtom>
             </div>
           )}
@@ -307,7 +308,7 @@ export const TodoList = memo(
         {/* <BtnAtom children={'add Todo'} handleOnClick={onClickHandler} /> */}
         <TodoListContainer
           bg={isExtreme ? 'extreme_dark' : 'primary1'}
-          padding="1rem 1.5rem"
+          padding={isMobile ? '1.25rem' : '1.75rem'}
           className="card"
           isMobile={isMobile}
         >
@@ -322,7 +323,7 @@ export const TodoList = memo(
                 className="close__btn"
                 tabIndex={3}
               >
-                <IconAtom size={1.5} alt="close" src={'icon/closeYellow.svg'} />
+                <IconAtom size={2} alt="close" src={'icon/closeYellow.svg'} />
               </BtnAtom>
             </div>
           )}

@@ -2,10 +2,13 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { motion, AnimatePresence } from 'framer-motion';
 
+export type HelpType = 'main' | 'list' | 'new' | 'rest' | 'time' | 'ranking';
+
 interface HelpModalAtomProps {
   isOpen: boolean;
   onClose: () => void;
   isMobile: boolean;
+  type: HelpType;
 }
 
 const Overlay = styled(motion.div)`
@@ -35,10 +38,11 @@ export const HelpModalAtom: React.FC<HelpModalAtomProps> = ({
   isOpen,
   onClose,
   isMobile,
+  type,
 }) => {
-  const imagePath = isMobile
-    ? '/Images/help_mobile.png'
-    : '/Images/help_desktop.png';
+  const imagePath = `/Images/help_${type}_${
+    isMobile ? 'mobile' : 'desktop'
+  }.png`;
 
   return (
     <AnimatePresence>
@@ -50,8 +54,9 @@ export const HelpModalAtom: React.FC<HelpModalAtomProps> = ({
           onClick={onClose}
         >
           <HelpImage
+            key={imagePath}
             src={imagePath}
-            alt="Help"
+            alt={`${type} help`}
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}

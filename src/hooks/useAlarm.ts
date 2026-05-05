@@ -3,9 +3,39 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const useAlarm = () => {
   const alarmSound = useRef<HTMLAudioElement | null>(null);
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [isAlarmOn, setIsAlarmOn] = useState<boolean>(() => {
+    const saved = localStorage.getItem('isAlarmOn');
+    return saved === null ? true : saved === 'true';
+  });
+
+  const toggleAlarm = useCallback(() => {
+    setIsAlarmOn((prev) => {
+      const next = !prev;
+      localStorage.setItem('isAlarmOn', String(next));
+      if (alarmSound.current) alarmSound.current.muted = !next;
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'isAlarmOn') {
+        const next = e.newValue === null ? true : e.newValue === 'true';
+        setIsAlarmOn(next);
+        if (alarmSound.current) {
+          alarmSound.current.muted = !next;
+          if (!next) {
+            alarmSound.current.currentTime = 0;
+          }
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const callNotification = useCallback(async () => {
-    if (!alarmSound.current) return;
+    if (!alarmSound.current || !isAlarmOn) return;
     alarmSound.current.currentTime = 0;
     alarmSound.current.muted = false;
     alarmSound.current.volume = 1;
@@ -15,7 +45,7 @@ const useAlarm = () => {
       console.error(err);
       alert('알람 소리 재생에 실패했습니다. 새로고침을 해주세요 :)');
     }
-  }, []);
+  }, [isAlarmOn]);
 
   const cancelNotification = useCallback(() => {
     if (!alarmSound.current) return;
@@ -49,7 +79,13 @@ const useAlarm = () => {
     };
   }, []);
 
-  return { callNotification, cancelNotification, initSoundPlayer };
+  return {
+    callNotification,
+    cancelNotification,
+    initSoundPlayer,
+    isAlarmOn,
+    toggleAlarm,
+  };
 };
 
 export default useAlarm;

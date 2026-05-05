@@ -2,8 +2,8 @@ import { createContext, ReactNode, useContext, useEffect } from 'react';
 import { IChildProps } from '../shared/interfaces';
 import { SideBtnAtom } from '../atoms/SideBtnAtom';
 import { ButtonName } from '../styles/emotion';
-import { IconAtom } from '../atoms';
 import styled from '@emotion/styled';
+import { useTodoListData } from '../hooks';
 
 export type SideButtonType =
   | 'ranking'
@@ -115,6 +115,8 @@ const ShowListButton = ({
   className?: string;
 }) => {
   const context = useContext(SideButtonContext);
+  const { todoList, doneTodoList } = useTodoListData();
+
   return (
     <SideBtnAtom
       focused={context.focusedButton === 'list'}
@@ -122,20 +124,8 @@ const ShowListButton = ({
       btnStyle={theme}
       className={className}
     >
-      {theme === 'extremeLightBtn' ? (
-        <SideBtnIcon
-          iconUrl="icon/list-red.svg"
-          btnStyle={theme}
-          focused={context.focusedButton === 'list'}
-        />
-      ) : (
-        <SideBtnIcon
-          iconUrl="icon/list.svg"
-          btnStyle={theme}
-          focused={context.focusedButton === 'list'}
-        />
-      )}
-      남은 할일
+      남은 할일: {todoList?.length ?? 0}/
+      {(todoList?.length ?? 0) + (doneTodoList?.length ?? 0)}
     </SideBtnAtom>
   );
 };

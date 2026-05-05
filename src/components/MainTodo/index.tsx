@@ -35,6 +35,7 @@ import {
   CardAnimationPlayerAtom,
   HelpModalAtom,
 } from '../../atoms';
+import { HelpType } from '../../atoms/HelpModalAtom';
 import { BackgroundColorName } from '../../styles/emotion';
 import { Subject } from 'rxjs';
 
@@ -54,7 +55,7 @@ export type CardType =
 export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
   const ANIMATION_DURATION = 300;
   const [currentCard, setCurrentCard] = useState<CardType>('currentTodo');
-  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [helpModalType, setHelpModalType] = useState<HelpType | null>(null);
   const [prevCard, setPrevCard] = useState<CardType | null>(null);
   const [currentCardColor, setCurrentCardColor] =
     useState<BackgroundColorName>('primary1');
@@ -77,6 +78,23 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     settings: { focusStep },
   } = usePomodoroValue();
 
+  const getHelpType = useCallback((card: CardType): HelpType => {
+    switch (card) {
+      case 'todolistModal':
+        return 'list';
+      case 'addTodoModal':
+        return 'new';
+      case 'timeModal':
+        return 'time';
+      case 'rest':
+        return 'rest';
+      case 'ranking':
+        return 'ranking';
+      default:
+        return 'main';
+    }
+  }, []);
+
   const changeCard = (curr: CardType, next: CardType) => {
     setPrevCard(curr);
     setCurrentCard(next);
@@ -92,7 +110,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
       } else {
         switch (type) {
           case 'help':
-            setIsHelpModalOpen(true);
+            setHelpModalType(getHelpType(currentCard));
             break;
           case 'doAll':
             if (window.confirm('모든 TODO를 종료하시겠습니까?')) {
@@ -114,7 +132,7 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         }
       }
     },
-    [isLogin, currentCard, changeCard, doAllTodo],
+    [isLogin, currentCard, changeCard, doAllTodo, getHelpType],
   );
 
   const handleClose = useCallback(() => {
@@ -399,9 +417,10 @@ export const MainTodo = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
         </MainTodoContentWrapper>
       </MainTodoContainer>
       <HelpModalAtom
-        isOpen={isHelpModalOpen}
-        onClose={() => setIsHelpModalOpen(false)}
+        isOpen={helpModalType !== null}
+        onClose={() => setHelpModalType(null)}
         isMobile={isMobile}
+        type={helpModalType || 'main'}
       />
     </SideButtons>
   );

@@ -104,7 +104,6 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
 
   const { mutate: doTodoMutate } = useMutation(doTodoMutateHandler, {
     onSuccess: () => {
-      setCurrentTodo(undefined);
       setFocusedOnTodo(0);
       setLastRestRoundFocusedTime(0);
       localStorage.removeItem(TODO_FOCUS_TIME_KEY);
@@ -117,7 +116,6 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
 
   const { mutate: doAllTodoMutate } = useMutation(doAllTodoMutateHandler, {
     onSuccess: () => {
-      setCurrentTodo(undefined);
       setFocusedOnTodo(0);
       setLastRestRoundFocusedTime(0);
       localStorage.removeItem(TODO_FOCUS_TIME_KEY);
@@ -284,7 +282,14 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
    */
   const init = useCallback(() => {
     const nextTodo = getNextTodo();
-    if (currentTodo == null) {
+    const currentTodoRemoved =
+      currentTodo != null &&
+      todos != null &&
+      !Array.from(todos.values())
+        .flat()
+        .some((t) => t.id === currentTodo.id);
+
+    if (currentTodo == null || currentTodoRemoved) {
       if (nextTodo) {
         setCurrentTodo(nextTodo);
         const savedFocusTime = checkLocalStorageAndGetFocusTime(nextTodo) ?? 0;
@@ -296,11 +301,13 @@ export const CurrentTodoProvider = ({ children }: IChildProps) => {
           );
         }
       } else {
+        setCurrentTodo(undefined);
         pomodoroActions.stopTimer();
         setFocusedOnTodo(0);
       }
     }
   }, [
+    todos,
     getNextTodo,
     currentTodo,
     checkLocalStorageAndGetFocusTime,

@@ -6,6 +6,7 @@ import {
   TargetAndTransition,
   Transition,
 } from 'motion/react';
+import { useIsMobile } from '../hooks';
 
 export const MainLogo = ({
   mainLogoPathLengthForScroll,
@@ -14,6 +15,7 @@ export const MainLogo = ({
   mainLogoPathLengthForScroll: MotionValue<number>;
   mainLogoFillForScroll: MotionValue<string>;
 }) => {
+  const isMobile = useIsMobile();
   const pathStyle: MotionStyle = useMemo(
     () => ({
       pathLength: mainLogoPathLengthForScroll,
@@ -23,8 +25,8 @@ export const MainLogo = ({
   );
   return (
     <svg
-      width="540"
-      height="180"
+      width={isMobile ? '300' : '540'}
+      height={isMobile ? '100' : '180'}
       viewBox="0 0 540 180"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

@@ -3,6 +3,7 @@ import { BtnAtom, InputAtom, TagAtom } from '../atoms';
 import { MAX_CATEGORY_ARRAY_LENGTH } from '../DB/indexedAction';
 import styled from '@emotion/styled';
 import { TagColorName } from '../styles/emotion';
+import { getTagTextColor } from '../atoms/TagAtom';
 
 interface ICategoryInputProps {
   categories: string[] | null;
@@ -13,18 +14,6 @@ interface ICategoryInputProps {
   tagColorList: Record<string, TagColorName>;
   isExtreme?: boolean;
 }
-
-const getSvgColor = (bg: string) => {
-  switch (bg) {
-    case 'mint':
-    case 'orange':
-    case 'pink':
-    case 'purple':
-      return '#FFFFFF';
-    default:
-      return '#523EA1';
-  }
-};
 
 export const CategoryInput = memo(
   ({
@@ -44,6 +33,7 @@ export const CategoryInput = memo(
             handleOnClick={() => handleClick.call(this, category)}
             key={category}
             ariaLabel={`category ${category}`}
+            className="category_tag"
           >
             <TagAtom
               styleOption={{
@@ -55,10 +45,10 @@ export const CategoryInput = memo(
             >
               {category}
               <svg
-                width={'0.625rem'}
-                height={'0.625rem'}
+                width={'0.875rem'}
+                height={'0.875rem'}
                 viewBox="0 0 32 32"
-                fill="none"
+                fill={getTagTextColor(tagColorList[category])}
                 xmlns="http://www.w3.org/2000/svg"
                 aria-label="delete"
               >
@@ -66,7 +56,6 @@ export const CategoryInput = memo(
                   width="1.81331"
                   height="25.3864"
                   transform="matrix(-0.707107 0.707107 0.707107 0.707107 7.28223 6.19336)"
-                  fill={getSvgColor(tagColorList[category])}
                 />
                 <rect
                   x="7.28223"
@@ -74,7 +63,6 @@ export const CategoryInput = memo(
                   width="1.81331"
                   height="25.3864"
                   transform="rotate(-135 7.28223 25.2329)"
-                  fill={getSvgColor(tagColorList[category])}
                 />
               </svg>
             </TagAtom>
@@ -97,11 +85,11 @@ export const CategoryInput = memo(
                 borderRadius: '50px',
                 borderWidth: '1px',
                 textAlign: 'center',
-                font: 'b2',
+                font: 'body',
                 placeholderOpacity: isFocus ? 0.3 : 1,
                 placeholderColor: isExtreme ? 'extreme_dark' : 'primary1',
-                width: isFocus ? '17ch' : '15ch',
-                height: '1.25rem',
+                width: isFocus ? '17ch' : '13ch',
+                height: '2rem',
                 fontColor: isExtreme ? 'extreme_dark' : 'primary1',
               }}
               tabIndex={0}
@@ -126,5 +114,9 @@ const CategoryContainer = styled.div`
   }
   .tag_with_delete {
     padding-right: 0.375rem;
+    display: flex;
+    gap: 0.375rem;
+    padding-left: 0.75rem;
+    padding-right: 0.635rem;
   }
 `;
