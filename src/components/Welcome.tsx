@@ -35,8 +35,8 @@ export const Welcome = forwardRef(
       return usersApi.login();
     };
 
-    const handleLogoutBtn = async (): Promise<void> => {
-      await deleteToken();
+    const handleLogoutBtn = () => {
+      deleteToken();
     };
 
     const handleSetting = (): void => {
