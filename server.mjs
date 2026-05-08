@@ -29,7 +29,7 @@ app.use(
 app.use(express.static(path.join(__dirname, 'build')));
 
 // 모든 경로를 index.html로 리다이렉트 (SPA 지원)
-app.get('*any', (req, res) => {
+app.get('/{*any}', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
