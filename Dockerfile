@@ -15,7 +15,6 @@ WORKDIR /app
 COPY . .
 
 RUN npm i
-RUN npm i -g serve
 RUN npm run build
 
 
@@ -30,6 +29,6 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV PATH /usr/local/node/bin:$PATH
 
-CMD [ "serve", "-s", "build" ]
+CMD [ "node", "server.mjs" ]
 
 EXPOSE 3000
